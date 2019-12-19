@@ -1,8 +1,8 @@
 {
   "name": "squirrelly-next",
   "version": "0.0.0",
-  "description": "",
-  "keywords": [],
+  "description": "Lightweight, fast, and powerful JS template engine",
+  "keywords": ["squirrelly", "helpers", "template inheritance", "handlebars"],
   "main": "dist/squirrelly-next.umd.js",
   "module": "dist/squirrelly-next.es5.js",
   "typings": "dist/types/squirrelly-next.d.ts",
@@ -47,13 +47,12 @@
   },
   "jest": {
     "transform": {
-      ".(ts|tsx)": "ts-jest"
+      ".(ts)": "ts-jest"
     },
     "testEnvironment": "node",
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
     "moduleFileExtensions": [
       "ts",
-      "tsx",
       "js"
     ],
     "coveragePathIgnorePatterns": [

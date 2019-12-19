@@ -1,0 +1,1 @@
+{"version":3,"file":"squirrelly-next.es5.js","sources":["../src/squirrelly-next.ts"],"sourcesContent":["// Import here Polyfills if needed. Recommended core-js (npm i -D core-js)\n  // import \"core-js/fn/array.find\"\n  // ...\nexport default class DummyClass {\n\n}\n"],"names":[],"mappings":"AAAA;;;AAGA;IAAA;KAEC;IAAD,iBAAC;CAAA,IAAA;;;;"}
