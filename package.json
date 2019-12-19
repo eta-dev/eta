@@ -1,8 +1,13 @@
 {
   "name": "squirrelly-next",
   "version": "0.0.0",
-  "description": "Lightweight, fast, and powerful JS template engine",
-  "keywords": ["squirrelly", "helpers", "template inheritance", "handlebars"],
+  "description": "Lightweight, fast, and powerful JS template engine. Supports helpers, filters, template inheritance",
+  "keywords": [
+    "squirrelly",
+    "helpers",
+    "template inheritance",
+    "handlebars"
+  ],
   "main": "dist/squirrelly-next.umd.js",
   "module": "dist/squirrelly-next.es5.js",
   "typings": "dist/types/squirrelly-next.d.ts",
@@ -94,7 +99,6 @@
     "jest": "^23.6.0",
     "jest-config": "^23.6.0",
     "lint-staged": "^8.0.0",
-    "lodash.camelcase": "^4.3.0",
     "prettier": "^1.14.3",
     "prompt": "^1.0.0",
     "replace-in-file": "^3.4.2",
