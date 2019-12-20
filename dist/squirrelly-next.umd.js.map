@@ -1,1 +1,0 @@
-{"version":3,"file":"squirrelly-next.umd.js","sources":["../src/squirrelly-next.ts"],"sourcesContent":["// Import here Polyfills if needed. Recommended core-js (npm i -D core-js)\n// import \"core-js/fn/array.find\"\n// ...\nexport default class DummyClass {}\n"],"names":[],"mappings":";;;;;;CAAA;CACA;CACA;CACA;KAAA;MAAkC;KAAD,iBAAC;CAAD,CAAC,IAAA;;;;;;;;"}

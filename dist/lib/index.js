@@ -9,4 +9,4 @@ var DummyClass = /** @class */ (function () {
     return DummyClass;
 }());
 exports.default = DummyClass;
-//# sourceMappingURL=squirrelly-next.js.map
+//# sourceMappingURL=index.js.map

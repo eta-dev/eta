@@ -2,11 +2,19 @@
   "name": "squirrelly-next",
   "version": "0.0.0",
   "description": "Lightweight, fast, and powerful JS template engine. Supports helpers, filters, template inheritance",
-  "keywords": ["squirrelly", "helpers", "template inheritance", "handlebars", "template engine"],
+  "keywords": [
+    "squirrelly",
+    "helpers",
+    "template inheritance",
+    "handlebars",
+    "template engine"
+  ],
   "main": "dist/squirrelly-next.umd.js",
   "module": "dist/squirrelly-next.es5.js",
   "typings": "dist/types/squirrelly-next.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "repository": {
     "type": "git",
@@ -31,7 +39,10 @@
     "travis-deploy-once": "travis-deploy-once"
   },
   "lint-staged": {
-    "{src,test}/**/*.ts": ["prettier --write", "git add"]
+    "{src,test}/**/*.ts": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "config": {
     "commitizen": {
@@ -44,8 +55,14 @@
     },
     "testEnvironment": "node",
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
-    "moduleFileExtensions": ["ts", "js"],
-    "coveragePathIgnorePatterns": ["/node_modules/", "/test/"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 90,
@@ -54,14 +71,18 @@
         "statements": 95
       }
     },
-    "collectCoverageFrom": ["src/*.{js,ts}"]
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ]
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
@@ -85,6 +106,7 @@
     "rollup-plugin-commonjs": "^9.1.8",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-terser": "^5.1.3",
     "rollup-plugin-typescript2": "^0.18.0",
     "shelljs": "^0.8.3",
     "travis-deploy-once": "^5.0.9",
