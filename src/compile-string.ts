@@ -1,5 +1,5 @@
 import Parse from './parse'
-import { TagType, templateAttribute, AstObject, Filter, TemplateObject } from './parse'
+import { AstObject, Filter, TemplateObject } from './parse'
 
 function CompileToString(str: string, tagOpen: string, tagClose: string) {
   var buffer: Array<AstObject> = Parse(str, tagOpen, tagClose)
@@ -21,7 +21,7 @@ function parseBlocks(blocks: Array<TemplateObject>) {
   var ret = '['
   for (var i = 0; i < blocks.length; i++) {
     var block = blocks[i]
-    ret += parseHelper(block.res || '', block.d || [], block.params || '', block.n || '')
+    ret += parseHelper(block.res || '', block.d || [], block.p || '', block.n || '')
     if (i < blocks.length) {
       ret += ','
     }

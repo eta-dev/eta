@@ -1,14 +1,20 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // v 1.0.32
+Object.defineProperty(exports, "__esModule", { value: true });
+var setPrototypeOf = Object.setPrototypeOf ||
+    function (obj, proto) {
+        obj.__proto__ = proto;
+        return obj;
+    };
 function SqrlErr(message) {
     var err = new Error(message);
-    Object.setPrototypeOf(err, SqrlErr.prototype);
+    setPrototypeOf(err, SqrlErr.prototype);
     return err;
 }
 SqrlErr.prototype = Object.create(Error.prototype, {
     name: { value: 'Squirrelly Error', enumerable: false }
 });
+// TODO: Class transpilation adds a lot to the bundle size
 function ParseErr(message, str, indx) {
     var whitespace = str
         .slice(0, indx) // +2 because of {{
@@ -28,7 +34,7 @@ function ParseErr(message, str, indx) {
             '  ' +
             Array(colNo).join(' ') +
             '^';
-    throw new SqrlErr(message);
+    throw SqrlErr(message);
 }
 exports.ParseErr = ParseErr;
 //# sourceMappingURL=err.js.map

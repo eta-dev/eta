@@ -1,10 +1,21 @@
 // v 1.0.32
-class SqrlErr extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'Squirrelly Error'
+
+var setPrototypeOf =
+  Object.setPrototypeOf ||
+  function(obj, proto) {
+    obj.__proto__ = proto
+    return obj
   }
+
+function SqrlErr(message: string) {
+  var err = new Error(message)
+  setPrototypeOf(err, SqrlErr.prototype)
+  return err
 }
+
+SqrlErr.prototype = Object.create(Error.prototype, {
+  name: { value: 'Squirrelly Error', enumerable: false }
+})
 
 // TODO: Class transpilation adds a lot to the bundle size
 
@@ -28,5 +39,5 @@ export function ParseErr(message: string, str: string, indx: number) {
     '  ' +
     Array(colNo).join(' ') +
     '^'
-  throw new SqrlErr(message)
+  throw SqrlErr(message)
 }

@@ -1,0 +1,24 @@
+Hi
+{{~log("Hope you like Squirrelly!")/}}
+{{htmlstuff}}
+{{~foreach(options.obj) => val, key}}
+
+Reversed value: {{val|reverse}}, Key: {{key}}
+{{~if(key==="thirdchild")}}
+{{~each(options.obj[key]) => index, key}}
+
+Salutations! Index: {{index}}, old key: {{key}}
+{{/each}}
+{{/if}}
+{{/foreach}}
+
+{{~customhelper()}}
+{{#cabbage}}
+Cabbages taste good
+{{!console.log(hi)}}
+{{?custom stuff}}
+{{#pineapple}}
+As do pineapples
+{{/customhelper}}
+
+This is a partial: {{~include("mypartial")/}}

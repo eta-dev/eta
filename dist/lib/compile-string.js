@@ -19,7 +19,7 @@ function parseBlocks(blocks) {
     var ret = '[';
     for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-        ret += parseHelper(block.res || '', block.d || [], block.params || '', block.n || '');
+        ret += parseHelper(block.res || '', block.d || [], block.p || '', block.n || '');
         if (i < blocks.length) {
             ret += ',';
         }
@@ -40,7 +40,7 @@ function ParseScope(buff) {
         }
         else if (typeof currentBlock === 'object') {
             var type = currentBlock.t; // ~, s, !, ?, r
-            var content = currentBlock.c;
+            var content = currentBlock.c || '';
             var filters = currentBlock.f || [];
             var name = currentBlock.n || '';
             var params = currentBlock.p || '';
@@ -54,7 +54,7 @@ function ParseScope(buff) {
             else if (type === '~') {
                 // helper
                 // TODO: native helpers
-                var helperReturn = "Sqrl.H['" + name + "'](" + parseHelper(res, currentBlock.d, params, false);
+                var helperReturn = "Sqrl.H['" + name + "'](" + parseHelper(res, currentBlock.d, params);
                 if (blocks) {
                     helperReturn += ',' + parseBlocks(blocks);
                 }
@@ -89,5 +89,5 @@ function filter(str, filters) {
     }
     return str;
 }
-module.exports = CompileToString;
+exports.default = CompileToString;
 //# sourceMappingURL=compile-string.js.map

@@ -1,53 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // Version 1.0.32
-var ParseErr = require('./Err').ParseErr;
+var err_1 = require("./err");
 var utils_1 = require("./utils");
-var TagType;
-(function (TagType) {
-    TagType["Helper"] = "~";
-    TagType["HelperEnd"] = "/";
-    TagType["Block"] = "#";
-    TagType["Custom"] = "?";
-    TagType["Ref"] = "r";
-    TagType["Exec"] = "!";
-    TagType["SelfClosing"] = "s";
-})(TagType = exports.TagType || (exports.TagType = {}));
-var templateAttribute;
-(function (templateAttribute) {
-    templateAttribute["Content"] = "c";
-    templateAttribute["Filter"] = "f";
-    templateAttribute["FilterParams"] = "fp";
-    templateAttribute["Params"] = "p";
-    templateAttribute["Name"] = "n";
-    templateAttribute["Err"] = "err";
-    templateAttribute["Results"] = "res";
-})(templateAttribute = exports.templateAttribute || (exports.templateAttribute = {}));
 function Parse(str, tagOpen, tagClose) {
     var powerchars = new RegExp('([|()]|=>)|' +
         '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
         '|\\/\\*[^]*?\\*\\/|((\\/)?(-|_)?' +
         tagClose +
         ')', 'g');
-    var tagOpenReg = new RegExp('([^]+?)' + tagOpen + '(-|_)?\\s*', 'g');
+    var tagOpenReg = new RegExp('([^]*?)' + tagOpen + '(-|_)?\\s*', 'g');
     var startInd = 0;
     var trimNextLeftWs = '';
     function parseTag() {
         // console.log(JSON.stringify(match))
-        var currentObj = { f: [] };
+        var currentObj = { f: [], d: [] };
         var numParens = 0;
         var filterNumber = 0;
         var firstChar = str[startInd];
-        var currentAttribute = templateAttribute.Content; // default - Valid values: 'c'=content, 'f'=filter, 'fp'=filter params, 'p'=param, 'n'=name
-        var currentType = TagType.Ref; // Default
+        var currentAttribute = 'c'; // default - Valid values: 'c'=content, 'f'=filter, 'fp'=filter params, 'p'=param, 'n'=name
+        var currentType = 'r'; // Default
         startInd += 1; // assume we're gonna skip the first character
-        if (firstChar === TagType.Helper ||
-            firstChar === TagType.Block ||
-            firstChar === TagType.HelperEnd) {
-            currentAttribute = templateAttribute.Name;
+        if (firstChar === '~' || firstChar === '#' || firstChar === '/') {
+            currentAttribute = 'n';
             currentType = firstChar;
         }
-        else if (firstChar === TagType.Exec || firstChar === TagType.Custom) {
+        else if (firstChar === '!' || firstChar === '?') {
             // ? for custom
             currentType = firstChar;
         }
@@ -58,25 +36,24 @@ function Parse(str, tagOpen, tagClose) {
             var valUnprocessed = str.slice(startInd, indx) + (strng || '');
             // console.log(valUnprocessed)
             var val = valUnprocessed.trim();
-            if (currentAttribute === templateAttribute.Filter) {
+            if (currentAttribute === 'f') {
                 currentObj.f[filterNumber - 1][0] += val; // filterNumber - 1 because first filter: 0->1, but zero-indexed arrays
             }
-            else if (currentAttribute === templateAttribute.FilterParams) {
+            else if (currentAttribute === 'fp') {
                 currentObj.f[filterNumber - 1][1] += val;
             }
-            else if (currentAttribute === templateAttribute.Err) {
+            else if (currentAttribute === 'err') {
                 if (val) {
                     var found = valUnprocessed.search(/\S/);
-                    ParseErr('invalid syntax', str, startInd + found);
+                    err_1.ParseErr('invalid syntax', str, startInd + found);
                 }
             }
             else if (currentAttribute) {
-                if (currentObj[currentAttribute]) {
-                    currentObj[currentAttribute] += val;
-                }
-                else {
-                    currentObj[currentAttribute] = val;
-                }
+                // if (currentObj[currentAttribute]) { // TODO make sure no errs
+                //   currentObj[currentAttribute] += val
+                // } else {
+                currentObj[currentAttribute] = val;
+                // }
             }
             startInd = indx + 1;
         }
@@ -91,28 +68,28 @@ function Parse(str, tagOpen, tagClose) {
                 // Power character
                 if (char === '(') {
                     if (numParens === 0) {
-                        if (currentAttribute === templateAttribute.Name) {
+                        if (currentAttribute === 'n') {
                             addAttrValue(i);
-                            currentAttribute = templateAttribute.Params;
+                            currentAttribute = 'p';
                         }
-                        else if (currentAttribute === templateAttribute.Filter) {
+                        else if (currentAttribute === 'f') {
                             addAttrValue(i);
-                            currentAttribute = templateAttribute.FilterParams;
+                            currentAttribute = 'fp';
                         }
                     }
                     numParens++;
                 }
                 else if (char === ')') {
                     numParens--;
-                    if (numParens === 0 && currentAttribute !== templateAttribute.Content) {
+                    if (numParens === 0 && currentAttribute !== 'c') {
                         // Then it's closing a filter, block, or helper
                         addAttrValue(i);
-                        currentAttribute = templateAttribute.Err; // Reset the current attribute
+                        currentAttribute = 'err'; // Reset the current attribute
                     }
                 }
                 else if (numParens === 0 && char === '|') {
                     addAttrValue(i); // this should actually always be whitespace or empty
-                    currentAttribute = templateAttribute.Filter;
+                    currentAttribute = 'f';
                     filterNumber++;
                     //   TODO if (!currentObj.f) {
                     //     currentObj.f = [] // Initial assign
@@ -122,7 +99,7 @@ function Parse(str, tagOpen, tagClose) {
                 else if (char === '=>') {
                     addAttrValue(i);
                     startInd += 1; // this is 2 chars
-                    currentAttribute = templateAttribute.Results;
+                    currentAttribute = 'res';
                 }
             }
             else if (tagClose) {
@@ -132,18 +109,18 @@ function Parse(str, tagOpen, tagClose) {
                 // console.log('tagClose: ' + startInd)
                 trimNextLeftWs = wsControl;
                 if (slash && currentType === '~') {
-                    currentType = TagType.SelfClosing;
+                    currentType = 's';
                 } // TODO throw err
                 currentObj.t = currentType;
                 return currentObj;
             }
         }
         // TODO: Do I need this?
-        return currentObj;
+        err_1.ParseErr('unclosed tag', str, str.length);
+        return currentObj; // To prevent TypeScript from erroring
     }
     function parseContext(parentObj, firstParse) {
         parentObj.b = []; // assume there will be blocks
-        parentObj.d = [];
         var lastBlock = false;
         var buffer = [];
         function pushString(strng, wsAhead) {
@@ -187,7 +164,7 @@ function Parse(str, tagOpen, tagClose) {
                     return parentObj;
                 }
                 else {
-                    throw Error("Helper start and end don't match");
+                    err_1.ParseErr("Helper start and end don't match", str, tagOpenMatch.index + tagOpenMatch[0].length);
                 }
             }
             else if (currentType === '#') {
@@ -214,7 +191,7 @@ function Parse(str, tagOpen, tagClose) {
         }
         return parentObj;
     }
-    var parseResult = parseContext({ f: [] }, true);
+    var parseResult = parseContext({ f: [], d: [] }, true);
     // console.log(JSON.stringify(parseResult))
     return parseResult.d; // Parse the very outside context
 }

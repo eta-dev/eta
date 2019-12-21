@@ -1,3 +1,15 @@
+/**
+ * Trims either one whitespace character from the beginning of a string, or all
+ *
+ * @remarks
+ * Includes trimLeft polyfill
+ *
+ * @param str - String to trim
+ * @param type - Either '-' (trim only 1 whitespace char) or '_' (trim all whitespace)
+ * @returns Trimmed string
+ *
+ */
+
 function trimLeft(str: string, type: string): string {
   if (type === '_') {
     // full slurp
@@ -6,12 +18,23 @@ function trimLeft(str: string, type: string): string {
     } else {
       return str.replace(/^[\s\uFEFF\xA0]+/, '')
     }
-  } else if (type === '-') {
+  } else {
+    // type must be '-'
     return str.replace(/^(?:[\s\uFEFF\xA0]|\r\n)/, '')
   }
-  return str
-  // else something's wrong
 }
+
+/**
+ * Trims either one whitespace character from the end of the string, or all
+ *
+ * @remarks
+ * Includes trimRight polyfill
+ *
+ * @param str - String to trim
+ * @param type - Either '-' (trim only 1 whitespace char) or '_' (trim all whitespace)
+ * @returns Trimmed string
+ *
+ */
 
 function trimRight(str: string, type: string): string {
   if (type === '_') {
@@ -21,10 +44,10 @@ function trimRight(str: string, type: string): string {
     } else {
       return str.replace(/[\s\uFEFF\xA0]+$/, '')
     }
-  } else if (type === '-') {
+  } else {
+    // type must be '-'
     return str.replace(/(?:[\s\uFEFF\xA0]|\r\n)$/, '') // TODO: make sure this gets \r\n
   }
-  return str
 }
 
 export { trimLeft, trimRight }
