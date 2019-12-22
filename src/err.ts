@@ -1,6 +1,6 @@
 // v 1.0.32
 
-function setPrototypeOf(obj: any, proto: any) {
+function setPrototypeOf (obj: any, proto: any) {
   if (Object.setPrototypeOf) {
     Object.setPrototypeOf(obj, proto)
   } else {
@@ -8,7 +8,7 @@ function setPrototypeOf(obj: any, proto: any) {
   }
 }
 
-function SqrlErr(message: string) {
+function SqrlErr (message: string) {
   var err = new Error(message)
   setPrototypeOf(err, SqrlErr.prototype)
   return err
@@ -20,7 +20,7 @@ SqrlErr.prototype = Object.create(Error.prototype, {
 
 // TODO: Class transpilation adds a lot to the bundle size
 
-export function ParseErr(message: string, str: string, indx: number) {
+export function ParseErr (message: string, str: string, indx: number) {
   var whitespace = str
     .slice(0, indx) // +2 because of {{
     .split(/\n/)

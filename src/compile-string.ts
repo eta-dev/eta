@@ -1,14 +1,14 @@
 import Parse from './parse'
 import { AstObject, Filter, TemplateObject } from './parse'
 
-function CompileToString(str: string, tagOpen: string, tagClose: string) {
+function CompileToString (str: string, tagOpen: string, tagClose: string) {
   var buffer: Array<AstObject> = Parse(str, tagOpen, tagClose)
   return ParseScope(buffer)
     .replace(/\n/g, '\\n')
     .replace(/\r/g, '\\r')
 }
 
-function parseHelper(res: string, descendants: Array<AstObject>, params: string, name?: string) {
+function parseHelper (res: string, descendants: Array<AstObject>, params: string, name?: string) {
   var ret = '{exec:function(' + res + '){' + ParseScope(descendants) + '},params:[' + params + ']'
   if (name) {
     ret += ",name:'" + name + "'"
@@ -17,7 +17,7 @@ function parseHelper(res: string, descendants: Array<AstObject>, params: string,
   return ret
 }
 
-function parseBlocks(blocks: Array<TemplateObject>) {
+function parseBlocks (blocks: Array<TemplateObject>) {
   var ret = '['
   for (var i = 0; i < blocks.length; i++) {
     var block = blocks[i]
@@ -30,7 +30,7 @@ function parseBlocks(blocks: Array<TemplateObject>) {
   return ret
 }
 
-function ParseScope(buff: Array<AstObject>) {
+function ParseScope (buff: Array<AstObject>) {
   var i = 0
   var buffLength = buff.length
   var returnStr = "var tR='';"
@@ -80,7 +80,7 @@ function ParseScope(buff: Array<AstObject>) {
   return returnStr + 'return tR'
 }
 
-function filter(str: string, filters: Array<Filter>) {
+function filter (str: string, filters: Array<Filter>) {
   for (var i = 0; i < filters.length; i++) {
     var name = filters[i][0]
     var params = filters[i][1]

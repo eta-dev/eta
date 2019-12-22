@@ -10,7 +10,7 @@
  *
  */
 
-function trimLeft(str: string, type: string): string {
+function trimLeft (str: string, type: string): string {
   if (type === '_') {
     // full slurp
     if (String.prototype.trimLeft) {
@@ -36,7 +36,7 @@ function trimLeft(str: string, type: string): string {
  *
  */
 
-function trimRight(str: string, type: string): string {
+function trimRight (str: string, type: string): string {
   if (type === '_') {
     // full slurp
     if (String.prototype.trimRight) {

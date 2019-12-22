@@ -124,7 +124,7 @@ function Parse(str, tagOpen, tagClose) {
         var lastBlock = false;
         var buffer = [];
         function pushString(strng, wsAhead) {
-            if (strng && typeof strng === 'string') {
+            if (strng) {
                 var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 if (wsAhead) {
                     stringToPush = utils_1.trimRight(stringToPush, wsAhead);

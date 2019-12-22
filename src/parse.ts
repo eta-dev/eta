@@ -21,7 +21,7 @@ export interface TemplateObject {
   b?: Array<TemplateObject>
 }
 
-export default function Parse(str: string, tagOpen: string, tagClose: string): Array<AstObject> {
+export default function Parse (str: string, tagOpen: string, tagClose: string): Array<AstObject> {
   var powerchars = new RegExp(
     '([|()]|=>)|' +
     '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
@@ -34,7 +34,7 @@ export default function Parse(str: string, tagOpen: string, tagClose: string): A
   var startInd = 0
   var trimNextLeftWs = ''
 
-  function parseTag(): TemplateObject {
+  function parseTag (): TemplateObject {
     // console.log(JSON.stringify(match))
     var currentObj: TemplateObject = { f: [], d: [] }
     var numParens = 0
@@ -54,7 +54,7 @@ export default function Parse(str: string, tagOpen: string, tagClose: string): A
       startInd -= 1
     }
 
-    function addAttrValue(indx: number, strng?: string) {
+    function addAttrValue (indx: number, strng?: string) {
       var valUnprocessed = str.slice(startInd, indx) + (strng || '')
       // console.log(valUnprocessed)
       var val = valUnprocessed.trim()
@@ -136,13 +136,13 @@ export default function Parse(str: string, tagOpen: string, tagClose: string): A
     return currentObj // To prevent TypeScript from erroring
   }
 
-  function parseContext(parentObj: TemplateObject, firstParse?: boolean): TemplateObject {
+  function parseContext (parentObj: TemplateObject, firstParse?: boolean): TemplateObject {
     parentObj.b = [] // assume there will be blocks
     var lastBlock: TemplateObject | boolean = false
     var buffer: Array<AstObject> = []
 
-    function pushString(strng: string, wsAhead?: string) {
-      if (strng && typeof strng === 'string') {
+    function pushString (strng: string, wsAhead?: string) {
+      if (strng) {
         var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
         if (wsAhead) {
           stringToPush = trimRight(stringToPush, wsAhead)

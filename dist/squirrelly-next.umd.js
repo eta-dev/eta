@@ -219,7 +219,7 @@
           var lastBlock = false;
           var buffer = [];
           function pushString(strng, wsAhead) {
-              if (strng && typeof strng === 'string') {
+              if (strng) {
                   var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                   if (wsAhead) {
                       stringToPush = trimRight(stringToPush, wsAhead);
