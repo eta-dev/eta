@@ -58,6 +58,7 @@ function Parse(str, tagOpen, tagClose) {
             startInd = indx + 1;
         }
         var m;
+        // tslint:disable-next-line:no-conditional-assignment
         while ((m = powerchars.exec(str)) !== null) {
             var char = m[1];
             var tagClose = m[2];
@@ -138,6 +139,7 @@ function Parse(str, tagOpen, tagClose) {
         }
         // Random TODO: parentObj.b doesn't need to have t: #
         var tagOpenMatch;
+        // tslint:disable-next-line:no-conditional-assignment
         while ((tagOpenMatch = tagOpenReg.exec(str)) !== null) {
             var precedingString = tagOpenMatch[1];
             var ws = tagOpenMatch[2];

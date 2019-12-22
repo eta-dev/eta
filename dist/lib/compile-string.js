@@ -38,7 +38,7 @@ function ParseScope(buff) {
             // we know string exists
             returnStr += "tR+='" + str.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "';";
         }
-        else if (typeof currentBlock === 'object') {
+        else {
             var type = currentBlock.t; // ~, s, !, ?, r
             var content = currentBlock.c || '';
             var filters = currentBlock.f || [];

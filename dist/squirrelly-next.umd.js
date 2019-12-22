@@ -153,6 +153,7 @@
               startInd = indx + 1;
           }
           var m;
+          // tslint:disable-next-line:no-conditional-assignment
           while ((m = powerchars.exec(str)) !== null) {
               var char = m[1];
               var tagClose = m[2];
@@ -233,6 +234,7 @@
           }
           // Random TODO: parentObj.b doesn't need to have t: #
           var tagOpenMatch;
+          // tslint:disable-next-line:no-conditional-assignment
           while ((tagOpenMatch = tagOpenReg.exec(str)) !== null) {
               var precedingString = tagOpenMatch[1];
               var ws = tagOpenMatch[2];
@@ -329,7 +331,7 @@
               // we know string exists
               returnStr += "tR+='" + str.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "';";
           }
-          else if (typeof currentBlock === 'object') {
+          else {
               var type = currentBlock.t; // ~, s, !, ?, r
               var content = currentBlock.c || '';
               var filters = currentBlock.f || [];

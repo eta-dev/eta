@@ -1,5 +1,4 @@
-import Parse from './parse'
-import { AstObject, Filter, TemplateObject } from './parse'
+import Parse, { AstObject, Filter, TemplateObject } from './parse'
 
 function CompileToString (str: string, tagOpen: string, tagClose: string) {
   var buffer: Array<AstObject> = Parse(str, tagOpen, tagClose)
@@ -42,7 +41,7 @@ function ParseScope (buff: Array<AstObject>) {
 
       // we know string exists
       returnStr += "tR+='" + str.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "';"
-    } else if (typeof currentBlock === 'object') {
+    } else {
       var type = currentBlock.t // ~, s, !, ?, r
       var content = currentBlock.c || ''
       var filters = currentBlock.f || []
