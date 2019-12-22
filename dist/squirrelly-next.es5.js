@@ -1,9 +1,12 @@
 // v 1.0.32
-var setPrototypeOf = Object.setPrototypeOf ||
-    function (obj, proto) {
+function setPrototypeOf(obj, proto) {
+    if (Object.setPrototypeOf) {
+        Object.setPrototypeOf(obj, proto);
+    }
+    else {
         obj.__proto__ = proto;
-        return obj;
-    };
+    }
+}
 function SqrlErr(message) {
     var err = new Error(message);
     setPrototypeOf(err, SqrlErr.prototype);
@@ -374,7 +377,12 @@ function Compile(str, tagOpen, tagClose) {
 }
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
+function Render(template, options) {
+    var templateFunc = Compile(template, '{{', '}}');
+    return templateFunc(options, {});
+}
+
 // Import here Polyfills if needed. Recommended core-js (npm i -D core-js)
 
-export { CompileToString, Compile, Parse };
+export { CompileToString, Compile, Parse, Render };
 //# sourceMappingURL=squirrelly-next.es5.js.map

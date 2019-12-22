@@ -1,11 +1,14 @@
 "use strict";
 // v 1.0.32
 Object.defineProperty(exports, "__esModule", { value: true });
-var setPrototypeOf = Object.setPrototypeOf ||
-    function (obj, proto) {
+function setPrototypeOf(obj, proto) {
+    if (Object.setPrototypeOf) {
+        Object.setPrototypeOf(obj, proto);
+    }
+    else {
         obj.__proto__ = proto;
-        return obj;
-    };
+    }
+}
 function SqrlErr(message) {
     var err = new Error(message);
     setPrototypeOf(err, SqrlErr.prototype);

@@ -9,4 +9,6 @@ var compile_1 = require("./compile");
 exports.Compile = compile_1.default;
 var parse_1 = require("./parse");
 exports.Parse = parse_1.default;
+var render_1 = require("./render");
+exports.Render = render_1.default;
 //# sourceMappingURL=index.js.map

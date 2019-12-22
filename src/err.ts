@@ -1,11 +1,12 @@
 // v 1.0.32
 
-var setPrototypeOf =
-  Object.setPrototypeOf ||
-  function(obj, proto) {
+function setPrototypeOf(obj: any, proto: any) {
+  if (Object.setPrototypeOf) {
+    Object.setPrototypeOf(obj, proto)
+  } else {
     obj.__proto__ = proto
-    return obj
   }
+}
 
 function SqrlErr(message: string) {
   var err = new Error(message)
