@@ -10,7 +10,10 @@
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/squirrellyjs/squirrelly-next.git"
+  },
+  "bugs": {
+    "url": "https://github.com/squirrellyjs/squirrelly-next/issues"
   },
   "license": "MIT",
   "engines": {
