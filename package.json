@@ -10,7 +10,10 @@
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/squirrellyjs/squirrelly-next.git"
+  },
+  "bugs": {
+    "url": "https://github.com/squirrellyjs/squirrelly-next/issues"
   },
   "license": "MIT",
   "engines": {
@@ -28,10 +31,13 @@
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
     "precommit": "lint-staged",
-    "travis-deploy-once": "travis-deploy-once"
+    "travis-deploy-once": "travis-deploy-once --pro",
+    "format": "prettier-standard --format '{src,test}/**/*.ts'"
   },
   "lint-staged": {
-    "{src,test}/**/*.ts": ["prettier --write", "git add"]
+    "linters": {
+      "{src,test}/**/*.ts": ["prettier-standard --lint", "git add"]
+    }
   },
   "config": {
     "commitizen": {
