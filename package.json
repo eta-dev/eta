@@ -2,11 +2,19 @@
   "name": "squirrelly-next",
   "version": "0.0.0",
   "description": "Lightweight, fast, and powerful JS template engine. Supports helpers, filters, template inheritance",
-  "keywords": ["squirrelly", "helpers", "template inheritance", "handlebars", "template engine"],
+  "keywords": [
+    "squirrelly",
+    "helpers",
+    "template inheritance",
+    "handlebars",
+    "template engine"
+  ],
   "main": "dist/squirrelly-next.umd.js",
   "module": "dist/squirrelly-next.es5.js",
   "typings": "dist/types/squirrelly-next.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "repository": {
     "type": "git",
@@ -22,7 +30,7 @@
   "scripts": {
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
+    "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode modules src",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
@@ -36,7 +44,10 @@
   },
   "lint-staged": {
     "linters": {
-      "{src,test}/**/*.ts": ["prettier-standard --lint", "git add"]
+      "{src,test}/**/*.ts": [
+        "prettier-standard --lint",
+        "git add"
+      ]
     }
   },
   "config": {
@@ -50,8 +61,14 @@
     },
     "testEnvironment": "node",
     "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|js)$",
-    "moduleFileExtensions": ["ts", "js"],
-    "coveragePathIgnorePatterns": ["/node_modules/", "/test/"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 90,
@@ -60,17 +77,23 @@
         "statements": 95
       }
     },
-    "collectCoverageFrom": ["src/*.{js,ts}"]
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ]
   },
   "standard": {
-    "ignore": ["dist/*.js"]
+    "ignore": [
+      "dist/*.js"
+    ]
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",

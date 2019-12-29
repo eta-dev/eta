@@ -7,6 +7,8 @@ function CompileToString(str, tagOpen, tagClose) {
         .replace(/\n/g, '\\n')
         .replace(/\r/g, '\\r');
 }
+// TODO: Use type intersections for TemplateObject, etc.
+// so I don't have to make properties mandatory
 function parseHelper(res, descendants, params, name) {
     var ret = '{exec:function(' + res + '){' + ParseScope(descendants) + '},params:[' + params + ']';
     if (name) {

@@ -13,7 +13,15 @@ declare class Cacher<T> {
   load (cacheObj: ICache<T>): void
 }
 
-function Cacher<T> (this: any, initialCache: ICache<T>) {
+interface CacheClass<T> {
+  define(key: string, val: T): void
+  get(key: string): T
+  remove(key: string): void
+  clear(): void
+  load(cacheObj: ICache<T>): void
+}
+
+function Cacher<T> (this: CacheClass<T>, initialCache: ICache<T>) {
   var cache: ICache<T> = initialCache
   this.define = function (key: string, val: T) {
     cache[key] = val
@@ -36,4 +44,4 @@ function Cacher<T> (this: any, initialCache: ICache<T>) {
   }
 }
 
-export default Cacher
+export { Cacher }

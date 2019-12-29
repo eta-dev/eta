@@ -14,6 +14,7 @@ function SqrlErr(message) {
     setPrototypeOf(err, SqrlErr.prototype);
     return err;
 }
+exports.default = SqrlErr;
 SqrlErr.prototype = Object.create(Error.prototype, {
     name: { value: 'Squirrelly Error', enumerable: false }
 });

@@ -3,7 +3,12 @@
     "moduleResolution": "node",
     "target": "es5",
     "module": "es2015",
-    "lib": ["es2015", "es2016", "es2017", "dom"],
+    "lib": [
+      "es2015",
+      "es2016",
+      "es2017",
+      "dom"
+    ],
     "strict": true,
     "sourceMap": true,
     "declaration": true,
@@ -12,7 +17,15 @@
     "emitDecoratorMetadata": true,
     "declarationDir": "dist/types",
     "outDir": "dist/lib",
-    "typeRoots": ["node_modules/@types"]
+    "typeRoots": [
+      "node_modules/@types"
+    ]
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "typings"
+  ]
 }
