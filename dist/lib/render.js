@@ -1,9 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var compile_1 = require("./compile");
+import Compile from './compile';
+import { Helpers, Filters } from './containers';
 function Render(template, options) {
-    var templateFunc = compile_1.default(template, '{{', '}}');
-    return templateFunc(options, {});
+    var templateFunc = Compile(template, '{{', '}}');
+    return templateFunc(options, { H: Helpers, F: Filters });
 }
-exports.default = Render;
+export default Render;
 //# sourceMappingURL=render.js.map

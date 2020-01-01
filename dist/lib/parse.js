@@ -1,9 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // Version 1.0.32
-var err_1 = require("./err");
-var utils_1 = require("./utils");
-function Parse(str, tagOpen, tagClose) {
+import { ParseErr } from './err';
+import { trimLeft, trimRight } from './utils';
+export default function Parse(str, tagOpen, tagClose) {
     var powerchars = new RegExp('([|()]|=>)|' +
         '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
         '|\\/\\*[^]*?\\*\\/|((\\/)?(-|_)?' +
@@ -45,7 +43,7 @@ function Parse(str, tagOpen, tagClose) {
             else if (currentAttribute === 'err') {
                 if (val) {
                     var found = valUnprocessed.search(/\S/);
-                    err_1.ParseErr('invalid syntax', str, startInd + found);
+                    ParseErr('invalid syntax', str, startInd + found);
                 }
             }
             else if (currentAttribute) {
@@ -117,7 +115,7 @@ function Parse(str, tagOpen, tagClose) {
             }
         }
         // TODO: Do I need this?
-        err_1.ParseErr('unclosed tag', str, str.length);
+        ParseErr('unclosed tag', str, str.length);
         return currentObj; // To prevent TypeScript from erroring
     }
     function parseContext(parentObj, firstParse) {
@@ -128,10 +126,10 @@ function Parse(str, tagOpen, tagClose) {
             if (strng) {
                 var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 if (wsAhead) {
-                    stringToPush = utils_1.trimRight(stringToPush, wsAhead);
+                    stringToPush = trimRight(stringToPush, wsAhead);
                 }
                 if (trimNextLeftWs) {
-                    stringToPush = utils_1.trimLeft(stringToPush, trimNextLeftWs);
+                    stringToPush = trimLeft(stringToPush, trimNextLeftWs);
                     trimNextLeftWs = '';
                 }
                 buffer.push(stringToPush);
@@ -166,7 +164,7 @@ function Parse(str, tagOpen, tagClose) {
                     return parentObj;
                 }
                 else {
-                    err_1.ParseErr("Helper start and end don't match", str, tagOpenMatch.index + tagOpenMatch[0].length);
+                    ParseErr("Helper start and end don't match", str, tagOpenMatch.index + tagOpenMatch[0].length);
                 }
             }
             else if (currentType === '#') {
@@ -197,6 +195,5 @@ function Parse(str, tagOpen, tagClose) {
     // console.log(JSON.stringify(parseResult))
     return parseResult.d; // Parse the very outside context
 }
-exports.default = Parse;
 // TODO: Don't add f[] by default. Use currentObj.f[currentObj.f.length - 1] instead of using filterNumber
 //# sourceMappingURL=parse.js.map

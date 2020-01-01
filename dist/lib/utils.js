@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Trims either one whitespace character from the beginning of a string, or all
  *
@@ -10,7 +9,8 @@
  * @returns Trimmed string
  *
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+// TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
+// TODO: only include trimLeft polyfill if not in ES6
 function trimLeft(str, type) {
     if (type === '_') {
         // full slurp
@@ -26,7 +26,6 @@ function trimLeft(str, type) {
         return str.replace(/^(?:[\s\uFEFF\xA0]|\r\n)/, '');
     }
 }
-exports.trimLeft = trimLeft;
 /**
  * Trims either one whitespace character from the end of the string, or all
  *
@@ -53,5 +52,5 @@ function trimRight(str, type) {
         return str.replace(/(?:[\s\uFEFF\xA0]|\r\n)$/, ''); // TODO: make sure this gets \r\n
     }
 }
-exports.trimRight = trimRight;
+export { trimLeft, trimRight };
 //# sourceMappingURL=utils.js.map

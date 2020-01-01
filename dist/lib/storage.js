@@ -1,28 +1,25 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var err_1 = require("./err");
-function Cacher(initialCache) {
-    var cache = initialCache;
-    this.define = function (key, val) {
-        cache[key] = val;
+var Cacher = /** @class */ (function () {
+    function Cacher(cache) {
+        this.cache = cache;
+    }
+    Cacher.prototype.define = function (key, val) {
+        this.cache[key] = val;
     };
-    this.get = function (key) {
-        if (cache[key]) {
-            return cache[key];
-        }
-        else {
-            throw err_1.default("Key '" + key + "' doesn't exist");
-        }
+    Cacher.prototype.get = function (key) {
+        // string | array.
+        // TODO: allow array of keys to look down
+        return this.cache[key];
     };
-    this.remove = function (key) {
-        delete cache[key];
+    Cacher.prototype.remove = function (key) {
+        delete this.cache[key];
     };
-    this.clear = function () {
-        cache = {};
+    Cacher.prototype.clear = function () {
+        this.cache = {};
     };
-    this.load = function (cacheObj) {
-        cache = cacheObj;
+    Cacher.prototype.load = function (cacheObj) {
+        this.cache = cacheObj;
     };
-}
-exports.Cacher = Cacher;
+    return Cacher;
+}());
+export { Cacher };
 //# sourceMappingURL=storage.js.map

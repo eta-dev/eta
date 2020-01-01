@@ -3,7 +3,13 @@ declare type TemplateFunction = (options: object, Sqrl: object) => string;
 declare var Templates: Cacher<TemplateFunction>;
 declare var Layouts: Cacher<TemplateFunction>;
 declare var Partials: Cacher<TemplateFunction>;
-declare var Helpers: Cacher<Function>;
+interface HelperBlock {
+    exec: Function;
+    params: Array<any>;
+}
+declare type HelperFunction = (content: HelperBlock, blocks: Array<HelperBlock>) => string;
+declare var Helpers: Cacher<HelperFunction>;
 declare var NativeHelpers: Cacher<Function>;
-declare var Filters: Cacher<Function>;
+declare type FilterFunction = (str: string) => string;
+declare var Filters: Cacher<FilterFunction>;
 export { Templates, Layouts, Partials, Helpers, NativeHelpers, Filters };

@@ -1,6 +1,4 @@
-"use strict";
 // v 1.0.32
-Object.defineProperty(exports, "__esModule", { value: true });
 function setPrototypeOf(obj, proto) {
     if (Object.setPrototypeOf) {
         Object.setPrototypeOf(obj, proto);
@@ -9,17 +7,16 @@ function setPrototypeOf(obj, proto) {
         obj.__proto__ = proto;
     }
 }
-function SqrlErr(message) {
+export default function SqrlErr(message) {
     var err = new Error(message);
     setPrototypeOf(err, SqrlErr.prototype);
     return err;
 }
-exports.default = SqrlErr;
 SqrlErr.prototype = Object.create(Error.prototype, {
     name: { value: 'Squirrelly Error', enumerable: false }
 });
 // TODO: Class transpilation adds a lot to the bundle size
-function ParseErr(message, str, indx) {
+export function ParseErr(message, str, indx) {
     var whitespace = str
         .slice(0, indx) // +2 because of {{
         .split(/\n/);
@@ -40,5 +37,4 @@ function ParseErr(message, str, indx) {
             '^';
     throw SqrlErr(message);
 }
-exports.ParseErr = ParseErr;
 //# sourceMappingURL=err.js.map

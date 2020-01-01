@@ -1,46 +1,28 @@
 import SqrlErr from './err'
 
 interface ICache<T> {
+  // Basically, an object where all keys point to a value of the same type
   [key: string]: T
 }
 
-declare class Cacher<T> {
-  constructor (initialCache: ICache<T>)
-  define (key: string, val: T): void
-  get (key: string): T
-  remove (key: string): void
-  clear (): void
-  load (cacheObj: ICache<T>): void
-}
-
-interface CacheClass<T> {
-  define(key: string, val: T): void
-  get(key: string): T
-  remove(key: string): void
-  clear(): void
-  load(cacheObj: ICache<T>): void
-}
-
-function Cacher<T> (this: CacheClass<T>, initialCache: ICache<T>) {
-  var cache: ICache<T> = initialCache
-  this.define = function (key: string, val: T) {
-    cache[key] = val
+class Cacher<T> {
+  constructor (private cache: ICache<T>) {}
+  define (key: string, val: T) {
+    this.cache[key] = val
   }
-  this.get = function (key: string) {
-    if (cache[key]) {
-      return cache[key]
-    } else {
-      throw SqrlErr("Key '" + key + "' doesn't exist")
-    }
+  get (key: string) {
+    // string | array.
+    // TODO: allow array of keys to look down
+    return this.cache[key]
   }
-  this.remove = function (key: string) {
-    delete cache[key]
+  remove (key: string) {
+    delete this.cache[key]
   }
-  this.clear = function () {
-    cache = {}
+  clear () {
+    this.cache = {}
   }
-  this.load = function (cacheObj: ICache<T>) {
-    cache = cacheObj
+  load (cacheObj: ICache<T>) {
+    this.cache = cacheObj
   }
 }
 

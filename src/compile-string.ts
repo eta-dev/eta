@@ -1,17 +1,23 @@
 import Parse, { AstObject, Filter, TemplateObject } from './parse'
+import { NativeHelpers } from './containers'
 
 function CompileToString (str: string, tagOpen: string, tagClose: string) {
   var buffer: Array<AstObject> = Parse(str, tagOpen, tagClose)
-  return ParseScope(buffer)
-    .replace(/\n/g, '\\n')
-    .replace(/\r/g, '\\r')
+  return (
+    "var tR='';" +
+    ParseScope(buffer)
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r') +
+    'return tR'
+  )
 }
 
+// TODO: rename parseHelper, parseScope, etc. to compileHelper, compileScope, etc.
 // TODO: Use type intersections for TemplateObject, etc.
 // so I don't have to make properties mandatory
 
 function parseHelper (res: string, descendants: Array<AstObject>, params: string, name?: string) {
-  var ret = '{exec:function(' + res + '){' + ParseScope(descendants) + '},params:[' + params + ']'
+  var ret = '{exec:' + ParseScopeIntoFunction(descendants, res) + ',params:[' + params + ']'
   if (name) {
     ret += ",name:'" + name + "'"
   }
@@ -32,10 +38,14 @@ function parseBlocks (blocks: Array<TemplateObject>) {
   return ret
 }
 
-function ParseScope (buff: Array<AstObject>) {
+export function ParseScopeIntoFunction (buff: Array<AstObject>, res: string) {
+  return 'function(' + res + "){var tR='';" + ParseScope(buff) + 'return tR}'
+}
+
+export function ParseScope (buff: Array<AstObject>) {
   var i = 0
   var buffLength = buff.length
-  var returnStr = "var tR='';"
+  var returnStr = ''
 
   for (i; i < buffLength; i++) {
     var currentBlock = buff[i]
@@ -43,7 +53,8 @@ function ParseScope (buff: Array<AstObject>) {
       var str = currentBlock
 
       // we know string exists
-      returnStr += "tR+='" + str.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "';"
+      returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';"
+      // I believe the above replace is already in Parse
     } else {
       var type = currentBlock.t // ~, s, !, ?, r
       var content = currentBlock.c || ''
@@ -60,16 +71,21 @@ function ParseScope (buff: Array<AstObject>) {
       } else if (type === '~') {
         // helper
         // TODO: native helpers
-        var helperReturn = "Sqrl.H['" + name + "'](" + parseHelper(res, currentBlock.d, params)
-        if (blocks) {
-          helperReturn += ',' + parseBlocks(blocks)
-        }
-        helperReturn += ')'
+        if (NativeHelpers.get(name)) {
+          returnStr += NativeHelpers.get(name)(currentBlock)
+        } else {
+          var helperReturn =
+            "Sqrl.H.get('" + name + "')(" + parseHelper(res, currentBlock.d, params)
+          if (blocks) {
+            helperReturn += ',' + parseBlocks(blocks)
+          }
+          helperReturn += ')'
 
-        helperReturn = filter(helperReturn, filters)
-        returnStr += 'tR+=' + helperReturn + ';'
+          helperReturn = filter(helperReturn, filters)
+          returnStr += 'tR+=' + helperReturn + ';'
+        }
       } else if (type === 's') {
-        returnStr += 'tR+=' + filter("Sqrl.H['" + name + "'](" + params + ')', filters) + ';'
+        returnStr += 'tR+=' + filter("Sqrl.H.get('" + name + "')(" + params + ')', filters) + ';'
         // self-closing helper
       } else if (type === '!') {
         // execute
@@ -79,14 +95,14 @@ function ParseScope (buff: Array<AstObject>) {
       }
     }
   }
-  return returnStr + 'return tR'
+  return returnStr
 }
 
 function filter (str: string, filters: Array<Filter>) {
   for (var i = 0; i < filters.length; i++) {
     var name = filters[i][0]
     var params = filters[i][1]
-    str = "Sqrl.F['" + name + "'](" + str
+    str = "Sqrl.F.get('" + name + "')(" + str
     if (params) {
       str += ',' + params
     }

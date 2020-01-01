@@ -1,20 +1,54 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var storage_1 = require("./storage");
+import { Cacher } from './storage';
+import SqrlErr from './err';
+import { ParseScope } from './compile-string';
 // interface ITemplate {
 //   exec: (options: object, Sqrl: object) => string
 // }
-var Templates = new storage_1.Cacher({});
-exports.Templates = Templates;
+var Templates = new Cacher({});
 // Templates.define("hey", function (it) {return "hey"})
-var Layouts = new storage_1.Cacher({});
-exports.Layouts = Layouts;
-var Partials = new storage_1.Cacher({});
-exports.Partials = Partials;
-var Helpers = new storage_1.Cacher({});
-exports.Helpers = Helpers;
-var NativeHelpers = new storage_1.Cacher({});
-exports.NativeHelpers = NativeHelpers;
-var Filters = new storage_1.Cacher({});
-exports.Filters = Filters;
+var Layouts = new Cacher({});
+var Partials = new Cacher({});
+var Helpers = new Cacher({
+    each: function (content) {
+        // helperStart is called with (params, id) but id isn't needed
+        var res = '';
+        var param = content.params[0];
+        for (var i = 0; i < param.length; i++) {
+            res += content.exec(param[i], i);
+        }
+        return res;
+    },
+    foreach: function (content) {
+        var res = '';
+        var param = content.params[0];
+        for (var key in param) {
+            if (!param.hasOwnProperty(key))
+                continue;
+            res += content.exec(param, key);
+        }
+        return res;
+    }
+});
+var NativeHelpers = new Cacher({
+    if: function (buffer) {
+        if (buffer.f && buffer.f.length) {
+            throw SqrlErr("native helper 'if' can't have filters");
+        }
+        var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d) + '}';
+        if (buffer.b) {
+            for (var i = 0; i < buffer.b.length; i++) {
+                var currentBlock = buffer.b[i];
+                if (currentBlock.n === 'else') {
+                    returnStr += 'else{' + ParseScope(currentBlock.d) + '}';
+                }
+                else if (currentBlock.n === 'elif') {
+                    returnStr += 'else if(' + currentBlock.p + '){' + ParseScope(currentBlock.d) + '}';
+                }
+            }
+        }
+        return returnStr;
+    }
+});
+var Filters = new Cacher({});
+export { Templates, Layouts, Partials, Helpers, NativeHelpers, Filters };
 //# sourceMappingURL=containers.js.map

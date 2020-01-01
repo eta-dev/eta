@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (factory((global.Sqrl = {})));
+  (global = global || self, factory(global.Sqrl = {}));
 }(this, (function (exports) { 'use strict';
 
   // v 1.0.32
@@ -55,6 +55,8 @@
    * @returns Trimmed string
    *
    */
+  // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
+  // TODO: only include trimLeft polyfill if not in ES6
   function trimLeft(str, type) {
       if (type === '_') {
           // full slurp
@@ -294,16 +296,89 @@
   }
   // TODO: Don't add f[] by default. Use currentObj.f[currentObj.f.length - 1] instead of using filterNumber
 
+  var Cacher = /** @class */ (function () {
+      function Cacher(cache) {
+          this.cache = cache;
+      }
+      Cacher.prototype.define = function (key, val) {
+          this.cache[key] = val;
+      };
+      Cacher.prototype.get = function (key) {
+          // string | array.
+          // TODO: allow array of keys to look down
+          return this.cache[key];
+      };
+      Cacher.prototype.remove = function (key) {
+          delete this.cache[key];
+      };
+      Cacher.prototype.clear = function () {
+          this.cache = {};
+      };
+      Cacher.prototype.load = function (cacheObj) {
+          this.cache = cacheObj;
+      };
+      return Cacher;
+  }());
+
+  // Templates.define("hey", function (it) {return "hey"})
+  var Layouts = new Cacher({});
+  var Partials = new Cacher({});
+  var Helpers = new Cacher({
+      each: function (content) {
+          // helperStart is called with (params, id) but id isn't needed
+          var res = '';
+          var param = content.params[0];
+          for (var i = 0; i < param.length; i++) {
+              res += content.exec(param[i], i);
+          }
+          return res;
+      },
+      foreach: function (content) {
+          var res = '';
+          var param = content.params[0];
+          for (var key in param) {
+              if (!param.hasOwnProperty(key))
+                  continue;
+              res += content.exec(param, key);
+          }
+          return res;
+      }
+  });
+  var NativeHelpers = new Cacher({
+      if: function (buffer) {
+          if (buffer.f && buffer.f.length) {
+              throw SqrlErr("native helper 'if' can't have filters");
+          }
+          var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d) + '}';
+          if (buffer.b) {
+              for (var i = 0; i < buffer.b.length; i++) {
+                  var currentBlock = buffer.b[i];
+                  if (currentBlock.n === 'else') {
+                      returnStr += 'else{' + ParseScope(currentBlock.d) + '}';
+                  }
+                  else if (currentBlock.n === 'elif') {
+                      returnStr += 'else if(' + currentBlock.p + '){' + ParseScope(currentBlock.d) + '}';
+                  }
+              }
+          }
+          return returnStr;
+      }
+  });
+  var Filters = new Cacher({});
+
   function CompileToString(str, tagOpen, tagClose) {
       var buffer = Parse(str, tagOpen, tagClose);
-      return ParseScope(buffer)
-          .replace(/\n/g, '\\n')
-          .replace(/\r/g, '\\r');
+      return ("var tR='';" +
+          ParseScope(buffer)
+              .replace(/\n/g, '\\n')
+              .replace(/\r/g, '\\r') +
+          'return tR');
   }
+  // TODO: rename parseHelper, parseScope, etc. to compileHelper, compileScope, etc.
   // TODO: Use type intersections for TemplateObject, etc.
   // so I don't have to make properties mandatory
   function parseHelper(res, descendants, params, name) {
-      var ret = '{exec:function(' + res + '){' + ParseScope(descendants) + '},params:[' + params + ']';
+      var ret = '{exec:' + ParseScopeIntoFunction(descendants, res) + ',params:[' + params + ']';
       if (name) {
           ret += ",name:'" + name + "'";
       }
@@ -322,16 +397,20 @@
       ret += ']';
       return ret;
   }
+  function ParseScopeIntoFunction(buff, res) {
+      return 'function(' + res + "){var tR='';" + ParseScope(buff) + 'return tR}';
+  }
   function ParseScope(buff) {
       var i = 0;
       var buffLength = buff.length;
-      var returnStr = "var tR='';";
+      var returnStr = '';
       for (i; i < buffLength; i++) {
           var currentBlock = buff[i];
           if (typeof currentBlock === 'string') {
               var str = currentBlock;
               // we know string exists
-              returnStr += "tR+='" + str.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "';";
+              returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';";
+              // I believe the above replace is already in Parse
           }
           else {
               var type = currentBlock.t; // ~, s, !, ?, r
@@ -349,16 +428,21 @@
               else if (type === '~') {
                   // helper
                   // TODO: native helpers
-                  var helperReturn = "Sqrl.H['" + name + "'](" + parseHelper(res, currentBlock.d, params);
-                  if (blocks) {
-                      helperReturn += ',' + parseBlocks(blocks);
+                  if (NativeHelpers.get(name)) {
+                      returnStr += NativeHelpers.get(name)(currentBlock);
                   }
-                  helperReturn += ')';
-                  helperReturn = filter(helperReturn, filters);
-                  returnStr += 'tR+=' + helperReturn + ';';
+                  else {
+                      var helperReturn = "Sqrl.H.get('" + name + "')(" + parseHelper(res, currentBlock.d, params);
+                      if (blocks) {
+                          helperReturn += ',' + parseBlocks(blocks);
+                      }
+                      helperReturn += ')';
+                      helperReturn = filter(helperReturn, filters);
+                      returnStr += 'tR+=' + helperReturn + ';';
+                  }
               }
               else if (type === 's') {
-                  returnStr += 'tR+=' + filter("Sqrl.H['" + name + "'](" + params + ')', filters) + ';';
+                  returnStr += 'tR+=' + filter("Sqrl.H.get('" + name + "')(" + params + ')', filters) + ';';
                   // self-closing helper
               }
               else if (type === '!') {
@@ -367,13 +451,13 @@
               }
           }
       }
-      return returnStr + 'return tR';
+      return returnStr;
   }
   function filter(str, filters) {
       for (var i = 0; i < filters.length; i++) {
           var name = filters[i][0];
           var params = filters[i][1];
-          str = "Sqrl.F['" + name + "'](" + str;
+          str = "Sqrl.F.get('" + name + "')(" + str;
           if (params) {
               str += ',' + params;
           }
@@ -389,17 +473,26 @@
 
   function Render(template, options) {
       var templateFunc = Compile(template, '{{', '}}');
-      return templateFunc(options, {});
+      return templateFunc(options, { H: Helpers, F: Filters });
   }
 
-  // Import here Polyfills if needed. Recommended core-js (npm i -D core-js)
+  function Config(key, val) {
+  }
 
-  exports.CompileToString = CompileToString;
   exports.Compile = Compile;
+  exports.CompileToString = CompileToString;
+  exports.Config = Config;
+  exports.F = Filters;
+  exports.H = Helpers;
+  exports.L = Layouts;
+  exports.NH = NativeHelpers;
+  exports.P = Partials;
   exports.Parse = Parse;
+  exports.ParseScope = ParseScope;
+  exports.ParseScopeIntoFunction = ParseScopeIntoFunction;
   exports.Render = Render;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
-//# sourceMappingURL=squirrelly-next.umd.js.map
+//# sourceMappingURL=squirrelly.umd.js.map
