@@ -18,3 +18,6 @@ function Config (key: string, val: any): void {
 // TODO: Fix types for this
 
 export { Conf, Config }
+
+// Have different envs. Sqrl.Render, Compile, etc. all use default env
+// Use class for env
