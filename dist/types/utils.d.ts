@@ -22,4 +22,5 @@ declare function trimLeft(str: string, type: string): string;
  *
  */
 declare function trimRight(str: string, type: string): string;
-export { trimLeft, trimRight };
+declare function XMLEscape(str: any): string;
+export { trimLeft, trimRight, XMLEscape };
