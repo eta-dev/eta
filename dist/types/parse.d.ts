@@ -12,6 +12,7 @@ export interface TemplateObject {
     p?: string;
     res?: string;
     d: Array<AstObject>;
+    raw?: boolean;
     b?: Array<TemplateObject>;
 }
 export default function Parse(str: string, tagOpen: string, tagClose: string, env: SqrlConfig): Array<AstObject>;

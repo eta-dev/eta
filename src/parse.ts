@@ -19,6 +19,7 @@ export interface TemplateObject {
   p?: string
   res?: string
   d: Array<AstObject> // Todo: Make this optional
+  raw?: boolean
   b?: Array<TemplateObject>
 }
 
@@ -44,7 +45,6 @@ export default function Parse (
     // console.log(JSON.stringify(match))
     var currentObj: TemplateObject = { f: [], d: [] }
     var numParens = 0
-    var filterNumber = 0
     var firstChar = str[startInd]
     var currentAttribute: TemplateAttribute = 'c' // default - Valid values: 'c'=content, 'f'=filter, 'fp'=filter params, 'p'=param, 'n'=name
     var currentType: TagType = 'r' // Default
@@ -56,6 +56,8 @@ export default function Parse (
     } else if (firstChar === '!' || firstChar === '?') {
       // ? for custom
       currentType = firstChar
+    } else if (firstChar === '*') {
+      currentObj.raw = true
     } else {
       startInd -= 1
     }
@@ -65,9 +67,13 @@ export default function Parse (
       // console.log(valUnprocessed)
       var val = valUnprocessed.trim()
       if (currentAttribute === 'f') {
-        currentObj.f[filterNumber - 1][0] += val // filterNumber - 1 because first filter: 0->1, but zero-indexed arrays
+        if (val === 'safe') {
+          currentObj.raw = true
+        } else {
+          currentObj.f.push([val, ''])
+        }
       } else if (currentAttribute === 'fp') {
-        currentObj.f[filterNumber - 1][1] += val
+        currentObj.f[currentObj.f.length - 1][1] += val
       } else if (currentAttribute === 'err') {
         if (val) {
           var found = valUnprocessed.search(/\S/)
@@ -115,11 +121,9 @@ export default function Parse (
         } else if (numParens === 0 && char === '|') {
           addAttrValue(i) // this should actually always be whitespace or empty
           currentAttribute = 'f'
-          filterNumber++
           //   TODO if (!currentObj.f) {
           //     currentObj.f = [] // Initial assign
           //   }
-          currentObj.f[filterNumber - 1] = ['', '']
         } else if (char === '=>') {
           addAttrValue(i)
           startInd += 1 // this is 2 chars
@@ -227,5 +231,3 @@ export default function Parse (
   // console.log(JSON.stringify(parseResult))
   return parseResult.d // Parse the very outside context
 }
-
-// TODO: Don't add f[] by default. Use currentObj.f[currentObj.f.length - 1] instead of using filterNumber

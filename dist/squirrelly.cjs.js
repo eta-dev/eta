@@ -111,7 +111,6 @@ function Parse(str, tagOpen, tagClose, env) {
         // console.log(JSON.stringify(match))
         var currentObj = { f: [], d: [] };
         var numParens = 0;
-        var filterNumber = 0;
         var firstChar = str[startInd];
         var currentAttribute = 'c'; // default - Valid values: 'c'=content, 'f'=filter, 'fp'=filter params, 'p'=param, 'n'=name
         var currentType = 'r'; // Default
@@ -124,6 +123,9 @@ function Parse(str, tagOpen, tagClose, env) {
             // ? for custom
             currentType = firstChar;
         }
+        else if (firstChar === '*') {
+            currentObj.raw = true;
+        }
         else {
             startInd -= 1;
         }
@@ -132,10 +134,15 @@ function Parse(str, tagOpen, tagClose, env) {
             // console.log(valUnprocessed)
             var val = valUnprocessed.trim();
             if (currentAttribute === 'f') {
-                currentObj.f[filterNumber - 1][0] += val; // filterNumber - 1 because first filter: 0->1, but zero-indexed arrays
+                if (val === 'safe') {
+                    currentObj.raw = true;
+                }
+                else {
+                    currentObj.f.push([val, '']);
+                }
             }
             else if (currentAttribute === 'fp') {
-                currentObj.f[filterNumber - 1][1] += val;
+                currentObj.f[currentObj.f.length - 1][1] += val;
             }
             else if (currentAttribute === 'err') {
                 if (val) {
@@ -186,11 +193,9 @@ function Parse(str, tagOpen, tagClose, env) {
                 else if (numParens === 0 && char === '|') {
                     addAttrValue(i); // this should actually always be whitespace or empty
                     currentAttribute = 'f';
-                    filterNumber++;
                     //   TODO if (!currentObj.f) {
                     //     currentObj.f = [] // Initial assign
                     //   }
-                    currentObj.f[filterNumber - 1] = ['', ''];
                 }
                 else if (char === '=>') {
                     addAttrValue(i);
@@ -292,7 +297,6 @@ function Parse(str, tagOpen, tagClose, env) {
     // console.log(JSON.stringify(parseResult))
     return parseResult.d; // Parse the very outside context
 }
-// TODO: Don't add f[] by default. Use currentObj.f[currentObj.f.length - 1] instead of using filterNumber
 
 var Cacher = /** @class */ (function () {
     function Cacher(cache) {
