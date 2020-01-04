@@ -2,6 +2,7 @@ import { Cacher } from './storage'
 import { AstObject, Filter, TemplateObject } from './parse'
 import SqrlErr from './err'
 import { ParseScope } from './compile-string'
+import { SqrlConfig } from './config'
 
 type TemplateFunction = (options: object, Sqrl: object) => string
 
@@ -45,27 +46,75 @@ var Helpers = new Cacher<HelperFunction>({
 })
 
 var NativeHelpers = new Cacher<Function>({
-  if: function (buffer: TemplateObject) {
+  if: function (buffer: TemplateObject, env: SqrlConfig) {
     if (buffer.f && buffer.f.length) {
       throw SqrlErr("native helper 'if' can't have filters")
     }
-    var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d) + '}'
+    var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d, env) + '}'
     if (buffer.b) {
       for (var i = 0; i < buffer.b.length; i++) {
         var currentBlock = buffer.b[i]
         if (currentBlock.n === 'else') {
-          returnStr += 'else{' + ParseScope(currentBlock.d) + '}'
+          returnStr += 'else{' + ParseScope(currentBlock.d, env) + '}'
         } else if (currentBlock.n === 'elif') {
-          returnStr += 'else if(' + currentBlock.p + '){' + ParseScope(currentBlock.d) + '}'
+          returnStr += 'else if(' + currentBlock.p + '){' + ParseScope(currentBlock.d, env) + '}'
         }
       }
     }
+    return returnStr
+  },
+  try: function (buffer: TemplateObject, env: SqrlConfig) {
+    if (buffer.f && buffer.f.length) {
+      throw SqrlErr("native helper 'try' can't have filters")
+    }
+    if (!buffer.b || buffer.b.length !== 1 || buffer.b[0].n !== 'catch') {
+      throw SqrlErr("native helper 'try' only accepts 1 block, 'catch'")
+    }
+    var returnStr = 'try{' + ParseScope(buffer.d, env) + '}'
+
+    var currentBlock = buffer.b[0]
+    returnStr +=
+      'catch' +
+      (currentBlock.res ? '(' + currentBlock.res + ')' : '') +
+      '{' +
+      ParseScope(currentBlock.d, env) +
+      '}'
+
     return returnStr
   }
 })
 
 type FilterFunction = (str: string) => string
 
-var Filters = new Cacher<FilterFunction>({})
+interface EscapeMap {
+  '&': '&amp;'
+  '<': '&lt;'
+  '"': '&quot;'
+  "'": '&#39;'
+  [index: string]: string
+}
+
+var escMap: EscapeMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}
+
+function replaceChar (s: string): string {
+  return escMap[s]
+}
+
+function XMLEscape (str: any) {
+  // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
+  var newStr = String(str)
+  if (/[&<"']/.test(newStr)) {
+    return newStr.replace(/[&<"']/g, replaceChar)
+  } else {
+    return newStr
+  }
+}
+
+var Filters = new Cacher<FilterFunction>({ e: XMLEscape })
 
 export { Templates, Layouts, Partials, Helpers, NativeHelpers, Filters }

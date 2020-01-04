@@ -1,16 +1,15 @@
 var Sqrl = require('../dist/squirrelly.cjs')
 var template = `
-The Daugherty's have 8 kids. Their names are:
-{{~each (it.riceKids) => val, index}}
-{{~if(index < it.riceKids.length - 1_}}
-  {{val}},
-{{_#else_}}
-  and {{val}}
-{{_/if}}
-{{_/each}}
+{{~try}}
+This won't work: {{it.hi | validate}}
+{{#catch => err}}
+Uh-oh, error! Message was '{{err}} ''
+{{/try}}
 `
-Sqrl.Filters.define('capitalize', function (str) {
-  return str.toUpperCase()
+Sqrl.Filters.define('validate', function (str) {
+  if (typeof str === 'undefined') {
+    throw Error("str doesn't fit expected format")
+  }
 })
 
 console.log(Sqrl.Parse(template, '{{', '}}'))

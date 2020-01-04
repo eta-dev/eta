@@ -27,19 +27,19 @@ Simply put, Squirrelly is super lightweight, super fast, super powerful, and sup
 
 ### 🌟 Features
 
-- :wrench: Custom helpers
-- :wrench: Custom filters
+- &#128295; Custom helpers
+- &#128295; Custom filters
 - :package: 0 dependencies
 - :hammer: Conditionals
 - :zap: Exports ES Modules as well as UMD
 - :hammer: Loops
-- :wrench: Custom delimeters
+- &#128295; Custom delimeters
 - :pencil2: Easy template syntax
-- :wrench: Precompilation
+- &#128295; Precompilation
 - :hammer: Partials
-- :wrench: Inline JavaScript
+- &#128295; Inline JavaScript
 - :hammer: Comments
-- :wrench: Caching
+- &#128295; Caching
 - :rocket: SUPER fast (look at the performance benchmarks [here](https://github.com/nebrelbug/squirrelly-benchmarks))
 
 ## :scroll: Docs

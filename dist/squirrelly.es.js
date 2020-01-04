@@ -94,7 +94,7 @@ function trimRight(str, type) {
 }
 
 // Version 1.0.32
-function Parse(str, tagOpen, tagClose) {
+function Parse(str, tagOpen, tagClose, env) {
     var powerchars = new RegExp('([|()]|=>)|' +
         '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
         '|\\/\\*[^]*?\\*\\/|((\\/)?(-|_)?' +
@@ -300,6 +300,7 @@ var Cacher = /** @class */ (function () {
     Cacher.prototype.get = function (key) {
         // string | array.
         // TODO: allow array of keys to look down
+        // TODO: create plugin to allow referencing helpers, filters with dot notation
         return this.cache[key];
     };
     Cacher.prototype.remove = function (key) {
@@ -339,31 +340,67 @@ var Helpers = new Cacher({
     }
 });
 var NativeHelpers = new Cacher({
-    if: function (buffer) {
+    if: function (buffer, env) {
         if (buffer.f && buffer.f.length) {
             throw SqrlErr("native helper 'if' can't have filters");
         }
-        var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d) + '}';
+        var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d, env) + '}';
         if (buffer.b) {
             for (var i = 0; i < buffer.b.length; i++) {
                 var currentBlock = buffer.b[i];
                 if (currentBlock.n === 'else') {
-                    returnStr += 'else{' + ParseScope(currentBlock.d) + '}';
+                    returnStr += 'else{' + ParseScope(currentBlock.d, env) + '}';
                 }
                 else if (currentBlock.n === 'elif') {
-                    returnStr += 'else if(' + currentBlock.p + '){' + ParseScope(currentBlock.d) + '}';
+                    returnStr += 'else if(' + currentBlock.p + '){' + ParseScope(currentBlock.d, env) + '}';
                 }
             }
         }
         return returnStr;
+    },
+    try: function (buffer, env) {
+        if (buffer.f && buffer.f.length) {
+            throw SqrlErr("native helper 'try' can't have filters");
+        }
+        if (!buffer.b || buffer.b.length !== 1 || buffer.b[0].n !== 'catch') {
+            throw SqrlErr("native helper 'try' only accepts 1 block, 'catch'");
+        }
+        var returnStr = 'try{' + ParseScope(buffer.d, env) + '}';
+        var currentBlock = buffer.b[0];
+        returnStr +=
+            'catch' +
+                (currentBlock.res ? '(' + currentBlock.res + ')' : '') +
+                '{' +
+                ParseScope(currentBlock.d, env) +
+                '}';
+        return returnStr;
     }
 });
-var Filters = new Cacher({});
+var escMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '"': '&quot;',
+    "'": '&#39;'
+};
+function replaceChar(s) {
+    return escMap[s];
+}
+function XMLEscape(str) {
+    // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
+    var newStr = String(str);
+    if (/[&<"']/.test(newStr)) {
+        return newStr.replace(/[&<"']/g, replaceChar);
+    }
+    else {
+        return newStr;
+    }
+}
+var Filters = new Cacher({ e: XMLEscape });
 
-function CompileToString(str, tagOpen, tagClose) {
+function CompileToString(str, tagOpen, tagClose, env) {
     var buffer = Parse(str, tagOpen, tagClose);
     return ("var tR='';" +
-        ParseScope(buffer)
+        ParseScope(buffer, env)
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '\\r') +
         'return tR');
@@ -371,19 +408,19 @@ function CompileToString(str, tagOpen, tagClose) {
 // TODO: rename parseHelper, parseScope, etc. to compileHelper, compileScope, etc.
 // TODO: Use type intersections for TemplateObject, etc.
 // so I don't have to make properties mandatory
-function parseHelper(res, descendants, params, name) {
-    var ret = '{exec:' + ParseScopeIntoFunction(descendants, res) + ',params:[' + params + ']';
+function parseHelper(env, res, descendants, params, name) {
+    var ret = '{exec:' + ParseScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']';
     if (name) {
         ret += ",name:'" + name + "'";
     }
     ret += '}';
     return ret;
 }
-function parseBlocks(blocks) {
+function parseBlocks(blocks, env) {
     var ret = '[';
     for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-        ret += parseHelper(block.res || '', block.d || [], block.p || '', block.n || '');
+        ret += parseHelper(env, block.res || '', block.d || [], block.p || '', block.n || '');
         if (i < blocks.length) {
             ret += ',';
         }
@@ -391,10 +428,10 @@ function parseBlocks(blocks) {
     ret += ']';
     return ret;
 }
-function ParseScopeIntoFunction(buff, res) {
-    return 'function(' + res + "){var tR='';" + ParseScope(buff) + 'return tR}';
+function ParseScopeIntoFunction(buff, res, env) {
+    return 'function(' + res + "){var tR='';" + ParseScope(buff, env) + 'return tR}';
 }
-function ParseScope(buff) {
+function ParseScope(buff, env) {
     var i = 0;
     var buffLength = buff.length;
     var returnStr = '';
@@ -423,12 +460,12 @@ function ParseScope(buff) {
                 // helper
                 // TODO: native helpers
                 if (NativeHelpers.get(name)) {
-                    returnStr += NativeHelpers.get(name)(currentBlock);
+                    returnStr += NativeHelpers.get(name)(currentBlock, env);
                 }
                 else {
-                    var helperReturn = "Sqrl.H.get('" + name + "')(" + parseHelper(res, currentBlock.d, params);
+                    var helperReturn = "Sqrl.H.get('" + name + "')(" + parseHelper(env, res, currentBlock.d, params);
                     if (blocks) {
-                        helperReturn += ',' + parseBlocks(blocks);
+                        helperReturn += ',' + parseBlocks(blocks, env);
                     }
                     helperReturn += ')';
                     helperReturn = filter(helperReturn, filters);
@@ -460,18 +497,62 @@ function filter(str, filters) {
     return str;
 }
 
-function Compile(str, tagOpen, tagClose) {
-    return new Function('it', 'Sqrl', CompileToString(str, tagOpen, tagClose)); // eslint-disable-line no-new-func
+var defaultConfig = {
+    varName: 'it',
+    autoTrim: false,
+    autoEscape: true,
+    defaultFilter: false
+};
+var Env = {
+    cache: {
+        default: defaultConfig
+    },
+    define: function (key, newConfig) {
+        if (!this.cache[key]) {
+            this.cache[key] = defaultConfig;
+        }
+        for (var attrname in newConfig) {
+            this.cache[key][attrname] = newConfig[attrname];
+        }
+    },
+    get: function (key) {
+        // string | array.
+        // TODO: allow array of keys to look down
+        return this.cache[key];
+    },
+    remove: function (key) {
+        delete this.cache[key];
+    },
+    clear: function () {
+        this.cache = {};
+    },
+    load: function (cacheObj) {
+        this.cache = cacheObj;
+    }
+};
+// Have different envs. Sqrl.Render, Compile, etc. all use default env
+// Use class for env
+
+function Compile(str, tagOpen, tagClose, envName) {
+    var SqrlEnv = Env.get(envName || 'default');
+    return new Function(SqrlEnv.varName, 'Sqrl', CompileToString(str, tagOpen, tagClose, SqrlEnv)); // eslint-disable-line no-new-func
 }
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
-function Render(template, options) {
-    var templateFunc = Compile(template, '{{', '}}');
-    return templateFunc(options, { H: Helpers, F: Filters });
+function Render(template, data, env, options) {
+    if (!env) {
+        env = 'default';
+    }
+    else if (typeof env === 'function') {
+        env = env(options); // this can be used to dynamically pick an env based on name, etc.
+    }
+    if (typeof template === 'function') {
+        return template(data, { H: Helpers, F: Filters });
+    }
+    // else
+    var templateFunc = Compile(template, '{{', '}}', env);
+    return templateFunc(data, { H: Helpers, F: Filters });
 }
 
-function Config(key, val) {
-}
-
-export { Compile, CompileToString, Config, Filters as F, Helpers as H, Layouts as L, NativeHelpers as NH, Partials as P, Parse, ParseScope, ParseScopeIntoFunction, Render };
+export { Compile, CompileToString, Env, Filters, Helpers, Layouts, NativeHelpers, Parse, ParseScope, ParseScopeIntoFunction, Partials, Render };
 //# sourceMappingURL=squirrelly.es.js.map

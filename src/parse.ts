@@ -1,6 +1,7 @@
 // Version 1.0.32
 import { ParseErr } from './err'
 import { trimLeft, trimRight } from './utils'
+import { SqrlConfig } from './config'
 
 export type TagType = '~' | '/' | '#' | '?' | 'r' | '!' | 's'
 export type TemplateAttribute = 'c' | 'f' | 'fp' | 'p' | 'n' | 'res' | 'err'
@@ -21,7 +22,12 @@ export interface TemplateObject {
   b?: Array<TemplateObject>
 }
 
-export default function Parse (str: string, tagOpen: string, tagClose: string): Array<AstObject> {
+export default function Parse (
+  str: string,
+  tagOpen: string,
+  tagClose: string,
+  env: SqrlConfig
+): Array<AstObject> {
   var powerchars = new RegExp(
     '([|()]|=>)|' +
     '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings

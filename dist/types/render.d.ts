@@ -1,3 +1,4 @@
-declare function Render(template: string, options: object): string;
+declare type TemplateFunction = (data: object, Sqrl: object) => string;
+declare type DetermineEnvFunction = (options?: object) => string;
+declare function Render(template: string | TemplateFunction, data: object, env?: string | DetermineEnvFunction, options?: object): any;
 export default Render;
-export declare type TemplateFunction = (options: object, Sqrl: object) => string;

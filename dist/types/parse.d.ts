@@ -1,3 +1,4 @@
+import { SqrlConfig } from './config';
 export declare type TagType = '~' | '/' | '#' | '?' | 'r' | '!' | 's';
 export declare type TemplateAttribute = 'c' | 'f' | 'fp' | 'p' | 'n' | 'res' | 'err';
 export declare type TemplateObjectAttribute = 'c' | 'p' | 'n' | 'res';
@@ -13,4 +14,4 @@ export interface TemplateObject {
     d: Array<AstObject>;
     b?: Array<TemplateObject>;
 }
-export default function Parse(str: string, tagOpen: string, tagClose: string): Array<AstObject>;
+export default function Parse(str: string, tagOpen: string, tagClose: string, env: SqrlConfig): Array<AstObject>;

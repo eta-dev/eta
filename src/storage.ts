@@ -13,6 +13,7 @@ class Cacher<T> {
   get (key: string) {
     // string | array.
     // TODO: allow array of keys to look down
+    // TODO: create plugin to allow referencing helpers, filters with dot notation
     return this.cache[key]
   }
   remove (key: string) {

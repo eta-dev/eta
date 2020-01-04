@@ -53,33 +53,4 @@ function trimRight (str: string, type: string): string {
   }
 }
 
-interface EscapeMap {
-  '&': '&amp;'
-  '<': '&lt;'
-  '"': '&quot;'
-  "'": '&#39;'
-  [index: string]: string
-}
-
-var escMap: EscapeMap = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '"': '&quot;',
-  "'": '&#39;'
-}
-
-function replaceChar (s: string): string {
-  return escMap[s]
-}
-
-function XMLEscape (str: any) {
-  // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
-  var newStr = String(str)
-  if (/[&<"']/.test(newStr)) {
-    return newStr.replace(/[&<"']/g, replaceChar)
-  } else {
-    return newStr
-  }
-}
-
-export { trimLeft, trimRight, XMLEscape }
+export { trimLeft, trimRight }

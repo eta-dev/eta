@@ -1,11 +1,12 @@
 import Parse, { AstObject, Filter, TemplateObject } from './parse'
 import { NativeHelpers } from './containers'
+import { SqrlConfig } from './config'
 
-function CompileToString (str: string, tagOpen: string, tagClose: string) {
-  var buffer: Array<AstObject> = Parse(str, tagOpen, tagClose)
+function CompileToString (str: string, tagOpen: string, tagClose: string, env: SqrlConfig) {
+  var buffer: Array<AstObject> = Parse(str, tagOpen, tagClose, env)
   return (
     "var tR='';" +
-    ParseScope(buffer)
+    ParseScope(buffer, env)
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r') +
     'return tR'
@@ -16,8 +17,14 @@ function CompileToString (str: string, tagOpen: string, tagClose: string) {
 // TODO: Use type intersections for TemplateObject, etc.
 // so I don't have to make properties mandatory
 
-function parseHelper (res: string, descendants: Array<AstObject>, params: string, name?: string) {
-  var ret = '{exec:' + ParseScopeIntoFunction(descendants, res) + ',params:[' + params + ']'
+function parseHelper (
+  env: SqrlConfig,
+  res: string,
+  descendants: Array<AstObject>,
+  params: string,
+  name?: string
+) {
+  var ret = '{exec:' + ParseScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']'
   if (name) {
     ret += ",name:'" + name + "'"
   }
@@ -25,11 +32,11 @@ function parseHelper (res: string, descendants: Array<AstObject>, params: string
   return ret
 }
 
-function parseBlocks (blocks: Array<TemplateObject>) {
+function parseBlocks (blocks: Array<TemplateObject>, env: SqrlConfig) {
   var ret = '['
   for (var i = 0; i < blocks.length; i++) {
     var block = blocks[i]
-    ret += parseHelper(block.res || '', block.d || [], block.p || '', block.n || '')
+    ret += parseHelper(env, block.res || '', block.d || [], block.p || '', block.n || '')
     if (i < blocks.length) {
       ret += ','
     }
@@ -38,11 +45,11 @@ function parseBlocks (blocks: Array<TemplateObject>) {
   return ret
 }
 
-export function ParseScopeIntoFunction (buff: Array<AstObject>, res: string) {
-  return 'function(' + res + "){var tR='';" + ParseScope(buff) + 'return tR}'
+export function ParseScopeIntoFunction (buff: Array<AstObject>, res: string, env: SqrlConfig) {
+  return 'function(' + res + "){var tR='';" + ParseScope(buff, env) + 'return tR}'
 }
 
-export function ParseScope (buff: Array<AstObject>) {
+export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
   var i = 0
   var buffLength = buff.length
   var returnStr = ''
@@ -72,12 +79,12 @@ export function ParseScope (buff: Array<AstObject>) {
         // helper
         // TODO: native helpers
         if (NativeHelpers.get(name)) {
-          returnStr += NativeHelpers.get(name)(currentBlock)
+          returnStr += NativeHelpers.get(name)(currentBlock, env)
         } else {
           var helperReturn =
-            "Sqrl.H.get('" + name + "')(" + parseHelper(res, currentBlock.d, params)
+            "Sqrl.H.get('" + name + "')(" + parseHelper(env, res, currentBlock.d, params)
           if (blocks) {
-            helperReturn += ',' + parseBlocks(blocks)
+            helperReturn += ',' + parseBlocks(blocks, env)
           }
           helperReturn += ')'
 
