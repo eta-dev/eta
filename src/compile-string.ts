@@ -72,6 +72,9 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
       var blocks = currentBlock.b || []
 
       if (type === 'r') {
+        if (currentBlock.raw && env.autoEscape) {
+          content = 'Sqrl.F.get("e")(' + content + ')'
+        }
         var filtered = filter(content, filters)
         returnStr += 'tR+=' + filtered + ';'
         // reference
