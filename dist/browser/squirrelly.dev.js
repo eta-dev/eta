@@ -161,6 +161,7 @@
               }
               startInd = indx + 1;
           }
+          powerchars.lastIndex = startInd;
           var m;
           // tslint:disable-next-line:no-conditional-assignment
           while ((m = powerchars.exec(str)) !== null) {
