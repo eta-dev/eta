@@ -67,8 +67,8 @@ export default function Parse (
       startInd -= 1
     }
 
-    function addAttrValue (indx: number, strng?: string) {
-      var valUnprocessed = str.slice(startInd, indx) + (strng || '')
+    function addAttrValue (indx: number) {
+      var valUnprocessed = str.slice(startInd, indx)
       // console.log(valUnprocessed)
       var val = valUnprocessed.trim()
       if (currentAttribute === 'f') {
@@ -136,7 +136,7 @@ export default function Parse (
         }
       } else if (tagClose) {
         addAttrValue(i)
-        startInd += tagClose.length - 1
+        startInd = i + m[0].length
         tagOpenReg.lastIndex = startInd
         // console.log('tagClose: ' + startInd)
         trimNextLeftWs = wsControl

@@ -125,8 +125,8 @@ function Parse(str, tagOpen, tagClose, env) {
         else {
             startInd -= 1;
         }
-        function addAttrValue(indx, strng) {
-            var valUnprocessed = str.slice(startInd, indx) + (strng || '');
+        function addAttrValue(indx) {
+            var valUnprocessed = str.slice(startInd, indx);
             // console.log(valUnprocessed)
             var val = valUnprocessed.trim();
             if (currentAttribute === 'f') {
@@ -199,7 +199,7 @@ function Parse(str, tagOpen, tagClose, env) {
             }
             else if (tagClose) {
                 addAttrValue(i);
-                startInd += tagClose.length - 1;
+                startInd = i + m[0].length;
                 tagOpenReg.lastIndex = startInd;
                 // console.log('tagClose: ' + startInd)
                 trimNextLeftWs = wsControl;
