@@ -14,28 +14,19 @@ export type Filter = [string, string | undefined]
 export interface TemplateObject {
   n?: string
   t?: string
-  f?: Array<Filter>
+  f: Array<Filter>
   c?: string
   p?: string
   res?: string
   d?: Array<AstObject> // Todo: Make this optional
   raw?: boolean
-  b?: Array<TemplateObject>
+  b?: Array<ParentTemplateObject>
 }
 
 export interface ParentTemplateObject extends TemplateObject {
   d: Array<AstObject>
+  b: Array<ParentTemplateObject>
 }
-
-interface FilteredTemplateObject extends TemplateObject {
-  f: Array<Filter>
-}
-
-interface FilteredParentTemplateObject extends ParentTemplateObject {
-  f: Array<Filter>
-}
-
-export type FilteredObject = FilteredTemplateObject | FilteredParentTemplateObject
 
 export default function Parse (
   str: string,
@@ -57,7 +48,7 @@ export default function Parse (
 
   function parseTag (): TemplateObject {
     // console.log(JSON.stringify(match))
-    var currentObj: TemplateObject = {}
+    var currentObj: TemplateObject = { f: [] }
     var numParens = 0
     var firstChar = str[startInd]
     var currentAttribute: TemplateAttribute = 'c' // default - Valid values: 'c'=content, 'f'=filter, 'fp'=filter params, 'p'=param, 'n'=name
@@ -84,14 +75,10 @@ export default function Parse (
         if (val === 'safe') {
           currentObj.raw = true
         } else {
-          if (currentObj.f) {
-            currentObj.f.push([val, ''])
-          } else {
-            currentObj.f = []
-          }
+          currentObj.f.push([val, ''])
         }
       } else if (currentAttribute === 'fp') {
-        ;(currentObj as FilteredObject).f[(currentObj as FilteredObject).f.length - 1][1] += val
+        currentObj.f[currentObj.f.length - 1][1] += val
       } else if (currentAttribute === 'err') {
         if (val) {
           var found = valUnprocessed.search(/\S/)
@@ -142,9 +129,6 @@ export default function Parse (
         } else if (numParens === 0 && char === '|') {
           addAttrValue(i) // this should actually always be whitespace or empty
           currentAttribute = 'f'
-          //   TODO if (!currentObj.f) {
-          //     currentObj.f = [] // Initial assign
-          //   }
         } else if (char === '=>') {
           addAttrValue(i)
           startInd += 1 // this is 2 chars
@@ -170,7 +154,8 @@ export default function Parse (
 
   function parseContext (parentObj: TemplateObject, firstParse?: boolean): ParentTemplateObject {
     parentObj.b = [] // assume there will be blocks // TODO: perf optimize this
-    var lastBlock: TemplateObject | boolean = false
+    parentObj.d = []
+    var lastBlock: ParentTemplateObject | false = false
     var buffer: Array<AstObject> = []
 
     function pushString (strng: string, wsAhead?: string) {
@@ -202,7 +187,7 @@ export default function Parse (
 
       var currentType = currentObj.t
       if (currentType === '~') {
-        currentObj = parseContext(currentObj as ParentTemplateObject) // currentObj is the parent object
+        currentObj = parseContext(currentObj) // currentObj is the parent object
         buffer.push(currentObj)
       } else if (currentType === '/') {
         if (parentObj.n === currentObj.n) {
@@ -230,7 +215,7 @@ export default function Parse (
         } else {
           parentObj.d = buffer
         }
-        lastBlock = currentObj // Set the 'lastBlock' object to the value of the current block
+        lastBlock = currentObj as ParentTemplateObject // Set the 'lastBlock' object to the value of the current block
 
         buffer = []
       } else {
@@ -248,7 +233,7 @@ export default function Parse (
     return parentObj as ParentTemplateObject
   }
 
-  var parseResult = parseContext({}, true)
+  var parseResult = parseContext({ f: [] }, true)
   // console.log(JSON.stringify(parseResult))
   return parseResult.d // Parse the very outside context
 }

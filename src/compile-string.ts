@@ -32,11 +32,11 @@ function parseHelper (
   return ret
 }
 
-function parseBlocks (blocks: Array<TemplateObject>, env: SqrlConfig) {
+function parseBlocks (blocks: Array<ParentTemplateObject>, env: SqrlConfig) {
   var ret = '['
   for (var i = 0; i < blocks.length; i++) {
     var block = blocks[i]
-    ret += parseHelper(env, block.res || '', block.d || [], block.p || '', block.n)
+    ret += parseHelper(env, block.res || '', block.d, block.p || '', block.n)
     if (i < blocks.length) {
       ret += ','
     }
@@ -65,14 +65,14 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
     } else {
       var type = currentBlock.t // ~, s, !, ?, r
       var content = currentBlock.c || ''
-      var filters = currentBlock.f || []
+      var filters = currentBlock.f
       var name = currentBlock.n || ''
       var params = currentBlock.p || ''
       var res = currentBlock.res || ''
-      var blocks = currentBlock.b || []
+      var blocks = currentBlock.b
 
       if (type === 'r') {
-        if (currentBlock.raw && env.autoEscape) {
+        if (!currentBlock.raw && env.autoEscape) {
           content = 'Sqrl.F.get("e")(' + content + ')'
         }
         var filtered = filter(content, filters)
@@ -85,14 +85,16 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
           returnStr += NativeHelpers.get(name)(currentBlock, env)
         } else {
           var helperReturn =
-            "Sqrl.H.get('" + name + "')(" + parseHelper(env, res, currentBlock.d || [], params)
+            "Sqrl.H.get('" +
+            name +
+            "')(" +
+            parseHelper(env, res, (currentBlock as ParentTemplateObject).d, params)
           if (blocks) {
-            helperReturn += ',' + parseBlocks(blocks, env)
+            helperReturn += ',' + parseBlocks(blocks as Array<ParentTemplateObject>, env)
           }
           helperReturn += ')'
 
-          helperReturn = filter(helperReturn, filters)
-          returnStr += 'tR+=' + helperReturn + ';'
+          returnStr += 'tR+=' + filter(helperReturn, filters) + ';'
         }
       } else if (type === 's') {
         returnStr += 'tR+=' + filter("Sqrl.H.get('" + name + "')(" + params + ')', filters) + ';'

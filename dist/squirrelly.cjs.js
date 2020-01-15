@@ -109,7 +109,7 @@ function Parse(str, tagOpen, tagClose, env) {
     var trimNextLeftWs = '';
     function parseTag() {
         // console.log(JSON.stringify(match))
-        var currentObj = {};
+        var currentObj = { f: [] };
         var numParens = 0;
         var firstChar = str[startInd];
         var currentAttribute = 'c'; // default - Valid values: 'c'=content, 'f'=filter, 'fp'=filter params, 'p'=param, 'n'=name
@@ -138,12 +138,7 @@ function Parse(str, tagOpen, tagClose, env) {
                     currentObj.raw = true;
                 }
                 else {
-                    if (currentObj.f) {
-                        currentObj.f.push([val, '']);
-                    }
-                    else {
-                        currentObj.f = [];
-                    }
+                    currentObj.f.push([val, '']);
                 }
             }
             else if (currentAttribute === 'fp') {
@@ -199,9 +194,6 @@ function Parse(str, tagOpen, tagClose, env) {
                 else if (numParens === 0 && char === '|') {
                     addAttrValue(i); // this should actually always be whitespace or empty
                     currentAttribute = 'f';
-                    //   TODO if (!currentObj.f) {
-                    //     currentObj.f = [] // Initial assign
-                    //   }
                 }
                 else if (char === '=>') {
                     addAttrValue(i);
@@ -228,6 +220,7 @@ function Parse(str, tagOpen, tagClose, env) {
     }
     function parseContext(parentObj, firstParse) {
         parentObj.b = []; // assume there will be blocks // TODO: perf optimize this
+        parentObj.d = [];
         var lastBlock = false;
         var buffer = [];
         function pushString(strng, wsAhead) {
@@ -299,7 +292,7 @@ function Parse(str, tagOpen, tagClose, env) {
         }
         return parentObj;
     }
-    var parseResult = parseContext({}, true);
+    var parseResult = parseContext({ f: [] }, true);
     // console.log(JSON.stringify(parseResult))
     return parseResult.d; // Parse the very outside context
 }
@@ -434,7 +427,7 @@ function parseBlocks(blocks, env) {
     var ret = '[';
     for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-        ret += parseHelper(env, block.res || '', block.d || [], block.p || '', block.n);
+        ret += parseHelper(env, block.res || '', block.d, block.p || '', block.n);
         if (i < blocks.length) {
             ret += ',';
         }
@@ -460,13 +453,13 @@ function ParseScope(buff, env) {
         else {
             var type = currentBlock.t; // ~, s, !, ?, r
             var content = currentBlock.c || '';
-            var filters = currentBlock.f || [];
+            var filters = currentBlock.f;
             var name = currentBlock.n || '';
             var params = currentBlock.p || '';
             var res = currentBlock.res || '';
-            var blocks = currentBlock.b || [];
+            var blocks = currentBlock.b;
             if (type === 'r') {
-                if (currentBlock.raw && env.autoEscape) {
+                if (!currentBlock.raw && env.autoEscape) {
                     content = 'Sqrl.F.get("e")(' + content + ')';
                 }
                 var filtered = filter(content, filters);
@@ -480,13 +473,15 @@ function ParseScope(buff, env) {
                     returnStr += NativeHelpers.get(name)(currentBlock, env);
                 }
                 else {
-                    var helperReturn = "Sqrl.H.get('" + name + "')(" + parseHelper(env, res, currentBlock.d || [], params);
+                    var helperReturn = "Sqrl.H.get('" +
+                        name +
+                        "')(" +
+                        parseHelper(env, res, currentBlock.d, params);
                     if (blocks) {
                         helperReturn += ',' + parseBlocks(blocks, env);
                     }
                     helperReturn += ')';
-                    helperReturn = filter(helperReturn, filters);
-                    returnStr += 'tR+=' + helperReturn + ';';
+                    returnStr += 'tR+=' + filter(helperReturn, filters) + ';';
                 }
             }
             else if (type === 's') {
