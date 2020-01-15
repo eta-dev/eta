@@ -105,7 +105,7 @@ function Parse(str, tagOpen, tagClose, env) {
     var trimNextLeftWs = '';
     function parseTag() {
         // console.log(JSON.stringify(match))
-        var currentObj = { f: [], d: [] };
+        var currentObj = {};
         var numParens = 0;
         var firstChar = str[startInd];
         var currentAttribute = 'c'; // default - Valid values: 'c'=content, 'f'=filter, 'fp'=filter params, 'p'=param, 'n'=name
@@ -134,7 +134,12 @@ function Parse(str, tagOpen, tagClose, env) {
                     currentObj.raw = true;
                 }
                 else {
-                    currentObj.f.push([val, '']);
+                    if (currentObj.f) {
+                        currentObj.f.push([val, '']);
+                    }
+                    else {
+                        currentObj.f = [];
+                    }
                 }
             }
             else if (currentAttribute === 'fp') {
@@ -218,7 +223,7 @@ function Parse(str, tagOpen, tagClose, env) {
         return currentObj; // To prevent TypeScript from erroring
     }
     function parseContext(parentObj, firstParse) {
-        parentObj.b = []; // assume there will be blocks
+        parentObj.b = []; // assume there will be blocks // TODO: perf optimize this
         var lastBlock = false;
         var buffer = [];
         function pushString(strng, wsAhead) {
@@ -290,7 +295,7 @@ function Parse(str, tagOpen, tagClose, env) {
         }
         return parentObj;
     }
-    var parseResult = parseContext({ f: [], d: [] }, true);
+    var parseResult = parseContext({}, true);
     // console.log(JSON.stringify(parseResult))
     return parseResult.d; // Parse the very outside context
 }
@@ -339,7 +344,7 @@ var Helpers = new Cacher({
         for (var key in param) {
             if (!param.hasOwnProperty(key))
                 continue;
-            res += content.exec(param, key);
+            res += content.exec(param, key); // todo: I think this is wrong?
         }
         return res;
     }
@@ -425,7 +430,7 @@ function parseBlocks(blocks, env) {
     var ret = '[';
     for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-        ret += parseHelper(env, block.res || '', block.d || [], block.p || '', block.n || '');
+        ret += parseHelper(env, block.res || '', block.d || [], block.p || '', block.n);
         if (i < blocks.length) {
             ret += ',';
         }
@@ -471,7 +476,7 @@ function ParseScope(buff, env) {
                     returnStr += NativeHelpers.get(name)(currentBlock, env);
                 }
                 else {
-                    var helperReturn = "Sqrl.H.get('" + name + "')(" + parseHelper(env, res, currentBlock.d, params);
+                    var helperReturn = "Sqrl.H.get('" + name + "')(" + parseHelper(env, res, currentBlock.d || [], params);
                     if (blocks) {
                         helperReturn += ',' + parseBlocks(blocks, env);
                     }

@@ -1,5 +1,5 @@
 import { Cacher } from './storage'
-import { AstObject, Filter, TemplateObject } from './parse'
+import { AstObject, Filter, TemplateObject, ParentTemplateObject } from './parse'
 import SqrlErr from './err'
 import { ParseScope } from './compile-string'
 import { SqrlConfig } from './config'
@@ -46,14 +46,14 @@ var Helpers = new Cacher<HelperFunction>({
 })
 
 var NativeHelpers = new Cacher<Function>({
-  if: function (buffer: TemplateObject, env: SqrlConfig) {
+  if: function (buffer: ParentTemplateObject, env: SqrlConfig) {
     if (buffer.f && buffer.f.length) {
       throw SqrlErr("native helper 'if' can't have filters")
     }
     var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d, env) + '}'
     if (buffer.b) {
       for (var i = 0; i < buffer.b.length; i++) {
-        var currentBlock = buffer.b[i]
+        var currentBlock = buffer.b[i] as ParentTemplateObject
         if (currentBlock.n === 'else') {
           returnStr += 'else{' + ParseScope(currentBlock.d, env) + '}'
         } else if (currentBlock.n === 'elif') {
@@ -63,7 +63,7 @@ var NativeHelpers = new Cacher<Function>({
     }
     return returnStr
   },
-  try: function (buffer: TemplateObject, env: SqrlConfig) {
+  try: function (buffer: ParentTemplateObject, env: SqrlConfig) {
     if (buffer.f && buffer.f.length) {
       throw SqrlErr("native helper 'try' can't have filters")
     }
@@ -72,7 +72,7 @@ var NativeHelpers = new Cacher<Function>({
     }
     var returnStr = 'try{' + ParseScope(buffer.d, env) + '}'
 
-    var currentBlock = buffer.b[0]
+    var currentBlock = buffer.b[0] as ParentTemplateObject
     returnStr +=
       'catch' +
       (currentBlock.res ? '(' + currentBlock.res + ')' : '') +

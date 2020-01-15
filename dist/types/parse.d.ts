@@ -7,12 +7,23 @@ export declare type Filter = [string, string | undefined];
 export interface TemplateObject {
     n?: string;
     t?: string;
-    f: Array<Filter>;
+    f?: Array<Filter>;
     c?: string;
     p?: string;
     res?: string;
-    d: Array<AstObject>;
+    d?: Array<AstObject>;
     raw?: boolean;
     b?: Array<TemplateObject>;
 }
+export interface ParentTemplateObject extends TemplateObject {
+    d: Array<AstObject>;
+}
+interface FilteredTemplateObject extends TemplateObject {
+    f: Array<Filter>;
+}
+interface FilteredParentTemplateObject extends ParentTemplateObject {
+    f: Array<Filter>;
+}
+export declare type FilteredObject = FilteredTemplateObject | FilteredParentTemplateObject;
 export default function Parse(str: string, tagOpen: string, tagClose: string, env: SqrlConfig): Array<AstObject>;
+export {};

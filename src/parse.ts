@@ -14,14 +14,28 @@ export type Filter = [string, string | undefined]
 export interface TemplateObject {
   n?: string
   t?: string
-  f: Array<Filter>
+  f?: Array<Filter>
   c?: string
   p?: string
   res?: string
-  d: Array<AstObject> // Todo: Make this optional
+  d?: Array<AstObject> // Todo: Make this optional
   raw?: boolean
   b?: Array<TemplateObject>
 }
+
+export interface ParentTemplateObject extends TemplateObject {
+  d: Array<AstObject>
+}
+
+interface FilteredTemplateObject extends TemplateObject {
+  f: Array<Filter>
+}
+
+interface FilteredParentTemplateObject extends ParentTemplateObject {
+  f: Array<Filter>
+}
+
+export type FilteredObject = FilteredTemplateObject | FilteredParentTemplateObject
 
 export default function Parse (
   str: string,
@@ -43,7 +57,7 @@ export default function Parse (
 
   function parseTag (): TemplateObject {
     // console.log(JSON.stringify(match))
-    var currentObj: TemplateObject = { f: [], d: [] }
+    var currentObj: TemplateObject = {}
     var numParens = 0
     var firstChar = str[startInd]
     var currentAttribute: TemplateAttribute = 'c' // default - Valid values: 'c'=content, 'f'=filter, 'fp'=filter params, 'p'=param, 'n'=name
@@ -70,10 +84,14 @@ export default function Parse (
         if (val === 'safe') {
           currentObj.raw = true
         } else {
-          currentObj.f.push([val, ''])
+          if (currentObj.f) {
+            currentObj.f.push([val, ''])
+          } else {
+            currentObj.f = []
+          }
         }
       } else if (currentAttribute === 'fp') {
-        currentObj.f[currentObj.f.length - 1][1] += val
+        ;(currentObj as FilteredObject).f[(currentObj as FilteredObject).f.length - 1][1] += val
       } else if (currentAttribute === 'err') {
         if (val) {
           var found = valUnprocessed.search(/\S/)
@@ -150,8 +168,8 @@ export default function Parse (
     return currentObj // To prevent TypeScript from erroring
   }
 
-  function parseContext (parentObj: TemplateObject, firstParse?: boolean): TemplateObject {
-    parentObj.b = [] // assume there will be blocks
+  function parseContext (parentObj: TemplateObject, firstParse?: boolean): ParentTemplateObject {
+    parentObj.b = [] // assume there will be blocks // TODO: perf optimize this
     var lastBlock: TemplateObject | boolean = false
     var buffer: Array<AstObject> = []
 
@@ -184,7 +202,7 @@ export default function Parse (
 
       var currentType = currentObj.t
       if (currentType === '~') {
-        currentObj = parseContext(currentObj) // currentObj is the parent object
+        currentObj = parseContext(currentObj as ParentTemplateObject) // currentObj is the parent object
         buffer.push(currentObj)
       } else if (currentType === '/') {
         if (parentObj.n === currentObj.n) {
@@ -196,7 +214,7 @@ export default function Parse (
             parentObj.d = buffer
           }
           // console.log('parentObj: ' + JSON.stringify(parentObj))
-          return parentObj
+          return parentObj as ParentTemplateObject
         } else {
           ParseErr(
             "Helper start and end don't match",
@@ -227,10 +245,10 @@ export default function Parse (
       parentObj.d = buffer
     }
 
-    return parentObj
+    return parentObj as ParentTemplateObject
   }
 
-  var parseResult = parseContext({ f: [], d: [] }, true)
+  var parseResult = parseContext({}, true)
   // console.log(JSON.stringify(parseResult))
   return parseResult.d // Parse the very outside context
 }

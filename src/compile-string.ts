@@ -1,4 +1,4 @@
-import Parse, { AstObject, Filter, TemplateObject } from './parse'
+import Parse, { AstObject, Filter, TemplateObject, ParentTemplateObject } from './parse'
 import { NativeHelpers } from './containers'
 import { SqrlConfig } from './config'
 
@@ -36,7 +36,7 @@ function parseBlocks (blocks: Array<TemplateObject>, env: SqrlConfig) {
   var ret = '['
   for (var i = 0; i < blocks.length; i++) {
     var block = blocks[i]
-    ret += parseHelper(env, block.res || '', block.d || [], block.p || '', block.n || '')
+    ret += parseHelper(env, block.res || '', block.d || [], block.p || '', block.n)
     if (i < blocks.length) {
       ret += ','
     }
@@ -85,7 +85,7 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
           returnStr += NativeHelpers.get(name)(currentBlock, env)
         } else {
           var helperReturn =
-            "Sqrl.H.get('" + name + "')(" + parseHelper(env, res, currentBlock.d, params)
+            "Sqrl.H.get('" + name + "')(" + parseHelper(env, res, currentBlock.d || [], params)
           if (blocks) {
             helperReturn += ',' + parseBlocks(blocks, env)
           }
