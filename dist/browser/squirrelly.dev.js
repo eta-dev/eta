@@ -152,7 +152,7 @@
                       ParseErr('invalid syntax', str, startInd + found);
                   }
               }
-              else if (currentAttribute) {
+              else {
                   // if (currentObj[currentAttribute]) { // TODO make sure no errs
                   //   currentObj[currentAttribute] += val
                   // } else {

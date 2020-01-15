@@ -84,7 +84,7 @@ export default function Parse (
           var found = valUnprocessed.search(/\S/)
           ParseErr('invalid syntax', str, startInd + found)
         }
-      } else if (currentAttribute) {
+      } else {
         // if (currentObj[currentAttribute]) { // TODO make sure no errs
         //   currentObj[currentAttribute] += val
         // } else {
