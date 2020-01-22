@@ -100,13 +100,13 @@
   }
 
   // Version 1.0.32
-  function Parse(str, tagOpen, tagClose, env) {
+  function Parse(str, env) {
       var powerchars = new RegExp('([|()]|=>)|' +
           '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
           '|\\/\\*[^]*?\\*\\/|((\\/)?(-|_)?' +
-          tagClose +
+          env.tags[1] +
           ')', 'g');
-      var tagOpenReg = new RegExp('([^]*?)' + tagOpen + '(-|_)?\\s*', 'g');
+      var tagOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*', 'g');
       var startInd = 0;
       var trimNextLeftWs = '';
       function parseTag() {
@@ -324,9 +324,10 @@
       return Cacher;
   }());
 
-  // Templates.define("hey", function (it) {return "hey"})
-  var Layouts = new Cacher({});
-  var Partials = new Cacher({});
+  // interface ITemplate {
+  //   exec: (options: object, Sqrl: object) => string
+  // }
+  var Templates = new Cacher({});
   var Helpers = new Cacher({
       each: function (content) {
           // helperStart is called with (params, id) but id isn't needed
@@ -406,8 +407,8 @@
   }
   var Filters = new Cacher({ e: XMLEscape });
 
-  function CompileToString(str, tagOpen, tagClose, env) {
-      var buffer = Parse(str, tagOpen, tagClose);
+  function CompileToString(str, env) {
+      var buffer = Parse(str, env);
       return ("var tR='';" +
           ParseScope(buffer, env)
               .replace(/\n/g, '\\n')
@@ -462,7 +463,7 @@
               var blocks = currentBlock.b;
               if (type === 'r') {
                   if (!currentBlock.raw && env.autoEscape) {
-                      content = 'Sqrl.F.get("e")(' + content + ')';
+                      content = "l('F','e')(" + content + ')';
                   }
                   var filtered = filter(content, filters);
                   returnStr += 'tR+=' + filtered + ';';
@@ -475,7 +476,7 @@
                       returnStr += NativeHelpers.get(name)(currentBlock, env);
                   }
                   else {
-                      var helperReturn = "Sqrl.H.get('" +
+                      var helperReturn = "l('H','" +
                           name +
                           "')(" +
                           parseHelper(env, res, currentBlock.d, params);
@@ -487,7 +488,7 @@
                   }
               }
               else if (type === 's') {
-                  returnStr += 'tR+=' + filter("Sqrl.H.get('" + name + "')(" + params + ')', filters) + ';';
+                  returnStr += 'tR+=' + filter("l('H','" + name + "')(" + params + ')', filters) + ';';
                   // self-closing helper
               }
               else if (type === '!') {
@@ -502,7 +503,7 @@
       for (var i = 0; i < filters.length; i++) {
           var name = filters[i][0];
           var params = filters[i][1];
-          str = "Sqrl.F.get('" + name + "')(" + str;
+          str = "l('F','" + name + "')(" + str;
           if (params) {
               str += ',' + params;
           }
@@ -515,7 +516,23 @@
       varName: 'it',
       autoTrim: false,
       autoEscape: true,
-      defaultFilter: false
+      defaultFilter: false,
+      tags: ['{{', '}}'],
+      loadFunction: function (container, name) {
+          if (container === 'T') {
+              return Templates.get(name);
+          }
+          else if (container === 'H') {
+              return Helpers.get(name);
+          }
+          else if (container === 'F') {
+              return Filters.get(name);
+          }
+      },
+      plugins: {
+          processAST: [],
+          processFuncString: []
+      }
   };
   var Env = {
       cache: {
@@ -547,25 +564,36 @@
   // Have different envs. Sqrl.Render, Compile, etc. all use default env
   // Use class for env
 
-  function Compile(str, tagOpen, tagClose, envName) {
-      var SqrlEnv = Env.get(envName || 'default');
-      return new Function(SqrlEnv.varName, 'Sqrl', CompileToString(str, tagOpen, tagClose, SqrlEnv)); // eslint-disable-line no-new-func
+  function Compile(str, env) {
+      var SqrlEnv = Env.get('default');
+      if (env && typeof env === 'string') {
+          SqrlEnv = Env.get(env);
+      }
+      else if (env && typeof env === 'object') {
+          SqrlEnv = env;
+      }
+      return new Function(SqrlEnv.varName, 'l', // this fetches helpers, partials, etc.
+      CompileToString(str, SqrlEnv)); // eslint-disable-line no-new-func
   }
   // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
   function Render(template, data, env, options) {
-      if (!env) {
-          env = 'default';
-      }
-      else if (typeof env === 'function') {
+      var Config = Env.get('default');
+      if (typeof env === 'function') {
           env = env(options); // this can be used to dynamically pick an env based on name, etc.
       }
+      if (typeof env === 'object') {
+          Config = env;
+      }
+      else if (typeof env === 'string' && env.length) {
+          Config = Env.get(env);
+      }
       if (typeof template === 'function') {
-          return template(data, { H: Helpers, F: Filters });
+          return template(data, Config.loadFunction);
       }
       // else
-      var templateFunc = Compile(template, '{{', '}}', env);
-      return templateFunc(data, { H: Helpers, F: Filters });
+      var templateFunc = Compile(template, Config);
+      return templateFunc(data, Config.loadFunction);
   }
 
   exports.Compile = Compile;
@@ -573,12 +601,10 @@
   exports.Env = Env;
   exports.Filters = Filters;
   exports.Helpers = Helpers;
-  exports.Layouts = Layouts;
   exports.NativeHelpers = NativeHelpers;
   exports.Parse = Parse;
   exports.ParseScope = ParseScope;
   exports.ParseScopeIntoFunction = ParseScopeIntoFunction;
-  exports.Partials = Partials;
   exports.Render = Render;
 
   Object.defineProperty(exports, '__esModule', { value: true });

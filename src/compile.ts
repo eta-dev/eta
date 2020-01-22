@@ -1,9 +1,18 @@
 import CompileToString from './compile-string'
-import { Env } from './config'
+import { Env, SqrlConfig } from './config'
 
-function Compile (str: string, tagOpen: string, tagClose: string, envName?: string) {
-  var SqrlEnv = Env.get(envName || 'default')
-  return new Function(SqrlEnv.varName, 'Sqrl', CompileToString(str, tagOpen, tagClose, SqrlEnv)) // eslint-disable-line no-new-func
+function Compile (str: string, env?: string | SqrlConfig) {
+  var SqrlEnv: SqrlConfig = Env.get('default')
+  if (env && typeof env === 'string') {
+    SqrlEnv = Env.get(env)
+  } else if (env && typeof env === 'object') {
+    SqrlEnv = env
+  }
+  return new Function(
+    SqrlEnv.varName,
+    'l', // this fetches helpers, partials, etc.
+    CompileToString(str, SqrlEnv)
+  ) // eslint-disable-line no-new-func
 }
 
 export default Compile

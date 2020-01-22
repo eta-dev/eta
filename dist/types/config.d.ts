@@ -14,6 +14,12 @@ export interface SqrlConfig {
     autoTrim: boolean | 'nl';
     autoEscape: boolean;
     defaultFilter: false | Function;
+    tags: [string, string];
+    loadFunction: Function;
+    plugins: {
+        processAST: Array<object>;
+        processFuncString: Array<object>;
+    };
     [index: string]: any;
 }
 declare var Env: IEnv;

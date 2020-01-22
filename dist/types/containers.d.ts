@@ -1,8 +1,6 @@
 import { Cacher } from './storage';
-declare type TemplateFunction = (options: object, Sqrl: object) => string;
+declare type TemplateFunction = (options: object, l: (container: 'T' | 'H' | 'F', name: string) => any) => string;
 declare var Templates: Cacher<TemplateFunction>;
-declare var Layouts: Cacher<TemplateFunction>;
-declare var Partials: Cacher<TemplateFunction>;
 interface HelperBlock {
     exec: Function;
     params: Array<any>;
@@ -12,4 +10,4 @@ declare var Helpers: Cacher<HelperFunction>;
 declare var NativeHelpers: Cacher<Function>;
 declare type FilterFunction = (str: string) => string;
 declare var Filters: Cacher<FilterFunction>;
-export { Templates, Layouts, Partials, Helpers, NativeHelpers, Filters };
+export { Templates, Helpers, NativeHelpers, Filters };

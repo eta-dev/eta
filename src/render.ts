@@ -1,7 +1,8 @@
 import Compile from './compile'
-import { Helpers, Filters } from './containers'
+import SqrlErr from './err'
+import { Env, SqrlConfig } from './config'
 
-type TemplateFunction = (data: object, Sqrl: object) => string
+type TemplateFunction = (data: object, fetcher: Function) => string
 type DetermineEnvFunction = (options?: object) => string
 
 function Render (
@@ -10,18 +11,23 @@ function Render (
   env?: string | DetermineEnvFunction,
   options?: object
 ) {
-  if (!env) {
-    env = 'default'
-  } else if (typeof env === 'function') {
+  var Config = Env.get('default')
+  if (typeof env === 'function') {
     env = env(options) // this can be used to dynamically pick an env based on name, etc.
   }
 
+  if (typeof env === 'object') {
+    Config = env
+  } else if (typeof env === 'string' && env.length) {
+    Config = Env.get(env)
+  }
+
   if (typeof template === 'function') {
-    return template(data, { H: Helpers, F: Filters })
+    return template(data, Config.loadFunction)
   }
   // else
-  var templateFunc = Compile(template, '{{', '}}', env)
-  return templateFunc(data, { H: Helpers, F: Filters })
+  var templateFunc = Compile(template, Config)
+  return templateFunc(data, Config.loadFunction)
 }
 
 export default Render

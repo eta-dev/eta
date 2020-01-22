@@ -28,21 +28,16 @@ export interface ParentTemplateObject extends TemplateObject {
   b: Array<ParentTemplateObject>
 }
 
-export default function Parse (
-  str: string,
-  tagOpen: string,
-  tagClose: string,
-  env: SqrlConfig
-): Array<AstObject> {
+export default function Parse (str: string, env: SqrlConfig): Array<AstObject> {
   var powerchars = new RegExp(
     '([|()]|=>)|' +
     '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
       '|\\/\\*[^]*?\\*\\/|((\\/)?(-|_)?' +
-      tagClose +
+      env.tags[1] +
       ')',
     'g'
   )
-  var tagOpenReg = new RegExp('([^]*?)' + tagOpen + '(-|_)?\\s*', 'g')
+  var tagOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*', 'g')
   var startInd = 0
   var trimNextLeftWs = ''
 

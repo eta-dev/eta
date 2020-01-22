@@ -4,19 +4,16 @@ import SqrlErr from './err'
 import { ParseScope } from './compile-string'
 import { SqrlConfig } from './config'
 
-type TemplateFunction = (options: object, Sqrl: object) => string
+type TemplateFunction = (
+  options: object,
+  l: (container: 'T' | 'H' | 'F', name: string) => any
+) => string
 
 // interface ITemplate {
 //   exec: (options: object, Sqrl: object) => string
 // }
 
 var Templates = new Cacher<TemplateFunction>({})
-
-// Templates.define("hey", function (it) {return "hey"})
-
-var Layouts = new Cacher<TemplateFunction>({})
-
-var Partials = new Cacher<TemplateFunction>({})
 
 interface HelperBlock {
   exec: Function
@@ -117,4 +114,4 @@ function XMLEscape (str: any) {
 
 var Filters = new Cacher<FilterFunction>({ e: XMLEscape })
 
-export { Templates, Layouts, Partials, Helpers, NativeHelpers, Filters }
+export { Templates, Helpers, NativeHelpers, Filters }

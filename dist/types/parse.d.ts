@@ -19,4 +19,4 @@ export interface ParentTemplateObject extends TemplateObject {
     d: Array<AstObject>;
     b: Array<ParentTemplateObject>;
 }
-export default function Parse(str: string, tagOpen: string, tagClose: string, env: SqrlConfig): Array<AstObject>;
+export default function Parse(str: string, env: SqrlConfig): Array<AstObject>;

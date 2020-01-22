@@ -1,3 +1,5 @@
+import { Helpers, Templates, Filters } from './containers'
+
 interface Dict {
   [key: string]: SqrlConfig
 }
@@ -16,6 +18,9 @@ export interface SqrlConfig {
   autoTrim: boolean | 'nl'
   autoEscape: boolean
   defaultFilter: false | Function
+  tags: [string, string]
+  loadFunction: Function
+  plugins: { processAST: Array<object>; processFuncString: Array<object> }
   [index: string]: any
 }
 
@@ -27,7 +32,21 @@ var defaultConfig: SqrlConfig = {
   varName: 'it',
   autoTrim: false,
   autoEscape: true,
-  defaultFilter: false
+  defaultFilter: false,
+  tags: ['{{', '}}'],
+  loadFunction: function (container: 'T' | 'H' | 'F', name: string) {
+    if (container === 'T') {
+      return Templates.get(name)
+    } else if (container === 'H') {
+      return Helpers.get(name)
+    } else if (container === 'F') {
+      return Filters.get(name)
+    }
+  },
+  plugins: {
+    processAST: [],
+    processFuncString: []
+  }
 }
 
 var Env: IEnv = {

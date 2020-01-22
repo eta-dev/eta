@@ -2,8 +2,8 @@ import Parse, { AstObject, Filter, TemplateObject, ParentTemplateObject } from '
 import { NativeHelpers } from './containers'
 import { SqrlConfig } from './config'
 
-function CompileToString (str: string, tagOpen: string, tagClose: string, env: SqrlConfig) {
-  var buffer: Array<AstObject> = Parse(str, tagOpen, tagClose, env)
+function CompileToString (str: string, env: SqrlConfig) {
+  var buffer: Array<AstObject> = Parse(str, env)
   return (
     "var tR='';" +
     ParseScope(buffer, env)
@@ -73,7 +73,7 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
 
       if (type === 'r') {
         if (!currentBlock.raw && env.autoEscape) {
-          content = 'Sqrl.F.get("e")(' + content + ')'
+          content = "l('F','e')(" + content + ')'
         }
         var filtered = filter(content, filters)
         returnStr += 'tR+=' + filtered + ';'
@@ -85,7 +85,7 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
           returnStr += NativeHelpers.get(name)(currentBlock, env)
         } else {
           var helperReturn =
-            "Sqrl.H.get('" +
+            "l('H','" +
             name +
             "')(" +
             parseHelper(env, res, (currentBlock as ParentTemplateObject).d, params)
@@ -97,7 +97,7 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
           returnStr += 'tR+=' + filter(helperReturn, filters) + ';'
         }
       } else if (type === 's') {
-        returnStr += 'tR+=' + filter("Sqrl.H.get('" + name + "')(" + params + ')', filters) + ';'
+        returnStr += 'tR+=' + filter("l('H','" + name + "')(" + params + ')', filters) + ';'
         // self-closing helper
       } else if (type === '!') {
         // execute
@@ -114,7 +114,7 @@ function filter (str: string, filters: Array<Filter>) {
   for (var i = 0; i < filters.length; i++) {
     var name = filters[i][0]
     var params = filters[i][1]
-    str = "Sqrl.F.get('" + name + "')(" + str
+    str = "l('F','" + name + "')(" + str
     if (params) {
       str += ',' + params
     }

@@ -13,8 +13,8 @@ Sqrl.Filters.define('capitalize', function (str) {
   return str.toUpperCase()
 })
 
-console.log(Sqrl.Parse(template, '{{', '}}'))
+console.log(Sqrl.Parse(template, Sqrl.Env.get('default')))
 console.log('===========================')
-console.log(Sqrl.Compile(template, '{{', '}}').toString())
+console.log(Sqrl.Compile(template, Sqrl.Env.get('default')).toString())
 console.log('===========================')
 console.log(Sqrl.Render(template, { riceKids: ['Ben', 'Polly', 'Joel', 'Phronsie', 'Davie'] }))
