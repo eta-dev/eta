@@ -19,20 +19,9 @@ export default [
         sourcemap: true
       },
       {
-        file: 'dist/browser/es/squirrelly.dev.js',
-        format: 'esm',
-        sourcemap: true
-      },
-      {
         file: pkg.browser,
         format: 'umd',
         name: 'Sqrl',
-        sourcemap: true,
-        plugins: [terser()]
-      },
-      {
-        file: 'dist/browser/es/squirrelly.min.js',
-        format: 'esm',
         sourcemap: true,
         plugins: [terser()]
       }
