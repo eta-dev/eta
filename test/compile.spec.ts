@@ -14,6 +14,11 @@ describe('Compile test', () => {
     expect(str).toBeTruthy()
   })
 
+  it('parses a simple template when env name is passed', () => {
+    var str = Compile('hi {{ hey }}', 'default')
+    expect(str).toBeTruthy()
+  })
+
   it('works with whitespace trimming', () => {
     var str = Compile('hi {{-hey-}} {{_hi_}}')
     expect(str).toBeTruthy()
