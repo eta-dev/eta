@@ -450,7 +450,9 @@
           if (typeof currentBlock === 'string') {
               var str = currentBlock;
               // we know string exists
-              returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';";
+              if (str) {
+                  returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';";
+              }
               // I believe the above replace is already in Parse
           }
           else {
