@@ -2,9 +2,9 @@ import CompileToString from './compile-string'
 import { Env, SqrlConfig } from './config'
 
 function Compile (str: string, env?: string | SqrlConfig) {
-  var SqrlEnv: SqrlConfig = Env.get('default')
+  var SqrlEnv: SqrlConfig = Env.default
   if (env && typeof env === 'string') {
-    SqrlEnv = Env.get(env)
+    SqrlEnv = Env[env]
   } else if (env && typeof env === 'object') {
     SqrlEnv = env
   }

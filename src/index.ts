@@ -6,7 +6,7 @@ export { default as Compile } from './compile'
 export { default as Parse } from './parse'
 export { default as Render } from './render'
 export { Helpers, NativeHelpers, Filters } from './containers'
-export { Env } from './config'
+export { Env, Config } from './config'
 
 // TODO: Allow for configuring different Squirrelly environments
 //       Don't require it like Nunjucks though. Keep it simple

@@ -11,7 +11,7 @@ function Render (
   env?: string | DetermineEnvFunction,
   options?: object
 ) {
-  var Config = Env.get('default')
+  var Config = Env.default
   if (typeof env === 'function') {
     env = env(options) // this can be used to dynamically pick an env based on name, etc.
   }
@@ -19,7 +19,7 @@ function Render (
   if (typeof env === 'object') {
     Config = env
   } else if (typeof env === 'string' && env.length) {
-    Config = Env.get(env)
+    Config = Env[env]
   }
 
   if (typeof template === 'function') {

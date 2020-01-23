@@ -508,6 +508,16 @@ function filter(str, filters) {
     return str;
 }
 
+function Config(newConfig, name) {
+    var conf = Env.default;
+    for (var attrname in newConfig) {
+        conf[attrname] = newConfig[attrname];
+    }
+    if (name) {
+        Env[name] = conf;
+    }
+    return conf;
+}
 var defaultConfig = {
     varName: 'it',
     autoTrim: false,
@@ -531,39 +541,15 @@ var defaultConfig = {
     }
 };
 var Env = {
-    cache: {
-        default: defaultConfig
-    },
-    define: function (key, newConfig) {
-        if (!this.cache[key]) {
-            this.cache[key] = defaultConfig;
-        }
-        for (var attrname in newConfig) {
-            this.cache[key][attrname] = newConfig[attrname];
-        }
-    },
-    get: function (key) {
-        // string | array.
-        // TODO: allow array of keys to look down
-        return this.cache[key];
-    },
-    remove: function (key) {
-        delete this.cache[key];
-    },
-    clear: function () {
-        this.cache = {};
-    },
-    load: function (cacheObj) {
-        this.cache = cacheObj;
-    }
+    default: defaultConfig
 };
 // Have different envs. Sqrl.Render, Compile, etc. all use default env
 // Use class for env
 
 function Compile(str, env) {
-    var SqrlEnv = Env.get('default');
+    var SqrlEnv = Env.default;
     if (env && typeof env === 'string') {
-        SqrlEnv = Env.get(env);
+        SqrlEnv = Env[env];
     }
     else if (env && typeof env === 'object') {
         SqrlEnv = env;
@@ -574,7 +560,7 @@ function Compile(str, env) {
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
 function Render(template, data, env, options) {
-    var Config = Env.get('default');
+    var Config = Env.default;
     if (typeof env === 'function') {
         env = env(options); // this can be used to dynamically pick an env based on name, etc.
     }
@@ -582,7 +568,7 @@ function Render(template, data, env, options) {
         Config = env;
     }
     else if (typeof env === 'string' && env.length) {
-        Config = Env.get(env);
+        Config = Env[env];
     }
     if (typeof template === 'function') {
         return template(data, Config.loadFunction);
@@ -592,5 +578,5 @@ function Render(template, data, env, options) {
     return templateFunc(data, Config.loadFunction);
 }
 
-export { Compile, CompileToString, Env, Filters, Helpers, NativeHelpers, Parse, ParseScope, ParseScopeIntoFunction, Render };
+export { Compile, CompileToString, Config, Env, Filters, Helpers, NativeHelpers, Parse, ParseScope, ParseScopeIntoFunction, Render };
 //# sourceMappingURL=squirrelly.es.js.map

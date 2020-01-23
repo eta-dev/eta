@@ -1,14 +1,6 @@
 interface Dict {
     [key: string]: SqrlConfig;
 }
-interface IEnv {
-    cache: Dict;
-    define: (key: string, val: SqrlConfig) => void;
-    get: (key: string) => SqrlConfig;
-    remove: (key: string) => void;
-    clear: () => void;
-    load: (cacheObj: Dict) => void;
-}
 export interface SqrlConfig {
     varName: string;
     autoTrim: boolean | 'nl';
@@ -22,5 +14,9 @@ export interface SqrlConfig {
     };
     [index: string]: any;
 }
-declare var Env: IEnv;
-export { Env };
+declare type PartialConfig = {
+    [P in keyof SqrlConfig]?: SqrlConfig[P];
+};
+declare function Config(newConfig: PartialConfig, name?: string): SqrlConfig;
+declare var Env: Dict;
+export { Env, Config };
