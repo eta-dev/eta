@@ -3,12 +3,12 @@ import SqrlErr from './err'
 import { Env, SqrlConfig } from './config'
 
 type TemplateFunction = (data: object, fetcher: Function) => string
-type DetermineEnvFunction = (options?: object) => string
+type DetermineEnvFunction = (options?: object) => string | SqrlConfig
 
 function Render (
   template: string | TemplateFunction,
   data: object,
-  env?: string | DetermineEnvFunction,
+  env?: string | DetermineEnvFunction | SqrlConfig,
   options?: object
 ) {
   var Config = Env.default
