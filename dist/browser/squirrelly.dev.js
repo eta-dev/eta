@@ -235,7 +235,9 @@
                       stringToPush = trimLeft(stringToPush, trimNextLeftWs);
                       trimNextLeftWs = '';
                   }
-                  buffer.push(stringToPush);
+                  if (stringToPush) {
+                      buffer.push(stringToPush);
+                  }
               }
           }
           // Random TODO: parentObj.b doesn't need to have t: #
@@ -450,9 +452,7 @@
           if (typeof currentBlock === 'string') {
               var str = currentBlock;
               // we know string exists
-              if (str) {
-                  returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';";
-              }
+              returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';";
               // I believe the above replace is already in Parse
           }
           else {

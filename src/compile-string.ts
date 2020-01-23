@@ -60,9 +60,7 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
       var str = currentBlock
 
       // we know string exists
-      if (str) {
-        returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';"
-      }
+      returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';"
       // I believe the above replace is already in Parse
     } else {
       var type = currentBlock.t // ~, s, !, ?, r

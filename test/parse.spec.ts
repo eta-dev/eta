@@ -18,7 +18,7 @@ describe('Parse test', () => {
 
   it('works with whitespace trimming', () => {
     var buff = Parse('hi {{-hey-}} {{_hi_}}', Env.get('default'))
-    expect(buff).toEqual(['hi', { f: [], c: 'hey', t: 'r' }, '', { f: [], c: 'hi', t: 'r' }])
+    expect(buff).toEqual(['hi', { f: [], c: 'hey', t: 'r' }, { f: [], c: 'hi', t: 'r' }])
   })
 
   it('works with filters', () => {

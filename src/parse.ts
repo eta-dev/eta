@@ -163,7 +163,9 @@ export default function Parse (str: string, env: SqrlConfig): Array<AstObject> {
           stringToPush = trimLeft(stringToPush, trimNextLeftWs)
           trimNextLeftWs = ''
         }
-        buffer.push(stringToPush)
+        if (stringToPush) {
+          buffer.push(stringToPush)
+        }
       }
     }
 
