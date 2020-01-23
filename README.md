@@ -1,4 +1,4 @@
-<a href="https://squirrelly.js.org"><img src="https://cdn.jsdelivr.net/gh/squirrellyjs/squirrelly-logo@1.0/svg-minified/squirrelly-fit-acorn.svg" align="right" width="30%" alt="Squirrel"></a>
+<a href="https://squirrelly.js.org"><img src="https://cdn.jsdelivr.net/gh/squirrellyjs/squirrelly-logo/svg-minified/squirrelly-fit-acorn.svg" align="right" width="30%" alt="Squirrel"></a>
 
 # squirrelly
 
