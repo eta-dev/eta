@@ -3,8 +3,8 @@
 # squirrelly
 
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Greenkeeper badge](https://img.shields.io/badge/Greenkeeper-enabled-brightgreen)](https://greenkeeper.io/)
-[![Travis](https://img.shields.io/travis/squirrellyjs/squirrelly-next.svg)](https://travis-ci.org/squirrellyjs/squirrelly-next)
+![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/squirrellyjs/squirrelly-next/master?label=current%20version)
+[![Travis](https://img.shields.io/travis/com/squirrellyjs/squirrelly-next/master.svg)](https://travis-ci.org/squirrellyjs/squirrelly-next)
 [![Coveralls](https://img.shields.io/coveralls/squirrellyjs/squirrelly-next.svg)](https://coveralls.io/github/squirrellyjs/squirrelly-next)
 [![Dev Dependencies](https://img.shields.io/david/dev/squirrellyjs/squirrelly-next)](https://david-dm.org/squirrellyjs/squirrelly-next?type=dev)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
