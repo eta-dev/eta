@@ -320,10 +320,6 @@ var Cacher = /** @class */ (function () {
     return Cacher;
 }());
 
-// interface ITemplate {
-//   exec: (options: object, Sqrl: object) => string
-// }
-var Templates = new Cacher({});
 var Helpers = new Cacher({
     each: function (content) {
         // helperStart is called with (params, id) but id isn't needed
@@ -509,7 +505,9 @@ function filter(str, filters) {
 }
 
 function Config(newConfig, name) {
-    var conf = Env.default;
+    // TODO:
+    // Double-check this is performant, doesn't cause errors
+    var conf = returnDefaultConfig();
     for (var attrname in newConfig) {
         conf[attrname] = newConfig[attrname];
     }
@@ -518,41 +516,48 @@ function Config(newConfig, name) {
     }
     return conf;
 }
-var defaultConfig = {
-    varName: 'it',
-    autoTrim: false,
-    autoEscape: true,
-    defaultFilter: false,
-    tags: ['{{', '}}'],
-    loadFunction: function (container, name) {
-        if (container === 'T') {
-            return Templates.get(name);
-        }
-        else if (container === 'H') {
-            return Helpers.get(name);
-        }
-        else if (container === 'F') {
-            return Filters.get(name);
-        }
-    },
-    plugins: {
-        processAST: [],
-        processFuncString: []
+function getConfig(conf) {
+    if (typeof conf === 'string') {
+        return Env[conf];
     }
-};
+    else if (typeof conf === 'object') {
+        return Config(conf);
+    }
+    else {
+        throw SqrlErr('Env reference cannot be of type: ' + typeof conf);
+    }
+}
+function returnDefaultConfig() {
+    return {
+        varName: 'it',
+        autoTrim: false,
+        autoEscape: true,
+        defaultFilter: false,
+        tags: ['{{', '}}'],
+        loadFunction: function (container, name) {
+            if (container === 'H') {
+                return Helpers.get(name);
+            }
+            else if (container === 'F') {
+                return Filters.get(name);
+            }
+        },
+        plugins: {
+            processAST: [],
+            processFuncString: []
+        }
+    };
+}
 var Env = {
-    default: defaultConfig
+    default: returnDefaultConfig()
 };
 // Have different envs. Sqrl.Render, Compile, etc. all use default env
 // Use class for env
 
 function Compile(str, env) {
     var SqrlEnv = Env.default;
-    if (env && typeof env === 'string') {
-        SqrlEnv = Env[env];
-    }
-    else if (env && typeof env === 'object') {
-        SqrlEnv = env;
+    if (env) {
+        SqrlEnv = getConfig(env);
     }
     return new Function(SqrlEnv.varName, 'l', // this fetches helpers, partials, etc.
     CompileToString(str, SqrlEnv)); // eslint-disable-line no-new-func
@@ -561,14 +566,11 @@ function Compile(str, env) {
 
 function Render(template, data, env, options) {
     var Config = Env.default;
-    if (typeof env === 'function') {
-        env = env(options); // this can be used to dynamically pick an env based on name, etc.
-    }
-    if (typeof env === 'object') {
-        Config = env;
-    }
-    else if (typeof env === 'string' && env.length) {
-        Config = Env[env];
+    if (env) {
+        if (typeof env === 'function') {
+            env = env(options); // this can be used to dynamically pick an env based on name, etc.
+        }
+        Config = getConfig(env);
     }
     if (typeof template === 'function') {
         return template(data, Config.loadFunction);

@@ -1,27 +1,24 @@
 import Compile from './compile'
 import SqrlErr from './err'
-import { Env, SqrlConfig } from './config'
+import { Env, PartialConfig, getConfig } from './config'
 
 type TemplateFunction = (data: object, fetcher: Function) => string
-type DetermineEnvFunction = (options?: object) => string | SqrlConfig
+type DetermineEnvFunction = (options?: object) => string | PartialConfig
 
 function Render (
   template: string | TemplateFunction,
   data: object,
-  env?: string | DetermineEnvFunction | SqrlConfig,
+  env?: string | DetermineEnvFunction | PartialConfig,
   options?: object
 ) {
   var Config = Env.default
-  if (typeof env === 'function') {
-    env = env(options) // this can be used to dynamically pick an env based on name, etc.
-  }
+  if (env) {
+    if (typeof env === 'function') {
+      env = env(options) // this can be used to dynamically pick an env based on name, etc.
+    }
 
-  if (typeof env === 'object') {
-    Config = env
-  } else if (typeof env === 'string' && env.length) {
-    Config = Env[env]
+    Config = getConfig(env)
   }
-
   if (typeof template === 'function') {
     return template(data, Config.loadFunction)
   }

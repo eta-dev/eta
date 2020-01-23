@@ -1,13 +1,12 @@
 import CompileToString from './compile-string'
-import { Env, SqrlConfig } from './config'
+import { Env, SqrlConfig, getConfig } from './config'
 
 function Compile (str: string, env?: string | SqrlConfig) {
   var SqrlEnv: SqrlConfig = Env.default
-  if (env && typeof env === 'string') {
-    SqrlEnv = Env[env]
-  } else if (env && typeof env === 'object') {
-    SqrlEnv = env
+  if (env) {
+    SqrlEnv = getConfig(env)
   }
+
   return new Function(
     SqrlEnv.varName,
     'l', // this fetches helpers, partials, etc.

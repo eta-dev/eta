@@ -14,9 +14,10 @@ export interface SqrlConfig {
     };
     [index: string]: any;
 }
-declare type PartialConfig = {
+export declare type PartialConfig = {
     [P in keyof SqrlConfig]?: SqrlConfig[P];
 };
 declare function Config(newConfig: PartialConfig, name?: string): SqrlConfig;
+declare function getConfig(conf: string | PartialConfig): SqrlConfig;
 declare var Env: Dict;
-export { Env, Config };
+export { Env, Config, getConfig };
