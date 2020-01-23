@@ -1,3 +1,4 @@
 import { SqrlConfig } from './config';
-declare function Compile(str: string, env?: string | SqrlConfig): Function;
+declare type TemplateFunction = (data: object, fetcher: Function) => string;
+declare function Compile(str: string, env?: string | SqrlConfig): TemplateFunction;
 export default Compile;

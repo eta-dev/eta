@@ -342,7 +342,7 @@
           for (var key in param) {
               if (!param.hasOwnProperty(key))
                   continue;
-              res += content.exec(param, key); // todo: I think this is wrong?
+              res += content.exec(key, param[key]); // todo: I think this is wrong?
           }
           return res;
       }

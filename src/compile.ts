@@ -1,7 +1,9 @@
 import CompileToString from './compile-string'
 import { Env, SqrlConfig, getConfig } from './config'
 
-function Compile (str: string, env?: string | SqrlConfig) {
+type TemplateFunction = (data: object, fetcher: Function) => string
+
+function Compile (str: string, env?: string | SqrlConfig): TemplateFunction {
   var SqrlEnv: SqrlConfig = Env.default
   if (env) {
     SqrlEnv = getConfig(env)
@@ -11,7 +13,7 @@ function Compile (str: string, env?: string | SqrlConfig) {
     SqrlEnv.varName,
     'l', // this fetches helpers, partials, etc.
     CompileToString(str, SqrlEnv)
-  ) // eslint-disable-line no-new-func
+  ) as TemplateFunction // eslint-disable-line no-new-func
 }
 
 export default Compile
