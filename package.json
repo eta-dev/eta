@@ -2,14 +2,22 @@
   "name": "squirrelly-next",
   "version": "0.0.0",
   "description": "Lightweight, fast, and powerful JS template engine. Supports helpers, filters, template inheritance",
-  "keywords": ["squirrelly", "helpers", "template inheritance", "handlebars", "template engine"],
+  "keywords": [
+    "squirrelly",
+    "helpers",
+    "template inheritance",
+    "handlebars",
+    "template engine"
+  ],
   "main": "dist/squirrelly.cjs.js",
   "browser": "dist/browser/squirrelly.min.js",
   "module": "dist/squirrelly.es.js",
   "typings": "dist/squirrelly.d.ts",
   "jsdelivr": "dist/browser/squirrelly.min.js",
   "unpkg": "dist/browser/squirrelly.min.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "repository": {
     "type": "git",
@@ -39,7 +47,10 @@
     "format": "prettier-standard --format '{src,test}/**/*.ts'"
   },
   "lint-staged": {
-    "{src,test}/**/*.ts": ["prettier-standard --lint", "git add"]
+    "{src,test}/**/*.ts": [
+      "prettier-standard --lint",
+      "git add"
+    ]
   },
   "config": {
     "commitizen": {
@@ -52,8 +63,14 @@
     },
     "testEnvironment": "node",
     "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|js)$",
-    "moduleFileExtensions": ["ts", "js"],
-    "coveragePathIgnorePatterns": ["/node_modules/", "/test/"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 90,
@@ -62,17 +79,23 @@
         "statements": 95
       }
     },
-    "collectCoverageFrom": ["src/*.{js,ts}"]
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ]
   },
   "standard": {
-    "ignore": ["dist"]
+    "ignore": [
+      "dist"
+    ]
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
@@ -88,7 +111,7 @@
     "jest": "^24.9.0",
     "jest-config": "^24.9.0",
     "lint-staged": "^9.5.0",
-    "prettier": "^1.14.3",
+    "prettier-standard": "^16.1.0",
     "prompt": "^1.0.0",
     "replace-in-file": "^5.0.2",
     "rimraf": "^3.0.0",

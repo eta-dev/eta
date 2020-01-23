@@ -90,7 +90,7 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
             "')(" +
             parseHelper(env, res, (currentBlock as ParentTemplateObject).d, params)
           if (blocks) {
-            helperReturn += ',' + parseBlocks(blocks as Array<ParentTemplateObject>, env)
+            helperReturn += ',' + parseBlocks(blocks, env)
           }
           helperReturn += ')'
 

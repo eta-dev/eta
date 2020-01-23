@@ -31,12 +31,13 @@ function Config (newConfig: PartialConfig, name?: string): SqrlConfig {
   }
 
   if (name) {
-    Env[name] = conf as SqrlConfig
+    Env[name] = conf
   }
-  return conf as SqrlConfig
+  return conf
 }
 
 function getConfig (conf: string | PartialConfig): SqrlConfig {
+  /* tslint:disable:strict-type-predicates */
   if (typeof conf === 'string') {
     return Env[conf]
   } else if (typeof conf === 'object') {
@@ -44,6 +45,7 @@ function getConfig (conf: string | PartialConfig): SqrlConfig {
   } else {
     throw SqrlErr('Env reference cannot be of type: ' + typeof conf)
   }
+  /* tslint:enable:strict-type-predicates */
 }
 
 function returnDefaultConfig (): SqrlConfig {

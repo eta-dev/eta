@@ -50,7 +50,7 @@ var NativeHelpers = new Cacher<Function>({
     var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d, env) + '}'
     if (buffer.b) {
       for (var i = 0; i < buffer.b.length; i++) {
-        var currentBlock = buffer.b[i] as ParentTemplateObject
+        var currentBlock = buffer.b[i]
         if (currentBlock.n === 'else') {
           returnStr += 'else{' + ParseScope(currentBlock.d, env) + '}'
         } else if (currentBlock.n === 'elif') {
@@ -69,7 +69,7 @@ var NativeHelpers = new Cacher<Function>({
     }
     var returnStr = 'try{' + ParseScope(buffer.d, env) + '}'
 
-    var currentBlock = buffer.b[0] as ParentTemplateObject
+    var currentBlock = buffer.b[0]
     returnStr +=
       'catch' +
       (currentBlock.res ? '(' + currentBlock.res + ')' : '') +

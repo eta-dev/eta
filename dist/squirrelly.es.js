@@ -517,6 +517,7 @@ function Config(newConfig, name) {
     return conf;
 }
 function getConfig(conf) {
+    /* tslint:disable:strict-type-predicates */
     if (typeof conf === 'string') {
         return Env[conf];
     }
@@ -526,6 +527,7 @@ function getConfig(conf) {
     else {
         throw SqrlErr('Env reference cannot be of type: ' + typeof conf);
     }
+    /* tslint:enable:strict-type-predicates */
 }
 function returnDefaultConfig() {
     return {
