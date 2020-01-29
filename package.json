@@ -2,22 +2,14 @@
   "name": "squirrelly-next",
   "version": "0.0.0",
   "description": "Lightweight, fast, and powerful JS template engine. Supports helpers, filters, template inheritance",
-  "keywords": [
-    "squirrelly",
-    "helpers",
-    "template inheritance",
-    "handlebars",
-    "template engine"
-  ],
+  "keywords": ["squirrelly", "helpers", "template inheritance", "handlebars", "template engine"],
   "main": "dist/squirrelly.cjs.js",
   "browser": "dist/browser/squirrelly.min.js",
   "module": "dist/squirrelly.es.js",
   "typings": "dist/squirrelly.d.ts",
   "jsdelivr": "dist/browser/squirrelly.min.js",
   "unpkg": "dist/browser/squirrelly.min.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "repository": {
     "type": "git",
@@ -42,15 +34,11 @@
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
-    "precommit": "lint-staged",
     "travis-deploy-once": "travis-deploy-once --pro",
     "format": "prettier-standard --format '{src,test}/**/*.ts'"
   },
   "lint-staged": {
-    "{src,test}/**/*.ts": [
-      "prettier-standard --lint",
-      "git add"
-    ]
+    "{src,test}/**/*.ts": ["prettier-standard --lint"]
   },
   "config": {
     "commitizen": {
@@ -63,14 +51,8 @@
     },
     "testEnvironment": "node",
     "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|js)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/test/"
-    ],
+    "moduleFileExtensions": ["ts", "js"],
+    "coveragePathIgnorePatterns": ["/node_modules/", "/test/"],
     "coverageThreshold": {
       "global": {
         "branches": 90,
@@ -79,38 +61,32 @@
         "statements": 95
       }
     },
-    "collectCoverageFrom": [
-      "src/*.{js,ts}"
-    ]
+    "collectCoverageFrom": ["src/*.{js,ts}"]
   },
   "standard": {
-    "ignore": [
-      "dist"
-    ]
+    "ignore": ["dist"]
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
   "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
+    "extends": ["@commitlint/config-conventional"]
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
-    "@types/jest": "^24.0.24",
-    "@types/node": "^12.12.21",
+    "@types/jest": "^25.1.0",
+    "@types/node": "^13.5.1",
     "colors": "^1.3.2",
     "commitizen": "^4.0.3",
     "coveralls": "^3.0.2",
-    "cross-env": "^6.0.3",
+    "cross-env": "^7.0.0",
     "cz-conventional-changelog": "^3.0.2",
     "husky": "^4.2.1",
     "jest": "^24.9.0",
     "jest-config": "^24.9.0",
-    "lint-staged": "^9.5.0",
+    "lint-staged": "^10.0.3",
     "prettier-standard": "^16.1.0",
     "prompt": "^1.0.0",
     "replace-in-file": "^5.0.2",
@@ -132,5 +108,10 @@
     "tslint-config-standard": "^9.0.0",
     "typedoc": "^0.16.7",
     "typescript": "^3.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
