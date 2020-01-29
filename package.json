@@ -2,7 +2,14 @@
   "name": "squirrelly-next",
   "version": "0.0.0",
   "description": "Lightweight, fast, and powerful JS template engine. Supports helpers, filters, template inheritance",
-  "keywords": ["squirrelly", "helpers", "template inheritance", "handlebars", "template engine"],
+  "keywords": [
+    "squirrelly",
+    "helpers",
+    "template inheritance",
+    "handlebars",
+    "template engine",
+    "typescript types"
+  ],
   "main": "dist/squirrelly.cjs.js",
   "browser": "dist/browser/squirrelly.min.js",
   "module": "dist/squirrelly.es.js",
