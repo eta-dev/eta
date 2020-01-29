@@ -42,7 +42,6 @@
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
-    "precommit": "lint-staged",
     "travis-deploy-once": "travis-deploy-once --pro",
     "format": "prettier-standard --format '{src,test}/**/*.ts'"
   },
@@ -132,5 +131,10 @@
     "tslint-config-standard": "^9.0.0",
     "typedoc": "^0.16.7",
     "typescript": "^3.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
