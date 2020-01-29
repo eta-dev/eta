@@ -27,28 +27,28 @@ Simply put, Squirrelly is super lightweight, super fast, super powerful, and sup
 
 ### 🌟 Features
 
-- &#128295; Custom helpers
-- &#128295; Custom filters
-- :package: 0 dependencies
-- :hammer: Conditionals
-- :zap: Exports ES Modules as well as UMD
-- :hammer: Loops
-- &#128295; Custom delimeters
-- :pencil2: Easy template syntax
-- &#128295; Precompilation
-- :hammer: Partials
-- &#128295; Inline JavaScript
-- :hammer: Comments
-- &#128295; Caching
-- :rocket: SUPER fast (look at the performance benchmarks [here](https://github.com/nebrelbug/squirrelly-benchmarks))
+- 🔧 Custom helpers
+- 🔧 Custom filters
+- 📦 0 dependencies
+- 🔨 Conditionals
+- ⚡️ Exports ES Modules as well as UMD
+- 🔨 Loops
+- 🔧 Custom delimeters
+- 📝 Easy template syntax
+- 🔧 Precompilation
+- 🔨 Partials
+- 🔧 Inline JavaScript
+- 🔨 Comments
+- 🔧 Caching
+- 🚀 Fast
 
-## :scroll: Docs
+## 📜 Docs
 
 We know nobody reads through the long and boring documentation in the ReadMe anyway, so head over to the documentation website:
 
-:pencil: [https://squirrelly.js.org](https://squirrelly.js.org)
+📝 [https://squirrelly.js.org](https://squirrelly.js.org)
 
-## :notebook: Examples
+## 📓 Examples
 
 ### Simple Template
 
@@ -79,7 +79,7 @@ The current index is {{index}}
 {{/each}}
 ```
 
-## :heavy_check_mark: Tests
+## ✔️ Tests
 
 Tests can be run with `npm test`. Multiple tests check that parsing, rendering, and compiling return expected results, formatting follows guidelines, and code coverage is at the expected level.
 
@@ -93,7 +93,7 @@ To be added
 
 ## Credits
 
-Made with :heart: by [@nebrelbug](https://github.com/nebrelbug) and all these wonderful contributors ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+Made with ❤ by [@nebrelbug](https://github.com/nebrelbug) and all these wonderful contributors ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
