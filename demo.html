@@ -1,0 +1,280 @@
+<!--Based on @olado's excellent tester from doT.js-->
+<!--Modified by Ben Gubler-->
+<!--NOTE: You have to serve this file if you want to see the sourcemaps. NPM Package 'serve' works-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <meta name="description" content="Test out Squirrelly code in the browser here" />
+    <script src="./dist/browser/squirrelly.dev.js"></script>
+    <style>
+      body {
+        background-color: #f4f4f4;
+        color: #555;
+        max-width: 800px;
+        padding: 20px;
+        font-size: 16px;
+        font-weight: 200;
+        margin: 0 auto;
+        font-family: Helvetica Neue, arial, verdana;
+      }
+
+      h2 {
+        text-shadow: 0 1px 2px #fff;
+        margin: 0;
+      }
+
+      h2 span {
+        font-weight: 200;
+        font-size: 14px;
+      }
+
+      a {
+        color: #2b80ff;
+      }
+
+      .smaller {
+        font-size: 0.8em;
+      }
+
+      h4 {
+        margin: 4px 0;
+        font-weight: 400;
+        font-size: 20px;
+      }
+
+      textarea {
+        border: 1px solid lightgrey;
+        outline: none;
+        font-size: 14px;
+        width: 96%;
+        height: 210px;
+        padding: 10px;
+        text-align: left;
+        resize: vertical;
+      }
+
+      .templategroup,
+      .datagroup,
+      .functiongroup,
+      .resultgroup {
+        width: 48%;
+        margin: 4px 2% 4px 0;
+        float: left;
+        min-width: 300px;
+      }
+
+      #function,
+      #result {
+        background: #ddd;
+        height: 212px;
+        padding: 10px;
+        font-size: 14px;
+        overflow-y: auto;
+      }
+
+      #result {
+        white-space: pre;
+      }
+
+      .definegroup {
+        display: none;
+      }
+
+      .templategroup.withdefs .definegroup {
+        display: block;
+      }
+
+      .templategroup.withdefs #template {
+        height: 90px;
+      }
+
+      textarea.defines {
+        height: 60px;
+      }
+
+      .stripgroup {
+        padding-top: 8px;
+        width: 160px;
+        float: left;
+      }
+
+      #sampletabs {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      #sampletabs li {
+        float: left;
+        margin: 4px;
+        padding: 4px 8px;
+        background: #ddd;
+        cursor: pointer;
+      }
+
+      #sampletabs li.active {
+        background: #2b80ff;
+        color: #fff;
+      }
+
+      @media all and (max-width: 740px) {
+        .templategroup,
+        .datagroup,
+        .functiongroup,
+        .resultgroup {
+          width: 100%;
+          margin-right: 0;
+        }
+
+        pre {
+          overflow-x: scroll;
+        }
+      }
+    </style>
+    <title>Squirrelly Playground</title>
+  </head>
+
+  <body>
+    <h2>
+      Playground
+      <span
+        >Based on the excellent
+        <a href="http://olado.github.io/doT/index.html">DoT.js</a> website</span
+      >
+    </h2>
+    <div id="samples">
+      <ul id="sampletabs"></ul>
+      <!--Keeping this just in case I implement a similar tabs feature-->
+      <!-- <div class="stripgroup">
+            <input id="strip" type="checkbox" checked="checked" />
+            <label for="strip">Strip whitespaces</label>
+        </div> -->
+      <div style="clear:both;height:10px"></div>
+      <div class="templategroup">
+        <h4>Template</h4>
+        <textarea autocomplete="off" id="template">
+Hi
+{{!console.log("Hope you like Squirrelly!")}}
+{{it.htmlstuff}}
+{{~foreach(it.obj) => val, key}}
+
+Reversed value: {{val|reverse}}, Key: {{key}}
+{{~if(key==="thirdchild")}}
+{{~each(it.obj[key]) => index, key}}
+
+Salutations! Index: {{index}}, old key: {{key}}
+{{/each}}
+{{/if}}
+{{/foreach}}
+
+{{~customhelper()}}
+{{#cabbage}}
+Cabbages taste good
+{{!console.log(hi)}}
+{{#pineapple}}
+As do pineapples
+{{/customhelper}}
+
+This is a partial: {{~include("mypartial")/}}
+        </textarea>
+      </div>
+      <div class="functiongroup">
+        <h4>Sqrl.Compile()</h4>
+        <div id="function"></div>
+      </div>
+      <div style="clear:both"></div>
+      <div class="datagroup">
+        <h4>Data</h4>
+        <textarea autocomplete="off" id="data">
+"htmlstuff": "<script>alert('hey')</script><p>alert('hey')</p><p>alert('hey')</p><p>alert('hey')</p>",
+"arr": ["Hey", "<p>Malicious XSS</p>", "Hey", 3, 12],
+"obj": {
+    "firstchild": "this is a lowercase string",
+    "secondchild": "HEY",
+    "thirdchild": [3, 6, 3, 2, 5, 4]
+}
+        </textarea>
+      </div>
+      <div class="resultgroup">
+        <h4>Result</h4>
+        <div id="result"></div>
+      </div>
+    </div>
+    <script>
+      /* global Sqrl */
+      window.onload = function () {
+        Sqrl.Filters.define('reverse', function (str) {
+          var out = ''
+          for (var i = str.length - 1; i >= 0; i--) {
+            out += String(str).charAt(i)
+          }
+          return out || str
+        })
+
+        Sqrl.Filters.define('capitalize', function (str) {
+          return str.toUpperCase()
+        })
+
+        Sqrl.Helpers.define('customhelper', function (args, content, blocks, options) {
+          var returnStr = 'Custom Helper speaking! \n'
+          for (var key in blocks) {
+            if (typeof blocks[key] === 'function') {
+              returnStr += 'Block found named ' + key + ', with value: ' + blocks[key]()
+            }
+          }
+          return returnStr
+        })
+
+        Sqrl.Helpers.define('log', function (args) {
+          console.log(args[0])
+          return ''
+        })
+
+        Sqrl.Helpers.define('include', function () {
+          return 'This is a partial'
+        })
+
+        function escape (str) {
+          // To handle escaping for the function result
+          var escMap = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;'
+          }
+
+          function replaceChar (s) {
+            return escMap[s]
+          }
+          var newStr = String(str)
+          if (/[&<>"'/]/.test(newStr)) {
+            return newStr.replace(/[&<>"'/]/g, replaceChar)
+          } else {
+            return newStr
+          }
+        }
+
+        function render () {
+          console.clear()
+          var options = JSON.parse('{' + document.getElementById('data').value + '}')
+          console.log(JSON.stringify(options))
+          var template = document.getElementById('template').value
+          var functionResult = Sqrl.Compile(template, 'default').toString()
+          document.getElementById('function').innerHTML = escape(functionResult)
+          document.getElementById('result').innerHTML = Sqrl.Render(template, options)
+          console.log(Sqrl.Render(template, options))
+        }
+        render()
+        document.getElementById('template').addEventListener('input', render)
+        document.getElementById('data').addEventListener('input', render)
+      }
+    </script>
+  </body>
+</html>
