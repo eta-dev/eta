@@ -7,10 +7,10 @@ describe('Simple Render checks', () => {
       expect(Render('Hi {{it.name}}', { name: 'Ada Lovelace' })).toEqual('Hi Ada Lovelace')
     })
     it('String trimming works', () => {
-      expect(Render('Hi  {{-it.name_}}  !', { name: 'Ada Lovelace' })).toEqual('Hi Ada Lovelace!')
+      expect(Render('Hi \n{{-it.name_}}  !', { name: 'Ada Lovelace' })).toEqual('Hi Ada Lovelace!')
     })
     it('Rendering function works', () => {
-      expect(Render(Compile('Hi  {{-it.name_}}  !', 'default'), { name: 'Ada Lovelace' })).toEqual(
+      expect(Render(Compile('Hi \n{{-it.name_}}  !', 'default'), { name: 'Ada Lovelace' })).toEqual(
         'Hi Ada Lovelace!'
       )
     })

@@ -161,13 +161,14 @@
 Hi
 {{!console.log("Hope you like Squirrelly!")}}
 {{it.htmlstuff}}
-{{~foreach(it.obj) => val, key}}
 
+{{~foreach(it.obj) => key, val}}
 Reversed value: {{val|reverse}}, Key: {{key}}
+
 {{~if(key==="thirdchild")}}
 {{~each(it.obj[key]) => index, key}}
+    Salutations! Index: {{index}}, old key: {{key}}
 
-Salutations! Index: {{index}}, old key: {{key}}
 {{/each}}
 {{/if}}
 {{/foreach}}
@@ -181,7 +182,8 @@ As do pineapples
 {{/customhelper}}
 
 This is a partial: {{~include("mypartial")/}}
-        </textarea>
+</textarea
+        >
       </div>
       <div class="functiongroup">
         <h4>Sqrl.Compile()</h4>

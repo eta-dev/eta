@@ -2,49 +2,48 @@ import { Render, Compile, Filters, Env, CompileToString } from '../src/index'
 
 var eachTemplate = `
 The Daugherty's have 8 kids. Their names are:
+
 {{~each (it.kids) => val, index}}
-{{~if(index < it.kids.length - 1_}}
+{{~if(index < it.kids.length - 1 _}}
   {{val}},
-{{_#else_}}
+{{#else _}}
   and {{val}}
-{{_/if}}
-{{_/each}}
+{{/if}}
+{{/each}}
 `
 
 describe('Helper tests', () => {
   it('parses a simple helper: each and if', () => {
     var res = Render(eachTemplate, { kids: ['Ben', 'Polly', 'Joel', 'Phronsie', 'Davie'] })
-    expect(res).toEqual(`
-The Daugherty's have 8 kids. Their names are:
+    expect(res).toEqual(
+      `The Daugherty's have 8 kids. Their names are:
 
 Ben,
 Polly,
 Joel,
 Phronsie,
-and Davie
-`)
+and Davie`
+    )
   })
 
   var forEachTemplate = `
 {{~foreach (it.numbers) => key, val}}
 Key: {{key}}, Val: {{val}}
-{{_/foreach}}
+
+{{/foreach}}
 `
 
   it('parses a simple helper: foreach', () => {
     var res = Render(forEachTemplate, { numbers: { one: 1, two: 2 } })
 
-    expect(res).toEqual(`
-
-Key: one, Val: 1
-Key: two, Val: 2
-`)
+    expect(res).toEqual('Key: one, Val: 1\nKey: two, Val: 2\n')
   })
 
   var tryCatchTemplate = `
 {{~try}}
 This won't work: {{ *it.hi | validate}}
 {{#catch => err}}
+
 Uh-oh, error! Message was '{{err.message}}'
 {{/try}}
 `
@@ -61,11 +60,8 @@ Uh-oh, error! Message was '{{err.message}}'
 
   it('parses a simple helper: try', () => {
     var res = Render(tryCatchTemplate, { hi: false })
-    expect(res).toEqual(`
-
-This won't work: 
+    expect(res).toEqual(`This won't work: 
 Uh-oh, error! Message was 'str does not fit expected format'
-
 `)
   })
 

@@ -7,7 +7,7 @@ interface Dict {
 
 export interface SqrlConfig {
   varName: string
-  autoTrim: boolean | 'nl'
+  autoTrim: boolean | 'nl' | 'slurp' | ['nl' | 'slurp' | boolean, 'nl' | 'slurp' | boolean]
   autoEscape: boolean
   defaultFilter: false | Function
   tags: [string, string]
@@ -51,7 +51,7 @@ function getConfig (conf: string | PartialConfig): SqrlConfig {
 function returnDefaultConfig (): SqrlConfig {
   return {
     varName: 'it',
-    autoTrim: false,
+    autoTrim: [false, 'nl'],
     autoEscape: true,
     defaultFilter: false,
     tags: ['{{', '}}'],

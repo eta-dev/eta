@@ -42,59 +42,61 @@ function ParseErr(message, str, indx) {
     throw SqrlErr(message);
 }
 
-/**
- * Trims either one whitespace character from the beginning of a string, or all
- *
- * @remarks
- * Includes trimLeft polyfill
- *
- * @param str - String to trim
- * @param type - Either '-' (trim only 1 whitespace char) or '_' (trim all whitespace)
- * @returns Trimmed string
- *
- */
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
-function trimLeft(str, type) {
-    if (type === '_') {
+function trimWS(str, env, wsLeft, wsRight) {
+    var leftTrim;
+    var rightTrim;
+    if (typeof env.autoTrim === 'string') {
+        leftTrim = rightTrim = env.autoTrim;
+    }
+    else if (Array.isArray(env.autoTrim)) {
+        // kinda confusing
+        // but _}} will trim the left side of the following string
+        leftTrim = env.autoTrim[1];
+        rightTrim = env.autoTrim[0];
+    }
+    if (wsLeft) {
+        leftTrim = wsLeft;
+    }
+    if (wsRight) {
+        rightTrim = wsRight;
+    }
+    if ((leftTrim === 'slurp' && rightTrim === 'slurp') ||
+        (leftTrim === true && rightTrim === true)) {
+        return str.trim();
+    }
+    if (leftTrim === '_' || leftTrim === 'slurp' || leftTrim === true) {
+        // console.log('trimming left' + leftTrim)
         // full slurp
         if (String.prototype.trimLeft) {
-            return str.trimLeft();
+            str = str.trimLeft();
         }
         else {
-            return str.replace(/^[\s\uFEFF\xA0]+/, '');
+            str = str.replace(/^[\s\uFEFF\xA0]+/, '');
         }
     }
-    else {
-        // type must be '-'
-        return str.replace(/^(?:[\s\uFEFF\xA0]|\r\n)/, '');
+    else if (leftTrim === '-' || leftTrim === 'nl') {
+        // console.log('trimming left nl' + leftTrim)
+        // nl trim
+        str = str.replace(/^(?:\n|\r|\r\n)/, '');
     }
-}
-/**
- * Trims either one whitespace character from the end of the string, or all
- *
- * @remarks
- * Includes trimRight polyfill
- *
- * @param str - String to trim
- * @param type - Either '-' (trim only 1 whitespace char) or '_' (trim all whitespace)
- * @returns Trimmed string
- *
- */
-function trimRight(str, type) {
-    if (type === '_') {
+    if (rightTrim === '_' || rightTrim === 'slurp' || rightTrim === true) {
+        // console.log('trimming right' + rightTrim)
         // full slurp
         if (String.prototype.trimRight) {
-            return str.trimRight();
+            str = str.trimRight();
         }
         else {
-            return str.replace(/[\s\uFEFF\xA0]+$/, '');
+            str = str.replace(/[\s\uFEFF\xA0]+$/, '');
         }
     }
-    else {
-        // type must be '-'
-        return str.replace(/(?:[\s\uFEFF\xA0]|\r\n)$/, ''); // TODO: make sure this gets \r\n
+    else if (rightTrim === '-' || rightTrim === 'nl') {
+        // console.log('trimming right nl' + rightTrim)
+        // nl trim
+        str = str.replace(/(?:\n|\r|\r\n)$/, ''); // TODO: make sure this gets \r\n
     }
+    return str;
 }
 
 // Version 1.0.32
@@ -223,16 +225,10 @@ function Parse(str, env) {
         parentObj.d = [];
         var lastBlock = false;
         var buffer = [];
-        function pushString(strng, wsAhead) {
+        function pushString(strng, shouldTrimRightPrecedingString) {
             if (strng) {
                 var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                if (wsAhead) {
-                    stringToPush = trimRight(stringToPush, wsAhead);
-                }
-                if (trimNextLeftWs) {
-                    stringToPush = trimLeft(stringToPush, trimNextLeftWs);
-                    trimNextLeftWs = '';
-                }
+                stringToPush = trimWS(stringToPush, env, trimNextLeftWs, shouldTrimRightPrecedingString);
                 if (stringToPush) {
                     buffer.push(stringToPush);
                 }
@@ -243,8 +239,8 @@ function Parse(str, env) {
         // tslint:disable-next-line:no-conditional-assignment
         while ((tagOpenMatch = tagOpenReg.exec(str)) !== null) {
             var precedingString = tagOpenMatch[1];
-            var ws = tagOpenMatch[2];
-            pushString(precedingString, ws);
+            var shouldTrimRightPrecedingString = tagOpenMatch[2];
+            pushString(precedingString, shouldTrimRightPrecedingString);
             startInd = tagOpenMatch.index + tagOpenMatch[0].length;
             var currentObj = parseTag();
             // ===== NOW ADD THE OBJECT TO OUR BUFFER =====
@@ -536,7 +532,7 @@ function getConfig(conf) {
 function returnDefaultConfig() {
     return {
         varName: 'it',
-        autoTrim: false,
+        autoTrim: [false, 'nl'],
         autoEscape: true,
         defaultFilter: false,
         tags: ['{{', '}}'],

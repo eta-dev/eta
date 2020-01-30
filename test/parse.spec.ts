@@ -17,7 +17,7 @@ describe('Parse test', () => {
   })
 
   it('works with whitespace trimming', () => {
-    var buff = Parse('hi {{-hey-}} {{_hi_}}', Env.default)
+    var buff = Parse('hi\n{{-hey-}} {{_hi_}}', Env.default)
     expect(buff).toEqual(['hi', { f: [], c: 'hey', t: 'r' }, { f: [], c: 'hi', t: 'r' }])
   })
 
@@ -56,9 +56,7 @@ describe('Parse test', () => {
     expect(buff).toEqual([
       'Hi\n',
       { f: [], n: 'log', p: '"Hope you like Squirrelly!"', t: 's' },
-      '\n',
       { f: [], c: 'htmlstuff', t: 'r' },
-      '\n',
       {
         f: [],
         n: 'foreach',
@@ -67,11 +65,10 @@ describe('Parse test', () => {
         t: '~',
         b: [],
         d: [
-          '\n\nReversed value: ',
+          '\nReversed value: ',
           { f: [['reverse', '']], c: 'val', t: 'r' },
           ', Key: ',
           { f: [], c: 'key', t: 'r' },
-          '\n',
           {
             f: [],
             n: 'if',
@@ -79,7 +76,6 @@ describe('Parse test', () => {
             t: '~',
             b: [],
             d: [
-              '\n',
               {
                 f: [],
                 n: 'each',
@@ -88,20 +84,17 @@ describe('Parse test', () => {
                 t: '~',
                 b: [],
                 d: [
-                  '\n\nSalutations! Index: ',
+                  '\nSalutations! Index: ',
                   { f: [], c: 'index', t: 'r' },
                   ', old key: ',
-                  { f: [], c: 'key', t: 'r' },
-                  '\n'
+                  { f: [], c: 'key', t: 'r' }
                 ]
-              },
-              '\n'
+              }
             ]
-          },
-          '\n'
+          }
         ]
       },
-      '\n\n',
+      '\n',
       {
         f: [],
         n: 'customhelper',
@@ -113,18 +106,16 @@ describe('Parse test', () => {
             n: 'cabbage',
             t: '#',
             d: [
-              '\nCabbages taste good\n',
+              'Cabbages taste good\n',
               { f: [], c: 'console.log(hi)', t: '!' },
-              '\n',
-              { f: [], c: 'custom stuff', t: '?' },
-              '\n'
+              { f: [], c: 'custom stuff', t: '?' }
             ]
           },
-          { f: [], n: 'pineapple', t: '#', d: ['\nAs do pineapples\n'] }
+          { f: [], n: 'pineapple', t: '#', d: ['As do pineapples\n'] }
         ],
-        d: ['\n']
+        d: []
       },
-      '\n\nThis is a partial: ',
+      '\nThis is a partial: ',
       { f: [], n: 'include', p: '"mypartial"', t: 's' }
     ])
   })

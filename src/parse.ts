@@ -1,6 +1,6 @@
 // Version 1.0.32
 import { ParseErr } from './err'
-import { trimLeft, trimRight } from './utils'
+import { trimWS } from './utils'
 import { SqrlConfig } from './config'
 
 export type TagType = '~' | '/' | '#' | '?' | 'r' | '!' | 's'
@@ -153,16 +153,11 @@ export default function Parse (str: string, env: SqrlConfig): Array<AstObject> {
     var lastBlock: ParentTemplateObject | false = false
     var buffer: Array<AstObject> = []
 
-    function pushString (strng: string, wsAhead?: string) {
+    function pushString (strng: string, shouldTrimRightPrecedingString?: string) {
       if (strng) {
         var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
-        if (wsAhead) {
-          stringToPush = trimRight(stringToPush, wsAhead)
-        }
-        if (trimNextLeftWs) {
-          stringToPush = trimLeft(stringToPush, trimNextLeftWs)
-          trimNextLeftWs = ''
-        }
+        stringToPush = trimWS(stringToPush, env, trimNextLeftWs, shouldTrimRightPrecedingString)
+
         if (stringToPush) {
           buffer.push(stringToPush)
         }
@@ -174,9 +169,9 @@ export default function Parse (str: string, env: SqrlConfig): Array<AstObject> {
     // tslint:disable-next-line:no-conditional-assignment
     while ((tagOpenMatch = tagOpenReg.exec(str)) !== null) {
       var precedingString = tagOpenMatch[1]
-      var ws = tagOpenMatch[2]
+      var shouldTrimRightPrecedingString = tagOpenMatch[2]
 
-      pushString(precedingString, ws)
+      pushString(precedingString, shouldTrimRightPrecedingString)
       startInd = tagOpenMatch.index + tagOpenMatch[0].length
 
       var currentObj = parseTag()

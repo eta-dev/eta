@@ -16,7 +16,7 @@ describe('Compile to String test', () => {
   })
 
   it('works with whitespace trimming', () => {
-    var str = CompileToString('hi {{-hey-}} {{_hi_}}', Env.default)
+    var str = CompileToString('hi\n{{-hey-}}\n{{_hi_}}', Env.default)
     expect(str).toEqual("var tR='';tR+='hi';tR+=l('F','e')(hey);tR+=l('F','e')(hi);return tR")
   })
 
@@ -37,7 +37,7 @@ describe('Compile to String test', () => {
   it('compiles complex template', () => {
     var str = CompileToString(complexTemplate, Env.default)
     expect(str).toEqual(
-      "var tR='';tR+='Hi\\n';tR+=l('H','log')(\"Hope you like Squirrelly!\");tR+='\\n';tR+=l('F','e')(htmlstuff);tR+='\\n';tR+=l('H','foreach')({exec:function(val, key){var tR='';tR+='\\n\\nReversed value: ';tR+=l('F','reverse')(l('F','e')(val));tR+=', Key: ';tR+=l('F','e')(key);tR+='\\n';if(key===\"thirdchild\"){tR+='\\n';tR+=l('H','each')({exec:function(index, key){var tR='';tR+='\\n\\nSalutations! Index: ';tR+=l('F','e')(index);tR+=', old key: ';tR+=l('F','e')(key);tR+='\\n';return tR},params:[options.obj[key]]},[]);tR+='\\n';}tR+='\\n';return tR},params:[options.obj]},[]);tR+='\\n\\n';tR+=l('H','customhelper')({exec:function(){var tR='';tR+='\\n';return tR},params:[]},[{exec:function(){var tR='';tR+='\\nCabbages taste good\\n';console.log(hi);tR+='\\n';tR+='\\n';return tR},params:[],name:'cabbage'},{exec:function(){var tR='';tR+='\\nAs do pineapples\\n';return tR},params:[],name:'pineapple'},]);tR+='\\n\\nThis is a partial: ';tR+=l('H','include')(\"mypartial\");return tR"
+      "var tR='';tR+='Hi\\n';tR+=l('H','log')(\"Hope you like Squirrelly!\");tR+=l('F','e')(htmlstuff);tR+=l('H','foreach')({exec:function(val, key){var tR='';tR+='\\nReversed value: ';tR+=l('F','reverse')(l('F','e')(val));tR+=', Key: ';tR+=l('F','e')(key);if(key===\"thirdchild\"){tR+=l('H','each')({exec:function(index, key){var tR='';tR+='\\nSalutations! Index: ';tR+=l('F','e')(index);tR+=', old key: ';tR+=l('F','e')(key);return tR},params:[options.obj[key]]},[]);}return tR},params:[options.obj]},[]);tR+='\\n';tR+=l('H','customhelper')({exec:function(){var tR='';return tR},params:[]},[{exec:function(){var tR='';tR+='Cabbages taste good\\n';console.log(hi);return tR},params:[],name:'cabbage'},{exec:function(){var tR='';tR+='As do pineapples\\n';return tR},params:[],name:'pineapple'},]);tR+='\\nThis is a partial: ';tR+=l('H','include')(\"mypartial\");return tR"
     )
   })
 
