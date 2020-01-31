@@ -1,0 +1,13 @@
+{
+  "files": ["README.md"],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [],
+  "contributorsPerLine": 7,
+  "projectName": "squirrelly",
+  "projectOwner": "squirrellyjs",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true,
+  "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg)](#contributors)"
+}

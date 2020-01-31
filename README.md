@@ -2,15 +2,16 @@
 
 # squirrelly
 
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 ![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/squirrellyjs/squirrelly/master?label=current%20version)
 [![Travis](https://img.shields.io/travis/com/squirrellyjs/squirrelly/master.svg)](https://travis-ci.com/squirrellyjs/squirrelly)
-[![Join the chat at https://gitter.im/squirrellyjs/Lobby](https://img.shields.io/gitter/room/squirrellyjs/squirrelly?color=%2346BC99)](https://gitter.im/squirrellyjs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg)](#contributors-)
 [![Coveralls](https://img.shields.io/coveralls/squirrellyjs/squirrelly.svg)](https://coveralls.io/github/squirrellyjs/squirrelly)
 [![Dev Dependencies](https://img.shields.io/david/dev/squirrellyjs/squirrelly)](https://david-dm.org/squirrellyjs/squirrelly?type=dev)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler) [![Greenkeeper badge](https://badges.greenkeeper.io/squirrellyjs/squirrelly.svg)](https://greenkeeper.io/)
 
-<!--Add all-contributors-->
+[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Greenkeeper badge](https://badges.greenkeeper.io/squirrellyjs/squirrelly.svg)](https://greenkeeper.io/)
+[![Join the chat at https://gitter.im/squirrellyjs/Lobby](https://img.shields.io/gitter/room/squirrellyjs/squirrelly?color=%2346BC99)](https://gitter.im/squirrellyjs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
 
 **Summary**
 
