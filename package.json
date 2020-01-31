@@ -1,5 +1,5 @@
 {
-  "name": "squirrelly-next",
+  "name": "squirrelly",
   "version": "0.0.0",
   "description": "Lightweight, fast, and powerful JS template engine. Supports helpers, filters, template inheritance",
   "keywords": [
@@ -7,6 +7,7 @@
     "helpers",
     "template inheritance",
     "handlebars",
+    "ejs",
     "template engine",
     "typescript types"
   ],
@@ -20,10 +21,10 @@
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/squirrellyjs/squirrelly-next.git"
+    "url": "git+https://github.com/squirrellyjs/squirrelly.git"
   },
   "bugs": {
-    "url": "https://github.com/squirrellyjs/squirrelly-next/issues"
+    "url": "https://github.com/squirrellyjs/squirrelly/issues"
   },
   "license": "MIT",
   "engines": {
