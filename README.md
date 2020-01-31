@@ -8,7 +8,7 @@
 [![Join the chat at https://gitter.im/squirrellyjs/Lobby](https://img.shields.io/gitter/room/squirrellyjs/squirrelly?color=%2346BC99)](https://gitter.im/squirrellyjs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Coveralls](https://img.shields.io/coveralls/squirrellyjs/squirrelly.svg)](https://coveralls.io/github/squirrellyjs/squirrelly)
 [![Dev Dependencies](https://img.shields.io/david/dev/squirrellyjs/squirrelly)](https://david-dm.org/squirrellyjs/squirrelly?type=dev)
-[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
+[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler) [![Greenkeeper badge](https://badges.greenkeeper.io/squirrellyjs/squirrelly.svg)](https://greenkeeper.io/)
 
 <!--Add all-contributors-->
 
