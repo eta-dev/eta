@@ -1,8 +1,23 @@
 {
-  "files": ["README.md"],
+  "files": [
+    "README.md"
+  ],
   "imageSize": 100,
   "commit": false,
-  "contributors": [],
+  "contributors": [
+    {
+      "login": "nebrelbug",
+      "name": "Ben Gubler",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/25597854?v=4",
+      "profile": "http://www.bengubler.com",
+      "contributions": [
+        "code",
+        "question",
+        "doc",
+        "test"
+      ]
+    }
+  ],
   "contributorsPerLine": 7,
   "projectName": "squirrelly",
   "projectOwner": "squirrellyjs",
