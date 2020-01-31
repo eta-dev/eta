@@ -4,7 +4,7 @@
 
 ![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/squirrellyjs/squirrelly/master?label=current%20version)
 [![Travis](https://img.shields.io/travis/com/squirrellyjs/squirrelly/master.svg)](https://travis-ci.com/squirrellyjs/squirrelly)
-[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg)](#contributors-)
 [![Coveralls](https://img.shields.io/coveralls/squirrellyjs/squirrelly.svg)](https://coveralls.io/github/squirrellyjs/squirrelly)
 [![Dev Dependencies](https://img.shields.io/david/dev/squirrellyjs/squirrelly)](https://david-dm.org/squirrellyjs/squirrelly?type=dev)
 
