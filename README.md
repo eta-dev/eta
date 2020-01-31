@@ -16,11 +16,11 @@
 
 Squirrelly is a modern, configurable, and blazing fast template engine implemented in JavaScript. It works out of the box with ExpressJS and the **full version** weighs only **~2.2KB gzipped**.
 
-This is version 8 - a new, more powerful rewrite of Squirrelly. It adds multiple features (like filter parameters, whitespace control, partials, and template inheritance) to bring you a template engine with the power of Nunjucks, the simplicity of EJS, and the small bundle size of its earlier versions.
+**This is version 8** - a new, more powerful rewrite of Squirrelly. It adds multiple features (like filter parameters, whitespace control, partials, and template inheritance) to bring you a template engine with the power of Nunjucks, the simplicity of EJS, and the small bundle size of its earlier versions.
 
-[Read about why we decided to develop in a separate repository]
+Version 8 is still in beta. Squirrelly v7 will continue to be maintained, and can be found at https://github.com/squirrellyjs/squirrelly/tree/v7.
 
-[learn about the changes]
+[Read about the changes](https://squirrelly.js.org)
 
 ## Why Squirrelly?
 
