@@ -8,7 +8,7 @@ function setPrototypeOf (obj: any, proto: any) {
   }
 }
 
-export default function SqrlErr (message: string) {
+export default function SqrlErr (message: string): Error {
   var err = new Error(message)
   setPrototypeOf(err, SqrlErr.prototype)
   return err

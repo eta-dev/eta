@@ -13,6 +13,7 @@ export interface SqrlConfig {
   tags: [string, string]
   loadFunction: Function
   plugins: { processAST: Array<object>; processFuncString: Array<object> }
+  async: boolean
   [index: string]: any
 }
 
@@ -62,6 +63,7 @@ function returnDefaultConfig (): SqrlConfig {
         return Filters.get(name)
       }
     },
+    async: false,
     plugins: {
       processAST: [],
       processFuncString: []
