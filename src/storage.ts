@@ -19,11 +19,15 @@ class Cacher<T> {
   remove (key: string) {
     delete this.cache[key]
   }
-  clear () {
+  reset () {
     this.cache = {}
   }
   load (cacheObj: ICache<T>) {
-    this.cache = cacheObj
+    for (var key in cacheObj) {
+      if (cacheObj.hasOwnProperty(key)) {
+        this.cache[key] = cacheObj[key]
+      }
+    }
   }
 }
 

@@ -7,7 +7,7 @@ declare class Cacher<T> {
     define(key: string, val: T): void;
     get(key: string): T;
     remove(key: string): void;
-    clear(): void;
+    reset(): void;
     load(cacheObj: ICache<T>): void;
 }
 export { Cacher };

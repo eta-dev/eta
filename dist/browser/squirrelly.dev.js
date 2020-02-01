@@ -313,11 +313,15 @@
       Cacher.prototype.remove = function (key) {
           delete this.cache[key];
       };
-      Cacher.prototype.clear = function () {
+      Cacher.prototype.reset = function () {
           this.cache = {};
       };
       Cacher.prototype.load = function (cacheObj) {
-          this.cache = cacheObj;
+          for (var key in cacheObj) {
+              if (cacheObj.hasOwnProperty(key)) {
+                  this.cache[key] = cacheObj[key];
+              }
+          }
       };
       return Cacher;
   }());

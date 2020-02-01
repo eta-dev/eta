@@ -17,13 +17,13 @@ describe('Config Tests', () => {
     expect(Container.get('one')).toEqual(undefined)
   })
 
-  it('Cache.clear works', () => {
-    Container.clear()
+  it('Cache.reset works', () => {
+    Container.reset()
     expect(Container.get('two')).toEqual(undefined)
   })
 
   it('Cache.load works', () => {
-    Container.clear()
+    Container.reset()
     Container.load({ seven: 7, eight: 8 })
     expect(Container.get('eight')).toEqual(8)
   })
