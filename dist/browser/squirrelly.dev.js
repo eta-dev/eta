@@ -550,6 +550,7 @@
                   return Filters.get(name);
               }
           },
+          async: false,
           plugins: {
               processAST: [],
               processFuncString: []
@@ -564,10 +565,32 @@
 
   function Compile(str, env) {
       var SqrlEnv = Env.default;
+      var ctor; // constructor
       if (env) {
           SqrlEnv = getConfig(env);
       }
-      return new Function(SqrlEnv.varName, 'l', // this fetches helpers, partials, etc.
+      /* ASYNC HANDLING */
+      // The below code is modified from mde/ejs. All credit should go to them.
+      if (SqrlEnv.async) {
+          // Have to use generated function for this, since in envs without support,
+          // it breaks in parsing
+          try {
+              ctor = new Function('return (async function(){}).constructor;')();
+          }
+          catch (e) {
+              if (e instanceof SyntaxError) {
+                  throw new Error('This environment does not support async/await');
+              }
+              else {
+                  throw e;
+              }
+          }
+      }
+      else {
+          ctor = Function;
+      }
+      /* END ASYNC HANDLING */
+      return new ctor(SqrlEnv.varName, 'l', // this fetches helpers, partials, etc.
       CompileToString(str, SqrlEnv)); // eslint-disable-line no-new-func
   }
   // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())

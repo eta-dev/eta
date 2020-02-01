@@ -12,6 +12,7 @@ export interface SqrlConfig {
         processAST: Array<object>;
         processFuncString: Array<object>;
     };
+    async: boolean;
     [index: string]: any;
 }
 export declare type PartialConfig = {

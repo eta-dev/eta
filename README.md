@@ -10,7 +10,7 @@
 
 ![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/squirrellyjs/squirrelly/master?label=current%20version)
 [![Travis](https://img.shields.io/travis/com/squirrellyjs/squirrelly/master.svg)](https://travis-ci.com/squirrellyjs/squirrelly)
-[![All Contributors][logo]](#credits-)
+[![All Contributors][logo]](#contributors-)
 [![Coveralls](https://img.shields.io/coveralls/squirrellyjs/squirrelly.svg)](https://coveralls.io/github/squirrellyjs/squirrelly)
 [![Dev Dependencies](https://img.shields.io/david/dev/squirrellyjs/squirrelly)](https://david-dm.org/squirrellyjs/squirrelly?type=dev)
 
@@ -99,7 +99,7 @@ To be added
 
 [Waiting for permissions]
 
-## Credits
+## Contributors
 
 Made with ❤ by [@nebrelbug](https://github.com/nebrelbug) and all these wonderful contributors ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
@@ -118,3 +118,7 @@ Made with ❤ by [@nebrelbug](https://github.com/nebrelbug) and all these wonder
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind are welcome!
+
+## Credits
+
+- Async support was added based on code from EJS, which is licensed under the Apache-2.0 license. Code was modified to throw a Squirrelly Error.
