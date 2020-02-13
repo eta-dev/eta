@@ -37,7 +37,7 @@ describe('Compile to String test', () => {
   it('compiles complex template', () => {
     var str = CompileToString(complexTemplate, defaultConfig)
     expect(str).toEqual(
-      "var tR='';tR+='Hi\\n';tR+=c.l('H','log')(\"Hope you like Squirrelly!\",[],c);tR+=c.l('F','e')(htmlstuff);tR+=c.l('H','foreach')({exec:function(val, key){var tR='';tR+='\\nReversed value: ';tR+=c.l('F','reverse')(c.l('F','e')(val));tR+=', Key: ';tR+=c.l('F','e')(key);if(key===\"thirdchild\"){tR+=c.l('H','each')({exec:function(index, key){var tR='';tR+='\\nSalutations! Index: ';tR+=c.l('F','e')(index);tR+=', old key: ';tR+=c.l('F','e')(key);return tR},params:[options.obj[key]]},[],c);}return tR},params:[options.obj]},[],c);tR+='\\n';tR+=c.l('H','customhelper')({exec:function(){var tR='';return tR},params:[]},[{exec:function(){var tR='';tR+='Cabbages taste good\\n';console.log(hi);return tR},params:[],name:'cabbage'},{exec:function(){var tR='';tR+='As do pineapples\\n';return tR},params:[],name:'pineapple'},],c);tR+='\\nThis is a partial: ';tR+=c.l('H','include')(\"mypartial\",[],c);return tR"
+      "var tR='';tR+='Hi\\n';tR+=c.l('H','log')({params:[\"Hope you like Squirrelly!\"]},[],c);tR+=c.l('F','e')(htmlstuff);tR+=c.l('H','foreach')({exec:function(val, key){var tR='';tR+='\\nReversed value: ';tR+=c.l('F','reverse')(c.l('F','e')(val));tR+=', Key: ';tR+=c.l('F','e')(key);if(key===\"thirdchild\"){tR+=c.l('H','each')({exec:function(index, key){var tR='';tR+='\\nSalutations! Index: ';tR+=c.l('F','e')(index);tR+=', old key: ';tR+=c.l('F','e')(key);return tR},params:[options.obj[key]]},[],c);}return tR},params:[options.obj]},[],c);tR+='\\n';tR+=c.l('H','customhelper')({exec:function(){var tR='';return tR},params:[]},[{exec:function(){var tR='';tR+='Cabbages taste good\\n';console.log(hi);return tR},params:[],name:'cabbage'},{exec:function(){var tR='';tR+='As do pineapples\\n';return tR},params:[],name:'pineapple'},],c);tR+='\\nThis is a partial: ';tR+=c.l('H','include')({params:[\"mypartial\"]},[],c);return tR"
     )
   })
 
@@ -49,7 +49,9 @@ describe('Compile to String test', () => {
 
   it('works with self-closing helpers', () => {
     var str = CompileToString('{{~log ("hey") | hi /}}', defaultConfig)
-    expect(str).toEqual("var tR='';tR+=c.l('F','hi')(c.l('H','log')(\"hey\",[],c));return tR")
+    expect(str).toEqual(
+      "var tR='';tR+=c.l('F','hi')(c.l('H','log')({params:[\"hey\"]},[],c));return tR"
+    )
   })
 
   it('works with helpers with results', () => {

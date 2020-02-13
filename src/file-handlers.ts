@@ -94,7 +94,9 @@ function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
 
 function includeFile (path: string, options: SqrlConfig) {
   // the below creates a new options object, using the parent filepath of the old options object and the path
+  console.log('filename is ' + getPath(path, options))
   var newFileOptions = getConfig({ filename: getPath(path, options) })
+  // TODO: update this to merge the old options
   return handleCache(newFileOptions as FileOptions)
 }
 

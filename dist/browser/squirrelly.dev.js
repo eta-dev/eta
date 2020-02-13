@@ -102,6 +102,7 @@
   }
 
   // Version 1.0.32
+  // TODO: INFINITE LOOP WHEN YOU TYPE IN AN UNCLOSED HELPER
   function Parse(str, env) {
       var powerchars = new RegExp('([|()]|=>)|' +
           '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
@@ -493,7 +494,8 @@
                   }
               }
               else if (type === 's') {
-                  returnStr += 'tR+=' + filter("c.l('H','" + name + "')(" + params + ',[],c)', filters) + ';';
+                  returnStr +=
+                      'tR+=' + filter("c.l('H','" + name + "')({params:[" + params + ']},[],c)', filters) + ';';
                   // self-closing helper
               }
               else if (type === '!') {

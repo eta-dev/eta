@@ -1,5 +1,5 @@
 import { TemplateFunction } from './compile';
-import { SqrlConfig, PartialConfig } from './config';
+import { SqrlConfig } from './config';
 declare type CallbackFn = (err: Error | null, str?: string) => void;
 /**
  * Get the template function.
@@ -19,5 +19,5 @@ interface DataObj {
     };
     [key: string]: any;
 }
-declare function renderFile(filename: string, data: DataObj, options: PartialConfig, cb?: CallbackFn): any;
+declare function renderFile(filename: string, data: DataObj, cb?: CallbackFn): any;
 export { includeFile, renderFile };

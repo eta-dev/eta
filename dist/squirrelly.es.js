@@ -125,6 +125,7 @@ function trimWS(str, env, wsLeft, wsRight) {
 }
 
 // Version 1.0.32
+// TODO: INFINITE LOOP WHEN YOU TYPE IN AN UNCLOSED HELPER
 function Parse(str, env) {
     var powerchars = new RegExp('([|()]|=>)|' +
         '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
@@ -404,7 +405,8 @@ function ParseScope(buff, env) {
                 }
             }
             else if (type === 's') {
-                returnStr += 'tR+=' + filter("c.l('H','" + name + "')(" + params + ',[],c)', filters) + ';';
+                returnStr +=
+                    'tR+=' + filter("c.l('H','" + name + "')({params:[" + params + ']},[],c)', filters) + ';';
                 // self-closing helper
             }
             else if (type === '!') {
@@ -743,11 +745,13 @@ function tryHandleCache(options, data, cb) {
  */
 function includeFile(path, options) {
     // the below creates a new options object, using the parent filepath of the old options object and the path
+    console.log('filename is ' + getPath(path, options));
     var newFileOptions = getConfig({ filename: getPath(path, options) });
+    // TODO: update this to merge the old options
     return handleCache(newFileOptions);
 }
-function renderFile(filename, data, options, cb) {
-    var Config = getConfig(options || {});
+function renderFile(filename, data, cb) {
+    var Config = getConfig(data || {});
     // TODO: make sure above doesn't error. We do set filename down below
     if (data.settings) {
         // Pull a few things from known locations

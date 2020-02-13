@@ -99,7 +99,8 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
           returnStr += 'tR+=' + filter(helperReturn, filters) + ';'
         }
       } else if (type === 's') {
-        returnStr += 'tR+=' + filter("c.l('H','" + name + "')(" + params + ',[],c)', filters) + ';'
+        returnStr +=
+          'tR+=' + filter("c.l('H','" + name + "')({params:[" + params + ']},[],c)', filters) + ';'
         // self-closing helper
       } else if (type === '!') {
         // execute

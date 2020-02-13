@@ -28,6 +28,8 @@ export interface ParentTemplateObject extends TemplateObject {
   b: Array<ParentTemplateObject>
 }
 
+// TODO: INFINITE LOOP WHEN YOU TYPE IN AN UNCLOSED HELPER
+
 export default function Parse (str: string, env: SqrlConfig): Array<AstObject> {
   var powerchars = new RegExp(
     '([|()]|=>)|' +
