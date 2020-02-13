@@ -17,11 +17,11 @@ describe('Config Tests', () => {
     expect(res).toEqual('<p>Hi</p>') // not escaped
   })
 
-  test('throws when invalid env reference is passed', () => {
-    expect(() => {
-      // I have to annotate 3 as unknown as string for typescript
-      // Don't worry, it's not converted to a string
-      Render('hi {{ it.name }}', { name: 'Ben' }, (3 as unknown) as PartialConfig)
-    }).toThrow()
-  })
+  // test('throws when invalid env reference is passed', () => {
+  //   expect(() => {
+  //     // I have to annotate 3 as unknown as string for typescript
+  //     // Don't worry, it's not converted to a string
+  //     Render('hi {{ it.name }}', { name: 'Ben' }, (3 as unknown) as PartialConfig)
+  //   }).toThrow()
+  // })
 })

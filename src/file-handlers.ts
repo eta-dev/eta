@@ -105,8 +105,8 @@ interface DataObj {
   [key: string]: any
 }
 
-function renderFile (filename: string, data: DataObj, options: PartialConfig, cb?: CallbackFn) {
-  var Config: FileOptions = getConfig(options || {}) as FileOptions
+function renderFile (filename: string, data: DataObj, cb?: CallbackFn) {
+  var Config: FileOptions = getConfig((data as PartialConfig) || {}) as FileOptions
   // TODO: make sure above doesn't error. We do set filename down below
 
   if (data.settings) {
