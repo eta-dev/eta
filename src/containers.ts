@@ -1,25 +1,24 @@
 import { Cacher } from './storage'
-import { AstObject, Filter, TemplateObject, ParentTemplateObject } from './parse'
+import { ParentTemplateObject } from './parse'
 import SqrlErr from './err'
 import { ParseScope } from './compile-string'
 import { SqrlConfig } from './config'
-
-type TemplateFunction = (
-  options: object,
-  l: (container: 'T' | 'H' | 'F', name: string) => any
-) => string
-
+import { TemplateFunction } from './compile'
 // interface ITemplate {
 //   exec: (options: object, Sqrl: object) => string
 // }
 
 var Templates = new Cacher<TemplateFunction>({})
 
-interface HelperBlock {
+export interface HelperBlock {
   exec: Function
   params: Array<any>
 }
-type HelperFunction = (content: HelperBlock, blocks: Array<HelperBlock>) => string
+export type HelperFunction = (
+  content: HelperBlock,
+  blocks: Array<HelperBlock>,
+  config: SqrlConfig
+) => string
 
 var Helpers = new Cacher<HelperFunction>({
   each: function (content: HelperBlock) {

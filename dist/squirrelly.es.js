@@ -1,3 +1,32 @@
+var Cacher = /** @class */ (function () {
+    function Cacher(cache) {
+        this.cache = cache;
+    }
+    Cacher.prototype.define = function (key, val) {
+        this.cache[key] = val;
+    };
+    Cacher.prototype.get = function (key) {
+        // string | array.
+        // TODO: allow array of keys to look down
+        // TODO: create plugin to allow referencing helpers, filters with dot notation
+        return this.cache[key];
+    };
+    Cacher.prototype.remove = function (key) {
+        delete this.cache[key];
+    };
+    Cacher.prototype.reset = function () {
+        this.cache = {};
+    };
+    Cacher.prototype.load = function (cacheObj) {
+        for (var key in cacheObj) {
+            if (cacheObj.hasOwnProperty(key)) {
+                this.cache[key] = cacheObj[key];
+            }
+        }
+    };
+    return Cacher;
+}());
+
 // v 1.0.32
 function setPrototypeOf(obj, proto) {
     if (Object.setPrototypeOf) {
@@ -291,35 +320,118 @@ function Parse(str, env) {
     return parseResult.d; // Parse the very outside context
 }
 
-var Cacher = /** @class */ (function () {
-    function Cacher(cache) {
-        this.cache = cache;
+function CompileToString(str, env) {
+    var buffer = Parse(str, env);
+    return ("var tR='';" +
+        ParseScope(buffer, env)
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r') +
+        'return tR');
+}
+// TODO: rename parseHelper, parseScope, etc. to compileHelper, compileScope, etc.
+// TODO: Use type intersections for TemplateObject, etc.
+// so I don't have to make properties mandatory
+function parseHelper(env, res, descendants, params, name) {
+    var ret = '{exec:' + ParseScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']';
+    if (name) {
+        ret += ",name:'" + name + "'";
     }
-    Cacher.prototype.define = function (key, val) {
-        this.cache[key] = val;
-    };
-    Cacher.prototype.get = function (key) {
-        // string | array.
-        // TODO: allow array of keys to look down
-        // TODO: create plugin to allow referencing helpers, filters with dot notation
-        return this.cache[key];
-    };
-    Cacher.prototype.remove = function (key) {
-        delete this.cache[key];
-    };
-    Cacher.prototype.reset = function () {
-        this.cache = {};
-    };
-    Cacher.prototype.load = function (cacheObj) {
-        for (var key in cacheObj) {
-            if (cacheObj.hasOwnProperty(key)) {
-                this.cache[key] = cacheObj[key];
+    ret += '}';
+    return ret;
+}
+function parseBlocks(blocks, env) {
+    var ret = '[';
+    for (var i = 0; i < blocks.length; i++) {
+        var block = blocks[i];
+        ret += parseHelper(env, block.res || '', block.d, block.p || '', block.n);
+        if (i < blocks.length) {
+            ret += ',';
+        }
+    }
+    ret += ']';
+    return ret;
+}
+function ParseScopeIntoFunction(buff, res, env) {
+    return 'function(' + res + "){var tR='';" + ParseScope(buff, env) + 'return tR}';
+}
+function ParseScope(buff, env) {
+    var i = 0;
+    var buffLength = buff.length;
+    var returnStr = '';
+    for (i; i < buffLength; i++) {
+        var currentBlock = buff[i];
+        if (typeof currentBlock === 'string') {
+            var str = currentBlock;
+            // we know string exists
+            returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';";
+            // I believe the above replace is already in Parse
+        }
+        else {
+            var type = currentBlock.t; // ~, s, !, ?, r
+            var content = currentBlock.c || '';
+            var filters = currentBlock.f;
+            var name = currentBlock.n || '';
+            var params = currentBlock.p || '';
+            var res = currentBlock.res || '';
+            var blocks = currentBlock.b;
+            if (type === 'r') {
+                if (!currentBlock.raw && env.autoEscape) {
+                    content = "c.l('F','e')(" + content + ')';
+                }
+                var filtered = filter(content, filters);
+                returnStr += 'tR+=' + filtered + ';';
+                // reference
+            }
+            else if (type === '~') {
+                // helper
+                // TODO: native helpers
+                if (NativeHelpers.get(name)) {
+                    returnStr += NativeHelpers.get(name)(currentBlock, env);
+                }
+                else {
+                    var helperReturn = "c.l('H','" +
+                        name +
+                        "')(" +
+                        parseHelper(env, res, currentBlock.d, params);
+                    if (blocks) {
+                        helperReturn += ',' + parseBlocks(blocks, env);
+                    }
+                    else {
+                        helperReturn += ',[]';
+                    }
+                    helperReturn += ',c)';
+                    returnStr += 'tR+=' + filter(helperReturn, filters) + ';';
+                }
+            }
+            else if (type === 's') {
+                returnStr += 'tR+=' + filter("c.l('H','" + name + "')(" + params + ',[],c)', filters) + ';';
+                // self-closing helper
+            }
+            else if (type === '!') {
+                // execute
+                returnStr += content + ';';
             }
         }
-    };
-    return Cacher;
-}());
+    }
+    return returnStr;
+}
+function filter(str, filters) {
+    for (var i = 0; i < filters.length; i++) {
+        var name = filters[i][0];
+        var params = filters[i][1];
+        str = "c.l('F','" + name + "')(" + str;
+        if (params) {
+            str += ',' + params;
+        }
+        str += ')';
+    }
+    return str;
+}
 
+// interface ITemplate {
+//   exec: (options: object, Sqrl: object) => string
+// }
+var Templates = new Cacher({});
 var Helpers = new Cacher({
     each: function (content) {
         // helperStart is called with (params, id) but id isn't needed
@@ -399,173 +511,51 @@ function XMLEscape(str) {
 }
 var Filters = new Cacher({ e: XMLEscape });
 
-function CompileToString(str, env) {
-    var buffer = Parse(str, env);
-    return ("var tR='';" +
-        ParseScope(buffer, env)
-            .replace(/\n/g, '\\n')
-            .replace(/\r/g, '\\r') +
-        'return tR');
-}
-// TODO: rename parseHelper, parseScope, etc. to compileHelper, compileScope, etc.
-// TODO: Use type intersections for TemplateObject, etc.
-// so I don't have to make properties mandatory
-function parseHelper(env, res, descendants, params, name) {
-    var ret = '{exec:' + ParseScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']';
-    if (name) {
-        ret += ",name:'" + name + "'";
-    }
-    ret += '}';
-    return ret;
-}
-function parseBlocks(blocks, env) {
-    var ret = '[';
-    for (var i = 0; i < blocks.length; i++) {
-        var block = blocks[i];
-        ret += parseHelper(env, block.res || '', block.d, block.p || '', block.n);
-        if (i < blocks.length) {
-            ret += ',';
+var defaultConfig = {
+    varName: 'it',
+    autoTrim: [false, 'nl'],
+    autoEscape: true,
+    defaultFilter: false,
+    tags: ['{{', '}}'],
+    l: function (container, name) {
+        if (container === 'H') {
+            return Helpers.get(name);
         }
-    }
-    ret += ']';
-    return ret;
-}
-function ParseScopeIntoFunction(buff, res, env) {
-    return 'function(' + res + "){var tR='';" + ParseScope(buff, env) + 'return tR}';
-}
-function ParseScope(buff, env) {
-    var i = 0;
-    var buffLength = buff.length;
-    var returnStr = '';
-    for (i; i < buffLength; i++) {
-        var currentBlock = buff[i];
-        if (typeof currentBlock === 'string') {
-            var str = currentBlock;
-            // we know string exists
-            returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';";
-            // I believe the above replace is already in Parse
+        else if (container === 'F') {
+            return Filters.get(name);
         }
-        else {
-            var type = currentBlock.t; // ~, s, !, ?, r
-            var content = currentBlock.c || '';
-            var filters = currentBlock.f;
-            var name = currentBlock.n || '';
-            var params = currentBlock.p || '';
-            var res = currentBlock.res || '';
-            var blocks = currentBlock.b;
-            if (type === 'r') {
-                if (!currentBlock.raw && env.autoEscape) {
-                    content = "l('F','e')(" + content + ')';
-                }
-                var filtered = filter(content, filters);
-                returnStr += 'tR+=' + filtered + ';';
-                // reference
-            }
-            else if (type === '~') {
-                // helper
-                // TODO: native helpers
-                if (NativeHelpers.get(name)) {
-                    returnStr += NativeHelpers.get(name)(currentBlock, env);
-                }
-                else {
-                    var helperReturn = "l('H','" +
-                        name +
-                        "')(" +
-                        parseHelper(env, res, currentBlock.d, params);
-                    if (blocks) {
-                        helperReturn += ',' + parseBlocks(blocks, env);
-                    }
-                    helperReturn += ')';
-                    returnStr += 'tR+=' + filter(helperReturn, filters) + ';';
-                }
-            }
-            else if (type === 's') {
-                returnStr += 'tR+=' + filter("l('H','" + name + "')(" + params + ')', filters) + ';';
-                // self-closing helper
-            }
-            else if (type === '!') {
-                // execute
-                returnStr += content + ';';
-            }
-        }
+    },
+    async: false,
+    cache: false,
+    plugins: {
+        processAST: [],
+        processFuncString: []
     }
-    return returnStr;
-}
-function filter(str, filters) {
-    for (var i = 0; i < filters.length; i++) {
-        var name = filters[i][0];
-        var params = filters[i][1];
-        str = "l('F','" + name + "')(" + str;
-        if (params) {
-            str += ',' + params;
-        }
-        str += ')';
-    }
-    return str;
-}
-
-function Config(newConfig, name) {
-    // TODO:
-    // Double-check this is performant, doesn't cause errors
-    var conf = returnDefaultConfig();
-    for (var attrname in newConfig) {
-        conf[attrname] = newConfig[attrname];
-    }
-    if (name) {
-        Env[name] = conf;
-    }
-    return conf;
-}
-function getConfig(conf) {
-    /* tslint:disable:strict-type-predicates */
-    if (typeof conf === 'string') {
-        return Env[conf];
-    }
-    else if (typeof conf === 'object') {
-        return Config(conf);
-    }
-    else {
-        throw SqrlErr('Env reference cannot be of type: ' + typeof conf);
-    }
-    /* tslint:enable:strict-type-predicates */
-}
-function returnDefaultConfig() {
+};
+function getConfig(override) {
     return {
-        varName: 'it',
-        autoTrim: [false, 'nl'],
-        autoEscape: true,
-        defaultFilter: false,
-        tags: ['{{', '}}'],
-        loadFunction: function (container, name) {
-            if (container === 'H') {
-                return Helpers.get(name);
-            }
-            else if (container === 'F') {
-                return Filters.get(name);
-            }
-        },
-        async: false,
-        plugins: {
-            processAST: [],
-            processFuncString: []
-        }
+        varName: override.varName || defaultConfig.varName,
+        autoTrim: override.autoTrim || defaultConfig.autoTrim,
+        autoEscape: override.autoEscape || defaultConfig.autoEscape,
+        defaultFilter: override.defaultFilter || defaultConfig.defaultFilter,
+        tags: override.tags || defaultConfig.tags,
+        l: override.l || defaultConfig.l,
+        async: override.async || defaultConfig.async,
+        cache: override.cache || defaultConfig.cache,
+        plugins: override.plugins || defaultConfig.plugins,
+        filename: override.filename,
+        name: override.name
     };
 }
-var Env = {
-    default: returnDefaultConfig()
-};
 // Have different envs. Sqrl.Render, Compile, etc. all use default env
 // Use class for env
 
 function Compile(str, env) {
-    var SqrlEnv = Env.default;
+    var Options = getConfig(env || {});
     var ctor; // constructor
-    if (env) {
-        SqrlEnv = getConfig(env);
-    }
     /* ASYNC HANDLING */
     // The below code is modified from mde/ejs. All credit should go to them.
-    if (SqrlEnv.async) {
+    if (Options.async) {
         // Have to use generated function for this, since in envs without support,
         // it breaks in parsing
         try {
@@ -584,26 +574,276 @@ function Compile(str, env) {
         ctor = Function;
     }
     /* END ASYNC HANDLING */
-    return new ctor(SqrlEnv.varName, 'l', // this fetches helpers, partials, etc.
-    CompileToString(str, SqrlEnv)); // eslint-disable-line no-new-func
+    return new ctor(Options.varName, 'c', // SqrlConfig
+    CompileToString(str, Options)); // eslint-disable-line no-new-func
 }
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
-function Render(template, data, env, options) {
-    var Config = Env.default;
-    if (env) {
-        if (typeof env === 'function') {
-            env = env(options); // this can be used to dynamically pick an env based on name, etc.
+var fs = require('fs');
+var path = require('path');
+var _BOM = /^\uFEFF/;
+/**
+ * Get the path to the included file from the parent file path and the
+ * specified path.
+ *
+ * @param {String}  name       specified path
+ * @param {String}  parentfile parent file path
+ * @param {Boolean} [isDir=false] whether parent file path is a directory
+ * @return {String}
+ */
+function getWholeFilePath(name, parentfile, isDirectory) {
+    var includePath = path.resolve(isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
+    name // file
+    );
+    var ext = path.extname(name);
+    if (!ext) {
+        includePath += '.sqrl';
+    }
+    return includePath;
+}
+/**
+ * Get the path to the included file by Options
+ *
+ * @param  {String}  path    specified path
+ * @param  {Options} options compilation options
+ * @return {String}
+ */
+function getPath(path, options) {
+    var includePath;
+    var filePath;
+    var views = options.views;
+    var match = /^[A-Za-z]+:\\|^\//.exec(path);
+    // Abs path
+    if (match && match.length) {
+        includePath = getWholeFilePath(path.replace(/^\/*/, ''), options.root || '/', true);
+    }
+    // Relative paths
+    else {
+        // Look relative to a passed filename first
+        if (options.filename) {
+            filePath = getWholeFilePath(path, options.filename);
+            if (fs.existsSync(filePath)) {
+                includePath = filePath;
+            }
         }
-        Config = getConfig(env);
+        // Then look in any views directories
+        if (!includePath) {
+            if (Array.isArray(views) &&
+                views.some(function (v) {
+                    filePath = getWholeFilePath(path, v, true);
+                    return fs.existsSync(filePath);
+                })) {
+                includePath = filePath;
+            }
+        }
+        if (!includePath) {
+            throw SqrlErr('Could not find the include file "' + path + '"');
+        }
     }
-    if (typeof template === 'function') {
-        return template(data, Config.loadFunction);
+    return includePath;
+}
+function readFile(filePath) {
+    return fs
+        .readFileSync(filePath)
+        .toString()
+        .replace(_BOM, ''); // TODO: is replacing BOM's necessary?
+}
+function loadFile(filePath, options) {
+    var template = readFile(filePath);
+    try {
+        var compiledTemplate = Compile(template, options);
+        Templates.define(options.filename, compiledTemplate);
+        return compiledTemplate;
     }
-    // else
-    var templateFunc = Compile(template, Config);
-    return templateFunc(data, Config.loadFunction);
+    catch (e) {
+        throw SqrlErr('Loading file: ' + filePath + ' failed');
+    }
 }
 
-export { Compile, CompileToString, Config, Env, Filters, Helpers, NativeHelpers, Parse, ParseScope, ParseScopeIntoFunction, Render };
+var promiseImpl = new Function('return this;')().Promise;
+/**
+ * Get the template from a string or a file, either compiled on-the-fly or
+ * read from cache (if enabled), and cache the template if needed.
+ *
+ * If `options.cache` is true, this function reads the file from
+ * `options.filename` so it must be set prior to calling this function.
+ *
+ * @param {Options} options   compilation options
+ * @param {String} [template] template source
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned.
+ * @static
+ */
+function handleCache(options) {
+    var filename = options.filename;
+    if (options.cache) {
+        var func = Templates.get(filename);
+        if (func) {
+            return func;
+        }
+        else {
+            return loadFile(filename, options);
+        }
+    }
+    return Compile(readFile(filename), options);
+}
+/**
+ * Try calling handleCache with the given options and data and call the
+ * callback with the result. If an error occurs, call the callback with
+ * the error. Used by renderFile().
+ *
+ * @param {Options} options    compilation options
+ * @param {Object} data        template data
+ * @param {RenderFileCallback} cb callback
+ * @static
+ */
+function tryHandleCache(options, data, cb) {
+    var result;
+    if (!cb) {
+        // No callback, try returning a promise
+        if (typeof promiseImpl == 'function') {
+            return new promiseImpl(function (resolve, reject) {
+                try {
+                    result = handleCache(options)(data, options);
+                    resolve(result);
+                }
+                catch (err) {
+                    reject(err);
+                }
+            });
+        }
+        else {
+            throw SqrlErr("Please provide a callback function, this env doesn't support Promises");
+        }
+    }
+    else {
+        try {
+            result = handleCache(options)(data, options);
+        }
+        catch (err) {
+            return cb(err);
+        }
+        cb(null, result);
+    }
+}
+/**
+ * Get the template function.
+ *
+ * If `options.cache` is `true`, then the template is cached.
+ *
+ * @param {String}  path    path for the specified file
+ * @param {Options} options compilation options
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned
+ * @static
+ */
+function includeFile(path, options) {
+    // the below creates a new options object, using the parent filepath of the old options object and the path
+    var newFileOptions = getConfig({ filename: getPath(path, options) });
+    return handleCache(newFileOptions);
+}
+function renderFile(filename, data, options, cb) {
+    var Config = getConfig(options || {});
+    // TODO: make sure above doesn't error. We do set filename down below
+    if (data.settings) {
+        // Pull a few things from known locations
+        if (data.settings.views) {
+            Config.views = data.settings.views;
+        }
+        if (data.settings['view cache']) {
+            Config.cache = true;
+        }
+        // Undocumented after Express 2, but still usable, esp. for
+        // items that are unsafe to be passed along with data, like `root`
+        var viewOpts = data.settings['view options'];
+        if (viewOpts) {
+            for (var key in viewOpts) {
+                if (viewOpts.hasOwnProperty(key)) {
+                    Config[key] = viewOpts[key];
+                }
+            }
+        }
+    }
+    Config.filename = filename; // Make sure filename is right
+    return tryHandleCache(Config, data, cb);
+}
+
+function includeFileHelper(content, blocks, config) {
+    // helperStart is called with (params, id) but id isn't needed
+    if (blocks && blocks.length > 0) {
+        throw SqrlErr("Helper 'include' doesn't accept blocks");
+    }
+    return includeFile(content.params[0], config)(content.params[1], config);
+}
+function includeHelper(content, blocks, config) {
+    // helperStart is called with (params, id) but id isn't needed
+    if (blocks && blocks.length > 0) {
+        throw SqrlErr("Helper 'include' doesn't accept blocks");
+    }
+    var template = Templates.get(content.params[0]);
+    if (!template) {
+        throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
+    }
+    return template(content.params[1], config);
+}
+// interface ExtendsHelperBlock extends HelperBlock {
+//   params: [string, object]
+// }
+// interface ExtendsHelperNameBlock extends HelperBlock {
+//   params: [string]
+// }
+// export function extendsHelper (
+//   content: ExtendsHelperBlock,
+//   blocks: Array<ExtendsHelperNameBlock>
+// ): string {
+//   // helperStart is called with (params, id) but id isn't needed
+//   if (blocks && blocks.length > 0) {
+//     throw SqrlErr("Helper 'extends' doesn't accept blocks")
+//   }
+//   var res = ''
+//   var param = content.params[0]
+//   for (var i = 0; i < param.length; i++) {
+//     res += content.exec(param[i], i)
+//   }
+//   return res
+// }
+// export function extendsFileHelper (
+//   content: ExtendsHelperBlock,
+//   blocks: Array<ExtendsHelperNameBlock>
+// ): string {
+//   // helperStart is called with (params, id) but id isn't needed
+//   if (blocks && blocks.length > 0) {
+//     throw SqrlErr("Helper 'extends' doesn't accept blocks")
+//   }
+//   var res = ''
+//   var param = content.params[0]
+//   for (var i = 0; i < param.length; i++) {
+//     res += content.exec(param[i], i)
+//   }
+//   return res
+// }
+
+function Render(template, data, env) {
+    var Options = getConfig(env || {});
+    var templateFunc;
+    if (Options.cache && Options.name && Templates.get(Options.name)) {
+        return Templates.get(Options.name)(data, Options);
+    }
+    if (typeof template === 'function') {
+        templateFunc = template;
+    }
+    else {
+        templateFunc = Compile(template, Options);
+    }
+    if (Options.cache && Options.name) {
+        Templates.define(Options.name, templateFunc);
+    }
+    return templateFunc(data, Options.loadFunction);
+}
+
+// TODO: allow importing polyfills?
+Helpers.define('include', includeHelper);
+Helpers.define('includeFile', includeFileHelper);
+
+export { Compile, CompileToString, Filters, Helpers, NativeHelpers, Parse, ParseScope, ParseScopeIntoFunction, Render, renderFile as __express, defaultConfig, getConfig, renderFile };
 //# sourceMappingURL=squirrelly.es.js.map

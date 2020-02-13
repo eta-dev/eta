@@ -1,17 +1,15 @@
 import CompileToString from './compile-string'
-import { Env, SqrlConfig, getConfig } from './config'
+import { getConfig, SqrlConfig, FetcherFunction, PartialConfig } from './config'
 
-type TemplateFunction = (data: object, fetcher: Function) => string
+export type TemplateFunction = (data: object, config: SqrlConfig) => string
 
-function Compile (str: string, env?: string | SqrlConfig): TemplateFunction {
-  var SqrlEnv: SqrlConfig = Env.default
+function Compile (str: string, env?: PartialConfig): TemplateFunction {
+  var Options: SqrlConfig = getConfig(env || {})
   var ctor // constructor
-  if (env) {
-    SqrlEnv = getConfig(env)
-  }
+
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.
-  if (SqrlEnv.async) {
+  if (Options.async) {
     // Have to use generated function for this, since in envs without support,
     // it breaks in parsing
     try {
@@ -28,9 +26,9 @@ function Compile (str: string, env?: string | SqrlConfig): TemplateFunction {
   }
   /* END ASYNC HANDLING */
   return new ctor(
-    SqrlEnv.varName,
-    'l', // this fetches helpers, partials, etc.
-    CompileToString(str, SqrlEnv)
+    Options.varName,
+    'c', // SqrlConfig
+    CompileToString(str, Options)
   ) as TemplateFunction // eslint-disable-line no-new-func
 }
 

@@ -1,30 +1,30 @@
 import Compile from './compile'
 import SqrlErr from './err'
-import { Env, PartialConfig, getConfig } from './config'
+import { getConfig, SqrlConfig, FetcherFunction, PartialConfig } from './config'
+import { Templates } from './containers'
 
-type TemplateFunction = (data: object, fetcher: Function) => string
-type DetermineEnvFunction = (options?: object) => string | PartialConfig
+type TemplateFunction = (data: object, config: SqrlConfig) => string
+type CallbackFn = (err: Error | null, str?: string) => void
 
-function Render (
-  template: string | TemplateFunction,
-  data: object,
-  env?: string | DetermineEnvFunction | PartialConfig,
-  options?: object
-) {
-  var Config = Env.default
-  if (env) {
-    if (typeof env === 'function') {
-      env = env(options) // this can be used to dynamically pick an env based on name, etc.
-    }
+function Render (template: string | TemplateFunction, data: object, env?: PartialConfig) {
+  var Options = getConfig(env || {})
+  var templateFunc
 
-    Config = getConfig(env)
+  if (Options.cache && Options.name && Templates.get(Options.name)) {
+    return Templates.get(Options.name)(data, Options)
   }
+
   if (typeof template === 'function') {
-    return template(data, Config.loadFunction)
+    templateFunc = template
+  } else {
+    templateFunc = Compile(template, Options)
   }
-  // else
-  var templateFunc = Compile(template, Config)
-  return templateFunc(data, Config.loadFunction)
+
+  if (Options.cache && Options.name) {
+    Templates.define(Options.name, templateFunc)
+  }
+
+  return templateFunc(data, Options.loadFunction)
 }
 
 export default Render

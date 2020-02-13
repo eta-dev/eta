@@ -10,7 +10,7 @@ const pkg = require('./package.json')
 
 export default [
   {
-    input: 'src/index.ts', // todo: use rollup-plugin-replace
+    input: 'src/browser.ts', // todo: use rollup-plugin-replace
     output: [
       {
         file: 'dist/browser/squirrelly.dev.js',

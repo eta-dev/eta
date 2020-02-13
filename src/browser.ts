@@ -1,13 +1,6 @@
-// TODO: allow importing polyfills?
+// Import here Polyfills if needed. Recommended core-js (npm i -D core-js)
 // import "core-js/fn/array.find"
 // ...
-
-import { Helpers, HelperFunction } from './containers'
-import { includeHelper, includeFileHelper } from './file-helpers'
-Helpers.define('include', includeHelper as HelperFunction)
-Helpers.define('includeFile', includeFileHelper as HelperFunction)
-export { renderFile, renderFile as __express } from './file-handlers'
-
 export { default as CompileToString, ParseScope, ParseScopeIntoFunction } from './compile-string'
 export { default as Compile } from './compile'
 export { default as Parse } from './parse'

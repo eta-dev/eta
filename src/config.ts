@@ -1,81 +1,70 @@
 import { Helpers, Templates, Filters } from './containers'
 import SqrlErr from './err'
 
-interface Dict {
-  [key: string]: SqrlConfig
-}
+export type FetcherFunction = (container: 'H' | 'F', name: string) => any
+
+type trimConfig = 'nl' | 'slurp' | boolean
 
 export interface SqrlConfig {
   varName: string
-  autoTrim: boolean | 'nl' | 'slurp' | ['nl' | 'slurp' | boolean, 'nl' | 'slurp' | boolean]
+  autoTrim: trimConfig | [trimConfig, trimConfig]
   autoEscape: boolean
   defaultFilter: false | Function
   tags: [string, string]
-  loadFunction: Function
+  l: FetcherFunction
   plugins: { processAST: Array<object>; processFuncString: Array<object> }
   async: boolean
+  cache: boolean
+  views?: string | Array<string>
+  root?: string
+  filename?: string
+  name?: string
+  'view cache'?: boolean
   [index: string]: any
+}
+
+var defaultConfig: SqrlConfig = {
+  varName: 'it',
+  autoTrim: [false, 'nl'],
+  autoEscape: true,
+  defaultFilter: false,
+  tags: ['{{', '}}'],
+  l: function (container: 'H' | 'F', name: string) {
+    if (container === 'H') {
+      return Helpers.get(name)
+    } else if (container === 'F') {
+      return Filters.get(name)
+    }
+  },
+  async: false,
+  cache: false,
+  plugins: {
+    processAST: [],
+    processFuncString: []
+  }
 }
 
 export type PartialConfig = {
   [P in keyof SqrlConfig]?: SqrlConfig[P]
 }
 
-function Config (newConfig: PartialConfig, name?: string): SqrlConfig {
-  // TODO:
-  // Double-check this is performant, doesn't cause errors
-
-  var conf: SqrlConfig = returnDefaultConfig()
-
-  for (var attrname in newConfig) {
-    conf[attrname] = newConfig[attrname]
-  }
-
-  if (name) {
-    Env[name] = conf
-  }
-  return conf
-}
-
-function getConfig (conf: string | PartialConfig): SqrlConfig {
-  /* tslint:disable:strict-type-predicates */
-  if (typeof conf === 'string') {
-    return Env[conf]
-  } else if (typeof conf === 'object') {
-    return Config(conf)
-  } else {
-    throw SqrlErr('Env reference cannot be of type: ' + typeof conf)
-  }
-  /* tslint:enable:strict-type-predicates */
-}
-
-function returnDefaultConfig (): SqrlConfig {
+function getConfig (override: PartialConfig): SqrlConfig {
   return {
-    varName: 'it',
-    autoTrim: [false, 'nl'],
-    autoEscape: true,
-    defaultFilter: false,
-    tags: ['{{', '}}'],
-    loadFunction: function (container: 'H' | 'F', name: string) {
-      if (container === 'H') {
-        return Helpers.get(name)
-      } else if (container === 'F') {
-        return Filters.get(name)
-      }
-    },
-    async: false,
-    plugins: {
-      processAST: [],
-      processFuncString: []
-    }
+    varName: override.varName || defaultConfig.varName,
+    autoTrim: override.autoTrim || defaultConfig.autoTrim,
+    autoEscape: override.autoEscape || defaultConfig.autoEscape,
+    defaultFilter: override.defaultFilter || defaultConfig.defaultFilter,
+    tags: override.tags || defaultConfig.tags,
+    l: override.l || defaultConfig.l,
+    async: override.async || defaultConfig.async,
+    cache: override.cache || defaultConfig.cache,
+    plugins: override.plugins || defaultConfig.plugins,
+    filename: override.filename,
+    name: override.name
   }
 }
 
-var Env: Dict = {
-  default: returnDefaultConfig()
-}
-
-export { Env, Config, getConfig }
+export { defaultConfig, getConfig }
 
 // Have different envs. Sqrl.Render, Compile, etc. all use default env
 // Use class for env

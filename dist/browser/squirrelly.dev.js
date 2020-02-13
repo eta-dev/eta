@@ -326,6 +326,10 @@
       return Cacher;
   }());
 
+  // interface ITemplate {
+  //   exec: (options: object, Sqrl: object) => string
+  // }
+  var Templates = new Cacher({});
   var Helpers = new Cacher({
       each: function (content) {
           // helperStart is called with (params, id) but id isn't needed
@@ -461,7 +465,7 @@
               var blocks = currentBlock.b;
               if (type === 'r') {
                   if (!currentBlock.raw && env.autoEscape) {
-                      content = "l('F','e')(" + content + ')';
+                      content = "c.l('F','e')(" + content + ')';
                   }
                   var filtered = filter(content, filters);
                   returnStr += 'tR+=' + filtered + ';';
@@ -474,19 +478,22 @@
                       returnStr += NativeHelpers.get(name)(currentBlock, env);
                   }
                   else {
-                      var helperReturn = "l('H','" +
+                      var helperReturn = "c.l('H','" +
                           name +
                           "')(" +
                           parseHelper(env, res, currentBlock.d, params);
                       if (blocks) {
                           helperReturn += ',' + parseBlocks(blocks, env);
                       }
-                      helperReturn += ')';
+                      else {
+                          helperReturn += ',[]';
+                      }
+                      helperReturn += ',c)';
                       returnStr += 'tR+=' + filter(helperReturn, filters) + ';';
                   }
               }
               else if (type === 's') {
-                  returnStr += 'tR+=' + filter("l('H','" + name + "')(" + params + ')', filters) + ';';
+                  returnStr += 'tR+=' + filter("c.l('H','" + name + "')(" + params + ',[],c)', filters) + ';';
                   // self-closing helper
               }
               else if (type === '!') {
@@ -501,7 +508,7 @@
       for (var i = 0; i < filters.length; i++) {
           var name = filters[i][0];
           var params = filters[i][1];
-          str = "l('F','" + name + "')(" + str;
+          str = "c.l('F','" + name + "')(" + str;
           if (params) {
               str += ',' + params;
           }
@@ -510,68 +517,51 @@
       return str;
   }
 
-  function Config(newConfig, name) {
-      // TODO:
-      // Double-check this is performant, doesn't cause errors
-      var conf = returnDefaultConfig();
-      for (var attrname in newConfig) {
-          conf[attrname] = newConfig[attrname];
-      }
-      if (name) {
-          Env[name] = conf;
-      }
-      return conf;
-  }
-  function getConfig(conf) {
-      /* tslint:disable:strict-type-predicates */
-      if (typeof conf === 'string') {
-          return Env[conf];
-      }
-      else if (typeof conf === 'object') {
-          return Config(conf);
-      }
-      else {
-          throw SqrlErr('Env reference cannot be of type: ' + typeof conf);
-      }
-      /* tslint:enable:strict-type-predicates */
-  }
-  function returnDefaultConfig() {
-      return {
-          varName: 'it',
-          autoTrim: [false, 'nl'],
-          autoEscape: true,
-          defaultFilter: false,
-          tags: ['{{', '}}'],
-          loadFunction: function (container, name) {
-              if (container === 'H') {
-                  return Helpers.get(name);
-              }
-              else if (container === 'F') {
-                  return Filters.get(name);
-              }
-          },
-          async: false,
-          plugins: {
-              processAST: [],
-              processFuncString: []
+  var defaultConfig = {
+      varName: 'it',
+      autoTrim: [false, 'nl'],
+      autoEscape: true,
+      defaultFilter: false,
+      tags: ['{{', '}}'],
+      l: function (container, name) {
+          if (container === 'H') {
+              return Helpers.get(name);
           }
+          else if (container === 'F') {
+              return Filters.get(name);
+          }
+      },
+      async: false,
+      cache: false,
+      plugins: {
+          processAST: [],
+          processFuncString: []
+      }
+  };
+  function getConfig(override) {
+      return {
+          varName: override.varName || defaultConfig.varName,
+          autoTrim: override.autoTrim || defaultConfig.autoTrim,
+          autoEscape: override.autoEscape || defaultConfig.autoEscape,
+          defaultFilter: override.defaultFilter || defaultConfig.defaultFilter,
+          tags: override.tags || defaultConfig.tags,
+          l: override.l || defaultConfig.l,
+          async: override.async || defaultConfig.async,
+          cache: override.cache || defaultConfig.cache,
+          plugins: override.plugins || defaultConfig.plugins,
+          filename: override.filename,
+          name: override.name
       };
   }
-  var Env = {
-      default: returnDefaultConfig()
-  };
   // Have different envs. Sqrl.Render, Compile, etc. all use default env
   // Use class for env
 
   function Compile(str, env) {
-      var SqrlEnv = Env.default;
+      var Options = getConfig(env || {});
       var ctor; // constructor
-      if (env) {
-          SqrlEnv = getConfig(env);
-      }
       /* ASYNC HANDLING */
       // The below code is modified from mde/ejs. All credit should go to them.
-      if (SqrlEnv.async) {
+      if (Options.async) {
           // Have to use generated function for this, since in envs without support,
           // it breaks in parsing
           try {
@@ -590,31 +580,31 @@
           ctor = Function;
       }
       /* END ASYNC HANDLING */
-      return new ctor(SqrlEnv.varName, 'l', // this fetches helpers, partials, etc.
-      CompileToString(str, SqrlEnv)); // eslint-disable-line no-new-func
+      return new ctor(Options.varName, 'c', // SqrlConfig
+      CompileToString(str, Options)); // eslint-disable-line no-new-func
   }
   // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
-  function Render(template, data, env, options) {
-      var Config = Env.default;
-      if (env) {
-          if (typeof env === 'function') {
-              env = env(options); // this can be used to dynamically pick an env based on name, etc.
-          }
-          Config = getConfig(env);
+  function Render(template, data, env) {
+      var Options = getConfig(env || {});
+      var templateFunc;
+      if (Options.cache && Options.name && Templates.get(Options.name)) {
+          return Templates.get(Options.name)(data, Options);
       }
       if (typeof template === 'function') {
-          return template(data, Config.loadFunction);
+          templateFunc = template;
       }
-      // else
-      var templateFunc = Compile(template, Config);
-      return templateFunc(data, Config.loadFunction);
+      else {
+          templateFunc = Compile(template, Options);
+      }
+      if (Options.cache && Options.name) {
+          Templates.define(Options.name, templateFunc);
+      }
+      return templateFunc(data, Options.loadFunction);
   }
 
   exports.Compile = Compile;
   exports.CompileToString = CompileToString;
-  exports.Config = Config;
-  exports.Env = Env;
   exports.Filters = Filters;
   exports.Helpers = Helpers;
   exports.NativeHelpers = NativeHelpers;
@@ -622,6 +612,8 @@
   exports.ParseScope = ParseScope;
   exports.ParseScopeIntoFunction = ParseScopeIntoFunction;
   exports.Render = Render;
+  exports.defaultConfig = defaultConfig;
+  exports.getConfig = getConfig;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -1,0 +1,102 @@
+var fs = require('fs')
+var path = require('path')
+var _BOM = /^\uFEFF/
+
+// express is set like: app.engine('html', require('ejs').renderFile)
+
+import SqrlErr from './err'
+import Compile, { TemplateFunction } from './compile'
+import { SqrlConfig, PartialConfig } from './config'
+import { Templates } from './containers'
+
+interface PartialFileOptions extends PartialConfig {
+  filename: string
+}
+
+/**
+ * Get the path to the included file from the parent file path and the
+ * specified path.
+ *
+ * @param {String}  name       specified path
+ * @param {String}  parentfile parent file path
+ * @param {Boolean} [isDir=false] whether parent file path is a directory
+ * @return {String}
+ */
+
+function getWholeFilePath (name: string, parentfile: string, isDirectory?: boolean) {
+  var includePath = path.resolve(
+    isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
+    name // file
+  )
+  var ext = path.extname(name)
+  if (!ext) {
+    includePath += '.sqrl'
+  }
+  return includePath
+}
+
+/**
+ * Get the path to the included file by Options
+ *
+ * @param  {String}  path    specified path
+ * @param  {Options} options compilation options
+ * @return {String}
+ */
+
+function getPath (path: string, options: SqrlConfig) {
+  var includePath
+  var filePath
+  var views = options.views
+  var match = /^[A-Za-z]+:\\|^\//.exec(path)
+
+  // Abs path
+  if (match && match.length) {
+    includePath = getWholeFilePath(path.replace(/^\/*/, ''), options.root || '/', true)
+  }
+  // Relative paths
+  else {
+    // Look relative to a passed filename first
+    if (options.filename) {
+      filePath = getWholeFilePath(path, options.filename)
+      if (fs.existsSync(filePath)) {
+        includePath = filePath
+      }
+    }
+    // Then look in any views directories
+    if (!includePath) {
+      if (
+        Array.isArray(views) &&
+        views.some(function (v) {
+          filePath = getWholeFilePath(path, v, true)
+          return fs.existsSync(filePath)
+        })
+      ) {
+        includePath = filePath
+      }
+    }
+    if (!includePath) {
+      throw SqrlErr('Could not find the include file "' + path + '"')
+    }
+  }
+  return includePath
+}
+
+function readFile (filePath: string) {
+  return fs
+    .readFileSync(filePath)
+    .toString()
+    .replace(_BOM, '') // TODO: is replacing BOM's necessary?
+}
+
+function loadFile (filePath: string, options: PartialFileOptions): TemplateFunction {
+  var template = readFile(filePath)
+  try {
+    var compiledTemplate = Compile(template, options)
+    Templates.define(options.filename, compiledTemplate)
+    return compiledTemplate
+  } catch (e) {
+    throw SqrlErr('Loading file: ' + filePath + ' failed')
+  }
+}
+
+export { getPath, readFile, loadFile }

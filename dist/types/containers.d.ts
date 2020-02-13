@@ -1,11 +1,12 @@
 import { Cacher } from './storage';
-declare type TemplateFunction = (options: object, l: (container: 'T' | 'H' | 'F', name: string) => any) => string;
+import { SqrlConfig } from './config';
+import { TemplateFunction } from './compile';
 declare var Templates: Cacher<TemplateFunction>;
-interface HelperBlock {
+export interface HelperBlock {
     exec: Function;
     params: Array<any>;
 }
-declare type HelperFunction = (content: HelperBlock, blocks: Array<HelperBlock>) => string;
+export declare type HelperFunction = (content: HelperBlock, blocks: Array<HelperBlock>, config: SqrlConfig) => string;
 declare var Helpers: Cacher<HelperFunction>;
 declare var NativeHelpers: Cacher<Function>;
 declare type FilterFunction = (str: string) => string;
