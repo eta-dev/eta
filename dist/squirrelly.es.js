@@ -314,6 +314,9 @@ function Parse(str, env) {
             pushString(str.slice(startInd, str.length));
             parentObj.d = buffer;
         }
+        else {
+            throw SqrlErr('unclosed helper "' + parentObj.n + '"');
+        }
         return parentObj;
     }
     var parseResult = parseContext({ f: [] }, true);

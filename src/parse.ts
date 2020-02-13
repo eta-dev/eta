@@ -1,5 +1,5 @@
 // Version 1.0.32
-import { ParseErr } from './err'
+import SqrlErr, { ParseErr } from './err'
 import { trimWS } from './utils'
 import { SqrlConfig } from './config'
 
@@ -222,6 +222,8 @@ export default function Parse (str: string, env: SqrlConfig): Array<AstObject> {
       // TODO: more intuitive
       pushString(str.slice(startInd, str.length))
       parentObj.d = buffer
+    } else {
+      throw SqrlErr('unclosed helper "' + parentObj.n + '"')
     }
 
     return parentObj as ParentTemplateObject
