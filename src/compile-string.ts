@@ -1,4 +1,4 @@
-import Parse, { AstObject, Filter, TemplateObject, ParentTemplateObject } from './parse'
+import Parse, { AstObject, Filter, ParentTemplateObject } from './parse'
 import { NativeHelpers } from './containers'
 import { SqrlConfig } from './config'
 

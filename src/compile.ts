@@ -1,5 +1,5 @@
 import CompileToString from './compile-string'
-import { getConfig, SqrlConfig, FetcherFunction, PartialConfig } from './config'
+import { getConfig, SqrlConfig, PartialConfig } from './config'
 
 export type TemplateFunction = (data: object, config: SqrlConfig) => string
 

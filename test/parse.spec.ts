@@ -1,5 +1,5 @@
 import { Parse } from '../src/index'
-import { Env } from '../src/config'
+import { defaultConfig } from '../src/config'
 
 var fs = require('fs'),
   path = require('path'),
@@ -12,17 +12,17 @@ const complexTemplate = fs.readFileSync(filePath, 'utf8')
  */
 describe('Parse test', () => {
   it('parses a simple template', () => {
-    var buff = Parse('hi {{ hey }}', Env.default)
+    var buff = Parse('hi {{ hey }}', defaultConfig)
     expect(buff).toEqual(['hi ', { f: [], c: 'hey', t: 'r' }])
   })
 
   it('works with whitespace trimming', () => {
-    var buff = Parse('hi\n{{-hey-}} {{_hi_}}', Env.default)
+    var buff = Parse('hi\n{{-hey-}} {{_hi_}}', defaultConfig)
     expect(buff).toEqual(['hi', { f: [], c: 'hey', t: 'r' }, { f: [], c: 'hi', t: 'r' }])
   })
 
   it('works with filters', () => {
-    var buff = Parse('hi {{ hey | stuff | stuff2 ("param1") }}', Env.default)
+    var buff = Parse('hi {{ hey | stuff | stuff2 ("param1") }}', defaultConfig)
     expect(buff).toEqual([
       'hi ',
       {
@@ -37,7 +37,7 @@ describe('Parse test', () => {
   })
 
   it('works with helpers', () => {
-    var buff = Parse('{{~each(x) => hi }} Hey {{#else }} oops {{/ each}}', Env.default)
+    var buff = Parse('{{~each(x) => hi }} Hey {{#else }} oops {{/ each}}', defaultConfig)
     expect(buff).toEqual([
       {
         f: [],
@@ -52,7 +52,7 @@ describe('Parse test', () => {
   })
 
   it('compiles complex template', () => {
-    var buff = Parse(complexTemplate, Env.default)
+    var buff = Parse(complexTemplate, defaultConfig)
     expect(buff).toEqual([
       'Hi\n',
       { f: [], n: 'log', p: '"Hope you like Squirrelly!"', t: 's' },
@@ -122,29 +122,29 @@ describe('Parse test', () => {
 
   test('throws with bad filter syntax', () => {
     expect(() => {
-      Parse('{{~hi () hey | hi /}}', Env.default)
+      Parse('{{~hi () hey | hi /}}', defaultConfig)
     }).toThrow()
   })
 
   test('throws with unclosed tag', () => {
     expect(() => {
-      Parse('{{hi("hey")', Env.default)
+      Parse('{{hi("hey")', defaultConfig)
     }).toThrow()
   })
 
   it('works with self-closing helpers', () => {
-    var buff = Parse('{{~log ("hey") | hi /}}', Env.default)
+    var buff = Parse('{{~log ("hey") | hi /}}', defaultConfig)
     expect(buff).toEqual([{ f: [['hi', '']], n: 'log', p: '"hey"', t: 's' }])
   })
 
   it('works with helpers with results', () => {
-    var buff = Parse('{{~log ("hey") => res, res2}}{{/log}}', Env.default)
+    var buff = Parse('{{~log ("hey") => res, res2}}{{/log}}', defaultConfig)
     expect(buff).toEqual([{ f: [], n: 'log', p: '"hey"', res: 'res, res2', t: '~', b: [], d: [] }])
   })
 
   test("throws when helpers start and end don't match", () => {
     expect(() => {
-      Parse('{{~each(x) => hi }} Hey {{#else }} oops {{/ if}}', Env.default)
+      Parse('{{~each(x) => hi }} Hey {{#else }} oops {{/ if}}', defaultConfig)
     }).toThrow()
   })
 })

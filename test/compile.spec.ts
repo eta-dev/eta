@@ -15,7 +15,7 @@ describe('Compile test', () => {
   })
 
   it('parses a simple template when env name is passed', () => {
-    var str = Compile('hi {{ hey }}', 'default')
+    var str = Compile('hi {{ hey }}')
     expect(str).toBeTruthy()
   })
 

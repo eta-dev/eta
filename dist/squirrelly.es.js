@@ -533,19 +533,23 @@ var defaultConfig = {
     }
 };
 function getConfig(override) {
-    return {
-        varName: override.varName || defaultConfig.varName,
-        autoTrim: override.autoTrim || defaultConfig.autoTrim,
-        autoEscape: override.autoEscape || defaultConfig.autoEscape,
-        defaultFilter: override.defaultFilter || defaultConfig.defaultFilter,
-        tags: override.tags || defaultConfig.tags,
-        l: override.l || defaultConfig.l,
-        async: override.async || defaultConfig.async,
-        cache: override.cache || defaultConfig.cache,
-        plugins: override.plugins || defaultConfig.plugins,
-        filename: override.filename,
-        name: override.name
+    var res = {
+        varName: defaultConfig.varName,
+        autoTrim: defaultConfig.autoTrim,
+        autoEscape: defaultConfig.autoEscape,
+        defaultFilter: defaultConfig.defaultFilter,
+        tags: defaultConfig.tags,
+        l: defaultConfig.l,
+        async: defaultConfig.async,
+        cache: defaultConfig.cache,
+        plugins: defaultConfig.plugins
     };
+    for (var key in override) {
+        if (override.hasOwnProperty(key)) {
+            res[key] = override[key];
+        }
+    }
+    return res;
 }
 // Have different envs. Sqrl.Render, Compile, etc. all use default env
 // Use class for env
@@ -838,7 +842,7 @@ function Render(template, data, env) {
     if (Options.cache && Options.name) {
         Templates.define(Options.name, templateFunc);
     }
-    return templateFunc(data, Options.loadFunction);
+    return templateFunc(data, Options);
 }
 
 // TODO: allow importing polyfills?

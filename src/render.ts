@@ -1,6 +1,5 @@
 import Compile from './compile'
-import SqrlErr from './err'
-import { getConfig, SqrlConfig, FetcherFunction, PartialConfig } from './config'
+import { getConfig, SqrlConfig, PartialConfig } from './config'
 import { Templates } from './containers'
 
 type TemplateFunction = (data: object, config: SqrlConfig) => string
@@ -24,7 +23,7 @@ function Render (template: string | TemplateFunction, data: object, env?: Partia
     Templates.define(Options.name, templateFunc)
   }
 
-  return templateFunc(data, Options.loadFunction)
+  return templateFunc(data, Options)
 }
 
 export default Render

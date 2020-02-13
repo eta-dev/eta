@@ -1,4 +1,4 @@
-import { Render, Compile, Filters, Env, CompileToString } from '../src/index'
+import { Render, Filters, defaultConfig, CompileToString } from '../src/index'
 
 var eachTemplate = `
 The Daugherty's have 8 kids. Their names are:
@@ -95,13 +95,13 @@ Uh-oh, If doesn't know what to do
 
   test('throws when if helper has filters', () => {
     expect(() => {
-      CompileToString(ifTemplateFilter, Env.default)
+      CompileToString(ifTemplateFilter, defaultConfig)
     }).toThrow()
   })
 
   test('throws when if helper has unrecognized blocks', () => {
     expect(() => {
-      CompileToString(ifTemplateBlock, Env.default)
+      CompileToString(ifTemplateBlock, defaultConfig)
     }).toThrow()
   })
 
@@ -125,13 +125,13 @@ Uh-oh, error! Message was '{{err.message}}'
 
   test('throws when try catch has filters', () => {
     expect(() => {
-      CompileToString(tryTemplateFilter, Env.default)
+      CompileToString(tryTemplateFilter, defaultConfig)
     }).toThrow()
   })
 
   test('throws when try catch has unrecognized block', () => {
     expect(() => {
-      CompileToString(tryTemplateBlock, Env.default)
+      CompileToString(tryTemplateBlock, defaultConfig)
     }).toThrow()
   })
 })

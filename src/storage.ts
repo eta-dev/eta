@@ -1,5 +1,3 @@
-import SqrlErr from './err'
-
 interface ICache<T> {
   // Basically, an object where all keys point to a value of the same type
   [key: string]: T

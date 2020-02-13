@@ -1,5 +1,4 @@
-import { Helpers, Templates, Filters } from './containers'
-import SqrlErr from './err'
+import { Helpers, Filters } from './containers'
 
 export type FetcherFunction = (container: 'H' | 'F', name: string) => any
 
@@ -49,19 +48,24 @@ export type PartialConfig = {
 }
 
 function getConfig (override: PartialConfig): SqrlConfig {
-  return {
-    varName: override.varName || defaultConfig.varName,
-    autoTrim: override.autoTrim || defaultConfig.autoTrim,
-    autoEscape: override.autoEscape || defaultConfig.autoEscape,
-    defaultFilter: override.defaultFilter || defaultConfig.defaultFilter,
-    tags: override.tags || defaultConfig.tags,
-    l: override.l || defaultConfig.l,
-    async: override.async || defaultConfig.async,
-    cache: override.cache || defaultConfig.cache,
-    plugins: override.plugins || defaultConfig.plugins,
-    filename: override.filename,
-    name: override.name
+  var res: SqrlConfig = {
+    varName: defaultConfig.varName,
+    autoTrim: defaultConfig.autoTrim,
+    autoEscape: defaultConfig.autoEscape,
+    defaultFilter: defaultConfig.defaultFilter,
+    tags: defaultConfig.tags,
+    l: defaultConfig.l,
+    async: defaultConfig.async,
+    cache: defaultConfig.cache,
+    plugins: defaultConfig.plugins
   }
+
+  for (var key in override) {
+    if (override.hasOwnProperty(key)) {
+      res[key] = override[key]
+    }
+  }
+  return res
 }
 
 export { defaultConfig, getConfig }
