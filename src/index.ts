@@ -2,16 +2,31 @@
 // import "core-js/fn/array.find"
 // ...
 
-import { Helpers, HelperFunction } from './containers'
+/* Export file stuff */
+import { helpers } from './containers'
 import { includeHelper, includeFileHelper } from './file-helpers'
-Helpers.define('include', includeHelper as HelperFunction)
-Helpers.define('includeFile', includeFileHelper as HelperFunction)
+
+/* TYPES */
+
+import { HelperFunction } from './containers'
+
+/* END TYPES */
+
+helpers.define('include', includeHelper as HelperFunction)
+helpers.define('includeFile', includeFileHelper as HelperFunction)
+
 export { renderFile, renderFile as __express } from './file-handlers'
 export { loadFile } from './file-utils'
 
-export { default as CompileToString, ParseScope, ParseScopeIntoFunction } from './compile-string'
-export { default as Compile } from './compile'
-export { default as Parse } from './parse'
-export { default as Render } from './render'
-export { Helpers, NativeHelpers, Filters, Templates } from './containers'
+/* End file stuff */
+
+export {
+  default as compileToString,
+  compileScope,
+  compileScopeIntoFunction
+} from './compile-string'
+export { default as compile } from './compile'
+export { default as parse } from './parse'
+export { default as render } from './render'
+export { helpers, nativeHelpers, filters, templates } from './containers'
 export { defaultConfig, getConfig } from './config'

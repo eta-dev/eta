@@ -2,16 +2,31 @@ var promiseImpl = new Function('return this;')().Promise
 
 // express is set like: app.engine('html', require('squirrelly').renderFile)
 
-import { Templates } from './containers'
+import { templates } from './containers'
 import SqrlErr from './err'
-import Compile, { TemplateFunction } from './compile'
-import { SqrlConfig, PartialConfig, getConfig } from './config'
+import compile from './compile'
+import { getConfig } from './config'
 import { getPath, readFile, loadFile } from './file-utils'
+
+/* TYPES */
+
+import { SqrlConfig, PartialConfig } from './config'
+import { TemplateFunction } from './compile'
+
 type CallbackFn = (err: Error | null, str?: string) => void
 
 interface FileOptions extends SqrlConfig {
   filename: string
 }
+
+interface DataObj {
+  settings?: {
+    [key: string]: any
+  }
+  [key: string]: any
+}
+
+/* END TYPES */
 
 /**
  * Get the template from a string or a file, either compiled on-the-fly or
@@ -31,7 +46,7 @@ function handleCache (options: FileOptions): TemplateFunction {
   var filename = options.filename
 
   if (options.cache) {
-    var func = Templates.get(filename)
+    var func = templates.get(filename)
     if (func) {
       return func
     } else {
@@ -39,7 +54,7 @@ function handleCache (options: FileOptions): TemplateFunction {
     }
   }
 
-  return Compile(readFile(filename), options)
+  return compile(readFile(filename), options)
 }
 
 /**
@@ -97,13 +112,6 @@ function includeFile (path: string, options: SqrlConfig) {
   var newFileOptions = getConfig({ filename: getPath(path, options) })
   // TODO: update this to merge the old options
   return handleCache(newFileOptions as FileOptions)
-}
-
-interface DataObj {
-  settings?: {
-    [key: string]: any
-  }
-  [key: string]: any
 }
 
 function renderFile (filename: string, data: DataObj, cb?: CallbackFn) {

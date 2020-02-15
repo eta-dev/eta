@@ -1,6 +1,12 @@
-import { TemplateFunction } from './compile';
 import { SqrlConfig } from './config';
+import { TemplateFunction } from './compile';
 declare type CallbackFn = (err: Error | null, str?: string) => void;
+interface DataObj {
+    settings?: {
+        [key: string]: any;
+    };
+    [key: string]: any;
+}
 /**
  * Get the template function.
  *
@@ -13,11 +19,5 @@ declare type CallbackFn = (err: Error | null, str?: string) => void;
  * @static
  */
 declare function includeFile(path: string, options: SqrlConfig): TemplateFunction;
-interface DataObj {
-    settings?: {
-        [key: string]: any;
-    };
-    [key: string]: any;
-}
 declare function renderFile(filename: string, data: DataObj, cb?: CallbackFn): any;
 export { includeFile, renderFile };

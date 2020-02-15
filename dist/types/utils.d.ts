@@ -1,4 +1,7 @@
 import { SqrlConfig } from './config';
+interface SomeObj {
+    [key: string]: any;
+}
 declare function trimWS(str: string, env: SqrlConfig, wsLeft: string, wsRight?: string): string;
 /**
  * Naive copy of properties from one object to another.
@@ -11,8 +14,5 @@ declare function trimWS(str: string, env: SqrlConfig, wsLeft: string, wsRight?: 
  * @static
  * @private
  */
-interface SomeObj {
-    [key: string]: any;
-}
 declare function shallowCopy<res>(to: SomeObj, from: Partial<res>): res;
 export { trimWS, shallowCopy };

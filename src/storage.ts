@@ -1,7 +1,11 @@
+/* TYPES */
+
 interface ICache<T> {
   // Basically, an object where all keys point to a value of the same type
   [key: string]: T
 }
+
+/* END TYPES */
 
 class Cacher<T> {
   constructor (private cache: ICache<T>) {}

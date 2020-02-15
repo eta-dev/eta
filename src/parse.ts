@@ -1,6 +1,9 @@
 // Version 1.0.32
 import SqrlErr, { ParseErr } from './err'
 import { trimWS } from './utils'
+
+/* TYPES */
+
 import { SqrlConfig } from './config'
 
 export type TagType = '~' | '/' | '#' | '?' | 'r' | '!' | 's'
@@ -18,7 +21,7 @@ export interface TemplateObject {
   c?: string
   p?: string
   res?: string
-  d?: Array<AstObject> // Todo: Make this optional
+  d?: Array<AstObject>
   raw?: boolean
   b?: Array<ParentTemplateObject>
 }
@@ -28,9 +31,9 @@ export interface ParentTemplateObject extends TemplateObject {
   b: Array<ParentTemplateObject>
 }
 
-// TODO: INFINITE LOOP WHEN YOU TYPE IN AN UNCLOSED HELPER
+/* END TYPES */
 
-export default function Parse (str: string, env: SqrlConfig): Array<AstObject> {
+export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
   var powerchars = new RegExp(
     '([|()]|=>)|' +
     '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
@@ -224,6 +227,7 @@ export default function Parse (str: string, env: SqrlConfig): Array<AstObject> {
       parentObj.d = buffer
     } else {
       throw SqrlErr('unclosed helper "' + parentObj.n + '"')
+      // It should have returned by now
     }
 
     return parentObj as ParentTemplateObject

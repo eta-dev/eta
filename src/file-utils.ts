@@ -5,13 +5,19 @@ var _BOM = /^\uFEFF/
 // express is set like: app.engine('html', require('ejs').renderFile)
 
 import SqrlErr from './err'
-import Compile, { TemplateFunction } from './compile'
+import Compile from './compile'
+import { templates } from './containers'
+
+/* TYPES */
+
 import { SqrlConfig, PartialConfig } from './config'
-import { Templates } from './containers'
+import { TemplateFunction } from './compile'
 
 interface PartialFileOptions extends PartialConfig {
   filename: string
 }
+
+/* END TYPES */
 
 /**
  * Get the path to the included file from the parent file path and the
@@ -92,7 +98,7 @@ function loadFile (filePath: string, options: PartialFileOptions): TemplateFunct
   var template = readFile(filePath)
   try {
     var compiledTemplate = Compile(template, options)
-    Templates.define(options.filename, compiledTemplate)
+    templates.define(options.filename, compiledTemplate)
     return compiledTemplate
   } catch (e) {
     throw SqrlErr('Loading file: ' + filePath + ' failed')

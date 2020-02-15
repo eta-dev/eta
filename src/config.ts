@@ -1,4 +1,6 @@
-import { Helpers, Filters } from './containers'
+import { helpers, filters } from './containers'
+
+/* TYPES */
 
 export type FetcherFunction = (container: 'H' | 'F', name: string) => any
 
@@ -22,6 +24,12 @@ export interface SqrlConfig {
   [index: string]: any
 }
 
+export type PartialConfig = {
+  [P in keyof SqrlConfig]?: SqrlConfig[P]
+}
+
+/* END TYPES */
+
 var defaultConfig: SqrlConfig = {
   varName: 'it',
   autoTrim: [false, 'nl'],
@@ -30,9 +38,9 @@ var defaultConfig: SqrlConfig = {
   tags: ['{{', '}}'],
   l: function (container: 'H' | 'F', name: string) {
     if (container === 'H') {
-      return Helpers.get(name)
+      return helpers.get(name)
     } else if (container === 'F') {
-      return Filters.get(name)
+      return filters.get(name)
     }
   },
   async: false,
@@ -41,10 +49,6 @@ var defaultConfig: SqrlConfig = {
     processAST: [],
     processFuncString: []
   }
-}
-
-export type PartialConfig = {
-  [P in keyof SqrlConfig]?: SqrlConfig[P]
 }
 
 function getConfig (override: PartialConfig): SqrlConfig {
@@ -70,5 +74,5 @@ function getConfig (override: PartialConfig): SqrlConfig {
 
 export { defaultConfig, getConfig }
 
-// Have different envs. Sqrl.Render, Compile, etc. all use default env
+// Have different envs. Sqrl.render, compile, etc. all use default env
 // Use class for env

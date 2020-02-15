@@ -1,14 +1,14 @@
-import { Render, Templates, Compile } from '../src/index'
+import { render, templates, compile } from '../src/index'
 import { defaultConfig } from '../src/config'
 
 var fs = require('fs'),
   path = require('path')
 
-Templates.define('test-template', Compile('HEY {{it.name}}'))
+templates.define('test-template', compile('HEY {{it.name}}'))
 
 describe('include works', () => {
   it('simple parser works with "includeFile"', async () => {
-    var renderedTemplate = Render(
+    var renderedTemplate = render(
       '{{~includeFile("simple", it)/}}',
       { name: 'Ben' },
       { filename: path.join(__dirname, 'templates/placeholder.sqrl') }
@@ -18,7 +18,7 @@ describe('include works', () => {
   })
 
   it('"includeFile" works with "views" array', async () => {
-    var renderedTemplate = Render(
+    var renderedTemplate = render(
       '{{~includeFile("randomtemplate", it)/}}',
       { user: 'Ben' },
       {
@@ -31,14 +31,14 @@ describe('include works', () => {
   })
 
   it('simple parser works with "include"', async () => {
-    var renderedTemplate = Render('{{~include("test-template", it)/}}', { name: 'Ben' })
+    var renderedTemplate = render('{{~include("test-template", it)/}}', { name: 'Ben' })
 
     expect(renderedTemplate).toEqual('HEY Ben')
   })
 
   test('throws if helper "includeFile" has blocks', () => {
     expect(() => {
-      Render('{{~includeFile("test-template", it)}} {{#block1}} {{/includeFile}}', {
+      render('{{~includeFile("test-template", it)}} {{#block1}} {{/includeFile}}', {
         name: 'stuff'
       })
     }).toThrow()
@@ -46,7 +46,7 @@ describe('include works', () => {
 
   test('throws if helper "include" has blocks', () => {
     expect(() => {
-      Render('{{~include("test-template", it)}} {{#block2}} {{/includeFile}}', { name: 'stuff' })
+      render('{{~include("test-template", it)}} {{#block2}} {{/includeFile}}', { name: 'stuff' })
     }).toThrow()
   })
 })

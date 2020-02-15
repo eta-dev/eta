@@ -1,7 +1,15 @@
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
 
+/* TYPES */
+
 import { SqrlConfig } from './config'
+
+interface SomeObj {
+  [key: string]: any
+}
+
+/* END TYPES */
 
 function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string): string {
   var leftTrim
@@ -74,10 +82,6 @@ function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string)
  * @static
  * @private
  */
-
-interface SomeObj {
-  [key: string]: any
-}
 
 function shallowCopy<res> (to: SomeObj, from: Partial<res>): res {
   for (var p in from) {

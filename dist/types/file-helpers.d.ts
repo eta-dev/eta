@@ -1,5 +1,5 @@
-import { HelperBlock } from './containers';
 import { SqrlConfig } from './config';
+import { HelperBlock } from './containers';
 interface IncludeHelperBlock extends HelperBlock {
     params: [string, object];
 }

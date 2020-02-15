@@ -1,14 +1,15 @@
 import { Cacher } from './storage'
-import { ParentTemplateObject } from './parse'
 import SqrlErr from './err'
-import { ParseScope } from './compile-string'
-import { SqrlConfig } from './config'
-import { TemplateFunction } from './compile'
+import { compileScope } from './compile-string'
 // interface ITemplate {
 //   exec: (options: object, Sqrl: object) => string
 // }
 
-var Templates = new Cacher<TemplateFunction>({})
+/* TYPES */
+
+import { SqrlConfig } from './config'
+import { TemplateFunction } from './compile'
+import { ParentTemplateObject } from './parse'
 
 export interface HelperBlock {
   exec: Function
@@ -20,7 +21,21 @@ export type HelperFunction = (
   config: SqrlConfig
 ) => string
 
-var Helpers = new Cacher<HelperFunction>({
+type FilterFunction = (str: string) => string
+
+interface EscapeMap {
+  '&': '&amp;'
+  '<': '&lt;'
+  '"': '&quot;'
+  "'": '&#39;'
+  [index: string]: string
+}
+
+/* END TYPES */
+
+var templates = new Cacher<TemplateFunction>({})
+
+var helpers = new Cacher<HelperFunction>({
   each: function (content: HelperBlock) {
     // helperStart is called with (params, id) but id isn't needed
     var res = ''
@@ -41,19 +56,19 @@ var Helpers = new Cacher<HelperFunction>({
   }
 })
 
-var NativeHelpers = new Cacher<Function>({
+var nativeHelpers = new Cacher<Function>({
   if: function (buffer: ParentTemplateObject, env: SqrlConfig) {
     if (buffer.f && buffer.f.length) {
       throw SqrlErr("native helper 'if' can't have filters")
     }
-    var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d, env) + '}'
+    var returnStr = 'if(' + buffer.p + '){' + compileScope(buffer.d, env) + '}'
     if (buffer.b) {
       for (var i = 0; i < buffer.b.length; i++) {
         var currentBlock = buffer.b[i]
         if (currentBlock.n === 'else') {
-          returnStr += 'else{' + ParseScope(currentBlock.d, env) + '}'
+          returnStr += 'else{' + compileScope(currentBlock.d, env) + '}'
         } else if (currentBlock.n === 'elif') {
-          returnStr += 'else if(' + currentBlock.p + '){' + ParseScope(currentBlock.d, env) + '}'
+          returnStr += 'else if(' + currentBlock.p + '){' + compileScope(currentBlock.d, env) + '}'
         }
       }
     }
@@ -66,29 +81,19 @@ var NativeHelpers = new Cacher<Function>({
     if (!buffer.b || buffer.b.length !== 1 || buffer.b[0].n !== 'catch') {
       throw SqrlErr("native helper 'try' only accepts 1 block, 'catch'")
     }
-    var returnStr = 'try{' + ParseScope(buffer.d, env) + '}'
+    var returnStr = 'try{' + compileScope(buffer.d, env) + '}'
 
     var currentBlock = buffer.b[0]
     returnStr +=
       'catch' +
       (currentBlock.res ? '(' + currentBlock.res + ')' : '') +
       '{' +
-      ParseScope(currentBlock.d, env) +
+      compileScope(currentBlock.d, env) +
       '}'
 
     return returnStr
   }
 })
-
-type FilterFunction = (str: string) => string
-
-interface EscapeMap {
-  '&': '&amp;'
-  '<': '&lt;'
-  '"': '&quot;'
-  "'": '&#39;'
-  [index: string]: string
-}
 
 var escMap: EscapeMap = {
   '&': '&amp;',
@@ -111,6 +116,6 @@ function XMLEscape (str: any) {
   }
 }
 
-var Filters = new Cacher<FilterFunction>({ e: XMLEscape })
+var filters = new Cacher<FilterFunction>({ e: XMLEscape })
 
-export { Templates, Helpers, NativeHelpers, Filters }
+export { templates, helpers, nativeHelpers, filters }

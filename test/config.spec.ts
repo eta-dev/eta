@@ -1,19 +1,19 @@
-import { Render } from '../src/index'
+import { render } from '../src/index'
 import { defaultConfig, PartialConfig } from '../src/config'
 
 describe('Config Tests', () => {
   it('Renders a simple template with default env', () => {
-    var res = Render('hi {{ it.name }}', { name: 'Ben' }, defaultConfig)
+    var res = render('hi {{ it.name }}', { name: 'Ben' }, defaultConfig)
     expect(res).toEqual('hi Ben')
   })
 
   it('Renders a simple template with custom tags', () => {
-    var res = Render('hi << it.name >>', { name: 'Ben' }, { tags: ['<<', '>>'] })
+    var res = render('hi << it.name >>', { name: 'Ben' }, { tags: ['<<', '>>'] })
     expect(res).toEqual('hi Ben')
   })
 
   it('Renders a simple template with stored env', () => {
-    var res = Render('{{ it.html }}', { html: '<p>Hi</p>' }, { autoEscape: false })
+    var res = render('{{ it.html }}', { html: '<p>Hi</p>' }, { autoEscape: false })
     expect(res).toEqual('<p>Hi</p>') // not escaped
   })
 

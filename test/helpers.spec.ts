@@ -1,4 +1,4 @@
-import { Render, Filters, defaultConfig, CompileToString } from '../src/index'
+import { render, filters, defaultConfig, compileToString } from '../src/index'
 
 var eachTemplate = `
 The Daugherty's have 8 kids. Their names are:
@@ -14,7 +14,7 @@ The Daugherty's have 8 kids. Their names are:
 
 describe('Helper tests', () => {
   it('parses a simple helper: each and if', () => {
-    var res = Render(eachTemplate, { kids: ['Ben', 'Polly', 'Joel', 'Phronsie', 'Davie'] })
+    var res = render(eachTemplate, { kids: ['Ben', 'Polly', 'Joel', 'Phronsie', 'Davie'] })
     expect(res).toEqual(
       `The Daugherty's have 8 kids. Their names are:
 
@@ -34,7 +34,7 @@ Key: {{key}}, Val: {{val}}
 `
 
   it('parses a simple helper: foreach', () => {
-    var res = Render(forEachTemplate, { numbers: { one: 1, two: 2 } })
+    var res = render(forEachTemplate, { numbers: { one: 1, two: 2 } })
 
     expect(res).toEqual('Key: one, Val: 1\nKey: two, Val: 2\n')
   })
@@ -50,7 +50,7 @@ Uh-oh, error! Message was '{{err.message}}'
 
   // the above is autoescaped because otherwise it automatically converts it to a string
 
-  Filters.define('validate', function (str: string) {
+  filters.define('validate', function (str: string) {
     if (typeof str !== 'string') {
       throw new Error('str does not fit expected format')
     } else {
@@ -59,7 +59,7 @@ Uh-oh, error! Message was '{{err.message}}'
   })
 
   it('parses a simple helper: try', () => {
-    var res = Render(tryCatchTemplate, { hi: false })
+    var res = render(tryCatchTemplate, { hi: false })
     expect(res).toEqual(`This won't work: 
 Uh-oh, error! Message was 'str does not fit expected format'
 `)
@@ -74,7 +74,7 @@ Number is five
 {{- /if}}`
 
   it('parses a simple helper: if with elif', () => {
-    var res = Render(ifTemplate, { number: 4 })
+    var res = render(ifTemplate, { number: 4 })
 
     expect(res).toEqual('Number is four')
   })
@@ -95,13 +95,13 @@ Uh-oh, If doesn't know what to do
 
   test('throws when if helper has filters', () => {
     expect(() => {
-      CompileToString(ifTemplateFilter, defaultConfig)
+      compileToString(ifTemplateFilter, defaultConfig)
     }).toThrow()
   })
 
   test('throws when if helper has unrecognized blocks', () => {
     expect(() => {
-      CompileToString(ifTemplateBlock, defaultConfig)
+      compileToString(ifTemplateBlock, defaultConfig)
     }).toThrow()
   })
 
@@ -125,13 +125,13 @@ Uh-oh, error! Message was '{{err.message}}'
 
   test('throws when try catch has filters', () => {
     expect(() => {
-      CompileToString(tryTemplateFilter, defaultConfig)
+      compileToString(tryTemplateFilter, defaultConfig)
     }).toThrow()
   })
 
   test('throws when try catch has unrecognized block', () => {
     expect(() => {
-      CompileToString(tryTemplateBlock, defaultConfig)
+      compileToString(tryTemplateBlock, defaultConfig)
     }).toThrow()
   })
 })

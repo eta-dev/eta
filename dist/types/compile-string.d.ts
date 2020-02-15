@@ -1,6 +1,6 @@
-import { AstObject } from './parse';
 import { SqrlConfig } from './config';
-declare function CompileToString(str: string, env: SqrlConfig): string;
-export declare function ParseScopeIntoFunction(buff: Array<AstObject>, res: string, env: SqrlConfig): string;
-export declare function ParseScope(buff: Array<AstObject>, env: SqrlConfig): string;
-export default CompileToString;
+import { AstObject } from './parse';
+declare function compileToString(str: string, env: SqrlConfig): string;
+export declare function compileScopeIntoFunction(buff: Array<AstObject>, res: string, env: SqrlConfig): string;
+export declare function compileScope(buff: Array<AstObject>, env: SqrlConfig): string;
+export default compileToString;

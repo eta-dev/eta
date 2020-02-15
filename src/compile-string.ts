@@ -1,30 +1,35 @@
-import Parse, { AstObject, Filter, ParentTemplateObject } from './parse'
-import { NativeHelpers } from './containers'
-import { SqrlConfig } from './config'
+import Parse from './parse'
+import { nativeHelpers } from './containers'
 
-function CompileToString (str: string, env: SqrlConfig) {
+/* TYPES */
+
+import { SqrlConfig } from './config'
+import { AstObject, Filter, ParentTemplateObject } from './parse'
+
+/* END TYPES */
+
+function compileToString (str: string, env: SqrlConfig) {
   var buffer: Array<AstObject> = Parse(str, env)
   return (
     "var tR='';" +
-    ParseScope(buffer, env)
+    compileScope(buffer, env)
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r') +
     'return tR'
   )
 }
 
-// TODO: rename parseHelper, parseScope, etc. to compileHelper, compileScope, etc.
 // TODO: Use type intersections for TemplateObject, etc.
 // so I don't have to make properties mandatory
 
-function parseHelper (
+function compileHelper (
   env: SqrlConfig,
   res: string,
   descendants: Array<AstObject>,
   params: string,
   name?: string
 ) {
-  var ret = '{exec:' + ParseScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']'
+  var ret = '{exec:' + compileScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']'
   if (name) {
     ret += ",name:'" + name + "'"
   }
@@ -32,11 +37,11 @@ function parseHelper (
   return ret
 }
 
-function parseBlocks (blocks: Array<ParentTemplateObject>, env: SqrlConfig) {
+function compileBlocks (blocks: Array<ParentTemplateObject>, env: SqrlConfig) {
   var ret = '['
   for (var i = 0; i < blocks.length; i++) {
     var block = blocks[i]
-    ret += parseHelper(env, block.res || '', block.d, block.p || '', block.n)
+    ret += compileHelper(env, block.res || '', block.d, block.p || '', block.n)
     if (i < blocks.length) {
       ret += ','
     }
@@ -45,11 +50,11 @@ function parseBlocks (blocks: Array<ParentTemplateObject>, env: SqrlConfig) {
   return ret
 }
 
-export function ParseScopeIntoFunction (buff: Array<AstObject>, res: string, env: SqrlConfig) {
-  return 'function(' + res + "){var tR='';" + ParseScope(buff, env) + 'return tR}'
+export function compileScopeIntoFunction (buff: Array<AstObject>, res: string, env: SqrlConfig) {
+  return 'function(' + res + "){var tR='';" + compileScope(buff, env) + 'return tR}'
 }
 
-export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
+export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
   var i = 0
   var buffLength = buff.length
   var returnStr = ''
@@ -60,8 +65,7 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
       var str = currentBlock
 
       // we know string exists
-      returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';"
-      // I believe the above replace is already in Parse
+      returnStr += "tR+='" + str + "';"
     } else {
       var type = currentBlock.t // ~, s, !, ?, r
       var content = currentBlock.c || ''
@@ -80,17 +84,17 @@ export function ParseScope (buff: Array<AstObject>, env: SqrlConfig) {
         // reference
       } else if (type === '~') {
         // helper
-        // TODO: native helpers
-        if (NativeHelpers.get(name)) {
-          returnStr += NativeHelpers.get(name)(currentBlock, env)
+        // TODO: native helpers: check
+        if (nativeHelpers.get(name)) {
+          returnStr += nativeHelpers.get(name)(currentBlock, env)
         } else {
           var helperReturn =
             "c.l('H','" +
             name +
             "')(" +
-            parseHelper(env, res, (currentBlock as ParentTemplateObject).d, params)
+            compileHelper(env, res, (currentBlock as ParentTemplateObject).d, params)
           if (blocks) {
-            helperReturn += ',' + parseBlocks(blocks, env)
+            helperReturn += ',' + compileBlocks(blocks, env)
           } else {
             helperReturn += ',[]'
           }
@@ -126,4 +130,4 @@ function filter (str: string, filters: Array<Filter>) {
   return str
 }
 
-export default CompileToString
+export default compileToString

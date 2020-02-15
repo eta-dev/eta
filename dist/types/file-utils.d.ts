@@ -1,5 +1,5 @@
-import { TemplateFunction } from './compile';
 import { SqrlConfig, PartialConfig } from './config';
+import { TemplateFunction } from './compile';
 interface PartialFileOptions extends PartialConfig {
     filename: string;
 }

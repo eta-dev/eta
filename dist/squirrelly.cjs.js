@@ -2,6 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+/* TYPES */
+/* END TYPES */
 var Cacher = /** @class */ (function () {
     function Cacher(cache) {
         this.cache = cache;
@@ -73,6 +75,7 @@ function ParseErr(message, str, indx) {
 
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
+/* END TYPES */
 function trimWS(str, env, wsLeft, wsRight) {
     var leftTrim;
     var rightTrim;
@@ -129,8 +132,8 @@ function trimWS(str, env, wsLeft, wsRight) {
 }
 
 // Version 1.0.32
-// TODO: INFINITE LOOP WHEN YOU TYPE IN AN UNCLOSED HELPER
-function Parse(str, env) {
+/* END TYPES */
+function parse(str, env) {
     var powerchars = new RegExp('([|()]|=>)|' +
         '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
         '|\\/\\*[^]*?\\*\\/|((\\/)?(-|_)?' +
@@ -320,6 +323,7 @@ function Parse(str, env) {
         }
         else {
             throw SqrlErr('unclosed helper "' + parentObj.n + '"');
+            // It should have returned by now
         }
         return parentObj;
     }
@@ -328,30 +332,30 @@ function Parse(str, env) {
     return parseResult.d; // Parse the very outside context
 }
 
-function CompileToString(str, env) {
-    var buffer = Parse(str, env);
+/* END TYPES */
+function compileToString(str, env) {
+    var buffer = parse(str, env);
     return ("var tR='';" +
-        ParseScope(buffer, env)
+        compileScope(buffer, env)
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '\\r') +
         'return tR');
 }
-// TODO: rename parseHelper, parseScope, etc. to compileHelper, compileScope, etc.
 // TODO: Use type intersections for TemplateObject, etc.
 // so I don't have to make properties mandatory
-function parseHelper(env, res, descendants, params, name) {
-    var ret = '{exec:' + ParseScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']';
+function compileHelper(env, res, descendants, params, name) {
+    var ret = '{exec:' + compileScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']';
     if (name) {
         ret += ",name:'" + name + "'";
     }
     ret += '}';
     return ret;
 }
-function parseBlocks(blocks, env) {
+function compileBlocks(blocks, env) {
     var ret = '[';
     for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-        ret += parseHelper(env, block.res || '', block.d, block.p || '', block.n);
+        ret += compileHelper(env, block.res || '', block.d, block.p || '', block.n);
         if (i < blocks.length) {
             ret += ',';
         }
@@ -359,10 +363,10 @@ function parseBlocks(blocks, env) {
     ret += ']';
     return ret;
 }
-function ParseScopeIntoFunction(buff, res, env) {
-    return 'function(' + res + "){var tR='';" + ParseScope(buff, env) + 'return tR}';
+function compileScopeIntoFunction(buff, res, env) {
+    return 'function(' + res + "){var tR='';" + compileScope(buff, env) + 'return tR}';
 }
-function ParseScope(buff, env) {
+function compileScope(buff, env) {
     var i = 0;
     var buffLength = buff.length;
     var returnStr = '';
@@ -371,8 +375,7 @@ function ParseScope(buff, env) {
         if (typeof currentBlock === 'string') {
             var str = currentBlock;
             // we know string exists
-            returnStr += "tR+='" + str /*.replace(/\\/g, '\\\\').replace(/'/g, "\\'")*/ + "';";
-            // I believe the above replace is already in Parse
+            returnStr += "tR+='" + str + "';";
         }
         else {
             var type = currentBlock.t; // ~, s, !, ?, r
@@ -392,17 +395,17 @@ function ParseScope(buff, env) {
             }
             else if (type === '~') {
                 // helper
-                // TODO: native helpers
-                if (NativeHelpers.get(name)) {
-                    returnStr += NativeHelpers.get(name)(currentBlock, env);
+                // TODO: native helpers: check
+                if (nativeHelpers.get(name)) {
+                    returnStr += nativeHelpers.get(name)(currentBlock, env);
                 }
                 else {
                     var helperReturn = "c.l('H','" +
                         name +
                         "')(" +
-                        parseHelper(env, res, currentBlock.d, params);
+                        compileHelper(env, res, currentBlock.d, params);
                     if (blocks) {
-                        helperReturn += ',' + parseBlocks(blocks, env);
+                        helperReturn += ',' + compileBlocks(blocks, env);
                     }
                     else {
                         helperReturn += ',[]';
@@ -437,11 +440,9 @@ function filter(str, filters) {
     return str;
 }
 
-// interface ITemplate {
-//   exec: (options: object, Sqrl: object) => string
-// }
-var Templates = new Cacher({});
-var Helpers = new Cacher({
+/* END TYPES */
+var templates = new Cacher({});
+var helpers = new Cacher({
     each: function (content) {
         // helperStart is called with (params, id) but id isn't needed
         var res = '';
@@ -462,20 +463,20 @@ var Helpers = new Cacher({
         return res;
     }
 });
-var NativeHelpers = new Cacher({
+var nativeHelpers = new Cacher({
     if: function (buffer, env) {
         if (buffer.f && buffer.f.length) {
             throw SqrlErr("native helper 'if' can't have filters");
         }
-        var returnStr = 'if(' + buffer.p + '){' + ParseScope(buffer.d, env) + '}';
+        var returnStr = 'if(' + buffer.p + '){' + compileScope(buffer.d, env) + '}';
         if (buffer.b) {
             for (var i = 0; i < buffer.b.length; i++) {
                 var currentBlock = buffer.b[i];
                 if (currentBlock.n === 'else') {
-                    returnStr += 'else{' + ParseScope(currentBlock.d, env) + '}';
+                    returnStr += 'else{' + compileScope(currentBlock.d, env) + '}';
                 }
                 else if (currentBlock.n === 'elif') {
-                    returnStr += 'else if(' + currentBlock.p + '){' + ParseScope(currentBlock.d, env) + '}';
+                    returnStr += 'else if(' + currentBlock.p + '){' + compileScope(currentBlock.d, env) + '}';
                 }
             }
         }
@@ -488,13 +489,13 @@ var NativeHelpers = new Cacher({
         if (!buffer.b || buffer.b.length !== 1 || buffer.b[0].n !== 'catch') {
             throw SqrlErr("native helper 'try' only accepts 1 block, 'catch'");
         }
-        var returnStr = 'try{' + ParseScope(buffer.d, env) + '}';
+        var returnStr = 'try{' + compileScope(buffer.d, env) + '}';
         var currentBlock = buffer.b[0];
         returnStr +=
             'catch' +
                 (currentBlock.res ? '(' + currentBlock.res + ')' : '') +
                 '{' +
-                ParseScope(currentBlock.d, env) +
+                compileScope(currentBlock.d, env) +
                 '}';
         return returnStr;
     }
@@ -518,8 +519,9 @@ function XMLEscape(str) {
         return newStr;
     }
 }
-var Filters = new Cacher({ e: XMLEscape });
+var filters = new Cacher({ e: XMLEscape });
 
+/* END TYPES */
 var defaultConfig = {
     varName: 'it',
     autoTrim: [false, 'nl'],
@@ -528,10 +530,10 @@ var defaultConfig = {
     tags: ['{{', '}}'],
     l: function (container, name) {
         if (container === 'H') {
-            return Helpers.get(name);
+            return helpers.get(name);
         }
         else if (container === 'F') {
-            return Filters.get(name);
+            return filters.get(name);
         }
     },
     async: false,
@@ -560,15 +562,16 @@ function getConfig(override) {
     }
     return res;
 }
-// Have different envs. Sqrl.Render, Compile, etc. all use default env
+// Have different envs. Sqrl.render, compile, etc. all use default env
 // Use class for env
 
-function Compile(str, env) {
-    var Options = getConfig(env || {});
+/* END TYPES */
+function compile(str, env) {
+    var options = getConfig(env || {});
     var ctor; // constructor
     /* ASYNC HANDLING */
     // The below code is modified from mde/ejs. All credit should go to them.
-    if (Options.async) {
+    if (options.async) {
         // Have to use generated function for this, since in envs without support,
         // it breaks in parsing
         try {
@@ -587,14 +590,15 @@ function Compile(str, env) {
         ctor = Function;
     }
     /* END ASYNC HANDLING */
-    return new ctor(Options.varName, 'c', // SqrlConfig
-    CompileToString(str, Options)); // eslint-disable-line no-new-func
+    return new ctor(options.varName, 'c', // SqrlConfig
+    compileToString(str, options)); // eslint-disable-line no-new-func
 }
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
 var fs = require('fs');
 var path = require('path');
 var _BOM = /^\uFEFF/;
+/* END TYPES */
 /**
  * Get the path to the included file from the parent file path and the
  * specified path.
@@ -664,8 +668,8 @@ function readFile(filePath) {
 function loadFile(filePath, options) {
     var template = readFile(filePath);
     try {
-        var compiledTemplate = Compile(template, options);
-        Templates.define(options.filename, compiledTemplate);
+        var compiledTemplate = compile(template, options);
+        templates.define(options.filename, compiledTemplate);
         return compiledTemplate;
     }
     catch (e) {
@@ -674,6 +678,7 @@ function loadFile(filePath, options) {
 }
 
 var promiseImpl = new Function('return this;')().Promise;
+/* END TYPES */
 /**
  * Get the template from a string or a file, either compiled on-the-fly or
  * read from cache (if enabled), and cache the template if needed.
@@ -690,7 +695,7 @@ var promiseImpl = new Function('return this;')().Promise;
 function handleCache(options) {
     var filename = options.filename;
     if (options.cache) {
-        var func = Templates.get(filename);
+        var func = templates.get(filename);
         if (func) {
             return func;
         }
@@ -698,7 +703,7 @@ function handleCache(options) {
             return loadFile(filename, options);
         }
     }
-    return Compile(readFile(filename), options);
+    return compile(readFile(filename), options);
 }
 /**
  * Try calling handleCache with the given options and data and call the
@@ -782,6 +787,7 @@ function renderFile(filename, data, cb) {
     return tryHandleCache(Config, data, cb);
 }
 
+/* END TYPES */
 function includeFileHelper(content, blocks, config) {
     // helperStart is called with (params, id) but id isn't needed
     if (blocks && blocks.length > 0) {
@@ -794,7 +800,7 @@ function includeHelper(content, blocks, config) {
     if (blocks && blocks.length > 0) {
         throw SqrlErr("Helper 'include' doesn't accept blocks");
     }
-    var template = Templates.get(content.params[0]);
+    var template = templates.get(content.params[0]);
     if (!template) {
         throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
     }
@@ -837,41 +843,43 @@ function includeHelper(content, blocks, config) {
 //   return res
 // }
 
+/* END TYPES */
 function Render(template, data, env) {
-    var Options = getConfig(env || {});
+    var options = getConfig(env || {});
     var templateFunc;
-    if (Options.cache && Options.name && Templates.get(Options.name)) {
-        return Templates.get(Options.name)(data, Options);
+    if (options.cache && options.name && templates.get(options.name)) {
+        return templates.get(options.name)(data, options);
     }
     if (typeof template === 'function') {
         templateFunc = template;
     }
     else {
-        templateFunc = Compile(template, Options);
+        templateFunc = compile(template, options);
     }
-    if (Options.cache && Options.name) {
-        Templates.define(Options.name, templateFunc);
+    if (options.cache && options.name) {
+        templates.define(options.name, templateFunc);
     }
-    return templateFunc(data, Options);
+    return templateFunc(data, options);
 }
 
 // TODO: allow importing polyfills?
-Helpers.define('include', includeHelper);
-Helpers.define('includeFile', includeFileHelper);
+/* END TYPES */
+helpers.define('include', includeHelper);
+helpers.define('includeFile', includeFileHelper);
 
-exports.Compile = Compile;
-exports.CompileToString = CompileToString;
-exports.Filters = Filters;
-exports.Helpers = Helpers;
-exports.NativeHelpers = NativeHelpers;
-exports.Parse = Parse;
-exports.ParseScope = ParseScope;
-exports.ParseScopeIntoFunction = ParseScopeIntoFunction;
-exports.Render = Render;
-exports.Templates = Templates;
 exports.__express = renderFile;
+exports.compile = compile;
+exports.compileScope = compileScope;
+exports.compileScopeIntoFunction = compileScopeIntoFunction;
+exports.compileToString = compileToString;
 exports.defaultConfig = defaultConfig;
+exports.filters = filters;
 exports.getConfig = getConfig;
+exports.helpers = helpers;
 exports.loadFile = loadFile;
+exports.nativeHelpers = nativeHelpers;
+exports.parse = parse;
+exports.render = Render;
 exports.renderFile = renderFile;
+exports.templates = templates;
 //# sourceMappingURL=squirrelly.cjs.js.map

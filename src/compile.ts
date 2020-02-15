@@ -1,15 +1,20 @@
-import CompileToString from './compile-string'
-import { getConfig, SqrlConfig, PartialConfig } from './config'
+import compileToString from './compile-string'
+import { getConfig } from './config'
 
+/* TYPES */
+
+import { SqrlConfig, PartialConfig } from './config'
 export type TemplateFunction = (data: object, config: SqrlConfig) => string
 
-function Compile (str: string, env?: PartialConfig): TemplateFunction {
-  var Options: SqrlConfig = getConfig(env || {})
+/* END TYPES */
+
+export default function compile (str: string, env?: PartialConfig): TemplateFunction {
+  var options: SqrlConfig = getConfig(env || {})
   var ctor // constructor
 
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.
-  if (Options.async) {
+  if (options.async) {
     // Have to use generated function for this, since in envs without support,
     // it breaks in parsing
     try {
@@ -26,11 +31,10 @@ function Compile (str: string, env?: PartialConfig): TemplateFunction {
   }
   /* END ASYNC HANDLING */
   return new ctor(
-    Options.varName,
+    options.varName,
     'c', // SqrlConfig
-    CompileToString(str, Options)
+    compileToString(str, options)
   ) as TemplateFunction // eslint-disable-line no-new-func
 }
 
-export default Compile
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())

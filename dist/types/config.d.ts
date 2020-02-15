@@ -20,9 +20,9 @@ export interface SqrlConfig {
     'view cache'?: boolean;
     [index: string]: any;
 }
-declare var defaultConfig: SqrlConfig;
 export declare type PartialConfig = {
     [P in keyof SqrlConfig]?: SqrlConfig[P];
 };
+declare var defaultConfig: SqrlConfig;
 declare function getConfig(override: PartialConfig): SqrlConfig;
 export { defaultConfig, getConfig };

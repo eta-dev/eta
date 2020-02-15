@@ -1,11 +1,17 @@
 import SqrlErr from './err'
-import { Templates, HelperBlock } from './containers'
-import { SqrlConfig } from './config'
+import { templates } from './containers'
 import { includeFile } from './file-handlers'
+
+/* TYPES */
+
+import { SqrlConfig } from './config'
+import { HelperBlock } from './containers'
 
 interface IncludeHelperBlock extends HelperBlock {
   params: [string, object]
 }
+
+/* END TYPES */
 
 export function includeFileHelper (
   content: IncludeHelperBlock,
@@ -28,7 +34,7 @@ export function includeHelper (
   if (blocks && blocks.length > 0) {
     throw SqrlErr("Helper 'include' doesn't accept blocks")
   }
-  var template = Templates.get(content.params[0])
+  var template = templates.get(content.params[0])
   if (!template) {
     throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
   }
