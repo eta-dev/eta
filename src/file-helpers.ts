@@ -14,7 +14,7 @@ export function includeFileHelper (
 ): string {
   // helperStart is called with (params, id) but id isn't needed
   if (blocks && blocks.length > 0) {
-    throw SqrlErr("Helper 'include' doesn't accept blocks")
+    throw SqrlErr("Helper 'includeFile' doesn't accept blocks")
   }
   return includeFile(content.params[0], config)(content.params[1], config)
 }

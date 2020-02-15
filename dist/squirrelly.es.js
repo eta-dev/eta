@@ -781,7 +781,7 @@ function renderFile(filename, data, cb) {
 function includeFileHelper(content, blocks, config) {
     // helperStart is called with (params, id) but id isn't needed
     if (blocks && blocks.length > 0) {
-        throw SqrlErr("Helper 'include' doesn't accept blocks");
+        throw SqrlErr("Helper 'includeFile' doesn't accept blocks");
     }
     return includeFile(content.params[0], config)(content.params[1], config);
 }
@@ -855,5 +855,5 @@ function Render(template, data, env) {
 Helpers.define('include', includeHelper);
 Helpers.define('includeFile', includeFileHelper);
 
-export { Compile, CompileToString, Filters, Helpers, NativeHelpers, Parse, ParseScope, ParseScopeIntoFunction, Render, renderFile as __express, defaultConfig, getConfig, renderFile };
+export { Compile, CompileToString, Filters, Helpers, NativeHelpers, Parse, ParseScope, ParseScopeIntoFunction, Render, Templates, renderFile as __express, defaultConfig, getConfig, loadFile, renderFile };
 //# sourceMappingURL=squirrelly.es.js.map

@@ -621,6 +621,7 @@
   exports.ParseScope = ParseScope;
   exports.ParseScopeIntoFunction = ParseScopeIntoFunction;
   exports.Render = Render;
+  exports.Templates = Templates;
   exports.defaultConfig = defaultConfig;
   exports.getConfig = getConfig;
 
