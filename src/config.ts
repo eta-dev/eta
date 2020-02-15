@@ -52,24 +52,34 @@ var defaultConfig: SqrlConfig = {
 }
 
 function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfig {
-  var starterConfig = baseConfig || defaultConfig
   var res: SqrlConfig = {
-    varName: starterConfig.varName,
-    autoTrim: starterConfig.autoTrim,
-    autoEscape: starterConfig.autoEscape,
-    defaultFilter: starterConfig.defaultFilter,
-    tags: starterConfig.tags,
-    l: starterConfig.l,
-    async: starterConfig.async,
-    cache: starterConfig.cache,
-    plugins: starterConfig.plugins
+    varName: defaultConfig.varName,
+    autoTrim: defaultConfig.autoTrim,
+    autoEscape: defaultConfig.autoEscape,
+    defaultFilter: defaultConfig.defaultFilter,
+    tags: defaultConfig.tags,
+    l: defaultConfig.l,
+    async: defaultConfig.async,
+    cache: defaultConfig.cache,
+    plugins: defaultConfig.plugins
   }
 
-  for (var key in override) {
-    if (override.hasOwnProperty(key)) {
-      res[key] = override[key]
+  if (baseConfig) {
+    for (var key in baseConfig) {
+      if (baseConfig.hasOwnProperty(key)) {
+        res[key] = baseConfig[key]
+      }
     }
   }
+
+  if (override) {
+    for (var key in override) {
+      if (override.hasOwnProperty(key)) {
+        res[key] = override[key]
+      }
+    }
+  }
+
   return res
 }
 

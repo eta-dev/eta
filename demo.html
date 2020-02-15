@@ -176,7 +176,7 @@ Reversed value: {{val|reverse}}, Key: {{key}}
 {{~customhelper()}}
 {{#cabbage}}
 Cabbages taste good
-{{!console.log(hi)}}
+{{!console.log("Hi from inside a template")}}
 {{#pineapple}}
 As do pineapples
 {{/customhelper}}
@@ -186,7 +186,7 @@ This is a partial: {{~include("mypartial")/}}
         >
       </div>
       <div class="functiongroup">
-        <h4>Sqrl.Compile()</h4>
+        <h4>Sqrl.compile()</h4>
         <div id="function"></div>
       </div>
       <div style="clear:both"></div>
@@ -210,7 +210,7 @@ This is a partial: {{~include("mypartial")/}}
     <script>
       /* global Sqrl */
       window.onload = function () {
-        Sqrl.Filters.define('reverse', function (str) {
+        Sqrl.filters.define('reverse', function (str) {
           var out = ''
           for (var i = str.length - 1; i >= 0; i--) {
             out += String(str).charAt(i)
@@ -218,27 +218,25 @@ This is a partial: {{~include("mypartial")/}}
           return out || str
         })
 
-        Sqrl.Filters.define('capitalize', function (str) {
+        Sqrl.filters.define('capitalize', function (str) {
           return str.toUpperCase()
         })
 
-        Sqrl.Helpers.define('customhelper', function (args, content, blocks, options) {
+        Sqrl.templates.define('mypartial', Sqrl.compile('This is a partial'))
+
+        Sqrl.helpers.define('customhelper', function (content, blocks, options) {
           var returnStr = 'Custom Helper speaking! \n'
-          for (var key in blocks) {
-            if (typeof blocks[key] === 'function') {
-              returnStr += 'Block found named ' + key + ', with value: ' + blocks[key]()
-            }
+          for (var i = 0; i < blocks.length; i++) {
+            var currentBlock = blocks[i]
+            returnStr +=
+              'Block found named ' + currentBlock.name + ', with value: ' + currentBlock.exec()
           }
           return returnStr
         })
 
-        Sqrl.Helpers.define('log', function (args) {
+        Sqrl.helpers.define('log', function (args) {
           console.log(args[0])
           return ''
-        })
-
-        Sqrl.Helpers.define('include', function () {
-          return 'This is a partial'
         })
 
         function escape (str) {
@@ -268,10 +266,10 @@ This is a partial: {{~include("mypartial")/}}
           var options = JSON.parse('{' + document.getElementById('data').value + '}')
           console.log(JSON.stringify(options))
           var template = document.getElementById('template').value
-          var functionResult = Sqrl.Compile(template, 'default').toString()
+          var functionResult = Sqrl.compile(template).toString()
           document.getElementById('function').innerHTML = escape(functionResult)
-          document.getElementById('result').innerHTML = Sqrl.Render(template, options)
-          console.log(Sqrl.Render(template, options))
+          document.getElementById('result').innerHTML = Sqrl.render(template, options)
+          console.log(Sqrl.render(template, options))
         }
         render()
         document.getElementById('template').addEventListener('input', render)

@@ -25,22 +25,6 @@ export function includeFileHelper (
   return includeFile(content.params[0], config)(content.params[1], config)
 }
 
-export function includeHelper (
-  content: IncludeHelperBlock,
-  blocks: Array<HelperBlock>,
-  config: SqrlConfig
-): string {
-  // helperStart is called with (params, id) but id isn't needed
-  if (blocks && blocks.length > 0) {
-    throw SqrlErr("Helper 'include' doesn't accept blocks")
-  }
-  var template = templates.get(content.params[0])
-  if (!template) {
-    throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
-  }
-  return template(content.params[1], config)
-}
-
 // interface ExtendsHelperBlock extends HelperBlock {
 //   params: [string, object]
 // }

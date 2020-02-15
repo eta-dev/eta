@@ -355,6 +355,17 @@
               res += content.exec(key, param[key]); // todo: I think this is wrong?
           }
           return res;
+      },
+      include: function (content, blocks, config) {
+          // helperStart is called with (params, id) but id isn't needed
+          if (blocks && blocks.length > 0) {
+              throw SqrlErr("Helper 'include' doesn't accept blocks");
+          }
+          var template = templates.get(content.params[0]);
+          if (!template) {
+              throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
+          }
+          return template(content.params[1], config);
       }
   });
   var nativeHelpers = new Cacher({
@@ -546,21 +557,29 @@
       }
   };
   function getConfig(override, baseConfig) {
-      var starterConfig = baseConfig || defaultConfig;
       var res = {
-          varName: starterConfig.varName,
-          autoTrim: starterConfig.autoTrim,
-          autoEscape: starterConfig.autoEscape,
-          defaultFilter: starterConfig.defaultFilter,
-          tags: starterConfig.tags,
-          l: starterConfig.l,
-          async: starterConfig.async,
-          cache: starterConfig.cache,
-          plugins: starterConfig.plugins
+          varName: defaultConfig.varName,
+          autoTrim: defaultConfig.autoTrim,
+          autoEscape: defaultConfig.autoEscape,
+          defaultFilter: defaultConfig.defaultFilter,
+          tags: defaultConfig.tags,
+          l: defaultConfig.l,
+          async: defaultConfig.async,
+          cache: defaultConfig.cache,
+          plugins: defaultConfig.plugins
       };
-      for (var key in override) {
-          if (override.hasOwnProperty(key)) {
-              res[key] = override[key];
+      if (baseConfig) {
+          for (var key in baseConfig) {
+              if (baseConfig.hasOwnProperty(key)) {
+                  res[key] = baseConfig[key];
+              }
+          }
+      }
+      if (override) {
+          for (var key in override) {
+              if (override.hasOwnProperty(key)) {
+                  res[key] = override[key];
+              }
           }
       }
       return res;

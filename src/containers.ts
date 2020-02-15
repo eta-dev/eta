@@ -31,6 +31,10 @@ interface EscapeMap {
   [index: string]: string
 }
 
+interface IncludeHelperBlock extends HelperBlock {
+  params: [string, object]
+}
+
 /* END TYPES */
 
 var templates = new Cacher<TemplateFunction>({})
@@ -53,7 +57,22 @@ var helpers = new Cacher<HelperFunction>({
       res += content.exec(key, param[key]) // todo: I think this is wrong?
     }
     return res
-  }
+  },
+  include: function (
+    content: IncludeHelperBlock,
+    blocks: Array<HelperBlock>,
+    config: SqrlConfig
+  ): string {
+    // helperStart is called with (params, id) but id isn't needed
+    if (blocks && blocks.length > 0) {
+      throw SqrlErr("Helper 'include' doesn't accept blocks")
+    }
+    var template = templates.get(content.params[0])
+    if (!template) {
+      throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
+    }
+    return template(content.params[1], config)
+  } as HelperFunction
 })
 
 var nativeHelpers = new Cacher<Function>({
