@@ -8,15 +8,18 @@ import { AstObject, Filter, ParentTemplateObject } from './parse'
 
 /* END TYPES */
 
-function compileToString (str: string, env: SqrlConfig) {
+export default function compileToString (str: string, env: SqrlConfig) {
   var buffer: Array<AstObject> = Parse(str, env)
+
   return (
     "var tR='';" +
     compileScope(buffer, env)
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r') +
-    'return tR'
+    'if(cb){return cb(null,tR)} return tR'
   )
+
+  // TODO: is `return cb()` necessary, or could we just do `cb()`
 }
 
 // TODO: Use type intersections for TemplateObject, etc.
@@ -29,7 +32,13 @@ function compileHelper (
   params: string,
   name?: string
 ) {
-  var ret = '{exec:' + compileScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']'
+  var ret =
+    '{exec:' +
+    (env.async ? 'async ' : '') +
+    compileScopeIntoFunction(descendants, res, env) +
+    ',params:[' +
+    params +
+    ']'
   if (name) {
     ret += ",name:'" + name + "'"
   }
@@ -79,7 +88,7 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
         if (!currentBlock.raw && env.autoEscape) {
           content = "c.l('F','e')(" + content + ')'
         }
-        var filtered = filter(content, filters)
+        var filtered = filter(content, filters, env)
         returnStr += 'tR+=' + filtered + ';'
         // reference
       } else if (type === '~') {
@@ -89,6 +98,7 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
           returnStr += nativeHelpers.get(name)(currentBlock, env)
         } else {
           var helperReturn =
+            (env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
             "c.l('H','" +
             name +
             "')(" +
@@ -100,11 +110,22 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
           }
           helperReturn += ',c)'
 
-          returnStr += 'tR+=' + filter(helperReturn, filters) + ';'
+          returnStr += 'tR+=' + filter(helperReturn, filters, env) + ';'
         }
       } else if (type === 's') {
         returnStr +=
-          'tR+=' + filter("c.l('H','" + name + "')({params:[" + params + ']},[],c)', filters) + ';'
+          'tR+=' +
+          filter(
+            (env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
+              "c.l('H','" +
+              name +
+              "')({params:[" +
+              params +
+              ']},[],c)',
+            filters,
+            env
+          ) +
+          ';'
         // self-closing helper
       } else if (type === '!') {
         // execute
@@ -117,10 +138,15 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
   return returnStr
 }
 
-function filter (str: string, filters: Array<Filter>) {
+function filter (str: string, filters: Array<Filter>, env: SqrlConfig) {
   for (var i = 0; i < filters.length; i++) {
     var name = filters[i][0]
     var params = filters[i][1]
+    if (env.async) {
+      if (env.asyncFilters && env.asyncFilters.includes(name)) {
+        str = 'await ' + str
+      }
+    }
     str = "c.l('F','" + name + "')(" + str
     if (params) {
       str += ',' + params
@@ -129,5 +155,3 @@ function filter (str: string, filters: Array<Filter>) {
   }
   return str
 }
-
-export default compileToString

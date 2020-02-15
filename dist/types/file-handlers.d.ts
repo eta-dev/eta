@@ -1,6 +1,6 @@
 import { SqrlConfig } from './config';
 import { TemplateFunction } from './compile';
-declare type CallbackFn = (err: Error | null, str?: string) => void;
+export declare type CallbackFn = (err: Error | null, str?: string) => void;
 interface DataObj {
     settings?: {
         [key: string]: any;

@@ -11,6 +11,8 @@ interface SomeObj {
 
 /* END TYPES */
 
+export var promiseImpl = new Function('return this;')().Promise
+
 function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string): string {
   var leftTrim
   var rightTrim

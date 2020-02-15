@@ -1,4 +1,4 @@
 import { PartialConfig } from './config';
 import { TemplateFunction } from './compile';
-declare function Render(template: string | TemplateFunction, data: object, env?: PartialConfig): string;
-export default Render;
+import { CallbackFn } from './file-handlers';
+export default function render(template: string | TemplateFunction, data: object, env?: PartialConfig, cb?: CallbackFn): any;

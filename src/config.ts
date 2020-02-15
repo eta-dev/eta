@@ -15,6 +15,8 @@ export interface SqrlConfig {
   l: FetcherFunction
   plugins: { processAST: Array<object>; processFuncString: Array<object> }
   async: boolean
+  asyncFilters?: Array<string>
+  asyncHelpers?: Array<string>
   cache: boolean
   views?: string | Array<string>
   root?: string
@@ -44,6 +46,7 @@ var defaultConfig: SqrlConfig = {
     }
   },
   async: false,
+  asyncHelpers: ['include', 'includeFile'],
   cache: false,
   plugins: {
     processAST: [],

@@ -12,6 +12,8 @@ export interface SqrlConfig {
         processFuncString: Array<object>;
     };
     async: boolean;
+    asyncFilters?: Array<string>;
+    asyncHelpers?: Array<string>;
     cache: boolean;
     views?: string | Array<string>;
     root?: string;

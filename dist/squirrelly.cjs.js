@@ -76,6 +76,7 @@ function ParseErr(message, str, indx) {
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
 /* END TYPES */
+var promiseImpl = new Function('return this;')().Promise;
 function trimWS(str, env, wsLeft, wsRight) {
     var leftTrim;
     var rightTrim;
@@ -339,12 +340,18 @@ function compileToString(str, env) {
         compileScope(buffer, env)
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '\\r') +
-        'return tR');
+        'if(cb){return cb(null,tR)} return tR');
+    // TODO: is `return cb()` necessary, or could we just do `cb()`
 }
 // TODO: Use type intersections for TemplateObject, etc.
 // so I don't have to make properties mandatory
 function compileHelper(env, res, descendants, params, name) {
-    var ret = '{exec:' + compileScopeIntoFunction(descendants, res, env) + ',params:[' + params + ']';
+    var ret = '{exec:' +
+        (env.async ? 'async ' : '') +
+        compileScopeIntoFunction(descendants, res, env) +
+        ',params:[' +
+        params +
+        ']';
     if (name) {
         ret += ",name:'" + name + "'";
     }
@@ -389,7 +396,7 @@ function compileScope(buff, env) {
                 if (!currentBlock.raw && env.autoEscape) {
                     content = "c.l('F','e')(" + content + ')';
                 }
-                var filtered = filter(content, filters);
+                var filtered = filter(content, filters, env);
                 returnStr += 'tR+=' + filtered + ';';
                 // reference
             }
@@ -400,7 +407,8 @@ function compileScope(buff, env) {
                     returnStr += nativeHelpers.get(name)(currentBlock, env);
                 }
                 else {
-                    var helperReturn = "c.l('H','" +
+                    var helperReturn = (env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
+                        "c.l('H','" +
                         name +
                         "')(" +
                         compileHelper(env, res, currentBlock.d, params);
@@ -411,12 +419,19 @@ function compileScope(buff, env) {
                         helperReturn += ',[]';
                     }
                     helperReturn += ',c)';
-                    returnStr += 'tR+=' + filter(helperReturn, filters) + ';';
+                    returnStr += 'tR+=' + filter(helperReturn, filters, env) + ';';
                 }
             }
             else if (type === 's') {
                 returnStr +=
-                    'tR+=' + filter("c.l('H','" + name + "')({params:[" + params + ']},[],c)', filters) + ';';
+                    'tR+=' +
+                        filter((env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
+                            "c.l('H','" +
+                            name +
+                            "')({params:[" +
+                            params +
+                            ']},[],c)', filters, env) +
+                        ';';
                 // self-closing helper
             }
             else if (type === '!') {
@@ -427,10 +442,15 @@ function compileScope(buff, env) {
     }
     return returnStr;
 }
-function filter(str, filters) {
+function filter(str, filters, env) {
     for (var i = 0; i < filters.length; i++) {
         var name = filters[i][0];
         var params = filters[i][1];
+        if (env.async) {
+            if (env.asyncFilters && env.asyncFilters.includes(name)) {
+                str = 'await ' + str;
+            }
+        }
         str = "c.l('F','" + name + "')(" + str;
         if (params) {
             str += ',' + params;
@@ -548,6 +568,7 @@ var defaultConfig = {
         }
     },
     async: false,
+    asyncHelpers: ['include', 'includeFile'],
     cache: false,
     plugins: {
         processAST: [],
@@ -611,6 +632,7 @@ function compile(str, env) {
     }
     /* END ASYNC HANDLING */
     return new ctor(options.varName, 'c', // SqrlConfig
+    'cb', // optional callback
     compileToString(str, options)); // eslint-disable-line no-new-func
 }
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
@@ -697,7 +719,7 @@ function loadFile(filePath, options) {
     }
 }
 
-var promiseImpl = new Function('return this;')().Promise;
+// express is set like: app.engine('html', require('squirrelly').renderFile)
 /* END TYPES */
 /**
  * Get the template from a string or a file, either compiled on-the-fly or
@@ -756,12 +778,11 @@ function tryHandleCache(options, data, cb) {
     }
     else {
         try {
-            result = handleCache(options)(data, options);
+            handleCache(options)(data, options, cb);
         }
         catch (err) {
             return cb(err);
         }
-        cb(null, result);
     }
 }
 /**
@@ -853,11 +874,44 @@ function includeFileHelper(content, blocks, config) {
 // }
 
 /* END TYPES */
-function Render(template, data, env) {
+function render(template, data, env, cb) {
     var options = getConfig(env || {});
+    if (options.async) {
+        var result;
+        if (!cb) {
+            // No callback, try returning a promise
+            if (typeof promiseImpl == 'function') {
+                return new promiseImpl(function (resolve, reject) {
+                    try {
+                        result = handleCache$1(template, options)(data, options);
+                        resolve(result);
+                    }
+                    catch (err) {
+                        reject(err);
+                    }
+                });
+            }
+            else {
+                throw SqrlErr("Please provide a callback function, this env doesn't support Promises");
+            }
+        }
+        else {
+            try {
+                handleCache$1(template, options)(data, options, cb);
+            }
+            catch (err) {
+                return cb(err);
+            }
+        }
+    }
+    else {
+        return handleCache$1(template, options)(data, options);
+    }
+}
+function handleCache$1(template, options) {
     var templateFunc;
     if (options.cache && options.name && templates.get(options.name)) {
-        return templates.get(options.name)(data, options);
+        return templates.get(options.name);
     }
     if (typeof template === 'function') {
         templateFunc = template;
@@ -868,7 +922,7 @@ function Render(template, data, env) {
     if (options.cache && options.name) {
         templates.define(options.name, templateFunc);
     }
-    return templateFunc(data, options);
+    return templateFunc;
 }
 
 // TODO: allow importing polyfills?
@@ -887,7 +941,7 @@ exports.helpers = helpers;
 exports.loadFile = loadFile;
 exports.nativeHelpers = nativeHelpers;
 exports.parse = parse;
-exports.render = Render;
+exports.render = render;
 exports.renderFile = renderFile;
 exports.templates = templates;
 //# sourceMappingURL=squirrelly.cjs.js.map

@@ -2,6 +2,7 @@ import { SqrlConfig } from './config';
 interface SomeObj {
     [key: string]: any;
 }
+export declare var promiseImpl: any;
 declare function trimWS(str: string, env: SqrlConfig, wsLeft: string, wsRight?: string): string;
 /**
  * Naive copy of properties from one object to another.

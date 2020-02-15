@@ -4,7 +4,8 @@ import { getConfig } from './config'
 /* TYPES */
 
 import { SqrlConfig, PartialConfig } from './config'
-export type TemplateFunction = (data: object, config: SqrlConfig) => string
+import { CallbackFn } from './file-handlers'
+export type TemplateFunction = (data: object, config: SqrlConfig, cb?: CallbackFn) => string
 
 /* END TYPES */
 
@@ -33,6 +34,7 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
   return new ctor(
     options.varName,
     'c', // SqrlConfig
+    'cb', // optional callback
     compileToString(str, options)
   ) as TemplateFunction // eslint-disable-line no-new-func
 }

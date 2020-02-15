@@ -1,5 +1,3 @@
-var promiseImpl = new Function('return this;')().Promise
-
 // express is set like: app.engine('html', require('squirrelly').renderFile)
 
 import { templates } from './containers'
@@ -7,13 +5,14 @@ import SqrlErr from './err'
 import compile from './compile'
 import { getConfig } from './config'
 import { getPath, readFile, loadFile } from './file-utils'
+import { promiseImpl } from './utils'
 
 /* TYPES */
 
 import { SqrlConfig, PartialConfig } from './config'
 import { TemplateFunction } from './compile'
 
-type CallbackFn = (err: Error | null, str?: string) => void
+export type CallbackFn = (err: Error | null, str?: string) => void
 
 interface FileOptions extends SqrlConfig {
   filename: string
@@ -86,12 +85,10 @@ function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
     }
   } else {
     try {
-      result = handleCache(options)(data, options)
+      handleCache(options)(data, options, cb)
     } catch (err) {
       return cb(err)
     }
-
-    cb(null, result)
   }
 }
 
