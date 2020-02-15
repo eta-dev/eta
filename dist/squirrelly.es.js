@@ -539,17 +539,18 @@ var defaultConfig = {
         processFuncString: []
     }
 };
-function getConfig(override) {
+function getConfig(override, baseConfig) {
+    var starterConfig = baseConfig || defaultConfig;
     var res = {
-        varName: defaultConfig.varName,
-        autoTrim: defaultConfig.autoTrim,
-        autoEscape: defaultConfig.autoEscape,
-        defaultFilter: defaultConfig.defaultFilter,
-        tags: defaultConfig.tags,
-        l: defaultConfig.l,
-        async: defaultConfig.async,
-        cache: defaultConfig.cache,
-        plugins: defaultConfig.plugins
+        varName: starterConfig.varName,
+        autoTrim: starterConfig.autoTrim,
+        autoEscape: starterConfig.autoEscape,
+        defaultFilter: starterConfig.defaultFilter,
+        tags: starterConfig.tags,
+        l: starterConfig.l,
+        async: starterConfig.async,
+        cache: starterConfig.cache,
+        plugins: starterConfig.plugins
     };
     for (var key in override) {
         if (override.hasOwnProperty(key)) {
@@ -753,7 +754,7 @@ function tryHandleCache(options, data, cb) {
  */
 function includeFile(path, options) {
     // the below creates a new options object, using the parent filepath of the old options object and the path
-    var newFileOptions = getConfig({ filename: getPath(path, options) });
+    var newFileOptions = getConfig({ filename: getPath(path, options) }, options);
     // TODO: update this to merge the old options
     return handleCache(newFileOptions);
 }

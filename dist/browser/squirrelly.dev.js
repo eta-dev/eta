@@ -545,17 +545,18 @@
           processFuncString: []
       }
   };
-  function getConfig(override) {
+  function getConfig(override, baseConfig) {
+      var starterConfig = baseConfig || defaultConfig;
       var res = {
-          varName: defaultConfig.varName,
-          autoTrim: defaultConfig.autoTrim,
-          autoEscape: defaultConfig.autoEscape,
-          defaultFilter: defaultConfig.defaultFilter,
-          tags: defaultConfig.tags,
-          l: defaultConfig.l,
-          async: defaultConfig.async,
-          cache: defaultConfig.cache,
-          plugins: defaultConfig.plugins
+          varName: starterConfig.varName,
+          autoTrim: starterConfig.autoTrim,
+          autoEscape: starterConfig.autoEscape,
+          defaultFilter: starterConfig.defaultFilter,
+          tags: starterConfig.tags,
+          l: starterConfig.l,
+          async: starterConfig.async,
+          cache: starterConfig.cache,
+          plugins: starterConfig.plugins
       };
       for (var key in override) {
           if (override.hasOwnProperty(key)) {

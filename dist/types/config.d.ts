@@ -24,5 +24,5 @@ export declare type PartialConfig = {
     [P in keyof SqrlConfig]?: SqrlConfig[P];
 };
 declare var defaultConfig: SqrlConfig;
-declare function getConfig(override: PartialConfig): SqrlConfig;
+declare function getConfig(override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfig;
 export { defaultConfig, getConfig };
