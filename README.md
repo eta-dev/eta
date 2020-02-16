@@ -49,6 +49,7 @@ Simply put, Squirrelly is super lightweight, super fast, super powerful, and sup
 - 🔨 Comments
 - 🔧 Caching
 - 🚀 Fast
+- ⚡️ Async support: supports async filters and helpers
 
 ## 📜 Docs
 
