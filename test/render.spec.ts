@@ -1,5 +1,6 @@
 import Render from '../src/render'
 import Compile from '../src/compile'
+import { templates } from '../src/containers'
 
 describe('Simple Render checks', () => {
   describe('Render works', () => {
@@ -25,5 +26,18 @@ describe('Simple Render checks', () => {
       }
       expect(await Render(template, { getName: getName }, { async: true })).toEqual('Hello Ada!')
     })
+  })
+})
+
+describe('Render caching checks', () => {
+  it('Simple template caches', () => {
+    Render('Hi {{it.name}}', { name: 'Ada Lovelace' }, { cache: true, name: 'template1' })
+    expect(templates.get('template1')).toBeTruthy()
+  })
+
+  it('Simple template works again', () => {
+    expect(
+      Render("This shouldn't show up", { name: 'Ada Lovelace' }, { cache: true, name: 'template1' })
+    ).toEqual('Hi Ada Lovelace')
   })
 })

@@ -72,24 +72,24 @@ function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string)
   return str
 }
 
-// Below is adapted from EJS
-/**
- * Naive copy of properties from one object to another.
- * Does not recurse into non-scalar properties
- * Does not check to see if the property has a value before copying
- *
- * @param  {Object} to   Destination object
- * @param  {Object} from Source object
- * @return {Object}      Destination object
- * @static
- * @private
- */
+// // Below is adapted from EJS
+// /**
+//  * Naive copy of properties from one object to another.
+//  * Does not recurse into non-scalar properties
+//  * Does not check to see if the property has a value before copying
+//  *
+//  * @param  {Object} to   Destination object
+//  * @param  {Object} from Source object
+//  * @return {Object}      Destination object
+//  * @static
+//  * @private
+//  */
 
-function shallowCopy<res> (to: SomeObj, from: Partial<res>): res {
-  for (var p in from) {
-    to[p] = from[p]
-  }
-  return to as res
-}
+// function shallowCopy<res> (to: SomeObj, from: Partial<res>): res {
+//   for (var p in from) {
+//     to[p] = from[p]
+//   }
+//   return to as res
+// }
 
-export { trimWS, shallowCopy }
+export { trimWS }

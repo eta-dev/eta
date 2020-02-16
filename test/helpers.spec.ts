@@ -134,4 +134,16 @@ Uh-oh, error! Message was '{{err.message}}'
       compileToString(tryTemplateBlock, defaultConfig)
     }).toThrow()
   })
+
+  test('throws when include helper has blocks', () => {
+    expect(() => {
+      render('{{~include("partial")}}{{#block1}}{{/include}}', {})
+    }).toThrow()
+  })
+
+  test('throws when include helper points to unrecognized partial', () => {
+    expect(() => {
+      render('{{~include("some-partial")/}}', {})
+    }).toThrow()
+  })
 })
