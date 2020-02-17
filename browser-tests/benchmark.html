@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<!-- 
+Modified from AUI's docs. See their license below:
+==================================================
+Copyright (c) 2017 糖饼
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+<html lang="en" id="page-rendering-test">
+  <head>
+    <meta charset="utf-8" />
+    <title>Squirrelly Rendering Benchmarks</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
+    />
+
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      input,
+      button,
+      select {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      @media screen {
+        html,
+        body {
+          height: 100%;
+        }
+      }
+      body {
+        background: #fff;
+        font-size: 16px;
+        font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+        color: #444;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      pre .keyword,
+      pre .javascript .function {
+        color: #8959a8;
+      }
+      #page-rendering-test #content-wrap {
+        padding: 0 60px;
+        max-width: 800px;
+      }
+      #page-rendering-test #content-wrap input[type='number'] {
+        width: 6em;
+        border-bottom: 1px solid #003cb1;
+      }
+      #page-rendering-test #content-wrap .button {
+        padding: 8px;
+        margin-right: 10px;
+        border-radius: 2em;
+        display: inline-block;
+        color: #fff;
+        transition: all 0.15s ease;
+        box-sizing: border-box;
+        text-decoration: none;
+        background: #003cb1;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="content-wrap">
+        <div id="app"></div>
+      </div>
+
+      <script src="https://unpkg.com/highcharts@8.0.0/highcharts.js"></script>
+
+      <script src="https://unpkg.com/art-template@4.13.2/lib/template-web.js"></script>
+      <script src="https://unpkg.com/dot@1.1.3/doT.min.js"></script>
+      <script src="https://unpkg.com/ejs@3.0.1/ejs.min.js"></script>
+      <script src="https://unpkg.com/handlebars@4.7.3/dist/handlebars.min.js"></script>
+      <script src="https://unpkg.com/squirrelly@8.0.0-beta.4/dist/browser/squirrelly.min.js"></script>
+      <script src="https://unpkg.com/mustache@4.0.0/mustache.min.js"></script>
+      <script src="https://pugjs.org/js/pug.js"></script>
+      <script src="https://unpkg.com/swig@1.4.2/dist/swig.min.js"></script>
+
+      <script src="./benchmark.js"></script>
+      <script>
+        app('#app')
+      </script>
+    </div>
+  </body>
+</html>
