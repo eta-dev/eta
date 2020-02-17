@@ -624,9 +624,9 @@ function getConfig(override, baseConfig) {
         }
     }
     if (override) {
-        for (var key in override) {
-            if (override.hasOwnProperty(key)) {
-                res[key] = override[key];
+        for (var overrideKey in override) {
+            if (override.hasOwnProperty(overrideKey)) {
+                res[overrideKey] = override[overrideKey];
             }
         }
     }
@@ -705,8 +705,8 @@ function getPath(path, options) {
     if (match && match.length) {
         includePath = getWholeFilePath(path.replace(/^\/*/, ''), options.root || '/', true);
     }
-    // Relative paths
     else {
+        // Relative paths
         // Look relative to a passed filename first
         if (options.filename) {
             filePath = getWholeFilePath(path, options.filename);
@@ -790,7 +790,7 @@ function tryHandleCache(options, data, cb) {
     var result;
     if (!cb) {
         // No callback, try returning a promise
-        if (typeof promiseImpl == 'function') {
+        if (typeof promiseImpl === 'function') {
             return new promiseImpl(function (resolve, reject) {
                 try {
                     result = handleCache(options)(data, options);
@@ -882,7 +882,7 @@ function render(template, data, env, cb) {
         var result;
         if (!cb) {
             // No callback, try returning a promise
-            if (typeof promiseImpl == 'function') {
+            if (typeof promiseImpl === 'function') {
                 return new promiseImpl(function (resolve, reject) {
                     try {
                         result = handleCache$1(template, options)(data, options);

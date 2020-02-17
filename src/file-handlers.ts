@@ -71,7 +71,7 @@ function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
   var result
   if (!cb) {
     // No callback, try returning a promise
-    if (typeof promiseImpl == 'function') {
+    if (typeof promiseImpl === 'function') {
       return new promiseImpl(function (resolve: Function, reject: Function) {
         try {
           result = handleCache(options)(data, options)

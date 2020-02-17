@@ -58,9 +58,8 @@ function getPath (path: string, options: SqrlConfig) {
   // Abs path
   if (match && match.length) {
     includePath = getWholeFilePath(path.replace(/^\/*/, ''), options.root || '/', true)
-  }
-  // Relative paths
-  else {
+  } else {
+    // Relative paths
     // Look relative to a passed filename first
     if (options.filename) {
       filePath = getWholeFilePath(path, options.filename)

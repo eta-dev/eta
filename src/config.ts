@@ -76,9 +76,9 @@ function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfi
   }
 
   if (override) {
-    for (var key in override) {
-      if (override.hasOwnProperty(key)) {
-        res[key] = override[key]
+    for (var overrideKey in override) {
+      if (override.hasOwnProperty(overrideKey)) {
+        res[overrideKey] = override[overrideKey]
       }
     }
   }

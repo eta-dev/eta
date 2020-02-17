@@ -630,9 +630,9 @@
           }
       }
       if (override) {
-          for (var key in override) {
-              if (override.hasOwnProperty(key)) {
-                  res[key] = override[key];
+          for (var overrideKey in override) {
+              if (override.hasOwnProperty(overrideKey)) {
+                  res[overrideKey] = override[overrideKey];
               }
           }
       }
@@ -679,7 +679,7 @@
           var result;
           if (!cb) {
               // No callback, try returning a promise
-              if (typeof promiseImpl == 'function') {
+              if (typeof promiseImpl === 'function') {
                   return new promiseImpl(function (resolve, reject) {
                       try {
                           result = handleCache(template, options)(data, options);
