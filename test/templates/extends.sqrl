@@ -1,0 +1,7 @@
+{{~extendsFile('layout', {name: it.name})}}
+This is the content of the page
+{{#title}}
+Custom Title
+{{#description}}
+{{it.name}}'s cool site
+{{/extendsFile}}
