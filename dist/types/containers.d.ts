@@ -1,11 +1,14 @@
 import { Cacher } from './storage';
 import { SqrlConfig } from './config';
 import { TemplateFunction } from './compile';
-export interface HelperBlock {
+export interface HelperContent {
     exec: Function;
     params: Array<any>;
 }
-export declare type HelperFunction = (content: HelperBlock, blocks: Array<HelperBlock>, config: SqrlConfig) => string;
+export interface HelperBlock extends HelperContent {
+    name: string;
+}
+export declare type HelperFunction = (content: HelperContent, blocks: Array<HelperBlock>, config: SqrlConfig) => string;
 declare type FilterFunction = (str: string) => string;
 declare var templates: Cacher<TemplateFunction>;
 declare var helpers: Cacher<HelperFunction>;

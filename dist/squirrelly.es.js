@@ -488,6 +488,19 @@ var helpers = new Cacher({
             throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
         }
         return template(content.params[1], config);
+    },
+    extends: function (content, blocks, config) {
+        var data = content.params[1] || {};
+        data.content = content.exec();
+        for (var i = 0; i < blocks.length; i++) {
+            var currentBlock = blocks[i];
+            data[currentBlock.name] = currentBlock.exec();
+        }
+        var template = templates.get(content.params[0]);
+        if (!template) {
+            throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
+        }
+        return template(data, config);
     }
 });
 var nativeHelpers = new Cacher({
@@ -524,6 +537,26 @@ var nativeHelpers = new Cacher({
                 '{' +
                 compileScope(currentBlock.d, env) +
                 '}';
+        return returnStr;
+    },
+    block: function (buffer, env) {
+        if (buffer.f && buffer.f.length) {
+            throw SqrlErr("native helper 'block' can't have filters");
+        }
+        var returnStr = 'if(!' +
+            env.varName +
+            '[' +
+            buffer.p +
+            ']){tR+=(' +
+            compileScopeIntoFunction(buffer.d, '', env) +
+            ')()}else{tR+=' +
+            env.varName +
+            '[' +
+            buffer.p +
+            ']}';
+        if (buffer.b && buffer.b.length) {
+            throw SqrlErr("native helper 'block' doesn't accept blocks");
+        }
         return returnStr;
     }
 });
@@ -832,42 +865,15 @@ function includeFileHelper(content, blocks, config) {
     }
     return includeFile(content.params[0], config)(content.params[1], config);
 }
-// interface ExtendsHelperBlock extends HelperBlock {
-//   params: [string, object]
-// }
-// interface ExtendsHelperNameBlock extends HelperBlock {
-//   params: [string]
-// }
-// export function extendsHelper (
-//   content: ExtendsHelperBlock,
-//   blocks: Array<ExtendsHelperNameBlock>
-// ): string {
-//   // helperStart is called with (params, id) but id isn't needed
-//   if (blocks && blocks.length > 0) {
-//     throw SqrlErr("Helper 'extends' doesn't accept blocks")
-//   }
-//   var res = ''
-//   var param = content.params[0]
-//   for (var i = 0; i < param.length; i++) {
-//     res += content.exec(param[i], i)
-//   }
-//   return res
-// }
-// export function extendsFileHelper (
-//   content: ExtendsHelperBlock,
-//   blocks: Array<ExtendsHelperNameBlock>
-// ): string {
-//   // helperStart is called with (params, id) but id isn't needed
-//   if (blocks && blocks.length > 0) {
-//     throw SqrlErr("Helper 'extends' doesn't accept blocks")
-//   }
-//   var res = ''
-//   var param = content.params[0]
-//   for (var i = 0; i < param.length; i++) {
-//     res += content.exec(param[i], i)
-//   }
-//   return res
-// }
+function extendsFileHelper(content, blocks, config) {
+    var data = content.params[1] || {};
+    data.content = content.exec();
+    for (var i = 0; i < blocks.length; i++) {
+        var currentBlock = blocks[i];
+        data[currentBlock.name] = currentBlock.exec();
+    }
+    return includeFile(content.params[0], config)(data, config);
+}
 
 /* END TYPES */
 function render(template, data, env, cb) {
@@ -924,6 +930,7 @@ function handleCache$1(template, options) {
 // TODO: allow importing polyfills?
 /* END TYPES */
 helpers.define('includeFile', includeFileHelper);
+helpers.define('extendsFile', extendsFileHelper);
 
 export { renderFile as __express, compile, compileScope, compileScopeIntoFunction, compileToString, defaultConfig, filters, getConfig, helpers, loadFile, nativeHelpers, parse, render, renderFile, templates };
 //# sourceMappingURL=squirrelly.es.js.map

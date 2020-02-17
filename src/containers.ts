@@ -1,6 +1,6 @@
 import { Cacher } from './storage'
 import SqrlErr from './err'
-import { compileScope } from './compile-string'
+import { compileScope, compileScopeIntoFunction } from './compile-string'
 // interface ITemplate {
 //   exec: (options: object, Sqrl: object) => string
 // }
@@ -11,12 +11,17 @@ import { SqrlConfig } from './config'
 import { TemplateFunction } from './compile'
 import { ParentTemplateObject } from './parse'
 
-export interface HelperBlock {
+export interface HelperContent {
   exec: Function
   params: Array<any>
 }
+
+export interface HelperBlock extends HelperContent {
+  name: string
+}
+
 export type HelperFunction = (
-  content: HelperBlock,
+  content: HelperContent,
   blocks: Array<HelperBlock>,
   config: SqrlConfig
 ) => string
@@ -31,8 +36,12 @@ interface EscapeMap {
   [index: string]: string
 }
 
-interface IncludeHelperBlock extends HelperBlock {
+interface IncludeHelperContent extends HelperContent {
   params: [string, object]
+}
+
+interface GenericData {
+  [index: string]: any
 }
 
 /* END TYPES */
@@ -40,7 +49,7 @@ interface IncludeHelperBlock extends HelperBlock {
 var templates = new Cacher<TemplateFunction>({})
 
 var helpers = new Cacher<HelperFunction>({
-  each: function (content: HelperBlock) {
+  each: function (content: HelperContent) {
     // helperStart is called with (params, id) but id isn't needed
     var res = ''
     var param = content.params[0]
@@ -49,7 +58,7 @@ var helpers = new Cacher<HelperFunction>({
     }
     return res
   },
-  foreach: function (content: HelperBlock) {
+  foreach: function (content: HelperContent) {
     var res = ''
     var param = content.params[0]
     for (var key in param) {
@@ -59,7 +68,7 @@ var helpers = new Cacher<HelperFunction>({
     return res
   },
   include: function (
-    content: IncludeHelperBlock,
+    content: IncludeHelperContent,
     blocks: Array<HelperBlock>,
     config: SqrlConfig
   ): string {
@@ -72,6 +81,25 @@ var helpers = new Cacher<HelperFunction>({
       throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
     }
     return template(content.params[1], config)
+  } as HelperFunction,
+  extends: function (
+    content: IncludeHelperContent,
+    blocks: Array<HelperBlock>,
+    config: SqrlConfig
+  ): string {
+    var data: GenericData = content.params[1] || {}
+    data.content = content.exec()
+
+    for (var i = 0; i < blocks.length; i++) {
+      var currentBlock = blocks[i]
+      data[currentBlock.name] = currentBlock.exec()
+    }
+
+    var template = templates.get(content.params[0])
+    if (!template) {
+      throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
+    }
+    return template(data, config)
   } as HelperFunction
 })
 
@@ -110,6 +138,29 @@ var nativeHelpers = new Cacher<Function>({
       compileScope(currentBlock.d, env) +
       '}'
 
+    return returnStr
+  },
+  block: function (buffer: ParentTemplateObject, env: SqrlConfig) {
+    if (buffer.f && buffer.f.length) {
+      throw SqrlErr("native helper 'block' can't have filters")
+    }
+
+    var returnStr =
+      'if(!' +
+      env.varName +
+      '[' +
+      buffer.p +
+      ']){tR+=(' +
+      compileScopeIntoFunction(buffer.d, '', env) +
+      ')()}else{tR+=' +
+      env.varName +
+      '[' +
+      buffer.p +
+      ']}'
+
+    if (buffer.b && buffer.b.length) {
+      throw SqrlErr("native helper 'block' doesn't accept blocks")
+    }
     return returnStr
   }
 })

@@ -367,6 +367,19 @@
               throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
           }
           return template(content.params[1], config);
+      },
+      extends: function (content, blocks, config) {
+          var data = content.params[1] || {};
+          data.content = content.exec();
+          for (var i = 0; i < blocks.length; i++) {
+              var currentBlock = blocks[i];
+              data[currentBlock.name] = currentBlock.exec();
+          }
+          var template = templates.get(content.params[0]);
+          if (!template) {
+              throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
+          }
+          return template(data, config);
       }
   });
   var nativeHelpers = new Cacher({
@@ -403,6 +416,26 @@
                   '{' +
                   compileScope(currentBlock.d, env) +
                   '}';
+          return returnStr;
+      },
+      block: function (buffer, env) {
+          if (buffer.f && buffer.f.length) {
+              throw SqrlErr("native helper 'block' can't have filters");
+          }
+          var returnStr = 'if(!' +
+              env.varName +
+              '[' +
+              buffer.p +
+              ']){tR+=(' +
+              compileScopeIntoFunction(buffer.d, '', env) +
+              ')()}else{tR+=' +
+              env.varName +
+              '[' +
+              buffer.p +
+              ']}';
+          if (buffer.b && buffer.b.length) {
+              throw SqrlErr("native helper 'block' doesn't accept blocks");
+          }
           return returnStr;
       }
   });
