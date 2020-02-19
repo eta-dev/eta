@@ -16,6 +16,16 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "clitetailor",
+      "name": "Clite Tailor",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/16368559?v=4",
+      "profile": "http://ducnhatphung@gmail.com",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
