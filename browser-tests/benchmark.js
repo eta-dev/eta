@@ -14,8 +14,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-Mustache.templateCache = undefined
-
 var templateList = {}
 
 templateList['template'] = `
@@ -129,13 +127,24 @@ var config = {
   escape: true
 }
 
+function getParameterByName (name) {
+  var url = window.location.href
+  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
+  var results = regex.exec(url)
+  if (!results) return null
+  if (!results[2]) return ''
+  return decodeURIComponent(results[2].replace(/\+/g, ' '))
+}
+
 if (window.location.search) {
-  var param = decodeURIComponent(window.location.search)
-  param = param.replace(/.*\btest=({[^}]*}).*?/, '$1')
-  try {
-    config = JSON.parse(param)
-  } catch (e) {
-    console.error(e)
+  if (getParameterByName('length')) {
+    config.length = Number(getParameterByName('length'))
+  }
+  if (getParameterByName('calls')) {
+    config.calls = Number(getParameterByName('calls'))
+  }
+  if (getParameterByName('escape')) {
+    config.escape = getParameterByName('escape') === 'true'
   }
 }
 
@@ -269,6 +278,8 @@ var testList = [
       var id = config.escape ? 'mustache' : 'mustache-raw'
       var source = templateList[id]
       var html = ''
+      Mustache.templateCache = undefined
+
       for (var i = 0; i < config.calls; i++) {
         html = Mustache.render(source, data)
       }
@@ -413,9 +424,8 @@ var runTest = function (callback) {
 
 window['restart'] = function (key, value) {
   config[key] = value
-  var data = JSON.stringify(config)
-  data = encodeURIComponent(data)
-  window.location.search = 'test=' + data
+  window.location.search =
+    'length=' + config.length + '&calls=' + config.calls + '&escape=' + config.escape
 }
 
 window['app'] = function (selector) {
@@ -437,7 +447,7 @@ window['app'] = function (selector) {
 </div>
 <div id="test-container" style="min-width: 400px; margin: 0 auto"></div>`
 
-  var data = Object.create(config)
+  var data = config
   data.testList = testList
   app.innerHTML = template.render(body, data)
 
