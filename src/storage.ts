@@ -1,4 +1,4 @@
-import { hasOwnProp } from './utils'
+import { copyProps } from './utils'
 
 /* TYPES */
 
@@ -27,11 +27,7 @@ class Cacher<T> {
     this.cache = {}
   }
   load (cacheObj: Dict<T>) {
-    for (var key in cacheObj) {
-      if (hasOwnProp(cacheObj, key)) {
-        this.cache[key] = cacheObj[key]
-      }
-    }
+    copyProps(this.cache, cacheObj)
   }
 }
 

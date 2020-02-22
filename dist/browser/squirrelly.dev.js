@@ -51,6 +51,13 @@
   function hasOwnProp(obj, prop) {
       return Object.prototype.hasOwnProperty.call(obj, prop);
   }
+  function copyProps(toObj, fromObj) {
+      for (var key in fromObj) {
+          if (hasOwnProp(fromObj, key)) {
+              toObj[key] = fromObj[key];
+          }
+      }
+  }
   function trimWS(str, env, wsLeft, wsRight) {
       var leftTrim;
       var rightTrim;
@@ -328,11 +335,7 @@
           this.cache = {};
       };
       Cacher.prototype.load = function (cacheObj) {
-          for (var key in cacheObj) {
-              if (hasOwnProp(cacheObj, key)) {
-                  this.cache[key] = cacheObj[key];
-              }
-          }
+          copyProps(this.cache, cacheObj);
       };
       return Cacher;
   }());
@@ -628,13 +631,6 @@
       },
       useWith: false
   };
-  function copyProps(toObj, fromObj) {
-      for (var key in fromObj) {
-          if (hasOwnProp(fromObj, key)) {
-              toObj[key] = fromObj[key];
-          }
-      }
-  }
   function getConfig(override, baseConfig) {
       // TODO: run more tests on this
       var res = {}; // Linked

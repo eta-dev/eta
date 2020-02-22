@@ -5,6 +5,13 @@ var promiseImpl = new Function('return this;')().Promise;
 function hasOwnProp(obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop);
 }
+function copyProps(toObj, fromObj) {
+    for (var key in fromObj) {
+        if (hasOwnProp(fromObj, key)) {
+            toObj[key] = fromObj[key];
+        }
+    }
+}
 function trimWS(str, env, wsLeft, wsRight) {
     var leftTrim;
     var rightTrim;
@@ -81,11 +88,7 @@ var Cacher = /** @class */ (function () {
         this.cache = {};
     };
     Cacher.prototype.load = function (cacheObj) {
-        for (var key in cacheObj) {
-            if (hasOwnProp(cacheObj, key)) {
-                this.cache[key] = cacheObj[key];
-            }
-        }
+        copyProps(this.cache, cacheObj);
     };
     return Cacher;
 }());
@@ -622,13 +625,6 @@ var defaultConfig = {
     },
     useWith: false
 };
-function copyProps(toObj, fromObj) {
-    for (var key in fromObj) {
-        if (hasOwnProp(fromObj, key)) {
-            toObj[key] = fromObj[key];
-        }
-    }
-}
 function getConfig(override, baseConfig) {
     // TODO: run more tests on this
     var res = {}; // Linked
@@ -871,11 +867,7 @@ function renderFile(filename, data, cb) {
         var viewOpts = data.settings['view options'];
         // TODO: use same merge function config uses
         if (viewOpts) {
-            for (var key in viewOpts) {
-                if (hasOwnProp(viewOpts, key)) {
-                    Config[key] = viewOpts[key];
-                }
-            }
+            copyProps(Config, viewOpts);
         }
     }
     Config.filename = filename; // Make sure filename is right

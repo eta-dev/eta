@@ -13,6 +13,14 @@ export function hasOwnProp (obj: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
+export function copyProps<T> (toObj: T, fromObj: T) {
+  for (var key in fromObj) {
+    if (hasOwnProp((fromObj as unknown) as object, key)) {
+      toObj[key] = fromObj[key]
+    }
+  }
+}
+
 function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string): string {
   var leftTrim
   var rightTrim

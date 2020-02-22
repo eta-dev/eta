@@ -1,7 +1,7 @@
 import { helpers, filters } from './containers'
 import { HelperFunction, FilterFunction } from './containers'
 import SqrlErr from './err'
-import { hasOwnProp } from './utils'
+import { copyProps } from './utils'
 
 /* TYPES */
 
@@ -67,14 +67,6 @@ var defaultConfig: SqrlConfig = {
     processFnString: []
   },
   useWith: false
-}
-
-function copyProps (toObj: PartialConfig, fromObj: PartialConfig) {
-  for (var key in fromObj) {
-    if (hasOwnProp(fromObj, key)) {
-      toObj[key] = fromObj[key]
-    }
-  }
 }
 
 function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfig {

@@ -5,7 +5,7 @@ import SqrlErr from './err'
 import compile from './compile'
 import { getConfig } from './config'
 import { getPath, readFile, loadFile } from './file-utils'
-import { promiseImpl, hasOwnProp } from './utils'
+import { promiseImpl, copyProps } from './utils'
 
 /* TYPES */
 
@@ -129,11 +129,7 @@ function renderFile (filename: string, data: DataObj, cb?: CallbackFn) {
 
     // TODO: use same merge function config uses
     if (viewOpts) {
-      for (var key in viewOpts) {
-        if (hasOwnProp(viewOpts, key)) {
-          Config[key] = viewOpts[key]
-        }
-      }
+      copyProps(Config, viewOpts)
     }
   }
 
