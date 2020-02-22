@@ -41,3 +41,21 @@ describe('Render caching checks', () => {
     ).toEqual('Hi Ada Lovelace')
   })
 })
+
+describe('Renders with different scopes', () => {
+  it('Puts `it` in global scope with env.useWith', () => {
+    expect(Render('Hi {{name}}', { name: 'Ada Lovelace' }, { useWith: true })).toEqual(
+      'Hi Ada Lovelace'
+    )
+  })
+
+  it('useScope helper works', () => {
+    expect(
+      Render(
+        'Hi {{~useScope(it)=>{name} }}{{name}}{{/useScope}}',
+        { name: 'Ada Lovelace' },
+        { useWith: true }
+      )
+    ).toEqual('Hi Ada Lovelace')
+  })
+})

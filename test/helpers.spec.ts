@@ -105,6 +105,12 @@ Uh-oh, If doesn't know what to do
     }).toThrow()
   })
 
+  test('throws when useScope helper has unrecognized blocks', () => {
+    expect(() => {
+      render('{{~useScope(it)=>{val1, val2} }}{{#randomblock}}{{/useScope}}', {})
+    }).toThrow()
+  })
+
   var tryTemplateFilter = `
 {{~try | filter1}}
 Some content

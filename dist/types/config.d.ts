@@ -9,7 +9,7 @@ export interface SqrlConfig {
     l: FetcherFunction;
     plugins: {
         processAST: Array<object>;
-        processFuncString: Array<object>;
+        processFnString: Array<object>;
     };
     async: boolean;
     asyncFilters?: Array<string>;
@@ -20,6 +20,7 @@ export interface SqrlConfig {
     filename?: string;
     name?: string;
     'view cache'?: boolean;
+    useWith?: boolean;
     [index: string]: any;
 }
 export declare type PartialConfig = {

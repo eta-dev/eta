@@ -26,7 +26,7 @@ export type HelperFunction = (
   config: SqrlConfig
 ) => string
 
-type FilterFunction = (str: string) => string
+export type FilterFunction = (str: string) => string
 
 interface EscapeMap {
   '&': '&amp;'
@@ -47,6 +47,20 @@ interface GenericData {
 /* END TYPES */
 
 var templates = new Cacher<TemplateFunction>({})
+
+function errWithBlocksOrFilters (
+  name: string,
+  blocks: Array<any> | false, // false means don't check
+  filters: Array<any> | false,
+  native?: boolean
+) {
+  if (blocks && blocks.length > 0) {
+    throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept blocks")
+  }
+  if (filters && filters.length > 0) {
+    throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept filters")
+  }
+}
 
 var helpers = new Cacher<HelperFunction>({
   each: function (content: HelperContent) {
@@ -72,10 +86,7 @@ var helpers = new Cacher<HelperFunction>({
     blocks: Array<HelperBlock>,
     config: SqrlConfig
   ): string {
-    // helperStart is called with (params, id) but id isn't needed
-    if (blocks && blocks.length > 0) {
-      throw SqrlErr("Helper 'include' doesn't accept blocks")
-    }
+    errWithBlocksOrFilters('include', blocks, false)
     var template = templates.get(content.params[0])
     if (!template) {
       throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
@@ -100,14 +111,18 @@ var helpers = new Cacher<HelperFunction>({
       throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
     }
     return template(data, config)
+  } as HelperFunction,
+  useScope: function (content: HelperContent, blocks: Array<HelperBlock>): string {
+    errWithBlocksOrFilters('useScope', blocks, false)
+
+    return content.exec(content.params[0])
   } as HelperFunction
 })
 
 var nativeHelpers = new Cacher<Function>({
   if: function (buffer: ParentTemplateObject, env: SqrlConfig) {
-    if (buffer.f && buffer.f.length) {
-      throw SqrlErr("native helper 'if' can't have filters")
-    }
+    errWithBlocksOrFilters('if', false, buffer.f, true)
+
     var returnStr = 'if(' + buffer.p + '){' + compileScope(buffer.d, env) + '}'
     if (buffer.b) {
       for (var i = 0; i < buffer.b.length; i++) {
@@ -122,9 +137,8 @@ var nativeHelpers = new Cacher<Function>({
     return returnStr
   },
   try: function (buffer: ParentTemplateObject, env: SqrlConfig) {
-    if (buffer.f && buffer.f.length) {
-      throw SqrlErr("native helper 'try' can't have filters")
-    }
+    errWithBlocksOrFilters('try', false, buffer.f, true)
+
     if (!buffer.b || buffer.b.length !== 1 || buffer.b[0].n !== 'catch') {
       throw SqrlErr("native helper 'try' only accepts 1 block, 'catch'")
     }
@@ -141,9 +155,7 @@ var nativeHelpers = new Cacher<Function>({
     return returnStr
   },
   block: function (buffer: ParentTemplateObject, env: SqrlConfig) {
-    if (buffer.f && buffer.f.length) {
-      throw SqrlErr("native helper 'block' can't have filters")
-    }
+    errWithBlocksOrFilters('block', buffer.b, buffer.f, true)
 
     var returnStr =
       'if(!' +
@@ -158,9 +170,6 @@ var nativeHelpers = new Cacher<Function>({
       buffer.p +
       ']}'
 
-    if (buffer.b && buffer.b.length) {
-      throw SqrlErr("native helper 'block' doesn't accept blocks")
-    }
     return returnStr
   }
 })

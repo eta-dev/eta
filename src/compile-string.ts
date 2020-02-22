@@ -13,10 +13,12 @@ export default function compileToString (str: string, env: SqrlConfig) {
 
   return (
     "var tR='';" +
+    (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
     compileScope(buffer, env)
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r') +
-    'if(cb){return cb(null,tR)} return tR'
+    'if(cb){return cb(null,tR)} return tR' +
+    (env.useWith ? '}' : '')
   )
 
   // TODO: is `return cb()` necessary, or could we just do `cb()`

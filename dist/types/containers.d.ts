@@ -9,7 +9,7 @@ export interface HelperBlock extends HelperContent {
     name: string;
 }
 export declare type HelperFunction = (content: HelperContent, blocks: Array<HelperBlock>, config: SqrlConfig) => string;
-declare type FilterFunction = (str: string) => string;
+export declare type FilterFunction = (str: string) => string;
 declare var templates: Cacher<TemplateFunction>;
 declare var helpers: Cacher<HelperFunction>;
 declare var nativeHelpers: Cacher<Function>;

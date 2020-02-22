@@ -1,4 +1,6 @@
 import { helpers, filters } from './containers'
+import { HelperFunction, FilterFunction } from './containers'
+import SqrlErr from './err'
 
 /* TYPES */
 
@@ -13,7 +15,7 @@ export interface SqrlConfig {
   defaultFilter: false | Function
   tags: [string, string]
   l: FetcherFunction
-  plugins: { processAST: Array<object>; processFuncString: Array<object> }
+  plugins: { processAST: Array<object>; processFnString: Array<object> }
   async: boolean
   asyncFilters?: Array<string>
   asyncHelpers?: Array<string>
@@ -23,6 +25,7 @@ export interface SqrlConfig {
   filename?: string
   name?: string
   'view cache'?: boolean
+  useWith?: boolean
   [index: string]: any
 }
 
@@ -40,9 +43,19 @@ var defaultConfig: SqrlConfig = {
   tags: ['{{', '}}'],
   l: function (container: 'H' | 'F', name: string) {
     if (container === 'H') {
-      return helpers.get(name)
+      var hRet = helpers.get(name) as HelperFunction | undefined
+      if (hRet) {
+        return hRet
+      } else {
+        throw SqrlErr("Can't find helper '" + name + "'")
+      }
     } else if (container === 'F') {
-      return filters.get(name)
+      var fRet = filters.get(name) as FilterFunction | undefined
+      if (fRet) {
+        return fRet
+      } else {
+        throw SqrlErr("Can't find filter '" + name + "'")
+      }
     }
   },
   async: false,
@@ -50,40 +63,64 @@ var defaultConfig: SqrlConfig = {
   cache: false,
   plugins: {
     processAST: [],
-    processFuncString: []
+    processFnString: []
+  },
+  useWith: false
+}
+
+function copyProps (toObj: PartialConfig, fromObj: PartialConfig) {
+  for (var key in fromObj) {
+    if (fromObj.hasOwnProperty(key)) {
+      toObj[key] = fromObj[key]
+    }
   }
 }
 
 function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfig {
-  var res: SqrlConfig = {
-    varName: defaultConfig.varName,
-    autoTrim: defaultConfig.autoTrim,
-    autoEscape: defaultConfig.autoEscape,
-    defaultFilter: defaultConfig.defaultFilter,
-    tags: defaultConfig.tags,
-    l: defaultConfig.l,
-    async: defaultConfig.async,
-    cache: defaultConfig.cache,
-    plugins: defaultConfig.plugins
-  }
+  // TODO: check speed on this vs for-in loop
+
+  // var res: SqrlConfig = {
+  //   varName: defaultConfig.varName,
+  //   autoTrim: defaultConfig.autoTrim,
+  //   autoEscape: defaultConfig.autoEscape,
+  //   defaultFilter: defaultConfig.defaultFilter,
+  //   tags: defaultConfig.tags,
+  //   l: defaultConfig.l,
+  //   plugins: defaultConfig.plugins,
+  //   async: defaultConfig.async,
+  //   asyncFilters: defaultConfig.asyncFilters,
+  //   asyncHelpers: defaultConfig.asyncHelpers,
+  //   cache: defaultConfig.cache,
+  //   views: defaultConfig.views,
+  //   root: defaultConfig.root,
+  //   filename: defaultConfig.filename,
+  //   name: defaultConfig.name,
+  //   'view cache': defaultConfig['view cache'],
+  //   useWith: defaultConfig.useWith
+  // }
+
+  var res: PartialConfig = {} // Linked
+  copyProps(res, defaultConfig) // Creates deep clone of res, 1 layer deep
 
   if (baseConfig) {
-    for (var key in baseConfig) {
-      if (baseConfig.hasOwnProperty(key)) {
-        res[key] = baseConfig[key]
-      }
-    }
+    // for (var key in baseConfig) {
+    //   if (baseConfig.hasOwnProperty(key)) {
+    //     res[key] = baseConfig[key]
+    //   }
+    // }
+    copyProps(res, baseConfig)
   }
 
   if (override) {
-    for (var overrideKey in override) {
-      if (override.hasOwnProperty(overrideKey)) {
-        res[overrideKey] = override[overrideKey]
-      }
-    }
+    // for (var overrideKey in override) {
+    //   if (override.hasOwnProperty(overrideKey)) {
+    //     res[overrideKey] = override[overrideKey]
+    //   }
+    // }
+    copyProps(res, override)
   }
 
-  return res
+  return res as SqrlConfig
 }
 
 export { defaultConfig, getConfig }

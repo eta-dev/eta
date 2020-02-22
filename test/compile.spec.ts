@@ -31,6 +31,7 @@ describe('Compile test', () => {
     expect(str).toBeTruthy()
   })
 
+  // TODO: Update
   it('compiles complex template', () => {
     var str = compile(complexTemplate)
     expect(str).toBeTruthy()
@@ -39,6 +40,12 @@ describe('Compile test', () => {
   test('throws with bad filter syntax', () => {
     expect(() => {
       compile('{{~hi () hey | hi /}}')
+    }).toThrow()
+  })
+
+  test('throws with bad inner JS syntax', () => {
+    expect(() => {
+      compile('{{hi (=h) }}')
     }).toThrow()
   })
 

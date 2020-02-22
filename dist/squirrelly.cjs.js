@@ -337,10 +337,12 @@ function parse(str, env) {
 function compileToString(str, env) {
     var buffer = parse(str, env);
     return ("var tR='';" +
+        (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
         compileScope(buffer, env)
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '\\r') +
-        'if(cb){return cb(null,tR)} return tR');
+        'if(cb){return cb(null,tR)} return tR' +
+        (env.useWith ? '}' : ''));
     // TODO: is `return cb()` necessary, or could we just do `cb()`
 }
 // TODO: Use type intersections for TemplateObject, etc.
@@ -462,6 +464,15 @@ function filter(str, filters, env) {
 
 /* END TYPES */
 var templates = new Cacher({});
+function errWithBlocksOrFilters(name, blocks, // false means don't check
+filters, native) {
+    if (blocks && blocks.length > 0) {
+        throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept blocks");
+    }
+    if (filters && filters.length > 0) {
+        throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept filters");
+    }
+}
 var helpers = new Cacher({
     each: function (content) {
         // helperStart is called with (params, id) but id isn't needed
@@ -483,10 +494,7 @@ var helpers = new Cacher({
         return res;
     },
     include: function (content, blocks, config) {
-        // helperStart is called with (params, id) but id isn't needed
-        if (blocks && blocks.length > 0) {
-            throw SqrlErr("Helper 'include' doesn't accept blocks");
-        }
+        errWithBlocksOrFilters('include', blocks, false);
         var template = templates.get(content.params[0]);
         if (!template) {
             throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
@@ -505,13 +513,15 @@ var helpers = new Cacher({
             throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
         }
         return template(data, config);
+    },
+    useScope: function (content, blocks) {
+        errWithBlocksOrFilters('useScope', blocks, false);
+        return content.exec(content.params[0]);
     }
 });
 var nativeHelpers = new Cacher({
     if: function (buffer, env) {
-        if (buffer.f && buffer.f.length) {
-            throw SqrlErr("native helper 'if' can't have filters");
-        }
+        errWithBlocksOrFilters('if', false, buffer.f, true);
         var returnStr = 'if(' + buffer.p + '){' + compileScope(buffer.d, env) + '}';
         if (buffer.b) {
             for (var i = 0; i < buffer.b.length; i++) {
@@ -527,9 +537,7 @@ var nativeHelpers = new Cacher({
         return returnStr;
     },
     try: function (buffer, env) {
-        if (buffer.f && buffer.f.length) {
-            throw SqrlErr("native helper 'try' can't have filters");
-        }
+        errWithBlocksOrFilters('try', false, buffer.f, true);
         if (!buffer.b || buffer.b.length !== 1 || buffer.b[0].n !== 'catch') {
             throw SqrlErr("native helper 'try' only accepts 1 block, 'catch'");
         }
@@ -544,9 +552,7 @@ var nativeHelpers = new Cacher({
         return returnStr;
     },
     block: function (buffer, env) {
-        if (buffer.f && buffer.f.length) {
-            throw SqrlErr("native helper 'block' can't have filters");
-        }
+        errWithBlocksOrFilters('block', buffer.b, buffer.f, true);
         var returnStr = 'if(!' +
             env.varName +
             '[' +
@@ -558,9 +564,6 @@ var nativeHelpers = new Cacher({
             '[' +
             buffer.p +
             ']}';
-        if (buffer.b && buffer.b.length) {
-            throw SqrlErr("native helper 'block' doesn't accept blocks");
-        }
         return returnStr;
     }
 });
@@ -594,10 +597,22 @@ var defaultConfig = {
     tags: ['{{', '}}'],
     l: function (container, name) {
         if (container === 'H') {
-            return helpers.get(name);
+            var hRet = helpers.get(name);
+            if (hRet) {
+                return hRet;
+            }
+            else {
+                throw SqrlErr("Can't find helper '" + name + "'");
+            }
         }
         else if (container === 'F') {
-            return filters.get(name);
+            var fRet = filters.get(name);
+            if (fRet) {
+                return fRet;
+            }
+            else {
+                throw SqrlErr("Can't find filter '" + name + "'");
+            }
         }
     },
     async: false,
@@ -605,34 +620,55 @@ var defaultConfig = {
     cache: false,
     plugins: {
         processAST: [],
-        processFuncString: []
-    }
+        processFnString: []
+    },
+    useWith: false
 };
-function getConfig(override, baseConfig) {
-    var res = {
-        varName: defaultConfig.varName,
-        autoTrim: defaultConfig.autoTrim,
-        autoEscape: defaultConfig.autoEscape,
-        defaultFilter: defaultConfig.defaultFilter,
-        tags: defaultConfig.tags,
-        l: defaultConfig.l,
-        async: defaultConfig.async,
-        cache: defaultConfig.cache,
-        plugins: defaultConfig.plugins
-    };
-    if (baseConfig) {
-        for (var key in baseConfig) {
-            if (baseConfig.hasOwnProperty(key)) {
-                res[key] = baseConfig[key];
-            }
+function copyProps(toObj, fromObj) {
+    for (var key in fromObj) {
+        if (fromObj.hasOwnProperty(key)) {
+            toObj[key] = fromObj[key];
         }
+    }
+}
+function getConfig(override, baseConfig) {
+    // TODO: check speed on this vs for-in loop
+    // var res: SqrlConfig = {
+    //   varName: defaultConfig.varName,
+    //   autoTrim: defaultConfig.autoTrim,
+    //   autoEscape: defaultConfig.autoEscape,
+    //   defaultFilter: defaultConfig.defaultFilter,
+    //   tags: defaultConfig.tags,
+    //   l: defaultConfig.l,
+    //   plugins: defaultConfig.plugins,
+    //   async: defaultConfig.async,
+    //   asyncFilters: defaultConfig.asyncFilters,
+    //   asyncHelpers: defaultConfig.asyncHelpers,
+    //   cache: defaultConfig.cache,
+    //   views: defaultConfig.views,
+    //   root: defaultConfig.root,
+    //   filename: defaultConfig.filename,
+    //   name: defaultConfig.name,
+    //   'view cache': defaultConfig['view cache'],
+    //   useWith: defaultConfig.useWith
+    // }
+    var res = {}; // Linked
+    copyProps(res, defaultConfig); // Creates deep clone of res, 1 layer deep
+    if (baseConfig) {
+        // for (var key in baseConfig) {
+        //   if (baseConfig.hasOwnProperty(key)) {
+        //     res[key] = baseConfig[key]
+        //   }
+        // }
+        copyProps(res, baseConfig);
     }
     if (override) {
-        for (var overrideKey in override) {
-            if (override.hasOwnProperty(overrideKey)) {
-                res[overrideKey] = override[overrideKey];
-            }
-        }
+        // for (var overrideKey in override) {
+        //   if (override.hasOwnProperty(overrideKey)) {
+        //     res[overrideKey] = override[overrideKey]
+        //   }
+        // }
+        copyProps(res, override);
     }
     return res;
 }
@@ -664,9 +700,24 @@ function compile(str, env) {
         ctor = Function;
     }
     /* END ASYNC HANDLING */
-    return new ctor(options.varName, 'c', // SqrlConfig
-    'cb', // optional callback
-    compileToString(str, options)); // eslint-disable-line no-new-func
+    try {
+        return new ctor(options.varName, 'c', // SqrlConfig
+        'cb', // optional callback
+        compileToString(str, options)); // eslint-disable-line no-new-func
+    }
+    catch (e) {
+        if (e instanceof SyntaxError) {
+            throw SqrlErr('Bad template syntax\n\n' +
+                e.message +
+                '\n' +
+                Array(e.message.length + 1).join('=') +
+                '\n' +
+                compileToString(str, options));
+        }
+        else {
+            throw e;
+        }
+    }
 }
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 

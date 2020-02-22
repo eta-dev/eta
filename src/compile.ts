@@ -1,5 +1,6 @@
 import compileToString from './compile-string'
 import { getConfig } from './config'
+import SqrlErr from './err'
 
 /* TYPES */
 
@@ -31,12 +32,27 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
     ctor = Function
   }
   /* END ASYNC HANDLING */
-  return new ctor(
-    options.varName,
-    'c', // SqrlConfig
-    'cb', // optional callback
-    compileToString(str, options)
-  ) as TemplateFunction // eslint-disable-line no-new-func
+  try {
+    return new ctor(
+      options.varName,
+      'c', // SqrlConfig
+      'cb', // optional callback
+      compileToString(str, options)
+    ) as TemplateFunction // eslint-disable-line no-new-func
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      throw SqrlErr(
+        'Bad template syntax\n\n' +
+          e.message +
+          '\n' +
+          Array(e.message.length + 1).join('=') +
+          '\n' +
+          compileToString(str, options)
+      )
+    } else {
+      throw e
+    }
+  }
 }
 
 // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
