@@ -3,7 +3,9 @@
 # squirrelly
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [logo]: https://img.shields.io/badge/all_contributors-2-orange.svg 'Number of contributors on All-Contributors'
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/squirrellyjs/squirrelly/master?label=current%20version)
@@ -33,10 +35,12 @@ Simply put, Squirrelly is super lightweight, super fast, super powerful, and sup
 
 ### 🌟 Features
 
-- 🔧 Custom helpers
-- 🔧 Custom filters
+- 🔧 Helpers, filters
+- 🔧 Great error reporting
 - 📦 0 dependencies
 - 🔨 Conditionals
+- 🔧 Better quotes/comments support
+  - _ex. `{{someval + "name }}" }}`_ compiles correctly, while it fails with DoT or EJS
 - ⚡️ Exports ES Modules as well as UMD
 - 🔨 Loops
 - 🔧 Custom delimeters
@@ -63,7 +67,7 @@ We know nobody reads through the long and boring documentation in the ReadMe any
 ```
 var myTemplate = "<p>My favorite kind of cake is: {{it.favoriteCake}}</p>"
 
-Sqrl.Render(myTemplate, {favoriteCake: 'Chocolate!'})
+Sqrl.render(myTemplate, {favoriteCake: 'Chocolate!'})
 // Returns: '<p>My favorite kind of cake is: Chocolate!</p>
 ```
 
@@ -115,10 +119,11 @@ Made with ❤ by [@nebrelbug](https://github.com/nebrelbug) and all these wonder
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind are welcome!
 
 ## Credits
 
-- Async support was added based on code from EJS, which is licensed under the Apache-2.0 license. Code was modified to throw a Squirrelly Error.
+- Async support and file handling were added based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified to throw a Squirrelly Error.
