@@ -1,6 +1,6 @@
 {
   "name": "squirrelly",
-  "version": "8.0.0-beta.5",
+  "version": "8.0.0-beta.6",
   "description": "Lightweight, fast, and powerful JS template engine. Supports helpers, filters, template inheritance",
   "keywords": [
     "squirrelly",
@@ -17,7 +17,9 @@
   "typings": "dist/types/index.d.ts",
   "jsdelivr": "dist/browser/squirrelly.min.js",
   "unpkg": "dist/browser/squirrelly.min.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "repository": {
     "type": "git",
@@ -46,7 +48,9 @@
     "format": "prettier-standard --format '{src,test}/**/*.ts'"
   },
   "lint-staged": {
-    "{src,test}/**/*.ts": ["prettier-standard --lint"]
+    "{src,test}/**/*.ts": [
+      "prettier-standard --lint"
+    ]
   },
   "config": {
     "commitizen": {
@@ -59,8 +63,14 @@
     },
     "testEnvironment": "node",
     "testRegex": "(/test/.*|\\.(test|spec))\\.(ts|js)$",
-    "moduleFileExtensions": ["ts", "js"],
-    "coveragePathIgnorePatterns": ["/node_modules/", "/test/"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/test/"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 80,
@@ -69,17 +79,23 @@
         "statements": 95
       }
     },
-    "collectCoverageFrom": ["src/{!(browser),}.ts"]
+    "collectCoverageFrom": [
+      "src/{!(browser),}.ts"
+    ]
   },
   "standard": {
-    "ignore": ["dist"]
+    "ignore": [
+      "dist"
+    ]
   },
   "prettier": {
     "semi": false,
     "singleQuote": true
   },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
