@@ -48,6 +48,9 @@
   // TODO: only include trimLeft polyfill if not in ES6
   /* END TYPES */
   var promiseImpl = new Function('return this;')().Promise;
+  function hasOwnProp(obj, prop) {
+      return Object.prototype.hasOwnProperty.call(obj, prop);
+  }
   function trimWS(str, env, wsLeft, wsRight) {
       var leftTrim;
       var rightTrim;
@@ -304,7 +307,6 @@
       return parseResult.d; // Parse the very outside context
   }
 
-  /* TYPES */
   /* END TYPES */
   var Cacher = /** @class */ (function () {
       function Cacher(cache) {
@@ -327,7 +329,7 @@
       };
       Cacher.prototype.load = function (cacheObj) {
           for (var key in cacheObj) {
-              if (cacheObj.hasOwnProperty(key)) {
+              if (hasOwnProp(cacheObj, key)) {
                   this.cache[key] = cacheObj[key];
               }
           }
@@ -360,7 +362,7 @@
           var res = '';
           var param = content.params[0];
           for (var key in param) {
-              if (!param.hasOwnProperty(key))
+              if (!hasOwnProp(param, key))
                   continue;
               res += content.exec(key, param[key]); // todo: I think this is wrong?
           }
@@ -473,6 +475,23 @@
           (env.useWith ? '}' : ''));
       // TODO: is `return cb()` necessary, or could we just do `cb()`
   }
+  function filter(str, filters, env) {
+      for (var i = 0; i < filters.length; i++) {
+          var name = filters[i][0];
+          var params = filters[i][1];
+          if (env.async) {
+              if (env.asyncFilters && env.asyncFilters.includes(name)) {
+                  str = 'await ' + str;
+              }
+          }
+          str = "c.l('F','" + name + "')(" + str;
+          if (params) {
+              str += ',' + params;
+          }
+          str += ')';
+      }
+      return str;
+  }
   // TODO: Use type intersections for TemplateObject, etc.
   // so I don't have to make properties mandatory
   function compileHelper(env, res, descendants, params, name) {
@@ -572,23 +591,6 @@
       }
       return returnStr;
   }
-  function filter(str, filters, env) {
-      for (var i = 0; i < filters.length; i++) {
-          var name = filters[i][0];
-          var params = filters[i][1];
-          if (env.async) {
-              if (env.asyncFilters && env.asyncFilters.includes(name)) {
-                  str = 'await ' + str;
-              }
-          }
-          str = "c.l('F','" + name + "')(" + str;
-          if (params) {
-              str += ',' + params;
-          }
-          str += ')';
-      }
-      return str;
-  }
 
   /* END TYPES */
   var defaultConfig = {
@@ -628,48 +630,19 @@
   };
   function copyProps(toObj, fromObj) {
       for (var key in fromObj) {
-          if (fromObj.hasOwnProperty(key)) {
+          if (hasOwnProp(fromObj, key)) {
               toObj[key] = fromObj[key];
           }
       }
   }
   function getConfig(override, baseConfig) {
-      // TODO: check speed on this vs for-in loop
-      // var res: SqrlConfig = {
-      //   varName: defaultConfig.varName,
-      //   autoTrim: defaultConfig.autoTrim,
-      //   autoEscape: defaultConfig.autoEscape,
-      //   defaultFilter: defaultConfig.defaultFilter,
-      //   tags: defaultConfig.tags,
-      //   l: defaultConfig.l,
-      //   plugins: defaultConfig.plugins,
-      //   async: defaultConfig.async,
-      //   asyncFilters: defaultConfig.asyncFilters,
-      //   asyncHelpers: defaultConfig.asyncHelpers,
-      //   cache: defaultConfig.cache,
-      //   views: defaultConfig.views,
-      //   root: defaultConfig.root,
-      //   filename: defaultConfig.filename,
-      //   name: defaultConfig.name,
-      //   'view cache': defaultConfig['view cache'],
-      //   useWith: defaultConfig.useWith
-      // }
+      // TODO: run more tests on this
       var res = {}; // Linked
       copyProps(res, defaultConfig); // Creates deep clone of res, 1 layer deep
       if (baseConfig) {
-          // for (var key in baseConfig) {
-          //   if (baseConfig.hasOwnProperty(key)) {
-          //     res[key] = baseConfig[key]
-          //   }
-          // }
           copyProps(res, baseConfig);
       }
       if (override) {
-          // for (var overrideKey in override) {
-          //   if (override.hasOwnProperty(overrideKey)) {
-          //     res[overrideKey] = override[overrideKey]
-          //   }
-          // }
           copyProps(res, override);
       }
       return res;
@@ -724,6 +697,22 @@
   // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
   /* END TYPES */
+  function handleCache(template, options) {
+      var templateFunc;
+      if (options.cache && options.name && templates.get(options.name)) {
+          return templates.get(options.name);
+      }
+      if (typeof template === 'function') {
+          templateFunc = template;
+      }
+      else {
+          templateFunc = compile(template, options);
+      }
+      if (options.cache && options.name) {
+          templates.define(options.name, templateFunc);
+      }
+      return templateFunc;
+  }
   function render(template, data, env, cb) {
       var options = getConfig(env || {});
       if (options.async) {
@@ -757,22 +746,6 @@
       else {
           return handleCache(template, options)(data, options);
       }
-  }
-  function handleCache(template, options) {
-      var templateFunc;
-      if (options.cache && options.name && templates.get(options.name)) {
-          return templates.get(options.name);
-      }
-      if (typeof template === 'function') {
-          templateFunc = template;
-      }
-      else {
-          templateFunc = compile(template, options);
-      }
-      if (options.cache && options.name) {
-          templates.define(options.name, templateFunc);
-      }
-      return templateFunc;
   }
 
   exports.compile = compile;

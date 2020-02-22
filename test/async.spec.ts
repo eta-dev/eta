@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import * as Sqrl from '../src/index'
 import { HelperFunction } from '../src/containers'
 

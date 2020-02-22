@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import { parse } from '../src/index'
 import { defaultConfig } from '../src/config'
 

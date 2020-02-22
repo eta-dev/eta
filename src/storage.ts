@@ -1,6 +1,8 @@
+import { hasOwnProp } from './utils'
+
 /* TYPES */
 
-interface ICache<T> {
+interface Dict<T> {
   // Basically, an object where all keys point to a value of the same type
   [key: string]: T
 }
@@ -8,7 +10,7 @@ interface ICache<T> {
 /* END TYPES */
 
 class Cacher<T> {
-  constructor (private cache: ICache<T>) {}
+  constructor (private cache: Dict<T>) {}
   define (key: string, val: T) {
     this.cache[key] = val
   }
@@ -24,9 +26,9 @@ class Cacher<T> {
   reset () {
     this.cache = {}
   }
-  load (cacheObj: ICache<T>) {
+  load (cacheObj: Dict<T>) {
     for (var key in cacheObj) {
-      if (cacheObj.hasOwnProperty(key)) {
+      if (hasOwnProp(cacheObj, key)) {
         this.cache[key] = cacheObj[key]
       }
     }

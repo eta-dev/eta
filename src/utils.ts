@@ -5,13 +5,13 @@
 
 import { SqrlConfig } from './config'
 
-interface SomeObj {
-  [key: string]: any
-}
-
 /* END TYPES */
 
 export var promiseImpl = new Function('return this;')().Promise
+
+export function hasOwnProp (obj: object, prop: string) {
+  return Object.prototype.hasOwnProperty.call(obj, prop)
+}
 
 function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string): string {
   var leftTrim
@@ -71,25 +71,5 @@ function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string)
 
   return str
 }
-
-// // Below is adapted from EJS
-// /**
-//  * Naive copy of properties from one object to another.
-//  * Does not recurse into non-scalar properties
-//  * Does not check to see if the property has a value before copying
-//  *
-//  * @param  {Object} to   Destination object
-//  * @param  {Object} from Source object
-//  * @return {Object}      Destination object
-//  * @static
-//  * @private
-//  */
-
-// function shallowCopy<res> (to: SomeObj, from: Partial<res>): res {
-//   for (var p in from) {
-//     to[p] = from[p]
-//   }
-//   return to as res
-// }
 
 export { trimWS }

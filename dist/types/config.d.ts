@@ -1,4 +1,4 @@
-export declare type FetcherFunction = (container: 'H' | 'F', name: string) => any;
+export declare type FetcherFunction = (container: 'H' | 'F', name: string) => Function | undefined;
 declare type trimConfig = 'nl' | 'slurp' | boolean;
 export interface SqrlConfig {
     varName: string;

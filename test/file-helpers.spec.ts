@@ -1,8 +1,8 @@
-import { render, templates, compile, renderFile } from '../src/index'
-import { defaultConfig } from '../src/config'
+/* global it, expect, describe */
 
-var fs = require('fs'),
-  path = require('path')
+import { render, templates, compile, renderFile } from '../src/index'
+
+var path = require('path')
 
 templates.define('test-template', compile('HEY {{it.name}}'))
 

@@ -1,6 +1,7 @@
 import { Cacher } from './storage'
 import SqrlErr from './err'
 import { compileScope, compileScopeIntoFunction } from './compile-string'
+import { hasOwnProp } from './utils'
 // interface ITemplate {
 //   exec: (options: object, Sqrl: object) => string
 // }
@@ -76,7 +77,7 @@ var helpers = new Cacher<HelperFunction>({
     var res = ''
     var param = content.params[0]
     for (var key in param) {
-      if (!param.hasOwnProperty(key)) continue
+      if (!hasOwnProp(param, key)) continue
       res += content.exec(key, param[key]) // todo: I think this is wrong?
     }
     return res

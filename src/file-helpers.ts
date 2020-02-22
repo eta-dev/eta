@@ -1,5 +1,4 @@
 import SqrlErr from './err'
-import { templates } from './containers'
 import { includeFile } from './file-handlers'
 
 /* TYPES */

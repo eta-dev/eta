@@ -1,10 +1,11 @@
 import { helpers, filters } from './containers'
 import { HelperFunction, FilterFunction } from './containers'
 import SqrlErr from './err'
+import { hasOwnProp } from './utils'
 
 /* TYPES */
 
-export type FetcherFunction = (container: 'H' | 'F', name: string) => any
+export type FetcherFunction = (container: 'H' | 'F', name: string) => Function | undefined
 
 type trimConfig = 'nl' | 'slurp' | boolean
 
@@ -41,7 +42,7 @@ var defaultConfig: SqrlConfig = {
   autoEscape: true,
   defaultFilter: false,
   tags: ['{{', '}}'],
-  l: function (container: 'H' | 'F', name: string) {
+  l: function (container: 'H' | 'F', name: string): HelperFunction | FilterFunction | undefined {
     if (container === 'H') {
       var hRet = helpers.get(name) as HelperFunction | undefined
       if (hRet) {
@@ -70,53 +71,23 @@ var defaultConfig: SqrlConfig = {
 
 function copyProps (toObj: PartialConfig, fromObj: PartialConfig) {
   for (var key in fromObj) {
-    if (fromObj.hasOwnProperty(key)) {
+    if (hasOwnProp(fromObj, key)) {
       toObj[key] = fromObj[key]
     }
   }
 }
 
 function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfig {
-  // TODO: check speed on this vs for-in loop
-
-  // var res: SqrlConfig = {
-  //   varName: defaultConfig.varName,
-  //   autoTrim: defaultConfig.autoTrim,
-  //   autoEscape: defaultConfig.autoEscape,
-  //   defaultFilter: defaultConfig.defaultFilter,
-  //   tags: defaultConfig.tags,
-  //   l: defaultConfig.l,
-  //   plugins: defaultConfig.plugins,
-  //   async: defaultConfig.async,
-  //   asyncFilters: defaultConfig.asyncFilters,
-  //   asyncHelpers: defaultConfig.asyncHelpers,
-  //   cache: defaultConfig.cache,
-  //   views: defaultConfig.views,
-  //   root: defaultConfig.root,
-  //   filename: defaultConfig.filename,
-  //   name: defaultConfig.name,
-  //   'view cache': defaultConfig['view cache'],
-  //   useWith: defaultConfig.useWith
-  // }
+  // TODO: run more tests on this
 
   var res: PartialConfig = {} // Linked
   copyProps(res, defaultConfig) // Creates deep clone of res, 1 layer deep
 
   if (baseConfig) {
-    // for (var key in baseConfig) {
-    //   if (baseConfig.hasOwnProperty(key)) {
-    //     res[key] = baseConfig[key]
-    //   }
-    // }
     copyProps(res, baseConfig)
   }
 
   if (override) {
-    // for (var overrideKey in override) {
-    //   if (override.hasOwnProperty(overrideKey)) {
-    //     res[overrideKey] = override[overrideKey]
-    //   }
-    // }
     copyProps(res, override)
   }
 

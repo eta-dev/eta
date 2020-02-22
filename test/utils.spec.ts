@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import { trimWS } from '../src/utils'
 import { defaultConfig } from '../src/config'
 

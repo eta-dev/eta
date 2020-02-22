@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import { compile } from '../src/index'
 var fs = require('fs'),
   path = require('path'),

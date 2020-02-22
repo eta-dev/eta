@@ -24,6 +24,24 @@ export default function compileToString (str: string, env: SqrlConfig) {
   // TODO: is `return cb()` necessary, or could we just do `cb()`
 }
 
+function filter (str: string, filters: Array<Filter>, env: SqrlConfig) {
+  for (var i = 0; i < filters.length; i++) {
+    var name = filters[i][0]
+    var params = filters[i][1]
+    if (env.async) {
+      if (env.asyncFilters && env.asyncFilters.includes(name)) {
+        str = 'await ' + str
+      }
+    }
+    str = "c.l('F','" + name + "')(" + str
+    if (params) {
+      str += ',' + params
+    }
+    str += ')'
+  }
+  return str
+}
+
 // TODO: Use type intersections for TemplateObject, etc.
 // so I don't have to make properties mandatory
 
@@ -138,22 +156,4 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
     }
   }
   return returnStr
-}
-
-function filter (str: string, filters: Array<Filter>, env: SqrlConfig) {
-  for (var i = 0; i < filters.length; i++) {
-    var name = filters[i][0]
-    var params = filters[i][1]
-    if (env.async) {
-      if (env.asyncFilters && env.asyncFilters.includes(name)) {
-        str = 'await ' + str
-      }
-    }
-    str = "c.l('F','" + name + "')(" + str
-    if (params) {
-      str += ',' + params
-    }
-    str += ')'
-  }
-  return str
 }

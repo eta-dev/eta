@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import Render from '../src/render'
 import Compile from '../src/compile'
 import { templates } from '../src/containers'
@@ -18,7 +20,7 @@ describe('Simple Render checks', () => {
     it('Rendering function works', async () => {
       let template = 'Hello {{ await it.getName() }}!'
       let getName = () => {
-        return new Promise((res, rej) => {
+        return new Promise(res => {
           setTimeout(() => {
             res('Ada')
           }, 1000)

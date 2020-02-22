@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import { render, filters, defaultConfig, compileToString } from '../src/index'
 
 var eachTemplate = `

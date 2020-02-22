@@ -1,11 +1,9 @@
+/* global it, expect, describe */
+
 import { renderFile } from '../src/index'
-import { defaultConfig } from '../src/config'
 
-var fs = require('fs'),
-  path = require('path'),
+var path = require('path'),
   filePath = path.join(__dirname, 'templates/simple.sqrl')
-
-const complexTemplate = fs.readFileSync(filePath, 'utf8')
 
 describe('File handlers test', () => {
   it('parses a simple template', async () => {

@@ -12,6 +12,26 @@ import { CallbackFn } from './file-handlers'
 
 /* END TYPES */
 
+function handleCache (template: string | TemplateFunction, options: SqrlConfig): TemplateFunction {
+  var templateFunc
+
+  if (options.cache && options.name && templates.get(options.name)) {
+    return templates.get(options.name)
+  }
+
+  if (typeof template === 'function') {
+    templateFunc = template
+  } else {
+    templateFunc = compile(template, options)
+  }
+
+  if (options.cache && options.name) {
+    templates.define(options.name, templateFunc)
+  }
+
+  return templateFunc
+}
+
 export default function render (
   template: string | TemplateFunction,
   data: object,
@@ -46,24 +66,4 @@ export default function render (
   } else {
     return handleCache(template, options)(data, options)
   }
-}
-
-function handleCache (template: string | TemplateFunction, options: SqrlConfig): TemplateFunction {
-  var templateFunc
-
-  if (options.cache && options.name && templates.get(options.name)) {
-    return templates.get(options.name)
-  }
-
-  if (typeof template === 'function') {
-    templateFunc = template
-  } else {
-    templateFunc = compile(template, options)
-  }
-
-  if (options.cache && options.name) {
-    templates.define(options.name, templateFunc)
-  }
-
-  return templateFunc
 }

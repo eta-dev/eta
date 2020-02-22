@@ -5,7 +5,7 @@ import SqrlErr from './err'
 import compile from './compile'
 import { getConfig } from './config'
 import { getPath, readFile, loadFile } from './file-utils'
-import { promiseImpl } from './utils'
+import { promiseImpl, hasOwnProp } from './utils'
 
 /* TYPES */
 
@@ -126,9 +126,11 @@ function renderFile (filename: string, data: DataObj, cb?: CallbackFn) {
     // Undocumented after Express 2, but still usable, esp. for
     // items that are unsafe to be passed along with data, like `root`
     var viewOpts = data.settings['view options']
+
+    // TODO: use same merge function config uses
     if (viewOpts) {
       for (var key in viewOpts) {
-        if (viewOpts.hasOwnProperty(key)) {
+        if (hasOwnProp(viewOpts, key)) {
           Config[key] = viewOpts[key]
         }
       }

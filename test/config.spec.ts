@@ -1,5 +1,7 @@
+/* global it, expect, describe */
+
 import { render } from '../src/index'
-import { defaultConfig, PartialConfig } from '../src/config'
+import { defaultConfig } from '../src/config'
 
 describe('Config Tests', () => {
   it('Renders a simple template with default env', () => {

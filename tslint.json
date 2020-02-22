@@ -1,7 +1,0 @@
-{
-  "extends": ["tslint-config-prettier", "tslint-config-standard"],
-  "rules": {
-    "no-var-keyword": false,
-    "no-duplicate-imports": false
-  }
-}

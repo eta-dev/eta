@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import { render, filters } from '../src'
 
 filters.define('capitalize', function (str: string) {

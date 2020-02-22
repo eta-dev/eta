@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import { ParseErr } from '../src/err'
 describe('ParseErr', () => {
   it('error throws correctly', () => {

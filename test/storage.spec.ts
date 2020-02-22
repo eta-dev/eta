@@ -1,3 +1,5 @@
+/* global it, expect, describe */
+
 import { Cacher } from '../src/storage'
 
 var Container = new Cacher<number>({ one: 1, two: 2 })

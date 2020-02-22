@@ -1,5 +1,7 @@
+/* global it, expect, describe */
 import { compileToString } from '../src/index'
 import { defaultConfig } from '../src/config'
+
 var fs = require('fs'),
   path = require('path'),
   filePath = path.join(__dirname, 'templates/complex.sqrl')
