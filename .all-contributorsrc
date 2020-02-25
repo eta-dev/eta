@@ -26,6 +26,16 @@
         "ideas",
         "code"
       ]
+    },
+    {
+      "login": "ichiriac",
+      "name": "Ioan CHIRIAC",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/173203?v=4",
+      "profile": "https://twitter.com/ioan_chiriac",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
