@@ -4,7 +4,6 @@
   (global = global || self, factory(global.Sqrl = {}));
 }(this, (function (exports) { 'use strict';
 
-  // v 1.0.32
   function setPrototypeOf(obj, proto) {
       if (Object.setPrototypeOf) {
           Object.setPrototypeOf(obj, proto);
@@ -23,10 +22,7 @@
   });
   // TODO: Class transpilation adds a lot to the bundle size
   function ParseErr(message, str, indx) {
-      var whitespace = str
-          .slice(0, indx) // +2 because of {{
-          .split(/\n/);
-      // console.log('whitespace: \n' + JSON.stringify(whitespace))
+      var whitespace = str.slice(0, indx).split(/\n/);
       var lineNo = whitespace.length;
       var colNo = whitespace[lineNo - 1].length + 1;
       message +=
@@ -113,7 +109,6 @@
       return str;
   }
 
-  // Version 1.0.32
   /* END TYPES */
   function parse(str, env) {
       var powerchars = new RegExp('([|()]|=>)|' +
@@ -125,7 +120,6 @@
       var startInd = 0;
       var trimNextLeftWs = '';
       function parseTag() {
-          // console.log(JSON.stringify(match))
           var currentObj = { f: [] };
           var numParens = 0;
           var firstChar = str[startInd];
@@ -299,7 +293,6 @@
               // ===== DONE ADDING OBJECT TO BUFFER =====
           }
           if (firstParse) {
-              // TODO: more intuitive
               pushString(str.slice(startInd, str.length));
               parentObj.d = buffer;
           }
@@ -353,7 +346,6 @@
   }
   var helpers = new Cacher({
       each: function (content) {
-          // helperStart is called with (params, id) but id isn't needed
           var res = '';
           var param = content.params[0];
           for (var i = 0; i < param.length; i++) {
@@ -554,7 +546,6 @@
               }
               else if (type === '~') {
                   // helper
-                  // TODO: native helpers: check
                   if (nativeHelpers.get(name)) {
                       returnStr += nativeHelpers.get(name)(currentBlock, env);
                   }
@@ -643,8 +634,6 @@
       }
       return res;
   }
-  // Have different envs. Sqrl.render, compile, etc. all use default env
-  // Use class for env
 
   /* END TYPES */
   function compile(str, env) {

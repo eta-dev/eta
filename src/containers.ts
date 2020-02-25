@@ -2,9 +2,6 @@ import { Cacher } from './storage'
 import SqrlErr from './err'
 import { compileScope, compileScopeIntoFunction } from './compile-string'
 import { hasOwnProp } from './utils'
-// interface ITemplate {
-//   exec: (options: object, Sqrl: object) => string
-// }
 
 /* TYPES */
 
@@ -65,7 +62,6 @@ function errWithBlocksOrFilters (
 
 var helpers = new Cacher<HelperFunction>({
   each: function (content: HelperContent) {
-    // helperStart is called with (params, id) but id isn't needed
     var res = ''
     var param = content.params[0]
     for (var i = 0; i < param.length; i++) {

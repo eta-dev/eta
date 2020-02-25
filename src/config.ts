@@ -87,6 +87,3 @@ function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfi
 }
 
 export { defaultConfig, getConfig }
-
-// Have different envs. Sqrl.render, compile, etc. all use default env
-// Use class for env

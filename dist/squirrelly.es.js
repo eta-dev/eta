@@ -93,7 +93,6 @@ var Cacher = /** @class */ (function () {
     return Cacher;
 }());
 
-// v 1.0.32
 function setPrototypeOf(obj, proto) {
     if (Object.setPrototypeOf) {
         Object.setPrototypeOf(obj, proto);
@@ -112,10 +111,7 @@ SqrlErr.prototype = Object.create(Error.prototype, {
 });
 // TODO: Class transpilation adds a lot to the bundle size
 function ParseErr(message, str, indx) {
-    var whitespace = str
-        .slice(0, indx) // +2 because of {{
-        .split(/\n/);
-    // console.log('whitespace: \n' + JSON.stringify(whitespace))
+    var whitespace = str.slice(0, indx).split(/\n/);
     var lineNo = whitespace.length;
     var colNo = whitespace[lineNo - 1].length + 1;
     message +=
@@ -133,7 +129,6 @@ function ParseErr(message, str, indx) {
     throw SqrlErr(message);
 }
 
-// Version 1.0.32
 /* END TYPES */
 function parse(str, env) {
     var powerchars = new RegExp('([|()]|=>)|' +
@@ -145,7 +140,6 @@ function parse(str, env) {
     var startInd = 0;
     var trimNextLeftWs = '';
     function parseTag() {
-        // console.log(JSON.stringify(match))
         var currentObj = { f: [] };
         var numParens = 0;
         var firstChar = str[startInd];
@@ -319,7 +313,6 @@ function parse(str, env) {
             // ===== DONE ADDING OBJECT TO BUFFER =====
         }
         if (firstParse) {
-            // TODO: more intuitive
             pushString(str.slice(startInd, str.length));
             parentObj.d = buffer;
         }
@@ -422,7 +415,6 @@ function compileScope(buff, env) {
             }
             else if (type === '~') {
                 // helper
-                // TODO: native helpers: check
                 if (nativeHelpers.get(name)) {
                     returnStr += nativeHelpers.get(name)(currentBlock, env);
                 }
@@ -476,7 +468,6 @@ filters, native) {
 }
 var helpers = new Cacher({
     each: function (content) {
-        // helperStart is called with (params, id) but id isn't needed
         var res = '';
         var param = content.params[0];
         for (var i = 0; i < param.length; i++) {
@@ -637,8 +628,6 @@ function getConfig(override, baseConfig) {
     }
     return res;
 }
-// Have different envs. Sqrl.render, compile, etc. all use default env
-// Use class for env
 
 /* END TYPES */
 function compile(str, env) {
@@ -848,7 +837,7 @@ function tryHandleCache(options, data, cb) {
 function includeFile(path, options) {
     // the below creates a new options object, using the parent filepath of the old options object and the path
     var newFileOptions = getConfig({ filename: getPath(path, options) }, options);
-    // TODO: update this to merge the old options
+    // TODO: make sure properties are currectly copied over
     return handleCache(newFileOptions);
 }
 function renderFile(filename, data, cb) {
@@ -865,7 +854,6 @@ function renderFile(filename, data, cb) {
         // Undocumented after Express 2, but still usable, esp. for
         // items that are unsafe to be passed along with data, like `root`
         var viewOpts = data.settings['view options'];
-        // TODO: use same merge function config uses
         if (viewOpts) {
             copyProps(Config, viewOpts);
         }
@@ -876,7 +864,6 @@ function renderFile(filename, data, cb) {
 
 /* END TYPES */
 function includeFileHelper(content, blocks, config) {
-    // helperStart is called with (params, id) but id isn't needed
     if (blocks && blocks.length > 0) {
         throw SqrlErr("Helper 'includeFile' doesn't accept blocks");
     }
@@ -944,7 +931,7 @@ function render(template, data, env, cb) {
     }
 }
 
-// TODO: allow importing polyfills?
+/* Export file stuff */
 /* END TYPES */
 helpers.define('includeFile', includeFileHelper);
 helpers.define('extendsFile', extendsFileHelper);

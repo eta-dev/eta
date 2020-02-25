@@ -107,7 +107,7 @@ function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
 function includeFile (path: string, options: SqrlConfig) {
   // the below creates a new options object, using the parent filepath of the old options object and the path
   var newFileOptions = getConfig({ filename: getPath(path, options) }, options)
-  // TODO: update this to merge the old options
+  // TODO: make sure properties are currectly copied over
   return handleCache(newFileOptions as FileOptions)
 }
 
@@ -127,7 +127,6 @@ function renderFile (filename: string, data: DataObj, cb?: CallbackFn) {
     // items that are unsafe to be passed along with data, like `root`
     var viewOpts = data.settings['view options']
 
-    // TODO: use same merge function config uses
     if (viewOpts) {
       copyProps(Config, viewOpts)
     }

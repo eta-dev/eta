@@ -1,5 +1,3 @@
-// v 1.0.32
-
 function setPrototypeOf (obj: any, proto: any) {
   if (Object.setPrototypeOf) {
     Object.setPrototypeOf(obj, proto)
@@ -21,11 +19,8 @@ SqrlErr.prototype = Object.create(Error.prototype, {
 // TODO: Class transpilation adds a lot to the bundle size
 
 export function ParseErr (message: string, str: string, indx: number) {
-  var whitespace = str
-    .slice(0, indx) // +2 because of {{
-    .split(/\n/)
+  var whitespace = str.slice(0, indx).split(/\n/)
 
-  // console.log('whitespace: \n' + JSON.stringify(whitespace))
   var lineNo = whitespace.length
   var colNo = whitespace[lineNo - 1].length + 1
   message +=

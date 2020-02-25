@@ -12,7 +12,6 @@ describe('File handlers test', () => {
     expect(renderedFile).toEqual('Hi Ben')
   })
 
-  // STUFF
   it('render file with callback works', done => {
     function cb (err: Error | null, res?: string) {
       try {
@@ -25,7 +24,6 @@ describe('File handlers test', () => {
 
     renderFile(filePath, { name: 'Ada Lovelace', async: true }, cb)
   })
-  // STUFF
 
   it('parses a simple template w/ a callback', async () => {
     renderFile(filePath, { name: 'Ben' }, function (err, res) {

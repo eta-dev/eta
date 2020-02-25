@@ -113,7 +113,6 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
         // reference
       } else if (type === '~') {
         // helper
-        // TODO: native helpers: check
         if (nativeHelpers.get(name)) {
           returnStr += nativeHelpers.get(name)(currentBlock, env)
         } else {

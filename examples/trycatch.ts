@@ -7,7 +7,7 @@ Uh-oh, error! Message was '{{err.message}}'
 {{/try}}
 `
 
-// the above is autoescaped because otherwise it automatically converts it to a string
+// the above is auto unescaped because otherwise it automatically converts it to a string
 
 Sqrl.Filters.define('validate', function (str) {
   console.log('str is ' + str + 'and its type is ' + typeof str)

@@ -50,7 +50,7 @@ Uh-oh, error! Message was '{{err.message}}'
 {{/try}}
 `
 
-  // the above is autoescaped because otherwise it automatically converts it to a string
+  // the above is auto unescaped because otherwise it automatically converts it to a string
 
   filters.define('validate', function (str: string) {
     if (typeof str !== 'string') {

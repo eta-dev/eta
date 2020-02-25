@@ -1,4 +1,3 @@
-// Version 1.0.32
 import SqrlErr, { ParseErr } from './err'
 import { trimWS } from './utils'
 
@@ -47,7 +46,6 @@ export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
   var trimNextLeftWs = ''
 
   function parseTag (): TemplateObject {
-    // console.log(JSON.stringify(match))
     var currentObj: TemplateObject = { f: [] }
     var numParens = 0
     var firstChar = str[startInd]
@@ -222,7 +220,6 @@ export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
     }
 
     if (firstParse) {
-      // TODO: more intuitive
       pushString(str.slice(startInd, str.length))
       parentObj.d = buffer
     } else {

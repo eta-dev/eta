@@ -1,7 +1,3 @@
-// TODO: allow importing polyfills?
-// import "core-js/fn/array.find"
-// ...
-
 /* Export file stuff */
 import { helpers } from './containers'
 import { includeFileHelper, extendsFileHelper } from './file-helpers'

@@ -12,10 +12,4 @@ describe('File tests', () => {
     expect(templates.get(filePath)).toBeTruthy()
     expect(templates.get(filePath)({ name: 'Ben' }, defaultConfig)).toBeTruthy()
   })
-
-  // test('throws with unclosed tag', () => {
-  //   expect(() => {
-  //     Parse('{{hi("hey")', defaultConfig)
-  //   }).toThrow()
-  // })
 })

@@ -2,7 +2,7 @@ var fs = require('fs')
 var path = require('path')
 var _BOM = /^\uFEFF/
 
-// express is set like: app.engine('html', require('ejs').renderFile)
+// express is set like: app.engine('html', require('squirrelly').renderFile)
 
 import SqrlErr from './err'
 import Compile from './compile'
