@@ -54,5 +54,3 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
     }
   }
 }
-
-// console.log(Compile('hi {{this}} hey', '{{', '}}').toString())

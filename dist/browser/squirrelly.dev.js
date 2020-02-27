@@ -705,7 +705,6 @@
           }
       }
   }
-  // console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
   /* END TYPES */
   function handleCache(template, options) {

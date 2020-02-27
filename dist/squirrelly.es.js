@@ -699,7 +699,6 @@ function compile(str, env) {
         }
     }
 }
-// console.log(Compile('hi {{this}} hey', '{{', '}}').toString())
 
 var fs = require('fs');
 var path = require('path');
