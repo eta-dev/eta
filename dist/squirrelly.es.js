@@ -5,12 +5,26 @@ var promiseImpl = new Function('return this;')().Promise;
 function hasOwnProp(obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop);
 }
-function copyProps(toObj, fromObj) {
+function copyProps(toObj, fromObj, notConfig) {
     for (var key in fromObj) {
         if (hasOwnProp(fromObj, key)) {
-            toObj[key] = fromObj[key];
+            if (fromObj[key] != null &&
+                typeof fromObj[key] == 'object' &&
+                (key === 'storage' || key === 'plugins') &&
+                !notConfig // not called from Cache.load
+            ) {
+                // plugins or storage
+                // Note: this doesn't merge from initial config!
+                // Deep clone instead of assigning
+                // TODO: run checks on this
+                toObj[key] = copyProps(/*toObj[key] ||*/ {}, fromObj[key]);
+            }
+            else {
+                toObj[key] = fromObj[key];
+            }
         }
     }
+    return toObj;
 }
 function trimWS(str, env, wsLeft, wsRight) {
     var leftTrim;
@@ -88,7 +102,9 @@ var Cacher = /** @class */ (function () {
         this.cache = {};
     };
     Cacher.prototype.load = function (cacheObj) {
-        copyProps(this.cache, cacheObj);
+        // TODO: this will err with deep objects and `storage` or `plugins` keys.
+        // Update Feb 26: EDITED so it shouldn't err
+        copyProps(this.cache, cacheObj, true);
     };
     return Cacher;
 }());
@@ -415,11 +431,13 @@ function compileScope(buff, env) {
             }
             else if (type === '~') {
                 // helper
-                if (nativeHelpers.get(name)) {
-                    returnStr += nativeHelpers.get(name)(currentBlock, env);
+                if (env.storage.nativeHelpers.get(name)) {
+                    returnStr += env.storage.nativeHelpers.get(name)(currentBlock, env);
                 }
                 else {
-                    var helperReturn = (env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
+                    var helperReturn = (env.async /* && env.asyncHelpers && env.asyncHelpers.includes(name) */
+                        ? 'await '
+                        : '') +
                         "c.l('H','" +
                         name +
                         "')(" +
@@ -448,7 +466,7 @@ function compileScope(buff, env) {
             }
             else if (type === '!') {
                 // execute
-                returnStr += content + ';';
+                returnStr += content;
             }
         }
     }
@@ -487,7 +505,7 @@ var helpers = new Cacher({
     },
     include: function (content, blocks, config) {
         errWithBlocksOrFilters('include', blocks, false);
-        var template = templates.get(content.params[0]);
+        var template = config.storage.templates.get(content.params[0]);
         if (!template) {
             throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
         }
@@ -500,7 +518,7 @@ var helpers = new Cacher({
             var currentBlock = blocks[i];
             data[currentBlock.name] = currentBlock.exec();
         }
-        var template = templates.get(content.params[0]);
+        var template = config.storage.templates.get(content.params[0]);
         if (!template) {
             throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
         }
@@ -589,7 +607,7 @@ var defaultConfig = {
     tags: ['{{', '}}'],
     l: function (container, name) {
         if (container === 'H') {
-            var hRet = helpers.get(name);
+            var hRet = this.storage.helpers.get(name);
             if (hRet) {
                 return hRet;
             }
@@ -598,7 +616,7 @@ var defaultConfig = {
             }
         }
         else if (container === 'F') {
-            var fRet = filters.get(name);
+            var fRet = this.storage.filters.get(name);
             if (fRet) {
                 return fRet;
             }
@@ -608,6 +626,12 @@ var defaultConfig = {
         }
     },
     async: false,
+    storage: {
+        helpers: helpers,
+        nativeHelpers: nativeHelpers,
+        filters: filters,
+        templates: templates
+    },
     asyncHelpers: ['include', 'includeFile'],
     cache: false,
     plugins: {
@@ -616,6 +640,7 @@ var defaultConfig = {
     },
     useWith: false
 };
+defaultConfig.l.bind(defaultConfig);
 function getConfig(override, baseConfig) {
     // TODO: run more tests on this
     var res = {}; // Linked
@@ -626,6 +651,7 @@ function getConfig(override, baseConfig) {
     if (override) {
         copyProps(res, override);
     }
+    res.l.bind(res);
     return res;
 }
 
@@ -643,7 +669,7 @@ function compile(str, env) {
         }
         catch (e) {
             if (e instanceof SyntaxError) {
-                throw new Error('This environment does not support async/await');
+                throw new Error("This environment doesn't support async/await");
             }
             else {
                 throw e;
@@ -746,10 +772,11 @@ function readFile(filePath) {
         .replace(_BOM, ''); // TODO: is replacing BOM's necessary?
 }
 function loadFile(filePath, options) {
+    var config = getConfig(options);
     var template = readFile(filePath);
     try {
-        var compiledTemplate = compile(template, options);
-        templates.define(options.filename, compiledTemplate);
+        var compiledTemplate = compile(template, config);
+        config.storage.templates.define(config.filename, compiledTemplate);
         return compiledTemplate;
     }
     catch (e) {
@@ -775,7 +802,7 @@ function loadFile(filePath, options) {
 function handleCache(options) {
     var filename = options.filename;
     if (options.cache) {
-        var func = templates.get(filename);
+        var func = options.storage.templates.get(filename);
         if (func) {
             return func;
         }
@@ -882,8 +909,8 @@ function extendsFileHelper(content, blocks, config) {
 /* END TYPES */
 function handleCache$1(template, options) {
     var templateFunc;
-    if (options.cache && options.name && templates.get(options.name)) {
-        return templates.get(options.name);
+    if (options.cache && options.name && options.storage.templates.get(options.name)) {
+        return options.storage.templates.get(options.name);
     }
     if (typeof template === 'function') {
         templateFunc = template;
@@ -892,7 +919,7 @@ function handleCache$1(template, options) {
         templateFunc = compile(template, options);
     }
     if (options.cache && options.name) {
-        templates.define(options.name, templateFunc);
+        options.storage.templates.define(options.name, templateFunc);
     }
     return templateFunc;
 }

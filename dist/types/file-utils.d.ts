@@ -1,6 +1,6 @@
 import { SqrlConfig, PartialConfig } from './config';
 import { TemplateFunction } from './compile';
-interface PartialFileOptions extends PartialConfig {
+interface PartialFileConfig extends PartialConfig {
     filename: string;
 }
 /**
@@ -12,5 +12,5 @@ interface PartialFileOptions extends PartialConfig {
  */
 declare function getPath(path: string, options: SqrlConfig): any;
 declare function readFile(filePath: string): any;
-declare function loadFile(filePath: string, options: PartialFileOptions): TemplateFunction;
+declare function loadFile(filePath: string, options: PartialFileConfig): TemplateFunction;
 export { getPath, readFile, loadFile };

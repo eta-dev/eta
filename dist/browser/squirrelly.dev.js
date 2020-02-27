@@ -47,12 +47,26 @@
   function hasOwnProp(obj, prop) {
       return Object.prototype.hasOwnProperty.call(obj, prop);
   }
-  function copyProps(toObj, fromObj) {
+  function copyProps(toObj, fromObj, notConfig) {
       for (var key in fromObj) {
           if (hasOwnProp(fromObj, key)) {
-              toObj[key] = fromObj[key];
+              if (fromObj[key] != null &&
+                  typeof fromObj[key] == 'object' &&
+                  (key === 'storage' || key === 'plugins') &&
+                  !notConfig // not called from Cache.load
+              ) {
+                  // plugins or storage
+                  // Note: this doesn't merge from initial config!
+                  // Deep clone instead of assigning
+                  // TODO: run checks on this
+                  toObj[key] = copyProps(/*toObj[key] ||*/ {}, fromObj[key]);
+              }
+              else {
+                  toObj[key] = fromObj[key];
+              }
           }
       }
+      return toObj;
   }
   function trimWS(str, env, wsLeft, wsRight) {
       var leftTrim;
@@ -308,157 +322,6 @@
   }
 
   /* END TYPES */
-  var Cacher = /** @class */ (function () {
-      function Cacher(cache) {
-          this.cache = cache;
-      }
-      Cacher.prototype.define = function (key, val) {
-          this.cache[key] = val;
-      };
-      Cacher.prototype.get = function (key) {
-          // string | array.
-          // TODO: allow array of keys to look down
-          // TODO: create plugin to allow referencing helpers, filters with dot notation
-          return this.cache[key];
-      };
-      Cacher.prototype.remove = function (key) {
-          delete this.cache[key];
-      };
-      Cacher.prototype.reset = function () {
-          this.cache = {};
-      };
-      Cacher.prototype.load = function (cacheObj) {
-          copyProps(this.cache, cacheObj);
-      };
-      return Cacher;
-  }());
-
-  /* END TYPES */
-  var templates = new Cacher({});
-  function errWithBlocksOrFilters(name, blocks, // false means don't check
-  filters, native) {
-      if (blocks && blocks.length > 0) {
-          throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept blocks");
-      }
-      if (filters && filters.length > 0) {
-          throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept filters");
-      }
-  }
-  var helpers = new Cacher({
-      each: function (content) {
-          var res = '';
-          var param = content.params[0];
-          for (var i = 0; i < param.length; i++) {
-              res += content.exec(param[i], i);
-          }
-          return res;
-      },
-      foreach: function (content) {
-          var res = '';
-          var param = content.params[0];
-          for (var key in param) {
-              if (!hasOwnProp(param, key))
-                  continue;
-              res += content.exec(key, param[key]); // todo: I think this is wrong?
-          }
-          return res;
-      },
-      include: function (content, blocks, config) {
-          errWithBlocksOrFilters('include', blocks, false);
-          var template = templates.get(content.params[0]);
-          if (!template) {
-              throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
-          }
-          return template(content.params[1], config);
-      },
-      extends: function (content, blocks, config) {
-          var data = content.params[1] || {};
-          data.content = content.exec();
-          for (var i = 0; i < blocks.length; i++) {
-              var currentBlock = blocks[i];
-              data[currentBlock.name] = currentBlock.exec();
-          }
-          var template = templates.get(content.params[0]);
-          if (!template) {
-              throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
-          }
-          return template(data, config);
-      },
-      useScope: function (content, blocks) {
-          errWithBlocksOrFilters('useScope', blocks, false);
-          return content.exec(content.params[0]);
-      }
-  });
-  var nativeHelpers = new Cacher({
-      if: function (buffer, env) {
-          errWithBlocksOrFilters('if', false, buffer.f, true);
-          var returnStr = 'if(' + buffer.p + '){' + compileScope(buffer.d, env) + '}';
-          if (buffer.b) {
-              for (var i = 0; i < buffer.b.length; i++) {
-                  var currentBlock = buffer.b[i];
-                  if (currentBlock.n === 'else') {
-                      returnStr += 'else{' + compileScope(currentBlock.d, env) + '}';
-                  }
-                  else if (currentBlock.n === 'elif') {
-                      returnStr += 'else if(' + currentBlock.p + '){' + compileScope(currentBlock.d, env) + '}';
-                  }
-              }
-          }
-          return returnStr;
-      },
-      try: function (buffer, env) {
-          errWithBlocksOrFilters('try', false, buffer.f, true);
-          if (!buffer.b || buffer.b.length !== 1 || buffer.b[0].n !== 'catch') {
-              throw SqrlErr("native helper 'try' only accepts 1 block, 'catch'");
-          }
-          var returnStr = 'try{' + compileScope(buffer.d, env) + '}';
-          var currentBlock = buffer.b[0];
-          returnStr +=
-              'catch' +
-                  (currentBlock.res ? '(' + currentBlock.res + ')' : '') +
-                  '{' +
-                  compileScope(currentBlock.d, env) +
-                  '}';
-          return returnStr;
-      },
-      block: function (buffer, env) {
-          errWithBlocksOrFilters('block', buffer.b, buffer.f, true);
-          var returnStr = 'if(!' +
-              env.varName +
-              '[' +
-              buffer.p +
-              ']){tR+=(' +
-              compileScopeIntoFunction(buffer.d, '', env) +
-              ')()}else{tR+=' +
-              env.varName +
-              '[' +
-              buffer.p +
-              ']}';
-          return returnStr;
-      }
-  });
-  var escMap = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '"': '&quot;',
-      "'": '&#39;'
-  };
-  function replaceChar(s) {
-      return escMap[s];
-  }
-  function XMLEscape(str) {
-      // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
-      var newStr = String(str);
-      if (/[&<"']/.test(newStr)) {
-          return newStr.replace(/[&<"']/g, replaceChar);
-      }
-      else {
-          return newStr;
-      }
-  }
-  var filters = new Cacher({ e: XMLEscape });
-
-  /* END TYPES */
   function compileToString(str, env) {
       var buffer = parse(str, env);
       return ("var tR='';" +
@@ -546,11 +409,13 @@
               }
               else if (type === '~') {
                   // helper
-                  if (nativeHelpers.get(name)) {
-                      returnStr += nativeHelpers.get(name)(currentBlock, env);
+                  if (env.storage.nativeHelpers.get(name)) {
+                      returnStr += env.storage.nativeHelpers.get(name)(currentBlock, env);
                   }
                   else {
-                      var helperReturn = (env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
+                      var helperReturn = (env.async /* && env.asyncHelpers && env.asyncHelpers.includes(name) */
+                          ? 'await '
+                          : '') +
                           "c.l('H','" +
                           name +
                           "')(" +
@@ -579,12 +444,165 @@
               }
               else if (type === '!') {
                   // execute
-                  returnStr += content + ';';
+                  returnStr += content;
               }
           }
       }
       return returnStr;
   }
+
+  /* END TYPES */
+  var Cacher = /** @class */ (function () {
+      function Cacher(cache) {
+          this.cache = cache;
+      }
+      Cacher.prototype.define = function (key, val) {
+          this.cache[key] = val;
+      };
+      Cacher.prototype.get = function (key) {
+          // string | array.
+          // TODO: allow array of keys to look down
+          // TODO: create plugin to allow referencing helpers, filters with dot notation
+          return this.cache[key];
+      };
+      Cacher.prototype.remove = function (key) {
+          delete this.cache[key];
+      };
+      Cacher.prototype.reset = function () {
+          this.cache = {};
+      };
+      Cacher.prototype.load = function (cacheObj) {
+          // TODO: this will err with deep objects and `storage` or `plugins` keys.
+          // Update Feb 26: EDITED so it shouldn't err
+          copyProps(this.cache, cacheObj, true);
+      };
+      return Cacher;
+  }());
+
+  /* END TYPES */
+  var templates = new Cacher({});
+  function errWithBlocksOrFilters(name, blocks, // false means don't check
+  filters, native) {
+      if (blocks && blocks.length > 0) {
+          throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept blocks");
+      }
+      if (filters && filters.length > 0) {
+          throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept filters");
+      }
+  }
+  var helpers = new Cacher({
+      each: function (content) {
+          var res = '';
+          var param = content.params[0];
+          for (var i = 0; i < param.length; i++) {
+              res += content.exec(param[i], i);
+          }
+          return res;
+      },
+      foreach: function (content) {
+          var res = '';
+          var param = content.params[0];
+          for (var key in param) {
+              if (!hasOwnProp(param, key))
+                  continue;
+              res += content.exec(key, param[key]); // todo: I think this is wrong?
+          }
+          return res;
+      },
+      include: function (content, blocks, config) {
+          errWithBlocksOrFilters('include', blocks, false);
+          var template = config.storage.templates.get(content.params[0]);
+          if (!template) {
+              throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
+          }
+          return template(content.params[1], config);
+      },
+      extends: function (content, blocks, config) {
+          var data = content.params[1] || {};
+          data.content = content.exec();
+          for (var i = 0; i < blocks.length; i++) {
+              var currentBlock = blocks[i];
+              data[currentBlock.name] = currentBlock.exec();
+          }
+          var template = config.storage.templates.get(content.params[0]);
+          if (!template) {
+              throw SqrlErr('Could not fetch template "' + content.params[0] + '"');
+          }
+          return template(data, config);
+      },
+      useScope: function (content, blocks) {
+          errWithBlocksOrFilters('useScope', blocks, false);
+          return content.exec(content.params[0]);
+      }
+  });
+  var nativeHelpers = new Cacher({
+      if: function (buffer, env) {
+          errWithBlocksOrFilters('if', false, buffer.f, true);
+          var returnStr = 'if(' + buffer.p + '){' + compileScope(buffer.d, env) + '}';
+          if (buffer.b) {
+              for (var i = 0; i < buffer.b.length; i++) {
+                  var currentBlock = buffer.b[i];
+                  if (currentBlock.n === 'else') {
+                      returnStr += 'else{' + compileScope(currentBlock.d, env) + '}';
+                  }
+                  else if (currentBlock.n === 'elif') {
+                      returnStr += 'else if(' + currentBlock.p + '){' + compileScope(currentBlock.d, env) + '}';
+                  }
+              }
+          }
+          return returnStr;
+      },
+      try: function (buffer, env) {
+          errWithBlocksOrFilters('try', false, buffer.f, true);
+          if (!buffer.b || buffer.b.length !== 1 || buffer.b[0].n !== 'catch') {
+              throw SqrlErr("native helper 'try' only accepts 1 block, 'catch'");
+          }
+          var returnStr = 'try{' + compileScope(buffer.d, env) + '}';
+          var currentBlock = buffer.b[0];
+          returnStr +=
+              'catch' +
+                  (currentBlock.res ? '(' + currentBlock.res + ')' : '') +
+                  '{' +
+                  compileScope(currentBlock.d, env) +
+                  '}';
+          return returnStr;
+      },
+      block: function (buffer, env) {
+          errWithBlocksOrFilters('block', buffer.b, buffer.f, true);
+          var returnStr = 'if(!' +
+              env.varName +
+              '[' +
+              buffer.p +
+              ']){tR+=(' +
+              compileScopeIntoFunction(buffer.d, '', env) +
+              ')()}else{tR+=' +
+              env.varName +
+              '[' +
+              buffer.p +
+              ']}';
+          return returnStr;
+      }
+  });
+  var escMap = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '"': '&quot;',
+      "'": '&#39;'
+  };
+  function replaceChar(s) {
+      return escMap[s];
+  }
+  function XMLEscape(str) {
+      // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
+      var newStr = String(str);
+      if (/[&<"']/.test(newStr)) {
+          return newStr.replace(/[&<"']/g, replaceChar);
+      }
+      else {
+          return newStr;
+      }
+  }
+  var filters = new Cacher({ e: XMLEscape });
 
   /* END TYPES */
   var defaultConfig = {
@@ -595,7 +613,7 @@
       tags: ['{{', '}}'],
       l: function (container, name) {
           if (container === 'H') {
-              var hRet = helpers.get(name);
+              var hRet = this.storage.helpers.get(name);
               if (hRet) {
                   return hRet;
               }
@@ -604,7 +622,7 @@
               }
           }
           else if (container === 'F') {
-              var fRet = filters.get(name);
+              var fRet = this.storage.filters.get(name);
               if (fRet) {
                   return fRet;
               }
@@ -614,6 +632,12 @@
           }
       },
       async: false,
+      storage: {
+          helpers: helpers,
+          nativeHelpers: nativeHelpers,
+          filters: filters,
+          templates: templates
+      },
       asyncHelpers: ['include', 'includeFile'],
       cache: false,
       plugins: {
@@ -622,6 +646,7 @@
       },
       useWith: false
   };
+  defaultConfig.l.bind(defaultConfig);
   function getConfig(override, baseConfig) {
       // TODO: run more tests on this
       var res = {}; // Linked
@@ -632,6 +657,7 @@
       if (override) {
           copyProps(res, override);
       }
+      res.l.bind(res);
       return res;
   }
 
@@ -649,7 +675,7 @@
           }
           catch (e) {
               if (e instanceof SyntaxError) {
-                  throw new Error('This environment does not support async/await');
+                  throw new Error("This environment doesn't support async/await");
               }
               else {
                   throw e;
@@ -684,8 +710,8 @@
   /* END TYPES */
   function handleCache(template, options) {
       var templateFunc;
-      if (options.cache && options.name && templates.get(options.name)) {
-          return templates.get(options.name);
+      if (options.cache && options.name && options.storage.templates.get(options.name)) {
+          return options.storage.templates.get(options.name);
       }
       if (typeof template === 'function') {
           templateFunc = template;
@@ -694,7 +720,7 @@
           templateFunc = compile(template, options);
       }
       if (options.cache && options.name) {
-          templates.define(options.name, templateFunc);
+          options.storage.templates.define(options.name, templateFunc);
       }
       return templateFunc;
   }

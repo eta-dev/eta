@@ -13,12 +13,26 @@ export function hasOwnProp (obj: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
-export function copyProps<T> (toObj: T, fromObj: T) {
+export function copyProps<T> (toObj: T, fromObj: T, notConfig?: boolean) {
   for (var key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
-      toObj[key] = fromObj[key]
+      if (
+        fromObj[key] != null &&
+        typeof fromObj[key] == 'object' &&
+        (key === 'storage' || key === 'plugins') &&
+        !notConfig // not called from Cache.load
+      ) {
+        // plugins or storage
+        // Note: this doesn't merge from initial config!
+        // Deep clone instead of assigning
+        // TODO: run checks on this
+        toObj[key] = copyProps(/*toObj[key] ||*/ {} as T[Extract<keyof T, string>], fromObj[key])
+      } else {
+        toObj[key] = fromObj[key]
+      }
     }
   }
+  return toObj
 }
 
 function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string): string {

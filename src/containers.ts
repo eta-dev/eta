@@ -84,7 +84,7 @@ var helpers = new Cacher<HelperFunction>({
     config: SqrlConfig
   ): string {
     errWithBlocksOrFilters('include', blocks, false)
-    var template = templates.get(content.params[0])
+    var template = config.storage.templates.get(content.params[0])
     if (!template) {
       throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
     }
@@ -103,7 +103,7 @@ var helpers = new Cacher<HelperFunction>({
       data[currentBlock.name] = currentBlock.exec()
     }
 
-    var template = templates.get(content.params[0])
+    var template = config.storage.templates.get(content.params[0])
     if (!template) {
       throw SqrlErr('Could not fetch template "' + content.params[0] + '"')
     }

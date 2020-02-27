@@ -109,7 +109,7 @@ describe('parse test', () => {
             t: '#',
             d: [
               'Cabbages taste good\n',
-              { f: [], c: 'console.log(hi)', t: '!' },
+              { f: [], c: 'console.log(hi);', t: '!' },
               { f: [], c: 'custom stuff', t: '?' }
             ]
           },

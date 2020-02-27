@@ -105,6 +105,13 @@ templateList['squirrelly'] = `
 {{/each}}
 </ul>`
 
+templateList['squirrelly-fast'] = `
+<ul>
+{{! for (var i = 0, l = it.list.length; i < l; i ++) { }}
+    <li>User: {{it.list[i].user}} / Web Site: {{it.list[i].site}}</li>
+{{! } }}
+</ul>`
+
 templateList['swig'] = `
 <ul>
     {% for key, value in list %}
@@ -273,6 +280,22 @@ var testList = [
     }
   },
   {
+    name: 'Squirrelly - Fast',
+    tester: function () {
+      if (!config.escape) {
+        Sqrl.defaultConfig.autoEscape = false
+      }
+      var source = templateList['squirrelly-fast']
+      //   console.log(fn.toString())
+      var html = ''
+      data.$name = 'temp'
+      for (var i = 0; i < config.calls; i++) {
+        html = Sqrl.render(source, data)
+      }
+      return html
+    }
+  },
+  {
     name: 'Mustache',
     tester: function () {
       var id = config.escape ? 'mustache' : 'mustache-raw'
@@ -424,6 +447,9 @@ var runTest = function (callback) {
 
 window['restart'] = function (key, value) {
   config[key] = value
+}
+
+function getLink () {
   window.location.search =
     'length=' + config.length + '&calls=' + config.calls + '&escape=' + config.escape
 }
@@ -432,15 +458,24 @@ window['app'] = function (selector) {
   var app = document.querySelector(selector)
   var body = `
 <h1>Rendering test</h1>
+<em>Note: on simple templates like these, doT is usually faster when not HTML-Escaping. On more complex templates, Squirrelly should be faster</em>
+<br><br>
+<em>Note: originally, Art-template's benchmarking page only benchmarked the template function after it was compiled. This benchmark includes compilation and rendering.</em>
+<br><br>
+<em>Note: 'Squirrelly - Fast' uses a Squirrelly template with native code tags instead of the builtin helper.</em>
+
 <div class="header">
     <p class="item">
         <button id="button-start" class="button">Run Test&raquo;</button>
         <button id="button-restart" class="button" style="display:none">Restart</button>
+        <br><br>
         <span>config: </span>
-        <label><input type="number" value="{{length}}" onchange="restart('length', this.value)"> list</label>
+        <label><input type="number" value="{{it.length}}" onchange="restart('length', this.value)"> list</label>
         <strong>×</strong>
-        <label><input type="number" value="{{calls}}" onchange="restart('calls', this.value)"> calls</label>
-        <label><input type="checkbox" {{if escape}}checked{{/if}} onchange="restart('escape', this.checked)"> escape</label>
+        <label><input type="number" value="{{it.calls}}" onchange="restart('calls', this.value)"> calls</label>
+        <label><input type="checkbox" {{~if(it.escape)}}checked{{/if}} onchange="restart('escape', this.checked)"> escape</label>
+        <button id="get-link" class="button">&#x1f517; Get link</button>
+
     </p>
     <p class="item">
     </p>
@@ -449,7 +484,9 @@ window['app'] = function (selector) {
 
   var data = config
   data.testList = testList
-  app.innerHTML = template.render(body, data)
+  app.innerHTML = Sqrl.render(body, data, { name: 'body' })
+
+  document.getElementById('get-link').addEventListener('click', getLink)
 
   document.getElementById('button-start').onclick = function () {
     var elem = this

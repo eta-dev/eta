@@ -6,14 +6,18 @@ var _BOM = /^\uFEFF/
 
 import SqrlErr from './err'
 import Compile from './compile'
-import { templates } from './containers'
+import { getConfig } from './config'
 
 /* TYPES */
 
 import { SqrlConfig, PartialConfig } from './config'
 import { TemplateFunction } from './compile'
 
-interface PartialFileOptions extends PartialConfig {
+interface PartialFileConfig extends PartialConfig {
+  filename: string
+}
+
+interface FileConfig extends SqrlConfig {
   filename: string
 }
 
@@ -93,11 +97,12 @@ function readFile (filePath: string) {
     .replace(_BOM, '') // TODO: is replacing BOM's necessary?
 }
 
-function loadFile (filePath: string, options: PartialFileOptions): TemplateFunction {
+function loadFile (filePath: string, options: PartialFileConfig): TemplateFunction {
+  var config = getConfig(options)
   var template = readFile(filePath)
   try {
-    var compiledTemplate = Compile(template, options)
-    templates.define(options.filename, compiledTemplate)
+    var compiledTemplate = Compile(template, config)
+    config.storage.templates.define((config as FileConfig).filename, compiledTemplate)
     return compiledTemplate
   } catch (e) {
     throw SqrlErr('Loading file: ' + filePath + ' failed')

@@ -27,7 +27,9 @@ class Cacher<T> {
     this.cache = {}
   }
   load (cacheObj: Dict<T>) {
-    copyProps(this.cache, cacheObj)
+    // TODO: this will err with deep objects and `storage` or `plugins` keys.
+    // Update Feb 26: EDITED so it shouldn't err
+    copyProps(this.cache, cacheObj, true)
   }
 }
 

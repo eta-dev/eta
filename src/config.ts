@@ -1,11 +1,13 @@
-import { helpers, filters } from './containers'
-import { HelperFunction, FilterFunction } from './containers'
+import { helpers, nativeHelpers, filters, templates } from './containers'
+import { Cacher } from './storage'
 import SqrlErr from './err'
 import { copyProps } from './utils'
 
 /* TYPES */
 
 export type FetcherFunction = (container: 'H' | 'F', name: string) => Function | undefined
+import { HelperFunction, FilterFunction } from './containers'
+import { TemplateFunction } from './compile'
 
 type trimConfig = 'nl' | 'slurp' | boolean
 
@@ -18,6 +20,12 @@ export interface SqrlConfig {
   l: FetcherFunction
   plugins: { processAST: Array<object>; processFnString: Array<object> }
   async: boolean
+  storage: {
+    helpers: Cacher<HelperFunction>
+    nativeHelpers: Cacher<Function>
+    filters: Cacher<FilterFunction>
+    templates: Cacher<TemplateFunction>
+  }
   asyncFilters?: Array<string>
   asyncHelpers?: Array<string>
   cache: boolean
@@ -44,14 +52,14 @@ var defaultConfig: SqrlConfig = {
   tags: ['{{', '}}'],
   l: function (container: 'H' | 'F', name: string): HelperFunction | FilterFunction | undefined {
     if (container === 'H') {
-      var hRet = helpers.get(name) as HelperFunction | undefined
+      var hRet = this.storage.helpers.get(name) as HelperFunction | undefined
       if (hRet) {
         return hRet
       } else {
         throw SqrlErr("Can't find helper '" + name + "'")
       }
     } else if (container === 'F') {
-      var fRet = filters.get(name) as FilterFunction | undefined
+      var fRet = this.storage.filters.get(name) as FilterFunction | undefined
       if (fRet) {
         return fRet
       } else {
@@ -60,6 +68,12 @@ var defaultConfig: SqrlConfig = {
     }
   },
   async: false,
+  storage: {
+    helpers: helpers,
+    nativeHelpers: nativeHelpers,
+    filters: filters,
+    templates: templates
+  },
   asyncHelpers: ['include', 'includeFile'],
   cache: false,
   plugins: {
@@ -68,6 +82,8 @@ var defaultConfig: SqrlConfig = {
   },
   useWith: false
 }
+
+defaultConfig.l.bind(defaultConfig)
 
 function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfig {
   // TODO: run more tests on this
@@ -82,6 +98,8 @@ function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfi
   if (override) {
     copyProps(res, override)
   }
+
+  ;(res as SqrlConfig).l.bind(res)
 
   return res as SqrlConfig
 }

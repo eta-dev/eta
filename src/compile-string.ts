@@ -1,5 +1,4 @@
 import Parse from './parse'
-import { nativeHelpers } from './containers'
 
 /* TYPES */
 
@@ -113,11 +112,13 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
         // reference
       } else if (type === '~') {
         // helper
-        if (nativeHelpers.get(name)) {
-          returnStr += nativeHelpers.get(name)(currentBlock, env)
+        if (env.storage.nativeHelpers.get(name)) {
+          returnStr += env.storage.nativeHelpers.get(name)(currentBlock, env)
         } else {
           var helperReturn =
-            (env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
+            (env.async /* && env.asyncHelpers && env.asyncHelpers.includes(name) */
+              ? 'await '
+              : '') +
             "c.l('H','" +
             name +
             "')(" +
@@ -148,7 +149,7 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
         // self-closing helper
       } else if (type === '!') {
         // execute
-        returnStr += content + ';'
+        returnStr += content
       } else if (type === '?') {
         // custom (implement later)
       }

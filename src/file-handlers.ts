@@ -1,6 +1,5 @@
 // express is set like: app.engine('html', require('squirrelly').renderFile)
 
-import { templates } from './containers'
 import SqrlErr from './err'
 import compile from './compile'
 import { getConfig } from './config'
@@ -45,7 +44,7 @@ function handleCache (options: FileOptions): TemplateFunction {
   var filename = options.filename
 
   if (options.cache) {
-    var func = templates.get(filename)
+    var func = options.storage.templates.get(filename)
     if (func) {
       return func
     } else {

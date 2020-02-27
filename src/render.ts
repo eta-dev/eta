@@ -1,6 +1,5 @@
 import compile from './compile'
 import { getConfig } from './config'
-import { templates } from './containers'
 import { promiseImpl } from './utils'
 import SqrlErr from './err'
 
@@ -15,8 +14,8 @@ import { CallbackFn } from './file-handlers'
 function handleCache (template: string | TemplateFunction, options: SqrlConfig): TemplateFunction {
   var templateFunc
 
-  if (options.cache && options.name && templates.get(options.name)) {
-    return templates.get(options.name)
+  if (options.cache && options.name && options.storage.templates.get(options.name)) {
+    return options.storage.templates.get(options.name)
   }
 
   if (typeof template === 'function') {
@@ -26,7 +25,7 @@ function handleCache (template: string | TemplateFunction, options: SqrlConfig):
   }
 
   if (options.cache && options.name) {
-    templates.define(options.name, templateFunc)
+    options.storage.templates.define(options.name, templateFunc)
   }
 
   return templateFunc

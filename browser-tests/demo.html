@@ -159,7 +159,7 @@
         <h4>Template</h4>
         <textarea autocomplete="off" id="template">
 Hi
-{{!console.log("Hope you like Squirrelly!")}}
+{{!console.log("Hope you like Squirrelly!");}}
 {{it.htmlstuff}}
 
 {{~foreach(it.obj) => key, val}}
@@ -176,7 +176,7 @@ Reversed value: {{val|reverse}}, Key: {{key}}
 {{~customhelper()}}
 {{#cabbage}}
 Cabbages taste good
-{{!console.log("Hi from inside a template")}}
+{{!console.log("Hi from inside a template");}}
 {{#pineapple}}
 As do pineapples
 {{/customhelper}}
@@ -266,10 +266,14 @@ This is a partial: {{~include("mypartial")/}}
           var options = JSON.parse('{' + document.getElementById('data').value + '}')
           console.log(JSON.stringify(options))
           var template = document.getElementById('template').value
-          var functionResult = Sqrl.compile(template).toString()
-          document.getElementById('function').innerHTML = escape(functionResult)
-          document.getElementById('result').innerHTML = Sqrl.render(template, options)
-          console.log(Sqrl.render(template, options))
+          try {
+            var functionResult = Sqrl.compile(template).toString()
+            document.getElementById('function').innerHTML = escape(functionResult)
+            document.getElementById('result').innerHTML = Sqrl.render(template, options)
+            console.log(Sqrl.render(template, options))
+          } catch (ex) {
+            console.error(ex.message)
+          }
         }
         render()
         document.getElementById('template').addEventListener('input', render)

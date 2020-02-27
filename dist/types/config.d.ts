@@ -1,4 +1,7 @@
+import { Cacher } from './storage';
 export declare type FetcherFunction = (container: 'H' | 'F', name: string) => Function | undefined;
+import { HelperFunction, FilterFunction } from './containers';
+import { TemplateFunction } from './compile';
 declare type trimConfig = 'nl' | 'slurp' | boolean;
 export interface SqrlConfig {
     varName: string;
@@ -12,6 +15,12 @@ export interface SqrlConfig {
         processFnString: Array<object>;
     };
     async: boolean;
+    storage: {
+        helpers: Cacher<HelperFunction>;
+        nativeHelpers: Cacher<Function>;
+        filters: Cacher<FilterFunction>;
+        templates: Cacher<TemplateFunction>;
+    };
     asyncFilters?: Array<string>;
     asyncHelpers?: Array<string>;
     cache: boolean;
