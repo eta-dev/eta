@@ -3,7 +3,9 @@
 # squirrelly
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[logo]: https://img.shields.io/badge/all_contributors-3-orange.svg 'Number of contributors on All-Contributors'
+
+[logo]: https://img.shields.io/badge/all_contributors-3-orange.svg "Number of contributors on All-Contributors"
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/squirrellyjs/squirrelly/master?label=current%20version)
@@ -48,7 +50,8 @@ Simply put, Squirrelly is super lightweight, super fast, super powerful, and sup
 - 🔧 Inline JavaScript
 - 🔨 Comments
 - 🔧 Caching
-- 🚀 Fast
+- 🚀 Super Fast
+  - Squirrelly [has been benchmarked](https://github.com/nebrelbug/squirrelly-benchmarks/tree/v8) against Marko, Pug, doT, Swig, Handlebars, Mustache, and Nunjucks. In each test, Squirrelly was fastest.
 - ⚡️ Async support: async filters, helpers, partials
 - 🔧 Template inheritance
 
@@ -118,6 +121,7 @@ Made with ❤ by [@nebrelbug](https://github.com/nebrelbug) and all these wonder
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind are welcome!

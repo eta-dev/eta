@@ -346,11 +346,11 @@ var runTest = function (callback) {
   })
 
   var Timer = function () {
-    this.startTime = +new Date()
+    this.startTime = window.performance.now()
   }
 
   Timer.prototype.stop = function () {
-    return +new Date() - this.startTime
+    return window.performance.now() - this.startTime
   }
 
   var colors = Highcharts.getOptions().colors
@@ -394,7 +394,7 @@ var runTest = function (callback) {
 
     tooltip: {
       formatter: function () {
-        return '<b>' + this.x + '</b><br/>' + this.y + 'ms'
+        return '<b>' + this.x + '</b><br/>' + this.y + ' ops/sec'
       }
     },
 
@@ -406,7 +406,7 @@ var runTest = function (callback) {
         dataLabels: {
           enabled: true,
           formatter: function () {
-            return this.y + 'ms'
+            return this.y + ' ops/sec'
           }
         }
       }
@@ -418,15 +418,18 @@ var runTest = function (callback) {
     ]
   })
 
-  var tester = function (target) {
+  function tester (target) {
     var time = new Timer()
     var html = target.tester()
-    console.log(target.name + '------------------\n', html)
     var endTime = time.stop()
+    console.log(target.name + '------------------\n', html)
+
+    var timeInSecs = endTime / 1000
+    var opsPerSec = Math.round(config.calls / timeInSecs)
 
     chart.series[0].addPoint({
       color: colors.shift(),
-      y: endTime
+      y: opsPerSec
     })
 
     if (!list.length) {
@@ -463,6 +466,8 @@ window['app'] = function (selector) {
 <em>Note: originally, Art-template's benchmarking page only benchmarked the template function after it was compiled. This benchmark includes compilation and rendering.</em>
 <br><br>
 <em>Note: 'Squirrelly - Fast' uses a Squirrelly template with native code tags instead of the builtin helper.</em>
+<br><br>
+<strong>Longer (more ops/sec) is better</strong>
 
 <div class="header">
     <p class="item">
