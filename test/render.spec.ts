@@ -1,19 +1,19 @@
 /* global it, expect, describe */
 
-import Render from '../src/render'
-import Compile from '../src/compile'
+import render from '../src/render'
+import compile from '../src/compile'
 import { templates } from '../src/containers'
 
 describe('Simple Render checks', () => {
   describe('Render works', () => {
     it('Simple template compiles', () => {
-      expect(Render('Hi {{it.name}}', { name: 'Ada Lovelace' })).toEqual('Hi Ada Lovelace')
+      expect(render('Hi {{it.name}}', { name: 'Ada Lovelace' })).toEqual('Hi Ada Lovelace')
     })
     it('String trimming works', () => {
-      expect(Render('Hi \n{{-it.name_}}  !', { name: 'Ada Lovelace' })).toEqual('Hi Ada Lovelace!')
+      expect(render('Hi \n{{-it.name_}}  !', { name: 'Ada Lovelace' })).toEqual('Hi Ada Lovelace!')
     })
     it('Rendering function works', () => {
-      expect(Render(Compile('Hi \n{{-it.name_}}  !'), { name: 'Ada Lovelace' })).toEqual(
+      expect(render(compile('Hi \n{{-it.name_}}  !'), { name: 'Ada Lovelace' })).toEqual(
         'Hi Ada Lovelace!'
       )
     })
@@ -26,34 +26,47 @@ describe('Simple Render checks', () => {
           }, 1000)
         })
       }
-      expect(await Render(template, { getName: getName }, { async: true })).toEqual('Hello Ada!')
+      expect(await render(template, { getName: getName }, { async: true })).toEqual('Hello Ada!')
+    })
+  })
+  describe('render errors', () => {
+    test("throws when there's an unknown helper", () => {
+      expect(() => {
+        render('{{~unknown-helper(it.name) /}}', { name: 'Ben' })
+      }).toThrow()
+    })
+
+    test("throws when there's an unknown filter", () => {
+      expect(() => {
+        render('{{it.name | unknown-filter}}', { name: 'Ben' })
+      }).toThrow()
     })
   })
 })
 
 describe('Render caching checks', () => {
   it('Simple template caches', () => {
-    Render('Hi {{it.name}}', { name: 'Ada Lovelace' }, { cache: true, name: 'template1' })
+    render('Hi {{it.name}}', { name: 'Ada Lovelace' }, { cache: true, name: 'template1' })
     expect(templates.get('template1')).toBeTruthy()
   })
 
   it('Simple template works again', () => {
     expect(
-      Render("This shouldn't show up", { name: 'Ada Lovelace' }, { cache: true, name: 'template1' })
+      render("This shouldn't show up", { name: 'Ada Lovelace' }, { cache: true, name: 'template1' })
     ).toEqual('Hi Ada Lovelace')
   })
 })
 
 describe('Renders with different scopes', () => {
   it('Puts `it` in global scope with env.useWith', () => {
-    expect(Render('Hi {{name}}', { name: 'Ada Lovelace' }, { useWith: true })).toEqual(
+    expect(render('Hi {{name}}', { name: 'Ada Lovelace' }, { useWith: true })).toEqual(
       'Hi Ada Lovelace'
     )
   })
 
   it('useScope helper works', () => {
     expect(
-      Render(
+      render(
         'Hi {{~useScope(it)=>{name} }}{{name}}{{/useScope}}',
         { name: 'Ada Lovelace' },
         { useWith: true }
