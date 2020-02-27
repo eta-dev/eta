@@ -44,6 +44,19 @@ describe('include works', () => {
     }).toThrow()
   })
 
+  test('throws if helper "includeFile" cannot find template', () => {
+    expect(() => {
+      render(
+        '{{~includeFile("missing-template", it)}}  {{/includeFile}}',
+        {},
+        {
+          filename: path.join(__dirname, 'templates/placeholder.sqrl'),
+          views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')]
+        }
+      )
+    }).toThrow(new Error('Could not find the include file "missing-template"'))
+  })
+
   test('throws if helper "include" has blocks', () => {
     expect(() => {
       render('{{~include("test-template", it)}} {{#block2}} {{/includeFile}}', { name: 'stuff' })
