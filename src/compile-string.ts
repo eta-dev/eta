@@ -4,21 +4,32 @@ import Parse from './parse'
 
 import { SqrlConfig } from './config'
 import { AstObject, Filter, ParentTemplateObject } from './parse'
+// import SqrlErr from './err'
 
 /* END TYPES */
 
 export default function compileToString (str: string, env: SqrlConfig) {
   var buffer: Array<AstObject> = Parse(str, env)
 
-  return (
+  var res =
     "var tR='';" +
     (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
     compileScope(buffer, env)
       .replace(/\n/g, '\\n')
       .replace(/\r/g, '\\r') +
-    'if(cb){return cb(null,tR)} return tR' +
+    'if(cb){cb(null,tR)} return tR' +
     (env.useWith ? '}' : '')
-  )
+
+  if (env.plugins) {
+    for (var i = 0; i < env.plugins.length; i++) {
+      var plugin = env.plugins[i]
+      if (plugin.processFnString) {
+        res = plugin.processFnString(res, env)
+      }
+    }
+  }
+
+  return res
 
   // TODO: is `return cb()` necessary, or could we just do `cb()`
 }
@@ -27,12 +38,14 @@ function filter (str: string, filters: Array<Filter>, env: SqrlConfig) {
   for (var i = 0; i < filters.length; i++) {
     var name = filters[i][0]
     var params = filters[i][1]
-    if (env.async) {
-      if (env.asyncFilters && env.asyncFilters.includes(name)) {
-        str = 'await ' + str
-      }
-    }
-    str = "c.l('F','" + name + "')(" + str
+    var isFilterAsync = filters[i][2]
+
+    // if (isFilterAsync && !env.async) {
+    //   throw SqrlErr("Async filter '" + name + "' in non-async env")
+    // }
+    // Let the JS compiler do this, compile() will catch it
+
+    str = (isFilterAsync ? 'await ' : '') + "c.l('F','" + name + "')(" + str
     if (params) {
       str += ',' + params
     }
@@ -49,17 +62,21 @@ function compileHelper (
   res: string,
   descendants: Array<AstObject>,
   params: string,
+  isAsync?: boolean,
   name?: string
 ) {
   var ret =
     '{exec:' +
-    (env.async ? 'async ' : '') +
+    (isAsync ? 'async ' : '') +
     compileScopeIntoFunction(descendants, res, env) +
     ',params:[' +
     params +
     ']'
   if (name) {
     ret += ",name:'" + name + "'"
+  }
+  if (isAsync) {
+    ret += ',async:true'
   }
   ret += '}'
   return ret
@@ -69,7 +86,7 @@ function compileBlocks (blocks: Array<ParentTemplateObject>, env: SqrlConfig) {
   var ret = '['
   for (var i = 0; i < blocks.length; i++) {
     var block = blocks[i]
-    ret += compileHelper(env, block.res || '', block.d, block.p || '', block.n)
+    ret += compileHelper(env, block.res || '', block.d, block.p || '', block.a, block.n)
     if (i < blocks.length) {
       ret += ','
     }
@@ -102,8 +119,15 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
       var params = currentBlock.p || ''
       var res = currentBlock.res || ''
       var blocks = currentBlock.b
-
+      var isAsync = !!currentBlock.a // !! is to booleanize it
+      // if (isAsync && !env.async) {
+      //   throw SqrlErr("Async block or helper '" + name + "' in non-async env")
+      // }
+      // Let compiler do this
       if (type === 'r') {
+        if (env.defaultFilter) {
+          content = "c.l('F','" + env.defaultFilter + "')(" + content + ')'
+        }
         if (!currentBlock.raw && env.autoEscape) {
           content = "c.l('F','e')(" + content + ')'
         }
@@ -116,13 +140,11 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
           returnStr += env.storage.nativeHelpers.get(name)(currentBlock, env)
         } else {
           var helperReturn =
-            (env.async /* && env.asyncHelpers && env.asyncHelpers.includes(name) */
-              ? 'await '
-              : '') +
+            (isAsync ? 'await ' : '') +
             "c.l('H','" +
             name +
             "')(" +
-            compileHelper(env, res, (currentBlock as ParentTemplateObject).d, params)
+            compileHelper(env, res, (currentBlock as ParentTemplateObject).d, params, isAsync)
           if (blocks) {
             helperReturn += ',' + compileBlocks(blocks, env)
           } else {
@@ -136,12 +158,7 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
         returnStr +=
           'tR+=' +
           filter(
-            (env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
-              "c.l('H','" +
-              name +
-              "')({params:[" +
-              params +
-              ']},[],c)',
+            (isAsync ? 'await ' : '') + "c.l('H','" + name + "')({params:[" + params + ']},[],c)',
             filters,
             env
           ) +
@@ -155,5 +172,6 @@ export function compileScope (buff: Array<AstObject>, env: SqrlConfig) {
       }
     }
   }
+
   return returnStr
 }

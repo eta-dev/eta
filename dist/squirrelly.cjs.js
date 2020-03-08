@@ -14,7 +14,7 @@ function copyProps(toObj, fromObj, notConfig) {
         if (hasOwnProp(fromObj, key)) {
             if (fromObj[key] != null &&
                 typeof fromObj[key] == 'object' &&
-                (key === 'storage' || key === 'plugins') &&
+                key === 'storage' &&
                 !notConfig // not called from Cache.load
             ) {
                 // plugins or storage
@@ -150,6 +150,7 @@ function ParseErr(message, str, indx) {
 }
 
 /* END TYPES */
+var asyncRegExp = /^async +/;
 function parse(str, env) {
     var powerchars = new RegExp('([|()]|=>)|' +
         '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"' + // matches strings
@@ -189,7 +190,13 @@ function parse(str, env) {
                     currentObj.raw = true;
                 }
                 else {
-                    currentObj.f.push([val, '']);
+                    if (env.async && asyncRegExp.test(val)) {
+                        val = val.replace(asyncRegExp, '');
+                        currentObj.f.push([val, '', true]);
+                    }
+                    else {
+                        currentObj.f.push([val, '']);
+                    }
                 }
             }
             else if (currentAttribute === 'fp') {
@@ -295,6 +302,11 @@ function parse(str, env) {
             // ===== NOW ADD THE OBJECT TO OUR BUFFER =====
             var currentType = currentObj.t;
             if (currentType === '~') {
+                var hName = currentObj.n || '';
+                if (env.async && asyncRegExp.test(hName)) {
+                    currentObj.a = true;
+                    currentObj.n = hName.replace(asyncRegExp, '');
+                }
                 currentObj = parseContext(currentObj); // currentObj is the parent object
                 buffer.push(currentObj);
             }
@@ -316,6 +328,7 @@ function parse(str, env) {
                 }
             }
             else if (currentType === '#') {
+                // TODO: make sure async stuff inside blocks are recognized
                 if (lastBlock) {
                     // If there's a previous block
                     lastBlock.d = buffer;
@@ -324,8 +337,21 @@ function parse(str, env) {
                 else {
                     parentObj.d = buffer;
                 }
+                var blockName = currentObj.n || '';
+                if (env.async && asyncRegExp.test(blockName)) {
+                    currentObj.a = true;
+                    currentObj.n = blockName.replace(asyncRegExp, '');
+                }
                 lastBlock = currentObj; // Set the 'lastBlock' object to the value of the current block
                 buffer = [];
+            }
+            else if (currentType === 's') {
+                var selfClosingHName = currentObj.n || '';
+                if (env.async && asyncRegExp.test(selfClosingHName)) {
+                    currentObj.a = true;
+                    currentObj.n = selfClosingHName.replace(asyncRegExp, '');
+                }
+                buffer.push(currentObj);
             }
             else {
                 buffer.push(currentObj);
@@ -344,31 +370,49 @@ function parse(str, env) {
     }
     var parseResult = parseContext({ f: [] }, true);
     // console.log(JSON.stringify(parseResult))
+    if (env.plugins) {
+        for (var i = 0; i < env.plugins.length; i++) {
+            var plugin = env.plugins[i];
+            if (plugin.processAST) {
+                parseResult.d = plugin.processAST(parseResult.d, env);
+            }
+        }
+    }
     return parseResult.d; // Parse the very outside context
 }
 
+// import SqrlErr from './err'
 /* END TYPES */
 function compileToString(str, env) {
     var buffer = parse(str, env);
-    return ("var tR='';" +
+    var res = "var tR='';" +
         (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
         compileScope(buffer, env)
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '\\r') +
-        'if(cb){return cb(null,tR)} return tR' +
-        (env.useWith ? '}' : ''));
+        'if(cb){cb(null,tR)} return tR' +
+        (env.useWith ? '}' : '');
+    if (env.plugins) {
+        for (var i = 0; i < env.plugins.length; i++) {
+            var plugin = env.plugins[i];
+            if (plugin.processFnString) {
+                res = plugin.processFnString(res, env);
+            }
+        }
+    }
+    return res;
     // TODO: is `return cb()` necessary, or could we just do `cb()`
 }
 function filter(str, filters, env) {
     for (var i = 0; i < filters.length; i++) {
         var name = filters[i][0];
         var params = filters[i][1];
-        if (env.async) {
-            if (env.asyncFilters && env.asyncFilters.includes(name)) {
-                str = 'await ' + str;
-            }
-        }
-        str = "c.l('F','" + name + "')(" + str;
+        var isFilterAsync = filters[i][2];
+        // if (isFilterAsync && !env.async) {
+        //   throw SqrlErr("Async filter '" + name + "' in non-async env")
+        // }
+        // Let the JS compiler do this, compile() will catch it
+        str = (isFilterAsync ? 'await ' : '') + "c.l('F','" + name + "')(" + str;
         if (params) {
             str += ',' + params;
         }
@@ -378,15 +422,18 @@ function filter(str, filters, env) {
 }
 // TODO: Use type intersections for TemplateObject, etc.
 // so I don't have to make properties mandatory
-function compileHelper(env, res, descendants, params, name) {
+function compileHelper(env, res, descendants, params, isAsync, name) {
     var ret = '{exec:' +
-        (env.async ? 'async ' : '') +
+        (isAsync ? 'async ' : '') +
         compileScopeIntoFunction(descendants, res, env) +
         ',params:[' +
         params +
         ']';
     if (name) {
         ret += ",name:'" + name + "'";
+    }
+    if (isAsync) {
+        ret += ',async:true';
     }
     ret += '}';
     return ret;
@@ -395,7 +442,7 @@ function compileBlocks(blocks, env) {
     var ret = '[';
     for (var i = 0; i < blocks.length; i++) {
         var block = blocks[i];
-        ret += compileHelper(env, block.res || '', block.d, block.p || '', block.n);
+        ret += compileHelper(env, block.res || '', block.d, block.p || '', block.a, block.n);
         if (i < blocks.length) {
             ret += ',';
         }
@@ -425,11 +472,19 @@ function compileScope(buff, env) {
             var params = currentBlock.p || '';
             var res = currentBlock.res || '';
             var blocks = currentBlock.b;
+            var isAsync = !!currentBlock.a; // !! is to booleanize it
+            // if (isAsync && !env.async) {
+            //   throw SqrlErr("Async block or helper '" + name + "' in non-async env")
+            // }
+            // Let compiler do this
             if (type === 'r') {
+                if (env.defaultFilter) {
+                    content = "c.l('F','" + env.defaultFilter + "')(" + content + ')';
+                }
                 if (!currentBlock.raw && env.autoEscape) {
                     content = "c.l('F','e')(" + content + ')';
                 }
-                var filtered = filter(content, filters, env);
+                var filtered = filter(content, filters);
                 returnStr += 'tR+=' + filtered + ';';
                 // reference
             }
@@ -439,13 +494,11 @@ function compileScope(buff, env) {
                     returnStr += env.storage.nativeHelpers.get(name)(currentBlock, env);
                 }
                 else {
-                    var helperReturn = (env.async /* && env.asyncHelpers && env.asyncHelpers.includes(name) */
-                        ? 'await '
-                        : '') +
+                    var helperReturn = (isAsync ? 'await ' : '') +
                         "c.l('H','" +
                         name +
                         "')(" +
-                        compileHelper(env, res, currentBlock.d, params);
+                        compileHelper(env, res, currentBlock.d, params, isAsync);
                     if (blocks) {
                         helperReturn += ',' + compileBlocks(blocks, env);
                     }
@@ -453,18 +506,13 @@ function compileScope(buff, env) {
                         helperReturn += ',[]';
                     }
                     helperReturn += ',c)';
-                    returnStr += 'tR+=' + filter(helperReturn, filters, env) + ';';
+                    returnStr += 'tR+=' + filter(helperReturn, filters) + ';';
                 }
             }
             else if (type === 's') {
                 returnStr +=
                     'tR+=' +
-                        filter((env.async && env.asyncHelpers && env.asyncHelpers.includes(name) ? 'await ' : '') +
-                            "c.l('H','" +
-                            name +
-                            "')({params:[" +
-                            params +
-                            ']},[],c)', filters, env) +
+                        filter((isAsync ? 'await ' : '') + "c.l('H','" + name + "')({params:[" + params + ']},[],c)', filters) +
                         ';';
                 // self-closing helper
             }
@@ -488,24 +536,64 @@ filters, native) {
         throw SqrlErr((native ? 'Native' : '') + "Helper '" + name + "' doesn't accept filters");
     }
 }
+/* ASYNC LOOP FNs */
+function asyncArrLoop(arr, index, fn, res, cb) {
+    fn(arr[index], index).then(function (val) {
+        res += val;
+        if (index === arr.length - 1) {
+            cb(res);
+        }
+        else {
+            asyncArrLoop(arr, index + 1, fn, res, cb);
+        }
+    });
+}
+function asyncObjLoop(obj, keys, index, fn, res, cb) {
+    fn(keys[index], obj[keys[index]]).then(function (val) {
+        res += val;
+        if (index === keys.length - 1) {
+            cb(res);
+        }
+        else {
+            asyncObjLoop(obj, keys, index + 1, fn, res, cb);
+        }
+    });
+}
+/* ASYNC LOOP FNs */
 var helpers = new Cacher({
-    each: function (content) {
+    each: function (content, blocks) {
         var res = '';
-        var param = content.params[0];
-        for (var i = 0; i < param.length; i++) {
-            res += content.exec(param[i], i);
+        var arr = content.params[0];
+        errWithBlocksOrFilters('each', blocks, false);
+        if (content.async) {
+            return new Promise(function (resolve) {
+                asyncArrLoop(arr, 0, content.exec, res, resolve);
+            });
         }
-        return res;
+        else {
+            for (var i = 0; i < arr.length; i++) {
+                res += content.exec(arr[i], i);
+            }
+            return res;
+        }
     },
-    foreach: function (content) {
-        var res = '';
-        var param = content.params[0];
-        for (var key in param) {
-            if (!hasOwnProp(param, key))
-                continue;
-            res += content.exec(key, param[key]); // todo: I think this is wrong?
+    foreach: function (content, blocks) {
+        var obj = content.params[0];
+        errWithBlocksOrFilters('foreach', blocks, false);
+        if (content.async) {
+            return new Promise(function (resolve) {
+                asyncObjLoop(obj, Object.keys(obj), 0, content.exec, '', resolve);
+            });
         }
-        return res;
+        else {
+            var res = '';
+            for (var key in obj) {
+                if (!hasOwnProp(obj, key))
+                    continue;
+                res += content.exec(key, obj[key]); // todo: check on order
+            }
+            return res;
+        }
     },
     include: function (content, blocks, config) {
         errWithBlocksOrFilters('include', blocks, false);
@@ -636,12 +724,8 @@ var defaultConfig = {
         filters: filters,
         templates: templates
     },
-    asyncHelpers: ['include', 'includeFile'],
     cache: false,
-    plugins: {
-        processAST: [],
-        processFnString: []
-    },
+    plugins: [],
     useWith: false
 };
 defaultConfig.l.bind(defaultConfig);

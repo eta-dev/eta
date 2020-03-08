@@ -11,8 +11,8 @@ export type TemplateObjectAttribute = 'c' | 'p' | 'n' | 'res'
 
 export type AstObject = string | TemplateObject
 
-export type Filter = [string, string | undefined]
-
+export type Filter = [string, string] | [string, string, true]
+// [name, params, async]
 export interface TemplateObject {
   n?: string
   t?: string
@@ -22,6 +22,7 @@ export interface TemplateObject {
   res?: string
   d?: Array<AstObject>
   raw?: boolean
+  a?: boolean // async
   b?: Array<ParentTemplateObject>
 }
 
@@ -31,6 +32,8 @@ export interface ParentTemplateObject extends TemplateObject {
 }
 
 /* END TYPES */
+
+var asyncRegExp = /^async +/
 
 export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
   var powerchars = new RegExp(
@@ -73,7 +76,12 @@ export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
         if (val === 'safe') {
           currentObj.raw = true
         } else {
-          currentObj.f.push([val, ''])
+          if (env.async && asyncRegExp.test(val)) {
+            val = val.replace(asyncRegExp, '')
+            currentObj.f.push([val, '', true])
+          } else {
+            currentObj.f.push([val, ''])
+          }
         }
       } else if (currentAttribute === 'fp') {
         currentObj.f[currentObj.f.length - 1][1] += val
@@ -182,6 +190,11 @@ export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
 
       var currentType = currentObj.t
       if (currentType === '~') {
+        var hName = currentObj.n || ''
+        if (env.async && asyncRegExp.test(hName)) {
+          currentObj.a = true
+          currentObj.n = hName.replace(asyncRegExp, '')
+        }
         currentObj = parseContext(currentObj) // currentObj is the parent object
         buffer.push(currentObj)
       } else if (currentType === '/') {
@@ -203,6 +216,7 @@ export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
           )
         }
       } else if (currentType === '#') {
+        // TODO: make sure async stuff inside blocks are recognized
         if (lastBlock) {
           // If there's a previous block
           lastBlock.d = buffer
@@ -210,9 +224,23 @@ export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
         } else {
           parentObj.d = buffer
         }
+
+        var blockName = currentObj.n || ''
+        if (env.async && asyncRegExp.test(blockName)) {
+          currentObj.a = true
+          currentObj.n = blockName.replace(asyncRegExp, '')
+        }
+
         lastBlock = currentObj as ParentTemplateObject // Set the 'lastBlock' object to the value of the current block
 
         buffer = []
+      } else if (currentType === 's') {
+        var selfClosingHName = currentObj.n || ''
+        if (env.async && asyncRegExp.test(selfClosingHName)) {
+          currentObj.a = true
+          currentObj.n = selfClosingHName.replace(asyncRegExp, '')
+        }
+        buffer.push(currentObj)
       } else {
         buffer.push(currentObj)
       }
@@ -232,5 +260,13 @@ export default function parse (str: string, env: SqrlConfig): Array<AstObject> {
 
   var parseResult = parseContext({ f: [] }, true)
   // console.log(JSON.stringify(parseResult))
+  if (env.plugins) {
+    for (var i = 0; i < env.plugins.length; i++) {
+      var plugin = env.plugins[i]
+      if (plugin.processAST) {
+        parseResult.d = plugin.processAST(parseResult.d, env)
+      }
+    }
+  }
   return parseResult.d // Parse the very outside context
 }

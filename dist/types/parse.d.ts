@@ -3,7 +3,7 @@ export declare type TagType = '~' | '/' | '#' | '?' | 'r' | '!' | 's';
 export declare type TemplateAttribute = 'c' | 'f' | 'fp' | 'p' | 'n' | 'res' | 'err';
 export declare type TemplateObjectAttribute = 'c' | 'p' | 'n' | 'res';
 export declare type AstObject = string | TemplateObject;
-export declare type Filter = [string, string | undefined];
+export declare type Filter = [string, string] | [string, string, true];
 export interface TemplateObject {
     n?: string;
     t?: string;
@@ -13,6 +13,7 @@ export interface TemplateObject {
     res?: string;
     d?: Array<AstObject>;
     raw?: boolean;
+    a?: boolean;
     b?: Array<ParentTemplateObject>;
 }
 export interface ParentTemplateObject extends TemplateObject {

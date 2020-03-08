@@ -1,19 +1,19 @@
-import { Cacher } from './storage';
 export declare type FetcherFunction = (container: 'H' | 'F', name: string) => Function | undefined;
 import { HelperFunction, FilterFunction } from './containers';
 import { TemplateFunction } from './compile';
+import { Cacher } from './storage';
 declare type trimConfig = 'nl' | 'slurp' | boolean;
 export interface SqrlConfig {
     varName: string;
     autoTrim: trimConfig | [trimConfig, trimConfig];
     autoEscape: boolean;
-    defaultFilter: false | Function;
+    defaultFilter: false | string;
     tags: [string, string];
     l: FetcherFunction;
-    plugins: {
-        processAST: Array<object>;
-        processFnString: Array<object>;
-    };
+    plugins: Array<{
+        processFnString?: Function;
+        processAST?: Function;
+    }>;
     async: boolean;
     storage: {
         helpers: Cacher<HelperFunction>;
@@ -21,8 +21,6 @@ export interface SqrlConfig {
         filters: Cacher<FilterFunction>;
         templates: Cacher<TemplateFunction>;
     };
-    asyncFilters?: Array<string>;
-    asyncHelpers?: Array<string>;
     cache: boolean;
     views?: string | Array<string>;
     root?: string;

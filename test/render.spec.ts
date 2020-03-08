@@ -23,7 +23,7 @@ describe('Simple Render checks', () => {
         return new Promise(res => {
           setTimeout(() => {
             res('Ada')
-          }, 1000)
+          }, 20)
         })
       }
       expect(await render(template, { getName: getName }, { async: true })).toEqual('Hello Ada!')

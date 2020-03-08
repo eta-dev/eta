@@ -209,8 +209,8 @@ This is a partial: {{~include("mypartial")/}}
     </div>
     <script>
       /* global Sqrl */
-      window.onload = function () {
-        Sqrl.filters.define('reverse', function (str) {
+      window.onload = function() {
+        Sqrl.filters.define('reverse', function(str) {
           var out = ''
           for (var i = str.length - 1; i >= 0; i--) {
             out += String(str).charAt(i)
@@ -218,13 +218,13 @@ This is a partial: {{~include("mypartial")/}}
           return out || str
         })
 
-        Sqrl.filters.define('capitalize', function (str) {
+        Sqrl.filters.define('capitalize', function(str) {
           return str.toUpperCase()
         })
 
         Sqrl.templates.define('mypartial', Sqrl.compile('This is a partial'))
 
-        Sqrl.helpers.define('customhelper', function (content, blocks, options) {
+        Sqrl.helpers.define('customhelper', function(content, blocks, options) {
           var returnStr = 'Custom Helper speaking! \n'
           for (var i = 0; i < blocks.length; i++) {
             var currentBlock = blocks[i]
@@ -234,12 +234,12 @@ This is a partial: {{~include("mypartial")/}}
           return returnStr
         })
 
-        Sqrl.helpers.define('log', function (args) {
+        Sqrl.helpers.define('log', function(args) {
           console.log(args[0])
           return ''
         })
 
-        function escape (str) {
+        function escape(str) {
           // To handle escaping for the function result
           var escMap = {
             '&': '&amp;',
@@ -250,7 +250,7 @@ This is a partial: {{~include("mypartial")/}}
             '/': '&#x2F;'
           }
 
-          function replaceChar (s) {
+          function replaceChar(s) {
             return escMap[s]
           }
           var newStr = String(str)
@@ -261,7 +261,7 @@ This is a partial: {{~include("mypartial")/}}
           }
         }
 
-        function render () {
+        function render() {
           console.clear()
           var options = JSON.parse('{' + document.getElementById('data').value + '}')
           console.log(JSON.stringify(options))
@@ -269,7 +269,13 @@ This is a partial: {{~include("mypartial")/}}
           try {
             var functionResult = Sqrl.compile(template).toString()
             document.getElementById('function').innerHTML = escape(functionResult)
-            document.getElementById('result').innerHTML = Sqrl.render(template, options)
+            if (!Sqrl.defaultConfig.async) {
+              document.getElementById('result').innerHTML = Sqrl.render(template, options)
+            } else {
+              Sqrl.render(template, options).then(function(res) {
+                document.getElementById('result').innerHTML = res
+              })
+            }
             console.log(Sqrl.render(template, options))
           } catch (ex) {
             console.error(ex.message)

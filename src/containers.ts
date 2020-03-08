@@ -12,6 +12,7 @@ import { ParentTemplateObject } from './parse'
 export interface HelperContent {
   exec: Function
   params: Array<any>
+  async?: boolean
 }
 
 export interface HelperBlock extends HelperContent {
@@ -22,9 +23,9 @@ export type HelperFunction = (
   content: HelperContent,
   blocks: Array<HelperBlock>,
   config: SqrlConfig
-) => string
+) => string | Promise<string>
 
-export type FilterFunction = (str: string) => string
+export type FilterFunction = (str: string) => any | Promise<any>
 
 interface EscapeMap {
   '&': '&amp;'
@@ -60,23 +61,72 @@ function errWithBlocksOrFilters (
   }
 }
 
+/* ASYNC LOOP FNs */
+function asyncArrLoop (arr: Array<any>, index: number, fn: Function, res: string, cb: Function) {
+  fn(arr[index], index).then(function (val: string) {
+    res += val
+    if (index === arr.length - 1) {
+      cb(res)
+    } else {
+      asyncArrLoop(arr, index + 1, fn, res, cb)
+    }
+  })
+}
+
+function asyncObjLoop (
+  obj: { [index: string]: any },
+  keys: Array<string>,
+  index: number,
+  fn: Function,
+  res: string,
+  cb: Function
+) {
+  fn(keys[index], obj[keys[index]]).then(function (val: string) {
+    res += val
+    if (index === keys.length - 1) {
+      cb(res)
+    } else {
+      asyncObjLoop(obj, keys, index + 1, fn, res, cb)
+    }
+  })
+}
+
+/* ASYNC LOOP FNs */
+
 var helpers = new Cacher<HelperFunction>({
-  each: function (content: HelperContent) {
+  each: function (content: HelperContent, blocks: Array<HelperBlock>) {
     var res = ''
-    var param = content.params[0]
-    for (var i = 0; i < param.length; i++) {
-      res += content.exec(param[i], i)
+    var arr = content.params[0]
+    errWithBlocksOrFilters('each', blocks, false)
+
+    if (content.async) {
+      return new Promise(function (resolve) {
+        asyncArrLoop(arr, 0, content.exec, res, resolve)
+      })
+    } else {
+      for (var i = 0; i < arr.length; i++) {
+        res += content.exec(arr[i], i)
+      }
+      return res
     }
-    return res
   },
-  foreach: function (content: HelperContent) {
-    var res = ''
-    var param = content.params[0]
-    for (var key in param) {
-      if (!hasOwnProp(param, key)) continue
-      res += content.exec(key, param[key]) // todo: I think this is wrong?
+  foreach: function (content: HelperContent, blocks: Array<HelperBlock>) {
+    var obj = content.params[0]
+    errWithBlocksOrFilters('foreach', blocks, false)
+
+    if (content.async) {
+      return new Promise(function (resolve) {
+        asyncObjLoop(obj, Object.keys(obj), 0, content.exec, '', resolve)
+      })
+    } else {
+      var res = ''
+
+      for (var key in obj) {
+        if (!hasOwnProp(obj, key)) continue
+        res += content.exec(key, obj[key]) // todo: check on order
+      }
+      return res
     }
-    return res
   },
   include: function (
     content: IncludeHelperContent,
