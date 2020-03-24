@@ -1,6 +1,6 @@
-// express is set like: app.engine('html', require('squirrelly').renderFile)
+// express is set like: app.engine('html', require('eta').renderFile)
 
-import SqrlErr from './err'
+import EtaErr from './err'
 import compile from './compile'
 import { getConfig } from './config'
 import { getPath, readFile, loadFile } from './file-utils'
@@ -8,12 +8,12 @@ import { promiseImpl, copyProps } from './utils'
 
 /* TYPES */
 
-import { SqrlConfig, PartialConfig } from './config'
+import { EtaConfig, PartialConfig } from './config'
 import { TemplateFunction } from './compile'
 
 export type CallbackFn = (err: Error | null, str?: string) => void
 
-interface FileOptions extends SqrlConfig {
+interface FileOptions extends EtaConfig {
   filename: string
 }
 
@@ -80,7 +80,7 @@ function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
         }
       })
     } else {
-      throw SqrlErr("Please provide a callback function, this env doesn't support Promises")
+      throw EtaErr("Please provide a callback function, this env doesn't support Promises")
     }
   } else {
     try {
@@ -103,7 +103,7 @@ function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
  * @static
  */
 
-function includeFile (path: string, options: SqrlConfig) {
+function includeFile (path: string, options: EtaConfig) {
   // the below creates a new options object, using the parent filepath of the old options object and the path
   var newFileOptions = getConfig({ filename: getPath(path, options) }, options)
   // TODO: make sure properties are currectly copied over

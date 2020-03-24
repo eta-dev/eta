@@ -6,14 +6,14 @@ function setPrototypeOf (obj: any, proto: any) {
   }
 }
 
-export default function SqrlErr (message: string): Error {
+export default function EtaErr (message: string): Error {
   var err = new Error(message)
-  setPrototypeOf(err, SqrlErr.prototype)
+  setPrototypeOf(err, EtaErr.prototype)
   return err
 }
 
-SqrlErr.prototype = Object.create(Error.prototype, {
-  name: { value: 'Squirrelly Error', enumerable: false }
+EtaErr.prototype = Object.create(Error.prototype, {
+  name: { value: 'Eta Error', enumerable: false }
 })
 
 // TODO: Class transpilation adds a lot to the bundle size
@@ -35,5 +35,5 @@ export function ParseErr (message: string, str: string, indx: number) {
     '  ' +
     Array(colNo).join(' ') +
     '^'
-  throw SqrlErr(message)
+  throw EtaErr(message)
 }

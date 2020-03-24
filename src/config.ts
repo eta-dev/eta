@@ -1,31 +1,27 @@
-import { helpers, nativeHelpers, filters, templates } from './containers'
-import SqrlErr from './err'
-import { copyProps } from './utils'
+import { templates } from './containers'
+import { copyProps, XMLEscape } from './utils'
 
 /* TYPES */
 
-export type FetcherFunction = (container: 'H' | 'F', name: string) => Function | undefined
-import { HelperFunction, FilterFunction } from './containers'
 import { TemplateFunction } from './compile'
 import { Cacher } from './storage'
 
-type trimConfig = 'nl' | 'slurp' | boolean
+type trimConfig = 'nl' | 'slurp' | false
 
-export interface SqrlConfig {
+export interface EtaConfig {
   varName: string
   autoTrim: trimConfig | [trimConfig, trimConfig]
   autoEscape: boolean
-  defaultFilter: false | string
   tags: [string, string]
-  l: FetcherFunction
+  parse: {
+    interpolate: string
+    raw: string
+    exec: string
+  }
+  e: (str: string) => string
   plugins: Array<{ processFnString?: Function; processAST?: Function }>
   async: boolean
-  storage: {
-    helpers: Cacher<HelperFunction>
-    nativeHelpers: Cacher<Function>
-    filters: Cacher<FilterFunction>
-    templates: Cacher<TemplateFunction>
-  }
+  templates: Cacher<TemplateFunction>
   cache: boolean
   views?: string | Array<string>
   root?: string
@@ -37,49 +33,30 @@ export interface SqrlConfig {
 }
 
 export type PartialConfig = {
-  [P in keyof SqrlConfig]?: SqrlConfig[P]
+  [P in keyof EtaConfig]?: EtaConfig[P]
 }
 
 /* END TYPES */
 
-var defaultConfig: SqrlConfig = {
+var defaultConfig: EtaConfig = {
   varName: 'it',
   autoTrim: [false, 'nl'],
   autoEscape: true,
-  defaultFilter: false,
   tags: ['{{', '}}'],
-  l: function (container: 'H' | 'F', name: string): HelperFunction | FilterFunction | undefined {
-    if (container === 'H') {
-      var hRet = this.storage.helpers.get(name) as HelperFunction | undefined
-      if (hRet) {
-        return hRet
-      } else {
-        throw SqrlErr("Can't find helper '" + name + "'")
-      }
-    } else if (container === 'F') {
-      var fRet = this.storage.filters.get(name) as FilterFunction | undefined
-      if (fRet) {
-        return fRet
-      } else {
-        throw SqrlErr("Can't find filter '" + name + "'")
-      }
-    }
+  parse: {
+    interpolate: '=',
+    raw: '~',
+    exec: ''
   },
   async: false,
-  storage: {
-    helpers: helpers,
-    nativeHelpers: nativeHelpers,
-    filters: filters,
-    templates: templates
-  },
+  templates: templates,
   cache: false,
   plugins: [],
-  useWith: false
+  useWith: false,
+  e: XMLEscape
 }
 
-defaultConfig.l.bind(defaultConfig)
-
-function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfig {
+function getConfig (override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
   // TODO: run more tests on this
 
   var res: PartialConfig = {} // Linked
@@ -93,9 +70,7 @@ function getConfig (override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfi
     copyProps(res, override)
   }
 
-  ;(res as SqrlConfig).l.bind(res)
-
-  return res as SqrlConfig
+  return res as EtaConfig
 }
 
 export { defaultConfig, getConfig }

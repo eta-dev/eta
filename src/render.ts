@@ -1,17 +1,17 @@
 import compile from './compile'
 import { getConfig } from './config'
 import { promiseImpl } from './utils'
-import SqrlErr from './err'
+import EtaErr from './err'
 
 /* TYPES */
 
-import { SqrlConfig, PartialConfig } from './config'
+import { EtaConfig, PartialConfig } from './config'
 import { TemplateFunction } from './compile'
 import { CallbackFn } from './file-handlers'
 
 /* END TYPES */
 
-function handleCache (template: string | TemplateFunction, options: SqrlConfig): TemplateFunction {
+function handleCache (template: string | TemplateFunction, options: EtaConfig): TemplateFunction {
   var templateFunc
 
   if (options.cache && options.name && options.storage.templates.get(options.name)) {
@@ -53,7 +53,7 @@ export default function render (
           }
         })
       } else {
-        throw SqrlErr("Please provide a callback function, this env doesn't support Promises")
+        throw EtaErr("Please provide a callback function, this env doesn't support Promises")
       }
     } else {
       try {

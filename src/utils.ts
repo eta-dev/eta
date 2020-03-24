@@ -3,7 +3,15 @@
 
 /* TYPES */
 
-import { SqrlConfig } from './config'
+import { EtaConfig } from './config'
+
+interface EscapeMap {
+  '&': '&amp;'
+  '<': '&lt;'
+  '"': '&quot;'
+  "'": '&#39;'
+  [index: string]: string
+}
 
 /* END TYPES */
 
@@ -16,26 +24,18 @@ export function hasOwnProp (obj: object, prop: string) {
 export function copyProps<T> (toObj: T, fromObj: T, notConfig?: boolean) {
   for (var key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
-      if (
-        fromObj[key] != null &&
-        typeof fromObj[key] == 'object' &&
-        key === 'storage' &&
-        !notConfig // not called from Cache.load
-      ) {
-        // plugins or storage
-        // Note: this doesn't merge from initial config!
-        // Deep clone instead of assigning
-        // TODO: run checks on this
-        toObj[key] = copyProps(/*toObj[key] ||*/ {} as T[Extract<keyof T, string>], fromObj[key])
-      } else {
-        toObj[key] = fromObj[key]
-      }
+      toObj[key] = fromObj[key]
     }
   }
   return toObj
 }
 
-function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string): string {
+function trimWS (
+  str: string,
+  env: EtaConfig,
+  wsLeft: string | false,
+  wsRight?: string | false
+): string {
   var leftTrim
   var rightTrim
 
@@ -48,22 +48,19 @@ function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string)
     rightTrim = env.autoTrim[0]
   }
 
-  if (wsLeft) {
+  if (wsLeft || wsLeft === false) {
     leftTrim = wsLeft
   }
 
-  if (wsRight) {
+  if (wsRight || wsRight === false) {
     rightTrim = wsRight
   }
 
-  if (
-    (leftTrim === 'slurp' && rightTrim === 'slurp') ||
-    (leftTrim === true && rightTrim === true)
-  ) {
+  if (leftTrim === 'slurp' && rightTrim === 'slurp') {
     return str.trim()
   }
 
-  if (leftTrim === '_' || leftTrim === 'slurp' || leftTrim === true) {
+  if (leftTrim === '_' || leftTrim === 'slurp') {
     // console.log('trimming left' + leftTrim)
     // full slurp
     if (String.prototype.trimLeft) {
@@ -77,7 +74,7 @@ function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string)
     str = str.replace(/^(?:\n|\r|\r\n)/, '')
   }
 
-  if (rightTrim === '_' || rightTrim === 'slurp' || rightTrim === true) {
+  if (rightTrim === '_' || rightTrim === 'slurp') {
     // console.log('trimming right' + rightTrim)
     // full slurp
     if (String.prototype.trimRight) {
@@ -94,4 +91,25 @@ function trimWS (str: string, env: SqrlConfig, wsLeft: string, wsRight?: string)
   return str
 }
 
-export { trimWS }
+var escMap: EscapeMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}
+
+function replaceChar (s: string): string {
+  return escMap[s]
+}
+
+function XMLEscape (str: any) {
+  // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
+  var newStr = String(str)
+  if (/[&<"']/.test(newStr)) {
+    return newStr.replace(/[&<"']/g, replaceChar)
+  } else {
+    return newStr
+  }
+}
+
+export { trimWS, XMLEscape }

@@ -1,20 +1,16 @@
-var Sqrl = require('../dist/squirrelly.cjs')
-var template = `
-{{it.value}}
+var Eta = require('../dist/eta.cjs')
+// var template = `
 
-{{it.value | safe}}
-{{!/*this is a comment */}}
-{{it.value | safe | capitalize}}
+// {{=it.value}}
 
-{{it.value | capitalize | safe}}
+// {{=it.value}}
+// {{/*this is a comment */}}
+// `
 
-`
-Sqrl.Filters.define('capitalize', function (str) {
-  return str.toUpperCase()
-})
+var template = '\n{{it.hi}}'
 
-console.log(Sqrl.Parse(template, Sqrl.Env.default))
+console.log(Eta.parse(template, Eta.defaultConfig))
 console.log('===========================')
-console.log(Sqrl.Compile(template, Sqrl.Env.default).toString())
-console.log('===========================')
-console.log(Sqrl.Render(template, { value: '<img>Something</img>' }))
+// console.log(Eta.compile(template, Eta.defaultConfig).toString())
+// console.log('===========================')
+// console.log(Eta.render(template, { value: '<img>Something</img>' }))

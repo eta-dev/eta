@@ -13,7 +13,7 @@ export default [
     input: 'src/browser.ts', // todo: use rollup-plugin-replace
     output: [
       {
-        file: 'dist/browser/squirrelly.dev.js',
+        file: 'dist/browser/eta.dev.js',
         format: 'umd',
         name: 'Sqrl',
         sourcemap: true

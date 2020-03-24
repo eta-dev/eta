@@ -1,17 +1,17 @@
 import compileToString from './compile-string'
 import { getConfig } from './config'
-import SqrlErr from './err'
+import EtaErr from './err'
 
 /* TYPES */
 
-import { SqrlConfig, PartialConfig } from './config'
+import { EtaConfig, PartialConfig } from './config'
 import { CallbackFn } from './file-handlers'
-export type TemplateFunction = (data: object, config: SqrlConfig, cb?: CallbackFn) => string
+export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn) => string
 
 /* END TYPES */
 
 export default function compile (str: string, env?: PartialConfig): TemplateFunction {
-  var options: SqrlConfig = getConfig(env || {})
+  var options: EtaConfig = getConfig(env || {})
   var ctor // constructor
 
   /* ASYNC HANDLING */
@@ -35,13 +35,13 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
   try {
     return new ctor(
       options.varName,
-      'c', // SqrlConfig
+      'E', // EtaConfig
       'cb', // optional callback
       compileToString(str, options)
     ) as TemplateFunction // eslint-disable-line no-new-func
   } catch (e) {
     if (e instanceof SyntaxError) {
-      throw SqrlErr(
+      throw EtaErr(
         'Bad template syntax\n\n' +
           e.message +
           '\n' +

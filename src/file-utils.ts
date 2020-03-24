@@ -2,22 +2,22 @@ var fs = require('fs')
 var path = require('path')
 var _BOM = /^\uFEFF/
 
-// express is set like: app.engine('html', require('squirrelly').renderFile)
+// express is set like: app.engine('html', require('eta').renderFile)
 
-import SqrlErr from './err'
+import EtaErr from './err'
 import Compile from './compile'
 import { getConfig } from './config'
 
 /* TYPES */
 
-import { SqrlConfig, PartialConfig } from './config'
+import { EtaConfig, PartialConfig } from './config'
 import { TemplateFunction } from './compile'
 
 interface PartialFileConfig extends PartialConfig {
   filename: string
 }
 
-interface FileConfig extends SqrlConfig {
+interface FileConfig extends EtaConfig {
   filename: string
 }
 
@@ -40,7 +40,7 @@ function getWholeFilePath (name: string, parentfile: string, isDirectory?: boole
   )
   var ext = path.extname(name)
   if (!ext) {
-    includePath += '.sqrl'
+    includePath += '.eta'
   }
   return includePath
 }
@@ -53,7 +53,7 @@ function getWholeFilePath (name: string, parentfile: string, isDirectory?: boole
  * @return {String}
  */
 
-function getPath (path: string, options: SqrlConfig) {
+function getPath (path: string, options: EtaConfig) {
   var includePath
   var filePath
   var views = options.views
@@ -84,7 +84,7 @@ function getPath (path: string, options: SqrlConfig) {
       }
     }
     if (!includePath) {
-      throw SqrlErr('Could not find the include file "' + path + '"')
+      throw EtaErr('Could not find the include file "' + path + '"')
     }
   }
   return includePath
@@ -105,7 +105,7 @@ function loadFile (filePath: string, options: PartialFileConfig): TemplateFuncti
     config.storage.templates.define((config as FileConfig).filename, compiledTemplate)
     return compiledTemplate
   } catch (e) {
-    throw SqrlErr('Loading file: ' + filePath + ' failed')
+    throw EtaErr('Loading file: ' + filePath + ' failed')
   }
 }
 

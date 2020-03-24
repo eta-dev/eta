@@ -1,4 +1,4 @@
-import { SqrlConfig } from './config';
+import { EtaConfig } from './config';
 import { TemplateFunction } from './compile';
 export declare type CallbackFn = (err: Error | null, str?: string) => void;
 interface DataObj {
@@ -18,6 +18,6 @@ interface DataObj {
  * Depending on the value of `options.client`, either type might be returned
  * @static
  */
-declare function includeFile(path: string, options: SqrlConfig): TemplateFunction;
+declare function includeFile(path: string, options: EtaConfig): TemplateFunction;
 declare function renderFile(filename: string, data: DataObj, cb?: CallbackFn): any;
 export { includeFile, renderFile };

@@ -1,26 +1,23 @@
-export declare type FetcherFunction = (container: 'H' | 'F', name: string) => Function | undefined;
-import { HelperFunction, FilterFunction } from './containers';
 import { TemplateFunction } from './compile';
 import { Cacher } from './storage';
-declare type trimConfig = 'nl' | 'slurp' | boolean;
-export interface SqrlConfig {
+declare type trimConfig = 'nl' | 'slurp' | false;
+export interface EtaConfig {
     varName: string;
     autoTrim: trimConfig | [trimConfig, trimConfig];
     autoEscape: boolean;
-    defaultFilter: false | string;
     tags: [string, string];
-    l: FetcherFunction;
+    parse: {
+        interpolate: string;
+        raw: string;
+        exec: string;
+    };
+    e: (str: string) => string;
     plugins: Array<{
         processFnString?: Function;
         processAST?: Function;
     }>;
     async: boolean;
-    storage: {
-        helpers: Cacher<HelperFunction>;
-        nativeHelpers: Cacher<Function>;
-        filters: Cacher<FilterFunction>;
-        templates: Cacher<TemplateFunction>;
-    };
+    templates: Cacher<TemplateFunction>;
     cache: boolean;
     views?: string | Array<string>;
     root?: string;
@@ -31,8 +28,8 @@ export interface SqrlConfig {
     [index: string]: any;
 }
 export declare type PartialConfig = {
-    [P in keyof SqrlConfig]?: SqrlConfig[P];
+    [P in keyof EtaConfig]?: EtaConfig[P];
 };
-declare var defaultConfig: SqrlConfig;
-declare function getConfig(override: PartialConfig, baseConfig?: SqrlConfig): SqrlConfig;
+declare var defaultConfig: EtaConfig;
+declare function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig;
 export { defaultConfig, getConfig };

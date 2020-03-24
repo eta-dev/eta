@@ -1,10 +1,10 @@
 <a href="https://squirrelly.js.org"><img src="https://cdn.jsdelivr.net/gh/squirrellyjs/squirrelly-logo/svg-minified/squirrelly-fit-acorn.svg" align="right" width="30%" alt="Squirrel"></a>
 
-# squirrelly
+# eta
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[logo]: https://img.shields.io/badge/all_contributors-3-orange.svg "Number of contributors on All-Contributors"
+[logo]: https://img.shields.io/badge/all_contributors-3-orange.svg 'Number of contributors on All-Contributors'
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 

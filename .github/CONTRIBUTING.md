@@ -8,7 +8,7 @@ These steps will guide you through contributing to this project:
 - Clone it and install dependencies
 
 ```
-git clone https://github.com/squirrellyjs/squirrelly
+git clone https://github.com/nebrelbug/eta
 npm install
 ```
 
@@ -16,4 +16,4 @@ Keep in mind that after running `npm install` the git repo is reset. So a good w
 
 Make and commit your changes. Make sure the commands npm run build and npm run test:prod are working.
 
-Finally send a [GitHub Pull Request](https://github.com/squirrellyjs/squirrelly/compare?expand=1) with a clear list of what you've done (read more [about pull requests](https://help.github.com/articles/about-pull-requests/)). Make sure all of your commits are atomic (one feature per commit).
+Finally send a [GitHub Pull Request](https://github.com/nebrelbug/eta/compare?expand=1) with a clear list of what you've done (read more [about pull requests](https://help.github.com/articles/about-pull-requests/)). Make sure all of your commits are atomic (one feature per commit).

@@ -2,13 +2,13 @@
 
 `dist`
 
-- `squirrelly.cjs.js` -- `main`
-- `squirrelly.es.js` -- `module` (don't transpile down to ES5)
+- `eta.cjs.js` -- `main`
+- `eta.es.js` -- `module` (don't transpile down to ES5)
 - `browser`
-  - `squirrelly.umd.js`
-  - `squirrelly.umd.min.js` -- `browser`
-  - `squirrelly.es.dev.js` (don't transpile)
-  - `squirrelly.es.min.js` (don't transpile)
+  - `eta.umd.js`
+  - `eta.umd.min.js` -- `browser`
+  - `eta.es.dev.js` (don't transpile)
+  - `eta.es.min.js` (don't transpile)
 
 One `index.d.ts` file
 
