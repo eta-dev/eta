@@ -32,8 +32,6 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
         trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
         shouldTrimRightOfString
       )
-      console.log('str to push is')
-      console.log(stringToPush.length)
       if (stringToPush) {
         buffer.push(stringToPush)
       }
@@ -70,8 +68,6 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     lastIndex = m[0].length + m.index
     var i = m.index
 
-    console.log(m)
-    console.log('hey')
     var precedingString = m[1]
     var wsLeft = m[2]
     var prefix = m[3] || '' // by default either ~, =, or empty

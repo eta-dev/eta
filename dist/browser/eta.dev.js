@@ -91,7 +91,6 @@
           return newStr;
       }
   }
-  //# sourceMappingURL=utils.js.map
 
   /* END TYPES */
   function parse(str, env) {
@@ -105,8 +104,6 @@
               // TODO: benchmark replace( /(\\|')/g, '\\$1')
               stringToPush = trimWS(stringToPush, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
               shouldTrimRightOfString);
-              console.log('str to push is');
-              console.log(stringToPush.length);
               if (stringToPush) {
                   buffer.push(stringToPush);
               }
@@ -133,8 +130,6 @@
       while ((m = parseReg.exec(str)) !== null) {
           lastIndex = m[0].length + m.index;
           var i = m.index;
-          console.log(m);
-          console.log('hey');
           var precedingString = m[1];
           var wsLeft = m[2];
           var prefix = m[3] || ''; // by default either ~, =, or empty
@@ -244,7 +239,6 @@
       };
       return Cacher;
   }());
-  //# sourceMappingURL=storage.js.map
 
   function setPrototypeOf(obj, proto) {
       if (Object.setPrototypeOf) {
@@ -262,11 +256,9 @@
   EtaErr.prototype = Object.create(Error.prototype, {
       name: { value: 'Eta Error', enumerable: false }
   });
-  //# sourceMappingURL=err.js.map
 
   /* END TYPES */
   var templates = new Cacher({});
-  //# sourceMappingURL=containers.js.map
 
   /* END TYPES */
   var defaultConfig = {
@@ -298,7 +290,6 @@
       }
       return res;
   }
-  //# sourceMappingURL=config.js.map
 
   /* END TYPES */
   function compile(str, env) {
@@ -344,7 +335,6 @@
           }
       }
   }
-  //# sourceMappingURL=compile.js.map
 
   /* END TYPES */
   function handleCache(template, options) {
@@ -397,7 +387,6 @@
           return handleCache(template, options)(data, options);
       }
   }
-  //# sourceMappingURL=render.js.map
 
   exports.compile = compile;
   exports.compileToString = compileToString;

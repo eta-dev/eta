@@ -18,7 +18,6 @@ function EtaErr(message) {
 EtaErr.prototype = Object.create(Error.prototype, {
     name: { value: 'Eta Error', enumerable: false }
 });
-//# sourceMappingURL=err.js.map
 
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
@@ -107,7 +106,6 @@ function XMLEscape(str) {
         return newStr;
     }
 }
-//# sourceMappingURL=utils.js.map
 
 /* END TYPES */
 function parse(str, env) {
@@ -121,8 +119,6 @@ function parse(str, env) {
             // TODO: benchmark replace( /(\\|')/g, '\\$1')
             stringToPush = trimWS(stringToPush, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
             shouldTrimRightOfString);
-            console.log('str to push is');
-            console.log(stringToPush.length);
             if (stringToPush) {
                 buffer.push(stringToPush);
             }
@@ -149,8 +145,6 @@ function parse(str, env) {
     while ((m = parseReg.exec(str)) !== null) {
         lastIndex = m[0].length + m.index;
         var i = m.index;
-        console.log(m);
-        console.log('hey');
         var precedingString = m[1];
         var wsLeft = m[2];
         var prefix = m[3] || ''; // by default either ~, =, or empty
@@ -260,11 +254,9 @@ var Cacher = /** @class */ (function () {
     };
     return Cacher;
 }());
-//# sourceMappingURL=storage.js.map
 
 /* END TYPES */
 var templates = new Cacher({});
-//# sourceMappingURL=containers.js.map
 
 /* END TYPES */
 var defaultConfig = {
@@ -296,7 +288,6 @@ function getConfig(override, baseConfig) {
     }
     return res;
 }
-//# sourceMappingURL=config.js.map
 
 /* END TYPES */
 function compile(str, env) {
@@ -342,7 +333,6 @@ function compile(str, env) {
         }
     }
 }
-//# sourceMappingURL=compile.js.map
 
 var fs = require('fs');
 var path = require('path');
@@ -365,7 +355,6 @@ function loadFile(filePath, options) {
         throw EtaErr('Loading file: ' + filePath + ' failed');
     }
 }
-//# sourceMappingURL=file-utils.js.map
 
 // express is set like: app.engine('html', require('eta').renderFile)
 /* END TYPES */
@@ -454,7 +443,6 @@ function renderFile(filename, data, cb) {
     Config.filename = filename; // Make sure filename is right
     return tryHandleCache(Config, data, cb);
 }
-//# sourceMappingURL=file-handlers.js.map
 
 /* END TYPES */
 function handleCache$1(template, options) {
@@ -507,7 +495,6 @@ function render(template, data, env, cb) {
         return handleCache$1(template, options)(data, options);
     }
 }
-//# sourceMappingURL=render.js.map
 
 exports.__express = renderFile;
 exports.compile = compile;
