@@ -13,7 +13,7 @@
 [![Dev Dependencies](https://img.shields.io/david/dev/nebrelbug/eta)](https://david-dm.org/nebrelbug/eta?type=dev)
 
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Join the chat at https://gitter.im/squirrellyjs/Lobby](https://img.shields.io/gitter/room/nebrelbug/eta?color=%2346BC99)](https://gitter.im/squirrellyjs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/eta-js/community](https://img.shields.io/gitter/room/nebrelbug/eta?color=%2346BC99)](https://gitter.im/eta-js/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
 
 **Summary**
@@ -43,7 +43,7 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 - 🔧 Great error reporting
 - 📦 0 dependencies
 - 🔧 Better quotes/comments support
-  - _ex. `<%= someval + "string %>" %>`_ compiles correctly, while it fails with DoT or EJS
+  - _ex. `<%= someval + "string %>" %>`_ compiles correctly, while it fails with doT or EJS
 - ⚡️ Exports ES Modules as well as UMD
 - 🔧 ExpressJS support out-of-the-box
 - 🔨 Loops
@@ -130,3 +130,4 @@ This project follows the [all-contributors](https://github.com/kentcdodds/all-co
 ## Credits
 
 - Async support and file handling were added based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified to throw a Squirrelly Error.
+- Syntax and some parts of compilation are heavily based off EJS, Nunjucks, and doT.
