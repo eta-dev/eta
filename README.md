@@ -1,5 +1,3 @@
-<a href="https://squirrelly.js.org"><img src="https://cdn.jsdelivr.net/gh/squirrellyjs/squirrelly-logo/svg-minified/squirrelly-fit-acorn.svg" align="right" width="30%" alt="Squirrel"></a>
-
 # eta
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
@@ -8,40 +6,48 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/squirrellyjs/squirrelly/master?label=current%20version)
-[![Travis](https://img.shields.io/travis/com/squirrellyjs/squirrelly/master.svg)](https://travis-ci.com/squirrellyjs/squirrelly)
+![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/nebrelbug/eta/master?label=current%20version)
+[![Travis](https://img.shields.io/travis/com/nebrelbug/eta/master.svg)](https://travis-ci.com/nebrelbug/eta)
 [![All Contributors][logo]](#contributors-)
-[![Coveralls](https://img.shields.io/coveralls/squirrellyjs/squirrelly.svg)](https://coveralls.io/github/squirrellyjs/squirrelly)
-[![Dev Dependencies](https://img.shields.io/david/dev/squirrellyjs/squirrelly)](https://david-dm.org/squirrellyjs/squirrelly?type=dev)
+[![Coveralls](https://img.shields.io/coveralls/nebrelbug/eta.svg)](https://coveralls.io/github/nebrelbug/eta)
+[![Dev Dependencies](https://img.shields.io/david/dev/nebrelbug/eta)](https://david-dm.org/nebrelbug/eta?type=dev)
 
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Greenkeeper badge](https://badges.greenkeeper.io/squirrellyjs/squirrelly.svg)](https://greenkeeper.io/)
-[![Join the chat at https://gitter.im/squirrellyjs/Lobby](https://img.shields.io/gitter/room/squirrellyjs/squirrelly?color=%2346BC99)](https://gitter.im/squirrellyjs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Greenkeeper badge](https://badges.greenkeeper.io/nebrelbug/eta.svg)](https://greenkeeper.io/)
+[![Join the chat at https://gitter.im/squirrellyjs/Lobby](https://img.shields.io/gitter/room/nebrelbug/eta?color=%2346BC99)](https://gitter.im/squirrellyjs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
 
 **Summary**
 
-Squirrelly is a modern, configurable, and blazing fast template engine implemented in JavaScript. It works out of the box with ExpressJS and the **full version** weighs only **~3.3KB gzipped**.
+Eta is a lightweight and blazing fast embedded JS templating engine. The team who created Squirrelly created it to serve as a better alternative to EJS.
 
-**This is version 8** - a new, more powerful rewrite of Squirrelly. It adds multiple features (like filter parameters, whitespace control, partials, and template inheritance) to bring you a template engine with the power of Nunjucks, the simplicity of EJS, and the small bundle size of its earlier versions.
+## Eta vs EJS
 
-Version 8 is still in beta. Squirrelly v7 will continue to be maintained, and can be found at https://github.com/squirrellyjs/squirrelly/tree/v7. Since the API of v8 isn't fully documented yet, most people should probably use v7 for the next few weeks.
+Eta's syntax is very similar to EJS' (most templates should work with either engine), Eta has a similar API, and Eta and EJS share the same file-handling logic. Here are the differences between Eta and EJS:
 
-[Read about the changes](https://squirrelly.js.org/blog/squirrelly-version-8)
+- Eta is more lightweight. Eta weighs less than **2KB gzipped**, while EJS is **4.4KB gzipped**
+- Eta compiles and renders templates **much faster than EJS**. Check out these benchmarks: https://cdn.statically.io/gh/nebrelbug/eta/master/browser-tests/benchmark.html
+- Eta allows left whitespace control (with `-`), something that doesn't work in EJS because EJS uses `-` on the left side to indicate that the value shouldn't be escaped. Instead, Eta uses `~` to output a raw value
+- Eta gives you more flexibility with delimeters -- you could set them to `{{` and `}}`, for example, while with EJS this isn't possible
+- Eta adds plugin support
+- Comments in Eta use `/* ... */` which allows commenting around template tags
+- Eta parses strings correctly. _Example: `<%= "%>" %>` works in Eta, while it breaks in EJS_
+- Eta exposes Typescript types and distributes a UMD build
+- Custom tag-type indicators. _Example: you could change `<%=` to `<%*`_
 
-## Why Squirrelly?
+## Why Eta?
 
-Simply put, Squirrelly is super lightweight, super fast, super powerful, and super simple.
+Simply put, Eta is super: super lightweight, super fast, super powerful, and super simple. Like with EJS, you don't have to worry about learning an entire new templating syntax. Just write JavaScript inside your templates.
 
 ### 🌟 Features
 
-- 🔧 Helpers, filters
 - 🔧 Great error reporting
 - 📦 0 dependencies
 - 🔨 Conditionals
 - 🔧 Better quotes/comments support
-  - _ex. `{{someval + "name }}" }}`_ compiles correctly, while it fails with DoT or EJS
+  - _ex. `<%= someval + "string %>" %>`_ compiles correctly, while it fails with DoT or EJS
 - ⚡️ Exports ES Modules as well as UMD
+- 🔧 ExpressJS support out-of-the-box
 - 🔨 Loops
 - 🔧 Custom delimeters
 - 📝 Easy template syntax
@@ -51,9 +57,8 @@ Simply put, Squirrelly is super lightweight, super fast, super powerful, and sup
 - 🔨 Comments
 - 🔧 Caching
 - 🚀 Super Fast
-  - Squirrelly [has been benchmarked](https://github.com/nebrelbug/squirrelly-benchmarks/tree/v8) against Marko, Pug, doT, Swig, Handlebars, Mustache, and Nunjucks. In each test, Squirrelly was fastest.
-- ⚡️ Async support: async filters, helpers, partials
-- 🔧 Template inheritance
+  - Check out [these benchmarks](https://cdn.statically.io/gh/nebrelbug/eta/master/browser-tests/benchmark.html)
+- ⚡️ Async support
 
 ## 📜 Docs
 
@@ -113,9 +118,9 @@ Made with ❤ by [@nebrelbug](https://github.com/nebrelbug) and all these wonder
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="http://www.bengubler.com"><img src="https://avatars3.githubusercontent.com/u/25597854?v=4" width="100px;" alt=""/><br /><sub><b>Ben Gubler</b></sub></a><br /><a href="https://github.com/squirrellyjs/squirrelly/commits?author=nebrelbug" title="Code">💻</a> <a href="#question-nebrelbug" title="Answering Questions">💬</a> <a href="https://github.com/squirrellyjs/squirrelly/commits?author=nebrelbug" title="Documentation">📖</a> <a href="https://github.com/squirrellyjs/squirrelly/commits?author=nebrelbug" title="Tests">⚠️</a></td>
-    <td align="center"><a href="http://ducnhatphung@gmail.com"><img src="https://avatars1.githubusercontent.com/u/16368559?v=4" width="100px;" alt=""/><br /><sub><b>Clite Tailor</b></sub></a><br /><a href="#ideas-clitetailor" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/squirrellyjs/squirrelly/commits?author=clitetailor" title="Code">💻</a></td>
-    <td align="center"><a href="https://twitter.com/ioan_chiriac"><img src="https://avatars2.githubusercontent.com/u/173203?v=4" width="100px;" alt=""/><br /><sub><b>Ioan CHIRIAC</b></sub></a><br /><a href="https://github.com/squirrellyjs/squirrelly/commits?author=ichiriac" title="Code">💻</a> <a href="#ideas-ichiriac" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://www.bengubler.com"><img src="https://avatars3.githubusercontent.com/u/25597854?v=4" width="100px;" alt=""/><br /><sub><b>Ben Gubler</b></sub></a><br /><a href="https://github.com/nebrelbug/eta/commits?author=nebrelbug" title="Code">💻</a> <a href="#question-nebrelbug" title="Answering Questions">💬</a> <a href="https://github.com/nebrelbug/eta/commits?author=nebrelbug" title="Documentation">📖</a> <a href="https://github.com/nebrelbug/eta/commits?author=nebrelbug" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://ducnhatphung@gmail.com"><img src="https://avatars1.githubusercontent.com/u/16368559?v=4" width="100px;" alt=""/><br /><sub><b>Clite Tailor</b></sub></a><br /><a href="#ideas-clitetailor" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/nebrelbug/eta/commits?author=clitetailor" title="Code">💻</a></td>
+    <td align="center"><a href="https://twitter.com/ioan_chiriac"><img src="https://avatars2.githubusercontent.com/u/173203?v=4" width="100px;" alt=""/><br /><sub><b>Ioan CHIRIAC</b></sub></a><br /><a href="https://github.com/nebrelbug/eta/commits?author=ichiriac" title="Code">💻</a> <a href="#ideas-ichiriac" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 

@@ -1,4 +1,4 @@
-/* eslint-disable dot-notation */
+/* eslint-disable dot-notation, space-before-function-paren */
 /* global template, doT, ejs, Handlebars, Sqrl, Mustache, swig, Highcharts, Eta */
 
 /*
@@ -484,11 +484,8 @@ window['app'] = function(selector) {
   var app = document.querySelector(selector)
   var body = `
 <h1>Rendering test</h1>
-<em>Note: on simple templates like these, doT is usually faster when not HTML-Escaping. On more complex templates, Squirrelly should be faster</em>
 <br><br>
 <em>Note: originally, Art-template's benchmarking page only benchmarked the template function after it was compiled. This benchmark includes compilation and rendering.</em>
-<br><br>
-<em>Note: 'Squirrelly - Fast' uses a Squirrelly template with native code tags instead of the builtin helper.</em>
 <br><br>
 <strong>Longer (more ops/sec) is better</strong>
 
