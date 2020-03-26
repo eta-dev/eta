@@ -1,6 +1,8 @@
 /* eslint-disable dot-notation, space-before-function-paren */
 /* global template, doT, ejs, Handlebars, Sqrl, Mustache, swig, Highcharts, Eta */
 
+// TODO: Re-enable Squirrelly when it has a stable release
+
 /*
 
 Modified from AUI's docs. See their license below:
@@ -13,6 +15,9 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+
+Eta.defaultConfig.autoTrim = false
+Sqrl.defaultConfig.autoTrim = false
 
 var templateList = {}
 
@@ -270,38 +275,38 @@ var testList = [
       return html
     }
   },
-  {
-    name: 'Squirrelly',
-    tester: function() {
-      if (!config.escape) {
-        Sqrl.defaultConfig.autoEscape = false
-      }
-      var source = templateList['squirrelly']
-      //   console.log(fn.toString())
-      var html = ''
-      data.$name = 'temp'
-      for (var i = 0; i < config.calls; i++) {
-        html = Sqrl.render(source, data)
-      }
-      return html
-    }
-  },
-  {
-    name: 'Squirrelly - Fast',
-    tester: function() {
-      if (!config.escape) {
-        Sqrl.defaultConfig.autoEscape = false
-      }
-      var source = templateList['squirrelly-fast']
-      //   console.log(fn.toString())
-      var html = ''
-      data.$name = 'temp'
-      for (var i = 0; i < config.calls; i++) {
-        html = Sqrl.render(source, data)
-      }
-      return html
-    }
-  },
+  // {
+  //   name: 'Squirrelly',
+  //   tester: function() {
+  //     if (!config.escape) {
+  //       Sqrl.defaultConfig.autoEscape = false
+  //     }
+  //     var source = templateList['squirrelly']
+  //     //   console.log(fn.toString())
+  //     var html = ''
+  //     data.$name = 'temp'
+  //     for (var i = 0; i < config.calls; i++) {
+  //       html = Sqrl.render(source, data)
+  //     }
+  //     return html
+  //   }
+  // },
+  // {
+  //   name: 'Squirrelly - Fast',
+  //   tester: function() {
+  //     if (!config.escape) {
+  //       Sqrl.defaultConfig.autoEscape = false
+  //     }
+  //     var source = templateList['squirrelly-fast']
+  //     //   console.log(fn.toString())
+  //     var html = ''
+  //     data.$name = 'temp'
+  //     for (var i = 0; i < config.calls; i++) {
+  //       html = Sqrl.render(source, data)
+  //     }
+  //     return html
+  //   }
+  // },
   {
     name: 'Eta',
     tester: function() {
