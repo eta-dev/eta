@@ -100,7 +100,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
-    "@types/jest": "^25.1.4",
+    "@types/jest": "^25.1.0",
     "@types/node": "^13.9.3",
     "@typescript-eslint/eslint-plugin": "2",
     "@typescript-eslint/parser": "^2.20.0",
@@ -133,7 +133,7 @@
     "travis-deploy-once": "^5.0.9",
     "ts-jest": "^25.1.0",
     "ts-node": "^8.5.4",
-    "typedoc": "^0.16.7",
+    "typedoc": "^0.17.3",
     "typescript": "^3.0.3"
   },
   "husky": {
