@@ -25,14 +25,14 @@ describe('Compile to String test', () => {
   it('compiles complex template', () => {
     var str = compileToString(complexTemplate, defaultConfig)
     expect(str).toEqual(
-      `var tR='';tR+='Hi\\n';console.log(\"Hope you like Eta!\")
+      `var tR='';tR+='Hi\\n';console.log("Hope you like Eta!")
 tR+=E.e(it.htmlstuff);tR+='\\n';for (var key in it.obj) {
 tR+='Value: ';tR+=E.e(it.obj[key]);tR+=', Key: ';tR+=E.e(key);tR+='\\n';if (key === 'thirdchild') {
 tR+='  ';for (var i = 0, arr = it.obj[key]; i < arr.length; i++) {
 tR+='      Salutations! Index: ';tR+=E.e(i);tR+=', parent key: ';tR+=E.e(key);tR+='      \\n  ';}
 }
 }
-tR+='\\nThis is a partial: ';tR+=E.e(E.include(\"mypartial\"));if(cb){cb(null,tR)} return tR`
+tR+='\\nThis is a partial: ';tR+=E.e(E.include("mypartial"));if(cb){cb(null,tR)} return tR`
     )
   })
 })
