@@ -100,6 +100,7 @@
       function pushString(strng, shouldTrimRightOfString) {
           if (strng) {
               // if string is truthy it must be of type 'string'
+              // replace \ with \\, ' with \'
               var stringToPush = strng.replace(/\\|'/g, '\\$&');
               // TODO: benchmark replace( /(\\|')/g, '\\$1')
               stringToPush = trimWS(stringToPush, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined

@@ -24,6 +24,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   function pushString (strng: string, shouldTrimRightOfString?: string | false) {
     if (strng) {
       // if string is truthy it must be of type 'string'
+      // replace \ with \\, ' with \'
       var stringToPush = strng.replace(/\\|'/g, '\\$&')
 
       // TODO: benchmark replace( /(\\|')/g, '\\$1')
