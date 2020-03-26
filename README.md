@@ -1,4 +1,4 @@
-# eta
+# eta (η)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
@@ -13,7 +13,6 @@
 [![Dev Dependencies](https://img.shields.io/david/dev/nebrelbug/eta)](https://david-dm.org/nebrelbug/eta?type=dev)
 
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Greenkeeper badge](https://badges.greenkeeper.io/nebrelbug/eta.svg)](https://greenkeeper.io/)
 [![Join the chat at https://gitter.im/squirrellyjs/Lobby](https://img.shields.io/gitter/room/nebrelbug/eta?color=%2346BC99)](https://gitter.im/squirrellyjs/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
 
@@ -26,7 +25,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine. The team wh
 Eta's syntax is very similar to EJS' (most templates should work with either engine), Eta has a similar API, and Eta and EJS share the same file-handling logic. Here are the differences between Eta and EJS:
 
 - Eta is more lightweight. Eta weighs less than **2KB gzipped**, while EJS is **4.4KB gzipped**
-- Eta compiles and renders templates **much faster than EJS**. Check out these benchmarks: https://cdn.statically.io/gh/nebrelbug/eta/master/browser-tests/benchmark.html
+- Eta compiles and renders templates **_much_ faster than EJS**. Check out these benchmarks: https://cdn.statically.io/gh/nebrelbug/eta/master/browser-tests/benchmark.html
 - Eta allows left whitespace control (with `-`), something that doesn't work in EJS because EJS uses `-` on the left side to indicate that the value shouldn't be escaped. Instead, Eta uses `~` to output a raw value
 - Eta gives you more flexibility with delimeters -- you could set them to `{{` and `}}`, for example, while with EJS this isn't possible
 - Eta adds plugin support
@@ -43,7 +42,6 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 
 - 🔧 Great error reporting
 - 📦 0 dependencies
-- 🔨 Conditionals
 - 🔧 Better quotes/comments support
   - _ex. `<%= someval + "string %>" %>`_ compiles correctly, while it fails with DoT or EJS
 - ⚡️ Exports ES Modules as well as UMD
@@ -53,8 +51,8 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 - 📝 Easy template syntax
 - 🔧 Precompilation
 - 🔨 Partials
-- 🔧 Inline JavaScript
 - 🔨 Comments
+- 🔨 Server and browser support
 - 🔧 Caching
 - 🚀 Super Fast
   - Check out [these benchmarks](https://cdn.statically.io/gh/nebrelbug/eta/master/browser-tests/benchmark.html)
@@ -62,39 +60,37 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 
 ## 📜 Docs
 
-We know nobody reads through the long and boring documentation in the ReadMe anyway, so head over to the documentation website:
-
-📝 [https://squirrelly.js.org](https://squirrelly.js.org)
+A documentation website is coming soon. In the meantime
 
 ## 📓 Examples
 
 ### Simple Template
 
 ```
-var myTemplate = "<p>My favorite kind of cake is: {{it.favoriteCake}}</p>"
+var myTemplate = "<p>My favorite kind of cake is: <%= it.favoriteCake %></p>"
 
-Sqrl.render(myTemplate, {favoriteCake: 'Chocolate!'})
+Eta.render(myTemplate, {favoriteCake: 'Chocolate!'})
 // Returns: '<p>My favorite kind of cake is: Chocolate!</p>
 ```
 
 ### Conditionals
 
 ```
-{{~if(it.somevalue === 1)}}
+<% if(it.somevalue === 1) { %>
 Display this
-{{#else}}
-Display this
-{{/if}}
+<% } else { %>
+Display this instead
+<% } %>
 ```
 
 ### Loops
 
 ```
-{{~each(it.somearray) => val, index}}
-Display this
-The current array element is {{val}}
-The current index is {{index}}
-{{/each}}
+<ul>
+<% it.users.forEach(function(user){ %>
+<li><%= user.name %></li>
+<% }) %>
+</ul>
 ```
 
 ## ✔️ Tests
@@ -105,9 +101,9 @@ Tests can be run with `npm test`. Multiple tests check that parsing, rendering, 
 
 To be added
 
-## Projects using `squirrelly`
+## Projects using `eta`
 
-[Waiting for permissions]
+[Add yours!](https://github.com/nebrelbug/eta/edit/master/README.md)
 
 ## Contributors
 
