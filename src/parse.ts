@@ -24,7 +24,8 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   function pushString (strng: string, shouldTrimRightOfString?: string | false) {
     if (strng) {
       // if string is truthy it must be of type 'string'
-      var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+      var stringToPush = strng.replace(/\\|'/g, '\\$&')
+
       // TODO: benchmark replace( /(\\|')/g, '\\$1')
       stringToPush = trimWS(
         stringToPush,
@@ -32,29 +33,41 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
         trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
         shouldTrimRightOfString
       )
+
+      stringToPush = stringToPush.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+
       if (stringToPush) {
         buffer.push(stringToPush)
       }
     }
   }
 
-  var prefixArr = []
+  var prefixes = ''
 
   if (env.parse.exec) {
-    prefixArr.push(env.parse.exec)
+    if (prefixes) {
+      prefixes += '|'
+    }
+    prefixes += env.parse.exec
   }
   if (env.parse.interpolate) {
-    prefixArr.push(env.parse.interpolate)
+    if (prefixes) {
+      prefixes += '|'
+    }
+    prefixes += env.parse.interpolate
   }
   if (env.parse.raw) {
-    prefixArr.push(env.parse.raw)
+    if (prefixes) {
+      prefixes += '|'
+    }
+    prefixes += env.parse.raw
   }
 
   var parseReg = new RegExp(
     '([^]*?)' +
       env.tags[0] +
       '(-|_)?\\s*(' +
-      prefixArr.join('|') +
+      prefixes +
       ')?\\s*((?:[^]*?(?:\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/)?)*?)\\s*(-|_)?' +
       env.tags[1],
     'g'
@@ -75,8 +88,6 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
 
     pushString(precedingString, wsLeft)
     trimLeftOfNextStr = m[5]
-
-    // if i is 0, we're gonna set I do
 
     var currentType: TagType = ''
     if (prefix === env.parse.exec) {

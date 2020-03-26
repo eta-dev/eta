@@ -159,34 +159,26 @@
         <h4>Template</h4>
         <textarea autocomplete="off" id="template">
 Hi
-{{!console.log("Hope you like Eta!");}}
-{{it.htmlstuff}}
+<% console.log("Hope you like Eta!"); %>
+<%= it.htmlstuff %>
 
-{{~foreach(it.obj) => key, val}}
-Reversed value: {{val|reverse}}, Key: {{key}}
+<% for (var key in it.obj) { %>
+Value: <%= it.obj[key] %>, Key: <%= key %>
 
-{{~if(key==="thirdchild")}}
-{{~each(it.obj[key]) => index, key}}
-    Salutations! Index: {{index}}, old key: {{key}}
+<% if (key === 'thirdchild') { %>
+  <% for (var i = 0, arr = it.obj[key]; i < arr.length; i++) { %>
+      Salutations! Index: <%= i %>, parent key: <%= key %>
+      
+  <% } %>
+<% } %>
+<% } %>
 
-{{/each}}
-{{/if}}
-{{/foreach}}
-
-{{~customhelper()}}
-{{#cabbage}}
-Cabbages taste good
-{{!console.log("Hi from inside a template");}}
-{{#pineapple}}
-As do pineapples
-{{/customhelper}}
-
-This is a partial: {{~include("mypartial")/}}
+This is a partial: <%= E.include("mypartial") %>
 </textarea
         >
       </div>
       <div class="functiongroup">
-        <h4>Sqrl.compile()</h4>
+        <h4>Eta.compile()</h4>
         <div id="function"></div>
       </div>
       <div style="clear:both"></div>
@@ -208,36 +200,9 @@ This is a partial: {{~include("mypartial")/}}
       </div>
     </div>
     <script>
-      /* global Sqrl */
+      /* global Eta */
       window.onload = function() {
-        Sqrl.filters.define('reverse', function(str) {
-          var out = ''
-          for (var i = str.length - 1; i >= 0; i--) {
-            out += String(str).charAt(i)
-          }
-          return out || str
-        })
-
-        Sqrl.filters.define('capitalize', function(str) {
-          return str.toUpperCase()
-        })
-
-        Sqrl.templates.define('mypartial', Sqrl.compile('This is a partial'))
-
-        Sqrl.helpers.define('customhelper', function(content, blocks, options) {
-          var returnStr = 'Custom Helper speaking! \n'
-          for (var i = 0; i < blocks.length; i++) {
-            var currentBlock = blocks[i]
-            returnStr +=
-              'Block found named ' + currentBlock.name + ', with value: ' + currentBlock.exec()
-          }
-          return returnStr
-        })
-
-        Sqrl.helpers.define('log', function(args) {
-          console.log(args[0])
-          return ''
-        })
+        Eta.templates.define('mypartial', Eta.compile('This is a partial'))
 
         function escape(str) {
           // To handle escaping for the function result
@@ -267,16 +232,16 @@ This is a partial: {{~include("mypartial")/}}
           console.log(JSON.stringify(options))
           var template = document.getElementById('template').value
           try {
-            var functionResult = Sqrl.compile(template).toString()
+            var functionResult = Eta.compile(template).toString()
             document.getElementById('function').innerHTML = escape(functionResult)
-            if (!Sqrl.defaultConfig.async) {
-              document.getElementById('result').innerHTML = Sqrl.render(template, options)
+            if (!Eta.defaultConfig.async) {
+              document.getElementById('result').innerHTML = Eta.render(template, options)
             } else {
-              Sqrl.render(template, options).then(function(res) {
+              Eta.render(template, options).then(function(res) {
                 document.getElementById('result').innerHTML = res
               })
             }
-            console.log(Sqrl.render(template, options))
+            console.log(Eta.render(template, options))
           } catch (ex) {
             console.error(ex.message)
           }

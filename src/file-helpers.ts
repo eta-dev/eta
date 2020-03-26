@@ -1,4 +1,5 @@
 import { includeFile } from './file-handlers'
+import EtaErr from './err'
 
 /* TYPES */
 
@@ -10,8 +11,8 @@ interface GenericData {
 
 /* END TYPES */
 
-export function includeFileHelper (path: string, data: GenericData, config: EtaConfig): string {
-  return includeFile(path, config)(data, config)
+export function includeFileHelper (this: EtaConfig, path: string, data: GenericData): string {
+  return includeFile(path, this)(data, this)
 }
 
 // export function extendsFileHelper(path: string, data: GenericData, config: EtaConfig): string {

@@ -14,8 +14,8 @@ import { CallbackFn } from './file-handlers'
 function handleCache (template: string | TemplateFunction, options: EtaConfig): TemplateFunction {
   var templateFunc
 
-  if (options.cache && options.name && options.storage.templates.get(options.name)) {
-    return options.storage.templates.get(options.name)
+  if (options.cache && options.name && options.templates.get(options.name)) {
+    return options.templates.get(options.name)
   }
 
   if (typeof template === 'function') {
@@ -25,7 +25,7 @@ function handleCache (template: string | TemplateFunction, options: EtaConfig): 
   }
 
   if (options.cache && options.name) {
-    options.storage.templates.define(options.name, templateFunc)
+    options.templates.define(options.name, templateFunc)
   }
 
   return templateFunc

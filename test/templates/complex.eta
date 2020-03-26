@@ -1,0 +1,16 @@
+Hi
+<% console.log("Hope you like Eta!") %>
+<%= it.htmlstuff %>
+
+<% for (var key in it.obj) { %>
+Value: <%= it.obj[key] %>, Key: <%= key %>
+
+<% if (key === 'thirdchild') { %>
+  <% for (var i = 0, arr = it.obj[key]; i < arr.length; i++) { %>
+      Salutations! Index: <%= i %>, parent key: <%= key %>
+      
+  <% } %>
+<% } %>
+<% } %>
+
+This is a partial: <%= E.include("mypartial") %>

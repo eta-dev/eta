@@ -6,7 +6,7 @@ describe('ParseErr', () => {
     try {
       ParseErr('Something Unexpected Happened!', 'template {{', 9)
     } catch (ex) {
-      expect(ex.name).toBe('Squirrelly Error')
+      expect(ex.name).toBe('Eta Error')
       expect(ex.message).toBe(`Something Unexpected Happened! at line 1 col 10:
 
   template {{
@@ -19,7 +19,7 @@ describe('ParseErr', () => {
     try {
       ParseErr('Something Unexpected Happened!', 'template {{', 9)
     } catch (ex) {
-      expect(ex.name).toBe('Squirrelly Error')
+      expect(ex.name).toBe('Eta Error')
       expect(ex.message).toBe(`Something Unexpected Happened! at line 1 col 10:
 
   template {{

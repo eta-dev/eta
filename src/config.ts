@@ -1,5 +1,6 @@
 import { templates } from './containers'
 import { copyProps, XMLEscape } from './utils'
+import EtaErr from './err'
 
 /* TYPES */
 
@@ -38,11 +39,19 @@ export type PartialConfig = {
 
 /* END TYPES */
 
+function includeHelper (this: EtaConfig, templateNameOrPath: string, data: object): string {
+  var template = this.templates.get(templateNameOrPath)
+  if (!template) {
+    throw EtaErr('Could not fetch template "' + templateNameOrPath + '"')
+  }
+  return template(data, this)
+}
+
 var defaultConfig: EtaConfig = {
   varName: 'it',
   autoTrim: [false, 'nl'],
   autoEscape: true,
-  tags: ['{{', '}}'],
+  tags: ['<%', '%>'],
   parse: {
     interpolate: '=',
     raw: '~',
@@ -53,8 +62,11 @@ var defaultConfig: EtaConfig = {
   cache: false,
   plugins: [],
   useWith: false,
-  e: XMLEscape
+  e: XMLEscape,
+  include: includeHelper
 }
+
+includeHelper.bind(defaultConfig)
 
 function getConfig (override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
   // TODO: run more tests on this

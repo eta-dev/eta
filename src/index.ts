@@ -1,12 +1,13 @@
 /* Export file stuff */
 import { includeFileHelper } from './file-helpers'
+import { defaultConfig } from './config'
 
 /* TYPES */
 
 /* END TYPES */
 
-// helpers.define('includeFile', includeFileHelper as HelperFunction)
-// helpers.define('extendsFile', extendsFileHelper as HelperFunction)
+defaultConfig.includeFile = includeFileHelper
+includeFileHelper.bind(defaultConfig)
 
 export { renderFile, renderFile as __express } from './file-handlers'
 export { loadFile } from './file-utils'

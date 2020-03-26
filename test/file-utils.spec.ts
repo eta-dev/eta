@@ -4,7 +4,7 @@ import { loadFile, templates } from '../src/index'
 import { defaultConfig } from '../src/config'
 
 var path = require('path'),
-  filePath = path.join(__dirname, 'templates/simple.sqrl')
+  filePath = path.join(__dirname, 'templates/simple.eta')
 
 describe('File tests', () => {
   it('loadFile works', () => {

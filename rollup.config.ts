@@ -15,13 +15,13 @@ export default [
       {
         file: 'dist/browser/eta.dev.js',
         format: 'umd',
-        name: 'Sqrl',
+        name: 'Eta',
         sourcemap: true
       },
       {
         file: pkg.browser,
         format: 'umd',
-        name: 'Sqrl',
+        name: 'Eta',
         sourcemap: true,
         plugins: [terser()]
       }

@@ -44,7 +44,7 @@ function handleCache (options: FileOptions): TemplateFunction {
   var filename = options.filename
 
   if (options.cache) {
-    var func = options.storage.templates.get(filename)
+    var func = options.templates.get(filename)
     if (func) {
       return func
     } else {

@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.Sqrl = {}));
+  (global = global || self, factory(global.Eta = {}));
 }(this, (function (exports) { 'use strict';
 
   // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
@@ -100,29 +100,39 @@
       function pushString(strng, shouldTrimRightOfString) {
           if (strng) {
               // if string is truthy it must be of type 'string'
-              var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+              var stringToPush = strng.replace(/\\|'/g, '\\$&');
               // TODO: benchmark replace( /(\\|')/g, '\\$1')
               stringToPush = trimWS(stringToPush, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
               shouldTrimRightOfString);
+              stringToPush = stringToPush.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
               if (stringToPush) {
                   buffer.push(stringToPush);
               }
           }
       }
-      var prefixArr = [];
+      var prefixes = '';
       if (env.parse.exec) {
-          prefixArr.push(env.parse.exec);
+          if (prefixes) {
+              prefixes += '|';
+          }
+          prefixes += env.parse.exec;
       }
       if (env.parse.interpolate) {
-          prefixArr.push(env.parse.interpolate);
+          if (prefixes) {
+              prefixes += '|';
+          }
+          prefixes += env.parse.interpolate;
       }
       if (env.parse.raw) {
-          prefixArr.push(env.parse.raw);
+          if (prefixes) {
+              prefixes += '|';
+          }
+          prefixes += env.parse.raw;
       }
       var parseReg = new RegExp('([^]*?)' +
           env.tags[0] +
           '(-|_)?\\s*(' +
-          prefixArr.join('|') +
+          prefixes +
           ')?\\s*((?:[^]*?(?:\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/)?)*?)\\s*(-|_)?' +
           env.tags[1], 'g');
       // TODO: benchmark having the \s* on either side vs using str.trim()
@@ -136,7 +146,6 @@
           var content = m[4];
           pushString(precedingString, wsLeft);
           trimLeftOfNextStr = m[5];
-          // if i is 0, we're gonna set I do
           var currentType = '';
           if (prefix === env.parse.exec) {
               currentType = 'e';
@@ -166,9 +175,7 @@
       var buffer = parse(str, env);
       var res = "var tR='';" +
           (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
-          compileScope(buffer)
-              .replace(/\n/g, '\\n')
-              .replace(/\r/g, '\\r') +
+          compileScope(buffer, env) +
           'if(cb){cb(null,tR)} return tR' +
           (env.useWith ? '}' : '');
       if (env.plugins) {
@@ -196,16 +203,21 @@
           else {
               var type = currentBlock.t; // ~, s, !, ?, r
               var content = currentBlock.val || '';
-              if (type === 'i') {
+              if (type === 'r') {
+                  // raw
                   returnStr += 'tR+=' + content + ';';
               }
-              else if (type === 'r') {
-                  returnStr = 'tR+=E.e(' + content + ')';
+              else if (type === 'i') {
+                  // interpolate
+                  if (env.autoEscape) {
+                      content = 'E.e(' + content + ')';
+                  }
+                  returnStr += 'tR+=' + content + ';';
                   // reference
               }
               else if (type === 'e') {
                   // execute
-                  returnStr += content;
+                  returnStr += content + '\n'; // you need a \n in case you have <% } %>
               }
           }
       }
@@ -240,6 +252,9 @@
       return Cacher;
   }());
 
+  /* END TYPES */
+  var templates = new Cacher({});
+
   function setPrototypeOf(obj, proto) {
       if (Object.setPrototypeOf) {
           Object.setPrototypeOf(obj, proto);
@@ -258,14 +273,18 @@
   });
 
   /* END TYPES */
-  var templates = new Cacher({});
-
-  /* END TYPES */
+  function includeHelper(templateNameOrPath, data) {
+      var template = this.templates.get(templateNameOrPath);
+      if (!template) {
+          throw EtaErr('Could not fetch template "' + templateNameOrPath + '"');
+      }
+      return template(data, this);
+  }
   var defaultConfig = {
       varName: 'it',
       autoTrim: [false, 'nl'],
       autoEscape: true,
-      tags: ['{{', '}}'],
+      tags: ['<%', '%>'],
       parse: {
           interpolate: '=',
           raw: '~',
@@ -276,8 +295,10 @@
       cache: false,
       plugins: [],
       useWith: false,
-      e: XMLEscape
+      e: XMLEscape,
+      include: includeHelper
   };
+  includeHelper.bind(defaultConfig);
   function getConfig(override, baseConfig) {
       // TODO: run more tests on this
       var res = {}; // Linked
@@ -305,7 +326,7 @@
           }
           catch (e) {
               if (e instanceof SyntaxError) {
-                  throw new Error("This environment doesn't support async/await");
+                  throw EtaErr("This environment doesn't support async/await");
               }
               else {
                   throw e;
@@ -339,8 +360,8 @@
   /* END TYPES */
   function handleCache(template, options) {
       var templateFunc;
-      if (options.cache && options.name && options.storage.templates.get(options.name)) {
-          return options.storage.templates.get(options.name);
+      if (options.cache && options.name && options.templates.get(options.name)) {
+          return options.templates.get(options.name);
       }
       if (typeof template === 'function') {
           templateFunc = template;
@@ -349,7 +370,7 @@
           templateFunc = compile(template, options);
       }
       if (options.cache && options.name) {
-          options.storage.templates.define(options.name, templateFunc);
+          options.templates.define(options.name, templateFunc);
       }
       return templateFunc;
   }

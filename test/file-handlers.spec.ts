@@ -3,7 +3,7 @@
 import { renderFile } from '../src/index'
 
 var path = require('path'),
-  filePath = path.join(__dirname, 'templates/simple.sqrl')
+  filePath = path.join(__dirname, 'templates/simple.eta')
 
 describe('File handlers test', () => {
   it('parses a simple template', async () => {

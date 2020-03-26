@@ -23,7 +23,7 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
       ctor = new Function('return (async function(){}).constructor;')()
     } catch (e) {
       if (e instanceof SyntaxError) {
-        throw new Error("This environment doesn't support async/await")
+        throw EtaErr("This environment doesn't support async/await")
       } else {
         throw e
       }

@@ -111,29 +111,39 @@ function parse(str, env) {
     function pushString(strng, shouldTrimRightOfString) {
         if (strng) {
             // if string is truthy it must be of type 'string'
-            var stringToPush = strng.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            var stringToPush = strng.replace(/\\|'/g, '\\$&');
             // TODO: benchmark replace( /(\\|')/g, '\\$1')
             stringToPush = trimWS(stringToPush, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
             shouldTrimRightOfString);
+            stringToPush = stringToPush.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
             if (stringToPush) {
                 buffer.push(stringToPush);
             }
         }
     }
-    var prefixArr = [];
+    var prefixes = '';
     if (env.parse.exec) {
-        prefixArr.push(env.parse.exec);
+        if (prefixes) {
+            prefixes += '|';
+        }
+        prefixes += env.parse.exec;
     }
     if (env.parse.interpolate) {
-        prefixArr.push(env.parse.interpolate);
+        if (prefixes) {
+            prefixes += '|';
+        }
+        prefixes += env.parse.interpolate;
     }
     if (env.parse.raw) {
-        prefixArr.push(env.parse.raw);
+        if (prefixes) {
+            prefixes += '|';
+        }
+        prefixes += env.parse.raw;
     }
     var parseReg = new RegExp('([^]*?)' +
         env.tags[0] +
         '(-|_)?\\s*(' +
-        prefixArr.join('|') +
+        prefixes +
         ')?\\s*((?:[^]*?(?:\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/)?)*?)\\s*(-|_)?' +
         env.tags[1], 'g');
     // TODO: benchmark having the \s* on either side vs using str.trim()
@@ -147,7 +157,6 @@ function parse(str, env) {
         var content = m[4];
         pushString(precedingString, wsLeft);
         trimLeftOfNextStr = m[5];
-        // if i is 0, we're gonna set I do
         var currentType = '';
         if (prefix === env.parse.exec) {
             currentType = 'e';
@@ -177,9 +186,7 @@ function compileToString(str, env) {
     var buffer = parse(str, env);
     var res = "var tR='';" +
         (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
-        compileScope(buffer)
-            .replace(/\n/g, '\\n')
-            .replace(/\r/g, '\\r') +
+        compileScope(buffer, env) +
         'if(cb){cb(null,tR)} return tR' +
         (env.useWith ? '}' : '');
     if (env.plugins) {
@@ -207,16 +214,21 @@ function compileScope(buff, env) {
         else {
             var type = currentBlock.t; // ~, s, !, ?, r
             var content = currentBlock.val || '';
-            if (type === 'i') {
+            if (type === 'r') {
+                // raw
                 returnStr += 'tR+=' + content + ';';
             }
-            else if (type === 'r') {
-                returnStr = 'tR+=E.e(' + content + ')';
+            else if (type === 'i') {
+                // interpolate
+                if (env.autoEscape) {
+                    content = 'E.e(' + content + ')';
+                }
+                returnStr += 'tR+=' + content + ';';
                 // reference
             }
             else if (type === 'e') {
                 // execute
-                returnStr += content;
+                returnStr += content + '\n'; // you need a \n in case you have <% } %>
             }
         }
     }
@@ -255,11 +267,18 @@ var Cacher = /** @class */ (function () {
 var templates = new Cacher({});
 
 /* END TYPES */
+function includeHelper(templateNameOrPath, data) {
+    var template = this.templates.get(templateNameOrPath);
+    if (!template) {
+        throw EtaErr('Could not fetch template "' + templateNameOrPath + '"');
+    }
+    return template(data, this);
+}
 var defaultConfig = {
     varName: 'it',
     autoTrim: [false, 'nl'],
     autoEscape: true,
-    tags: ['{{', '}}'],
+    tags: ['<%', '%>'],
     parse: {
         interpolate: '=',
         raw: '~',
@@ -270,8 +289,10 @@ var defaultConfig = {
     cache: false,
     plugins: [],
     useWith: false,
-    e: XMLEscape
+    e: XMLEscape,
+    include: includeHelper
 };
+includeHelper.bind(defaultConfig);
 function getConfig(override, baseConfig) {
     // TODO: run more tests on this
     var res = {}; // Linked
@@ -299,7 +320,7 @@ function compile(str, env) {
         }
         catch (e) {
             if (e instanceof SyntaxError) {
-                throw new Error("This environment doesn't support async/await");
+                throw EtaErr("This environment doesn't support async/await");
             }
             else {
                 throw e;
@@ -333,6 +354,67 @@ function compile(str, env) {
 var fs = require('fs');
 var path = require('path');
 var _BOM = /^\uFEFF/;
+/* END TYPES */
+/**
+ * Get the path to the included file from the parent file path and the
+ * specified path.
+ *
+ * @param {String}  name       specified path
+ * @param {String}  parentfile parent file path
+ * @param {Boolean} [isDir=false] whether parent file path is a directory
+ * @return {String}
+ */
+function getWholeFilePath(name, parentfile, isDirectory) {
+    var includePath = path.resolve(isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
+    name // file
+    );
+    var ext = path.extname(name);
+    if (!ext) {
+        includePath += '.eta';
+    }
+    return includePath;
+}
+/**
+ * Get the path to the included file by Options
+ *
+ * @param  {String}  path    specified path
+ * @param  {Options} options compilation options
+ * @return {String}
+ */
+function getPath(path, options) {
+    var includePath;
+    var filePath;
+    var views = options.views;
+    var match = /^[A-Za-z]+:\\|^\//.exec(path);
+    // Abs path
+    if (match && match.length) {
+        includePath = getWholeFilePath(path.replace(/^\/*/, ''), options.root || '/', true);
+    }
+    else {
+        // Relative paths
+        // Look relative to a passed filename first
+        if (options.filename) {
+            filePath = getWholeFilePath(path, options.filename);
+            if (fs.existsSync(filePath)) {
+                includePath = filePath;
+            }
+        }
+        // Then look in any views directories
+        if (!includePath) {
+            if (Array.isArray(views) &&
+                views.some(function (v) {
+                    filePath = getWholeFilePath(path, v, true);
+                    return fs.existsSync(filePath);
+                })) {
+                includePath = filePath;
+            }
+        }
+        if (!includePath) {
+            throw EtaErr('Could not find the include file "' + path + '"');
+        }
+    }
+    return includePath;
+}
 function readFile(filePath) {
     return fs
         .readFileSync(filePath)
@@ -344,7 +426,7 @@ function loadFile(filePath, options) {
     var template = readFile(filePath);
     try {
         var compiledTemplate = compile(template, config);
-        config.storage.templates.define(config.filename, compiledTemplate);
+        config.templates.define(config.filename, compiledTemplate);
         return compiledTemplate;
     }
     catch (e) {
@@ -370,7 +452,7 @@ function loadFile(filePath, options) {
 function handleCache(options) {
     var filename = options.filename;
     if (options.cache) {
-        var func = options.storage.templates.get(filename);
+        var func = options.templates.get(filename);
         if (func) {
             return func;
         }
@@ -418,6 +500,23 @@ function tryHandleCache(options, data, cb) {
         }
     }
 }
+/**
+ * Get the template function.
+ *
+ * If `options.cache` is `true`, then the template is cached.
+ *
+ * @param {String}  path    path for the specified file
+ * @param {Options} options compilation options
+ * @return {(TemplateFunction|ClientFunction)}
+ * Depending on the value of `options.client`, either type might be returned
+ * @static
+ */
+function includeFile(path, options) {
+    // the below creates a new options object, using the parent filepath of the old options object and the path
+    var newFileOptions = getConfig({ filename: getPath(path, options) }, options);
+    // TODO: make sure properties are currectly copied over
+    return handleCache(newFileOptions);
+}
 function renderFile(filename, data, cb) {
     var Config = getConfig(data || {});
     // TODO: make sure above doesn't error. We do set filename down below
@@ -441,10 +540,24 @@ function renderFile(filename, data, cb) {
 }
 
 /* END TYPES */
+function includeFileHelper(path, data) {
+    return includeFile(path, this)(data, this);
+}
+// export function extendsFileHelper(path: string, data: GenericData, config: EtaConfig): string {
+//   var data: GenericData = content.params[1] || {}
+//   data.content = content.exec()
+//   for (var i = 0; i < blocks.length; i++) {
+//     var currentBlock = blocks[i]
+//     data[currentBlock.name] = currentBlock.exec()
+//   }
+//   return includeFile(content.params[0], config)(data, config)
+// }
+
+/* END TYPES */
 function handleCache$1(template, options) {
     var templateFunc;
-    if (options.cache && options.name && options.storage.templates.get(options.name)) {
-        return options.storage.templates.get(options.name);
+    if (options.cache && options.name && options.templates.get(options.name)) {
+        return options.templates.get(options.name);
     }
     if (typeof template === 'function') {
         templateFunc = template;
@@ -453,7 +566,7 @@ function handleCache$1(template, options) {
         templateFunc = compile(template, options);
     }
     if (options.cache && options.name) {
-        options.storage.templates.define(options.name, templateFunc);
+        options.templates.define(options.name, templateFunc);
     }
     return templateFunc;
 }
@@ -491,6 +604,12 @@ function render(template, data, env, cb) {
         return handleCache$1(template, options)(data, options);
     }
 }
+
+/* Export file stuff */
+/* TYPES */
+/* END TYPES */
+defaultConfig.includeFile = includeFileHelper;
+includeFileHelper.bind(defaultConfig);
 
 export { renderFile as __express, compile, compileToString, defaultConfig, getConfig, loadFile, parse, render, renderFile, templates };
 //# sourceMappingURL=eta.es.js.map

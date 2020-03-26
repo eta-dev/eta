@@ -102,7 +102,7 @@ function loadFile (filePath: string, options: PartialFileConfig): TemplateFuncti
   var template = readFile(filePath)
   try {
     var compiledTemplate = Compile(template, config)
-    config.storage.templates.define((config as FileConfig).filename, compiledTemplate)
+    config.templates.define((config as FileConfig).filename, compiledTemplate)
     return compiledTemplate
   } catch (e) {
     throw EtaErr('Loading file: ' + filePath + ' failed')

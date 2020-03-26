@@ -13,9 +13,7 @@ export default function compileToString (str: string, env: EtaConfig) {
   var res =
     "var tR='';" +
     (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
-    compileScope(buffer, env)
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r') +
+    compileScope(buffer, env) +
     'if(cb){cb(null,tR)} return tR' +
     (env.useWith ? '}' : '')
 
@@ -49,14 +47,19 @@ function compileScope (buff: Array<AstObject>, env: EtaConfig) {
       var type = currentBlock.t // ~, s, !, ?, r
       var content = currentBlock.val || ''
 
-      if (type === 'i') {
+      if (type === 'r') {
+        // raw
         returnStr += 'tR+=' + content + ';'
-      } else if (type === 'r') {
-        returnStr = 'tR+=E.e(' + content + ')'
+      } else if (type === 'i') {
+        // interpolate
+        if (env.autoEscape) {
+          content = 'E.e(' + content + ')'
+        }
+        returnStr += 'tR+=' + content + ';'
         // reference
       } else if (type === 'e') {
         // execute
-        returnStr += content
+        returnStr += content + '\n' // you need a \n in case you have <% } %>
       }
     }
   }
