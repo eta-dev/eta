@@ -1,6 +1,6 @@
 /* global it, expect, describe */
 
-import * as Sqrl from '../src/index'
+import * as Eta from '../src/index'
 
 function resolveAfter2Seconds (val: string): Promise<string> {
   return new Promise(resolve => {
@@ -19,12 +19,12 @@ describe('Async Render checks', () => {
   describe('Async works', () => {
     it('Simple template compiles asynchronously', async () => {
       expect(
-        await Sqrl.render('Hi <%= it.name %>', { name: 'Ada Lovelace' }, { async: true })
+        await Eta.render('Hi <%= it.name %>', { name: 'Ada Lovelace' }, { async: true })
       ).toEqual('Hi Ada Lovelace')
     })
     it('Async function works', async () => {
       expect(
-        await Sqrl.render(
+        await Eta.render(
           '<%= await it.asyncTest() %>',
           { name: 'Ada Lovelace', asyncTest: asyncTest },
           { async: true }
