@@ -14,6 +14,25 @@ function EtaErr(message) {
 EtaErr.prototype = Object.create(Error.prototype, {
     name: { value: 'Eta Error', enumerable: false }
 });
+// TODO: Class transpilation adds a lot to the bundle size
+function ParseErr(message, str, indx) {
+    var whitespace = str.slice(0, indx).split(/\n/);
+    var lineNo = whitespace.length;
+    var colNo = whitespace[lineNo - 1].length + 1;
+    message +=
+        ' at line ' +
+            lineNo +
+            ' col ' +
+            colNo +
+            ':\n\n' +
+            '  ' +
+            str.split(/\n/)[lineNo - 1] +
+            '\n' +
+            '  ' +
+            Array(colNo).join(' ') +
+            '^';
+    throw EtaErr(message);
+}
 
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
@@ -122,53 +141,39 @@ function parse(str, env) {
             }
         }
     }
-    var prefixes = '';
-    if (env.parse.exec) {
-        if (prefixes) {
-            prefixes += '|';
-        }
-        prefixes += env.parse.exec;
-    }
-    if (env.parse.interpolate) {
-        if (prefixes) {
-            prefixes += '|';
-        }
-        prefixes += env.parse.interpolate;
-    }
-    if (env.parse.raw) {
-        if (prefixes) {
-            prefixes += '|';
-        }
-        prefixes += env.parse.raw;
-    }
-    var parseReg = new RegExp('([^]*?)' +
-        env.tags[0] +
-        '(-|_)?\\s*(' +
-        prefixes +
-        ')?\\s*((?:[^]*?(?:\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/)?)*?)\\s*(-|_)?' +
+    var prefixes = (env.parse.exec + env.parse.interpolate + env.parse.raw).split('').join('|');
+    var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?', 'g');
+    var parseCloseReg = new RegExp('\\s*((?:[^]*?(?:\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/)?)*?)\\s*(-|_)?' +
         env.tags[1], 'g');
     // TODO: benchmark having the \s* on either side vs using str.trim()
     var m;
-    while ((m = parseReg.exec(str)) !== null) {
+    while ((m = parseOpenReg.exec(str)) !== null) {
         lastIndex = m[0].length + m.index;
-        var i = m.index;
         var precedingString = m[1];
         var wsLeft = m[2];
         var prefix = m[3] || ''; // by default either ~, =, or empty
-        var content = m[4];
         pushString(precedingString, wsLeft);
-        trimLeftOfNextStr = m[5];
-        var currentType = '';
-        if (prefix === env.parse.exec) {
-            currentType = 'e';
+        parseCloseReg.lastIndex = lastIndex;
+        var closeTag = parseCloseReg.exec(str);
+        if (closeTag) {
+            var content = closeTag[1];
+            trimLeftOfNextStr = closeTag[2];
+            parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex;
+            var currentType = '';
+            if (prefix === env.parse.exec) {
+                currentType = 'e';
+            }
+            else if (prefix === env.parse.raw) {
+                currentType = 'r';
+            }
+            else if (prefix === env.parse.interpolate) {
+                currentType = 'i';
+            }
+            buffer.push({ t: currentType, val: content });
         }
-        else if (prefix === env.parse.raw) {
-            currentType = 'r';
+        else {
+            ParseErr('unclosed tag', str, lastIndex);
         }
-        else if (prefix === env.parse.interpolate) {
-            currentType = 'i';
-        }
-        buffer.push({ t: currentType, val: content });
     }
     pushString(str.slice(lastIndex, str.length), false);
     if (env.plugins) {

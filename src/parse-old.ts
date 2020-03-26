@@ -45,45 +45,42 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
 
   var prefixes = (env.parse.exec + env.parse.interpolate + env.parse.raw).split('').join('|')
 
-  var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?', 'g')
-  var parseCloseReg = new RegExp(
-    '\\s*((?:[^]*?(?:\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/)?)*?)\\s*(-|_)?' +
+  var parseReg = new RegExp(
+    '([^]*?)' +
+      env.tags[0] +
+      '(-|_)?\\s*(' +
+      prefixes +
+      ')?\\s*((?:[^]*?(?:\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/)?)*?)\\s*(-|_)?' +
       env.tags[1],
     'g'
   )
+
   // TODO: benchmark having the \s* on either side vs using str.trim()
 
   var m
 
-  while ((m = parseOpenReg.exec(str)) !== null) {
+  while ((m = parseReg.exec(str)) !== null) {
     lastIndex = m[0].length + m.index
+    var i = m.index
 
     var precedingString = m[1]
     var wsLeft = m[2]
     var prefix = m[3] || '' // by default either ~, =, or empty
+    var content = m[4]
 
     pushString(precedingString, wsLeft)
+    trimLeftOfNextStr = m[5]
 
-    parseCloseReg.lastIndex = lastIndex
-    var closeTag = parseCloseReg.exec(str)
-    if (closeTag) {
-      var content = closeTag[1]
-      trimLeftOfNextStr = closeTag[2]
-      parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex
-
-      var currentType: TagType = ''
-      if (prefix === env.parse.exec) {
-        currentType = 'e'
-      } else if (prefix === env.parse.raw) {
-        currentType = 'r'
-      } else if (prefix === env.parse.interpolate) {
-        currentType = 'i'
-      }
-
-      buffer.push({ t: currentType, val: content })
-    } else {
-      ParseErr('unclosed tag', str, lastIndex)
+    var currentType: TagType = ''
+    if (prefix === env.parse.exec) {
+      currentType = 'e'
+    } else if (prefix === env.parse.raw) {
+      currentType = 'r'
+    } else if (prefix === env.parse.interpolate) {
+      currentType = 'i'
     }
+
+    buffer.push({ t: currentType, val: content })
   }
 
   pushString(str.slice(lastIndex, str.length), false)
