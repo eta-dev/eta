@@ -38,6 +38,10 @@ Eta's syntax is very similar to EJS' (most templates should work with either eng
 
 Simply put, Eta is super: super lightweight, super fast, super powerful, and super simple. Like with EJS, you don't have to worry about learning an entire new templating syntax. Just write JavaScript inside your templates.
 
+### Where did Eta's name come from?
+
+"Eta" means tiny in Esperanto. Plus, it can be used as an acronym for all sorts of cool phrases: "ECMAScript Template Awesomeness", "Embedded Templating Alternative", etc...
+
 ### 🌟 Features
 
 - 🔧 Great error reporting
