@@ -20,13 +20,13 @@
     "dist"
   ],
   "author": "Ben Gubler <nebrelbug@gmail.com>",
-  "funding": "https://github.com/nebrelbug/eta?sponsor=1",
+  "funding": "https://github.com/eta-dev/eta?sponsor=1",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nebrelbug/eta.git"
+    "url": "git+https://github.com/eta-dev/eta.git"
   },
   "bugs": {
-    "url": "https://github.com/nebrelbug/eta/issues"
+    "url": "https://github.com/eta-dev/eta/issues"
   },
   "license": "MIT",
   "engines": {
