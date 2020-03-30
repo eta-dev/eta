@@ -25,30 +25,33 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     if (strng) {
       // if string is truthy it must be of type 'string'
       // replace \ with \\, ' with \'
-      var stringToPush = strng.replace(/\\|'/g, '\\$&')
 
       // TODO: benchmark replace( /(\\|')/g, '\\$1')
-      stringToPush = trimWS(
-        stringToPush,
+      strng = trimWS(
+        strng,
         env,
         trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
         shouldTrimRightOfString
       )
 
-      stringToPush = stringToPush.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+      if (strng) {
+        strng = strng
+          .replace(/\\|'/g, '\\$&')
+          .replace(/\n/g, '\\n')
+          .replace(/\r/g, '\\r')
 
-      if (stringToPush) {
-        buffer.push(stringToPush)
+        buffer.push(strng)
       }
     }
   }
 
   var prefixes = (env.parse.exec + env.parse.interpolate + env.parse.raw).split('').join('|')
 
-  var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?', 'g')
+  var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g')
   var parseCloseReg = new RegExp(
-    '\\s*((?:[^]*?(?:\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/)?)*?)\\s*(-|_)?' +
-      env.tags[1],
+    '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/|(\\s*(-|_)?' +
+      env.tags[1] +
+      ')',
     'g'
   )
   // TODO: benchmark having the \s* on either side vs using str.trim()
@@ -65,22 +68,32 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     pushString(precedingString, wsLeft)
 
     parseCloseReg.lastIndex = lastIndex
-    var closeTag = parseCloseReg.exec(str)
-    if (closeTag) {
-      var content = closeTag[1]
-      trimLeftOfNextStr = closeTag[2]
-      parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex
+    var closeTag
+    var currentObj
 
-      var currentType: TagType = ''
-      if (prefix === env.parse.exec) {
-        currentType = 'e'
-      } else if (prefix === env.parse.raw) {
-        currentType = 'r'
-      } else if (prefix === env.parse.interpolate) {
-        currentType = 'i'
+    while ((closeTag = parseCloseReg.exec(str)) !== null) {
+      if (closeTag[1]) {
+        var content = str.slice(lastIndex, closeTag.index)
+
+        parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex
+
+        trimLeftOfNextStr = closeTag[2]
+
+        var currentType: TagType = ''
+        if (prefix === env.parse.exec) {
+          currentType = 'e'
+        } else if (prefix === env.parse.raw) {
+          currentType = 'r'
+        } else if (prefix === env.parse.interpolate) {
+          currentType = 'i'
+        }
+
+        currentObj = { t: currentType, val: content }
+        break
       }
-
-      buffer.push({ t: currentType, val: content })
+    }
+    if (currentObj) {
+      buffer.push(currentObj)
     } else {
       ParseErr('unclosed tag', str, lastIndex)
     }

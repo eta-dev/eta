@@ -275,38 +275,38 @@ var testList = [
       return html
     }
   },
-  // {
-  //   name: 'Squirrelly',
-  //   tester: function() {
-  //     if (!config.escape) {
-  //       Sqrl.defaultConfig.autoEscape = false
-  //     }
-  //     var source = templateList['squirrelly']
-  //     //   console.log(fn.toString())
-  //     var html = ''
-  //     data.$name = 'temp'
-  //     for (var i = 0; i < config.calls; i++) {
-  //       html = Sqrl.render(source, data)
-  //     }
-  //     return html
-  //   }
-  // },
-  // {
-  //   name: 'Squirrelly - Fast',
-  //   tester: function() {
-  //     if (!config.escape) {
-  //       Sqrl.defaultConfig.autoEscape = false
-  //     }
-  //     var source = templateList['squirrelly-fast']
-  //     //   console.log(fn.toString())
-  //     var html = ''
-  //     data.$name = 'temp'
-  //     for (var i = 0; i < config.calls; i++) {
-  //       html = Sqrl.render(source, data)
-  //     }
-  //     return html
-  //   }
-  // },
+  {
+    name: 'Squirrelly',
+    tester: function() {
+      if (!config.escape) {
+        Sqrl.defaultConfig.autoEscape = false
+      }
+      var source = templateList['squirrelly']
+      //   console.log(fn.toString())
+      var html = ''
+      data.$name = 'temp'
+      for (var i = 0; i < config.calls; i++) {
+        html = Sqrl.render(source, data)
+      }
+      return html
+    }
+  },
+  {
+    name: 'Squirrelly - Fast',
+    tester: function() {
+      if (!config.escape) {
+        Sqrl.defaultConfig.autoEscape = false
+      }
+      var source = templateList['squirrelly-fast']
+      //   console.log(fn.toString())
+      var html = ''
+      data.$name = 'temp'
+      for (var i = 0; i < config.calls; i++) {
+        html = Sqrl.render(source, data)
+      }
+      return html
+    }
+  },
   {
     name: 'Eta',
     tester: function() {
