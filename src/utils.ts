@@ -39,13 +39,13 @@ function trimWS (
   var leftTrim
   var rightTrim
 
-  if (typeof env.autoTrim === 'string') {
-    leftTrim = rightTrim = env.autoTrim
-  } else if (Array.isArray(env.autoTrim)) {
+  if (Array.isArray(env.autoTrim)) {
     // kinda confusing
     // but _}} will trim the left side of the following string
     leftTrim = env.autoTrim[1]
     rightTrim = env.autoTrim[0]
+  } else {
+    leftTrim = rightTrim = env.autoTrim
   }
 
   if (wsLeft || wsLeft === false) {
@@ -71,7 +71,7 @@ function trimWS (
   } else if (leftTrim === '-' || leftTrim === 'nl') {
     // console.log('trimming left nl' + leftTrim)
     // nl trim
-    str = str.replace(/^(?:\n|\r|\r\n)/, '')
+    str = str.replace(/^(?:\r\n|\n|\r)/, '')
   }
 
   if (rightTrim === '_' || rightTrim === 'slurp') {
@@ -85,7 +85,7 @@ function trimWS (
   } else if (rightTrim === '-' || rightTrim === 'nl') {
     // console.log('trimming right nl' + rightTrim)
     // nl trim
-    str = str.replace(/(?:\n|\r|\r\n)$/, '') // TODO: make sure this gets \r\n
+    str = str.replace(/(?:\r\n|\n|\r)$/, '') // TODO: make sure this gets \r\n
   }
 
   return str

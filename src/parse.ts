@@ -24,7 +24,6 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   function pushString (strng: string, shouldTrimRightOfString?: string | false) {
     if (strng) {
       // if string is truthy it must be of type 'string'
-      // replace \ with \\, ' with \'
 
       // TODO: benchmark replace( /(\\|')/g, '\\$1')
       strng = trimWS(
@@ -35,10 +34,10 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
       )
 
       if (strng) {
-        strng = strng
-          .replace(/\\|'/g, '\\$&')
-          .replace(/\n/g, '\\n')
-          .replace(/\r/g, '\\r')
+        // replace \ with \\, ' with \'
+
+        strng = strng.replace(/\\|'/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n')
+        // we're going to convert all CRLF to LF so it doesn't take more than one replace
 
         buffer.push(strng)
       }
@@ -58,7 +57,8 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
 
   var m
 
-  while ((m = parseOpenReg.exec(str)) !== null) {
+  while ((m = parseOpenReg.exec(str))) {
+    // TODO: check if above needs exec(str) !== null. Don't think it's possible to have 0-width matches but...
     lastIndex = m[0].length + m.index
 
     var precedingString = m[1]
@@ -71,7 +71,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     var closeTag
     var currentObj
 
-    while ((closeTag = parseCloseReg.exec(str)) !== null) {
+    while ((closeTag = parseCloseReg.exec(str))) {
       if (closeTag[1]) {
         var content = str.slice(lastIndex, closeTag.index)
 

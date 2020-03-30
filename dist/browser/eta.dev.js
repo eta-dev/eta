@@ -58,14 +58,14 @@
   function trimWS(str, env, wsLeft, wsRight) {
       var leftTrim;
       var rightTrim;
-      if (typeof env.autoTrim === 'string') {
-          leftTrim = rightTrim = env.autoTrim;
-      }
-      else if (Array.isArray(env.autoTrim)) {
+      if (Array.isArray(env.autoTrim)) {
           // kinda confusing
           // but _}} will trim the left side of the following string
           leftTrim = env.autoTrim[1];
           rightTrim = env.autoTrim[0];
+      }
+      else {
+          leftTrim = rightTrim = env.autoTrim;
       }
       if (wsLeft || wsLeft === false) {
           leftTrim = wsLeft;
@@ -89,7 +89,7 @@
       else if (leftTrim === '-' || leftTrim === 'nl') {
           // console.log('trimming left nl' + leftTrim)
           // nl trim
-          str = str.replace(/^(?:\n|\r|\r\n)/, '');
+          str = str.replace(/^(?:\r\n|\n|\r)/, '');
       }
       if (rightTrim === '_' || rightTrim === 'slurp') {
           // console.log('trimming right' + rightTrim)
@@ -104,7 +104,7 @@
       else if (rightTrim === '-' || rightTrim === 'nl') {
           // console.log('trimming right nl' + rightTrim)
           // nl trim
-          str = str.replace(/(?:\n|\r|\r\n)$/, ''); // TODO: make sure this gets \r\n
+          str = str.replace(/(?:\r\n|\n|\r)$/, ''); // TODO: make sure this gets \r\n
       }
       return str;
   }
@@ -136,15 +136,13 @@
       function pushString(strng, shouldTrimRightOfString) {
           if (strng) {
               // if string is truthy it must be of type 'string'
-              // replace \ with \\, ' with \'
               // TODO: benchmark replace( /(\\|')/g, '\\$1')
               strng = trimWS(strng, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
               shouldTrimRightOfString);
               if (strng) {
-                  strng = strng
-                      .replace(/\\|'/g, '\\$&')
-                      .replace(/\n/g, '\\n')
-                      .replace(/\r/g, '\\r');
+                  // replace \ with \\, ' with \'
+                  strng = strng.replace(/\\|'/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n');
+                  // we're going to convert all CRLF to LF so it doesn't take more than one replace
                   buffer.push(strng);
               }
           }
