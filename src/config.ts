@@ -72,7 +72,7 @@ function getConfig (override: PartialConfig, baseConfig?: EtaConfig): EtaConfig 
   // TODO: run more tests on this
 
   var res: PartialConfig = {} // Linked
-  copyProps(res, defaultConfig) // Creates deep clone of res, 1 layer deep
+  copyProps(res, defaultConfig) // Creates deep clone of defaultConfig, 1 layer deep
 
   if (baseConfig) {
     copyProps(res, baseConfig)

@@ -105,7 +105,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
 
           var singleQuoteMatch = singleQuoteReg.exec(str)
           if (singleQuoteMatch) {
-            parseCloseReg.lastIndex = singleQuoteMatch.index + singleQuoteMatch[0].length
+            parseCloseReg.lastIndex = singleQuoteReg.lastIndex
           } else {
             ParseErr('unclosed string', str, closeTag.index)
           }
@@ -114,7 +114,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
           var doubleQuoteMatch = doubleQuoteReg.exec(str)
 
           if (doubleQuoteMatch) {
-            parseCloseReg.lastIndex = doubleQuoteMatch.index + doubleQuoteMatch[0].length
+            parseCloseReg.lastIndex = doubleQuoteReg.lastIndex
           } else {
             ParseErr('unclosed string', str, closeTag.index)
           }
@@ -122,7 +122,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
           templateLitReg.lastIndex = closeTag.index
           var templateLitMatch = templateLitReg.exec(str)
           if (templateLitMatch) {
-            parseCloseReg.lastIndex = templateLitMatch.index + templateLitMatch[0].length
+            parseCloseReg.lastIndex = templateLitReg.lastIndex
           } else {
             ParseErr('unclosed string', str, closeTag.index)
           }

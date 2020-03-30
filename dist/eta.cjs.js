@@ -71,6 +71,9 @@ function trimWS(str, env, wsLeft, wsRight) {
     if (wsRight || wsRight === false) {
         rightTrim = wsRight;
     }
+    if (!rightTrim && !leftTrim) {
+        return str;
+    }
     if (leftTrim === 'slurp' && rightTrim === 'slurp') {
         return str.trim();
     }
@@ -194,7 +197,7 @@ function parse(str, env) {
                     singleQuoteReg.lastIndex = closeTag.index;
                     var singleQuoteMatch = singleQuoteReg.exec(str);
                     if (singleQuoteMatch) {
-                        parseCloseReg.lastIndex = singleQuoteMatch.index + singleQuoteMatch[0].length;
+                        parseCloseReg.lastIndex = singleQuoteReg.lastIndex;
                     }
                     else {
                         ParseErr('unclosed string', str, closeTag.index);
@@ -204,7 +207,7 @@ function parse(str, env) {
                     doubleQuoteReg.lastIndex = closeTag.index;
                     var doubleQuoteMatch = doubleQuoteReg.exec(str);
                     if (doubleQuoteMatch) {
-                        parseCloseReg.lastIndex = doubleQuoteMatch.index + doubleQuoteMatch[0].length;
+                        parseCloseReg.lastIndex = doubleQuoteReg.lastIndex;
                     }
                     else {
                         ParseErr('unclosed string', str, closeTag.index);
@@ -214,7 +217,7 @@ function parse(str, env) {
                     templateLitReg.lastIndex = closeTag.index;
                     var templateLitMatch = templateLitReg.exec(str);
                     if (templateLitMatch) {
-                        parseCloseReg.lastIndex = templateLitMatch.index + templateLitMatch[0].length;
+                        parseCloseReg.lastIndex = templateLitReg.lastIndex;
                     }
                     else {
                         ParseErr('unclosed string', str, closeTag.index);
@@ -356,7 +359,7 @@ includeHelper.bind(defaultConfig);
 function getConfig(override, baseConfig) {
     // TODO: run more tests on this
     var res = {}; // Linked
-    copyProps(res, defaultConfig); // Creates deep clone of res, 1 layer deep
+    copyProps(res, defaultConfig); // Creates deep clone of defaultConfig, 1 layer deep
     if (baseConfig) {
         copyProps(res, baseConfig);
     }

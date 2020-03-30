@@ -56,6 +56,10 @@ function trimWS (
     rightTrim = wsRight
   }
 
+  if (!rightTrim && !leftTrim) {
+    return str
+  }
+
   if (leftTrim === 'slurp' && rightTrim === 'slurp') {
     return str.trim()
   }
