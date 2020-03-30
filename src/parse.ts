@@ -21,6 +21,12 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   var trimLeftOfNextStr: string | false = false
   var lastIndex = 0
 
+  var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g
+
+  var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g
+
+  var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g
+
   function pushString (strng: string, shouldTrimRightOfString?: string | false) {
     if (strng) {
       // if string is truthy it must be of type 'string'
@@ -47,12 +53,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   var prefixes = (env.parse.exec + env.parse.interpolate + env.parse.raw).split('').join('|')
 
   var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g')
-  var parseCloseReg = new RegExp(
-    '\'(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r\'\\\\])*?\'|`(?:\\\\[\\s\\w"\'\\\\`]|[^\\\\`])*?`|"(?:\\\\[\\s\\w"\'\\\\`]|[^\\n\\r"\\\\])*?"|\\/\\*[^]*?\\*\\/|(\\s*(-|_)?' +
-      env.tags[1] +
-      ')',
-    'g'
-  )
+  var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + env.tags[1] + ')', 'g')
   // TODO: benchmark having the \s* on either side vs using str.trim()
 
   var m
@@ -90,12 +91,48 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
 
         currentObj = { t: currentType, val: content }
         break
+      } else {
+        var char = closeTag[0]
+        if (char === '/*') {
+          var commentCloseInd = str.indexOf('*/', parseCloseReg.lastIndex)
+
+          if (commentCloseInd === -1) {
+            ParseErr('unclosed comment', str, closeTag.index)
+          }
+          parseCloseReg.lastIndex = commentCloseInd
+        } else if (char === "'") {
+          singleQuoteReg.lastIndex = closeTag.index
+
+          var singleQuoteMatch = singleQuoteReg.exec(str)
+          if (singleQuoteMatch) {
+            parseCloseReg.lastIndex = singleQuoteMatch.index + singleQuoteMatch[0].length
+          } else {
+            ParseErr('unclosed string', str, closeTag.index)
+          }
+        } else if (char === '"') {
+          doubleQuoteReg.lastIndex = closeTag.index
+          var doubleQuoteMatch = doubleQuoteReg.exec(str)
+
+          if (doubleQuoteMatch) {
+            parseCloseReg.lastIndex = doubleQuoteMatch.index + doubleQuoteMatch[0].length
+          } else {
+            ParseErr('unclosed string', str, closeTag.index)
+          }
+        } else if (char === '`') {
+          templateLitReg.lastIndex = closeTag.index
+          var templateLitMatch = templateLitReg.exec(str)
+          if (templateLitMatch) {
+            parseCloseReg.lastIndex = templateLitMatch.index + templateLitMatch[0].length
+          } else {
+            ParseErr('unclosed string', str, closeTag.index)
+          }
+        }
       }
     }
     if (currentObj) {
       buffer.push(currentObj)
     } else {
-      ParseErr('unclosed tag', str, lastIndex)
+      ParseErr('unclosed tag', str, m.index)
     }
   }
 

@@ -8,10 +8,11 @@ var Eta = require('../dist/eta.cjs')
 // `
 
 var template = `
-{{=it.value}}
+<%=it.value%>
+
 Partial
 -------
-{{=E.include("template1", {name: "Ben"})}}
+<%=E.include('template1', {name: 'Ben'})%>
 `
 
 Eta.templates.define('template1', Eta.compile('Hi {{=it.name}}'))
