@@ -9,6 +9,7 @@
     "template engine",
     "typescript types"
   ],
+  "homepage": "https://eta.js.org",
   "main": "dist/eta.cjs.js",
   "browser": "dist/browser/eta.min.js",
   "module": "dist/eta.es.js",
