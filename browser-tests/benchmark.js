@@ -275,38 +275,38 @@ var testList = [
       return html
     }
   },
-  {
-    name: 'Squirrelly',
-    tester: function() {
-      if (!config.escape) {
-        Sqrl.defaultConfig.autoEscape = false
-      }
-      var source = templateList['squirrelly']
-      //   console.log(fn.toString())
-      var html = ''
-      data.$name = 'temp'
-      for (var i = 0; i < config.calls; i++) {
-        html = Sqrl.render(source, data)
-      }
-      return html
-    }
-  },
-  {
-    name: 'Squirrelly - Fast',
-    tester: function() {
-      if (!config.escape) {
-        Sqrl.defaultConfig.autoEscape = false
-      }
-      var source = templateList['squirrelly-fast']
-      //   console.log(fn.toString())
-      var html = ''
-      data.$name = 'temp'
-      for (var i = 0; i < config.calls; i++) {
-        html = Sqrl.render(source, data)
-      }
-      return html
-    }
-  },
+  // {
+  //   name: 'Squirrelly',
+  //   tester: function() {
+  //     if (!config.escape) {
+  //       Sqrl.defaultConfig.autoEscape = false
+  //     }
+  //     var source = templateList['squirrelly']
+  //     //   console.log(fn.toString())
+  //     var html = ''
+  //     data.$name = 'temp'
+  //     for (var i = 0; i < config.calls; i++) {
+  //       html = Sqrl.render(source, data)
+  //     }
+  //     return html
+  //   }
+  // },
+  // {
+  //   name: 'Squirrelly - Fast',
+  //   tester: function() {
+  //     if (!config.escape) {
+  //       Sqrl.defaultConfig.autoEscape = false
+  //     }
+  //     var source = templateList['squirrelly-fast']
+  //     //   console.log(fn.toString())
+  //     var html = ''
+  //     data.$name = 'temp'
+  //     for (var i = 0; i < config.calls; i++) {
+  //       html = Sqrl.render(source, data)
+  //     }
+  //     return html
+  //   }
+  // },
   {
     name: 'Eta',
     tester: function() {
@@ -488,9 +488,11 @@ function getLink() {
 window['app'] = function(selector) {
   var app = document.querySelector(selector)
   var body = `
-<h1>Rendering test</h1>
-<br><br>
+<h1>Eta Browser Benchmarks</h1>
+<br>
 <em>Note: originally, Art-template's benchmarking page only benchmarked the template function after it was compiled. This benchmark includes compilation and rendering.</em>
+<br><br>
+<em>Note: doT and Eta usually trade off the lead on unescaped templates. Keep in mind that Eta supports template tags inside strings & comments, plugins, whitespace trimming, etc.</em>
 <br><br>
 <strong>Longer (more ops/sec) is better</strong>
 
