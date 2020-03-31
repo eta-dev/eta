@@ -12,6 +12,7 @@
 [![Coveralls](https://img.shields.io/coveralls/nebrelbug/eta.svg)](https://coveralls.io/github/nebrelbug/eta)
 [![Dev Dependencies](https://img.shields.io/david/dev/nebrelbug/eta)](https://david-dm.org/nebrelbug/eta?type=dev)
 
+[![documentation website](https://img.shields.io/badge/read_the_docs-website-brightgreen.svg)](https://eta.js.org)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Join the chat at https://gitter.im/eta-js/community](https://img.shields.io/gitter/room/nebrelbug/eta?color=%2346BC99)](https://gitter.im/eta-js/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
@@ -40,7 +41,9 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 
 ### Where did Eta's name come from?
 
-"Eta" means tiny in Esperanto. Plus, it can be used as an acronym for all sorts of cool phrases: "ECMAScript Template Awesomeness", "Embedded Templating Alternative", etc...
+"Eta" means tiny in Esperanto. Plus, it can be used as an acronym for all sorts of cool phrases: "ECMAScript Template Awesomeness", "Embedded Templating Alternative", etc....
+
+Additionally, Eta is a letter of the Greek alphabet, and is three letters long, which is great for file extensions.
 
 ### 🌟 Features
 
@@ -64,7 +67,9 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 
 ## 📜 Docs
 
-A documentation website is coming soon. In the meantime
+We know nobody reads through the long and boring documentation in the ReadMe anyway, so head over to the documentation website:
+
+📝 [https://eta.js.org](https://eta.js.org)
 
 ## 📓 Examples
 
@@ -133,5 +138,5 @@ This project follows the [all-contributors](https://github.com/kentcdodds/all-co
 
 ## Credits
 
-- Async support and file handling were added based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified to throw a Squirrelly Error.
+- Async support and file handling were added based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified to throw an Eta Error.
 - Syntax and some parts of compilation are heavily based off EJS, Nunjucks, and doT.
