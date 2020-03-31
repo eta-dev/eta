@@ -16,16 +16,20 @@ export type AstObject = string | TemplateObject
 
 /* END TYPES */
 
+var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g
+
+var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g
+
+var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g
+
 export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   var buffer: Array<AstObject> = []
   var trimLeftOfNextStr: string | false = false
   var lastIndex = 0
 
-  var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g
-
-  var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g
-
-  var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g
+  templateLitReg.lastIndex = 0
+  singleQuoteReg.lastIndex = 0
+  doubleQuoteReg.lastIndex = 0
 
   function pushString (strng: string, shouldTrimRightOfString?: string | false) {
     if (strng) {

@@ -130,13 +130,16 @@ function XMLEscape(str) {
 }
 
 /* END TYPES */
+var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g;
+var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g;
+var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
 function parse(str, env) {
     var buffer = [];
     var trimLeftOfNextStr = false;
     var lastIndex = 0;
-    var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g;
-    var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g;
-    var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
+    templateLitReg.lastIndex = 0;
+    singleQuoteReg.lastIndex = 0;
+    doubleQuoteReg.lastIndex = 0;
     function pushString(strng, shouldTrimRightOfString) {
         if (strng) {
             // if string is truthy it must be of type 'string'

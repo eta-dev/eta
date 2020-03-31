@@ -9,9 +9,6 @@ var fs = require('fs'),
 
 const complexTemplate = fs.readFileSync(filePath, 'utf8')
 
-/**
- * Dummy test
- */
 describe('parse test', () => {
   it('parses a simple template', () => {
     var buff = parse('hi <%= hey %>', defaultConfig)
@@ -55,11 +52,45 @@ describe('parse test', () => {
     ])
   })
 
-  // TODO: Add errs here
+  test('throws with unclosed tag', () => {
+    expect(() => {
+      parse('<%hi("hey")', defaultConfig)
+    }).toThrowError('hi')
+  })
 
-  // test('throws with unclosed tag', () => {
-  //   expect(() => {
-  //     parse('<%hi("hey")', defaultConfig)
-  //   }).toThrow()
-  // })
+  test('throws with unclosed single-quote string', () => {
+    expect(() => {
+      parse("<%= ' %>", defaultConfig)
+    }).toThrowError(`unclosed string at line 1 col 5:
+
+  <%= ' %>
+      ^`)
+  })
+
+  test('throws with unclosed double-quote string', () => {
+    expect(() => {
+      parse('<%= " %>', defaultConfig)
+    }).toThrowError(`unclosed string at line 1 col 5:
+
+  <%= " %>
+      ^`)
+  })
+
+  test('throws with unclosed template literal', () => {
+    expect(() => {
+      parse('<%= ` %>', defaultConfig)
+    }).toThrowError(`unclosed string at line 1 col 5:
+
+  <%= \` %>
+      ^`)
+  })
+
+  test('throws with unclosed multi-line comment', () => {
+    expect(() => {
+      parse('<%= /* %>', defaultConfig)
+    }).toThrowError(`unclosed comment at line 1 col 5:
+
+  <%= /* %>
+      ^`)
+  })
 })
