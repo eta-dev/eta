@@ -15,7 +15,7 @@ Partial
 <%=E.include('template1', {name: 'Ben'})%>
 `
 
-Eta.templates.define('template1', Eta.compile('Hi {{=it.name}}'))
+Eta.templates.define('template1', Eta.compile('Hi <%=it.name%>'))
 console.log(Eta.parse(template, Eta.defaultConfig))
 console.log('===========================')
 console.log(Eta.compile(template, Eta.defaultConfig).toString())
