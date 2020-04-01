@@ -170,7 +170,7 @@
           pushString(precedingString, wsLeft);
           parseCloseReg.lastIndex = lastIndex;
           var closeTag;
-          var currentObj;
+          var currentObj = false;
           while ((closeTag = parseCloseReg.exec(str))) {
               if (closeTag[1]) {
                   var content = str.slice(lastIndex, closeTag.index);
@@ -234,7 +234,7 @@
               buffer.push(currentObj);
           }
           else {
-              ParseErr('unclosed tag', str, m.index);
+              ParseErr('unclosed tag', str, m.index + precedingString.length);
           }
       }
       pushString(str.slice(lastIndex, str.length), false);

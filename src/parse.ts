@@ -74,7 +74,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
 
     parseCloseReg.lastIndex = lastIndex
     var closeTag
-    var currentObj
+    var currentObj: AstObject | false = false
 
     while ((closeTag = parseCloseReg.exec(str))) {
       if (closeTag[1]) {
@@ -136,7 +136,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     if (currentObj) {
       buffer.push(currentObj)
     } else {
-      ParseErr('unclosed tag', str, m.index)
+      ParseErr('unclosed tag', str, m.index + precedingString.length)
     }
   }
 
