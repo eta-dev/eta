@@ -362,7 +362,7 @@ var defaultConfig = {
         interpolate: '=',
         raw: '~',
         special: '@',
-        exec: '',
+        exec: ''
     },
     async: false,
     templates: templates,
@@ -370,7 +370,7 @@ var defaultConfig = {
     plugins: [],
     useWith: false,
     e: XMLEscape,
-    include: includeHelper,
+    include: includeHelper
 };
 includeHelper.bind(defaultConfig);
 function getConfig(override, baseConfig) {

@@ -364,7 +364,7 @@
           interpolate: '=',
           raw: '~',
           special: '@',
-          exec: '',
+          exec: ''
       },
       async: false,
       templates: templates,
@@ -372,7 +372,7 @@
       plugins: [],
       useWith: false,
       e: XMLEscape,
-      include: includeHelper,
+      include: includeHelper
   };
   includeHelper.bind(defaultConfig);
   function getConfig(override, baseConfig) {
