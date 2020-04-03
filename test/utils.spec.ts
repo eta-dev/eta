@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
-import { trimWS } from '../src/utils'
-import { defaultConfig } from '../src/config'
+import { trimWS, XMLEscape } from '../src/utils'
+import { defaultConfig, getConfig } from '../src/config'
 
 describe('Whitespace trim', () => {
   describe('#trimLeft', () => {
@@ -12,10 +12,10 @@ describe('Whitespace trim', () => {
       Object.defineProperty(String.prototype, 'trimLeft', { value: undefined })
       expect(trimWS('  jestjs', defaultConfig, '_')).toBe('jestjs')
     })
-    it('WS 1 char', () => {
+    it('WS newline', () => {
       expect(trimWS('\njestjs', defaultConfig, '-')).toBe('jestjs')
     })
-    it('WS slurp and WS 1 char are equal with 1 char of whitespace', () => {
+    it('WS slurp and WS newline are equal with newline', () => {
       Object.defineProperty(String.prototype, 'trimLeft', { value: undefined })
       expect(trimWS(' jestjs', defaultConfig, '_')).toBe(trimWS('\njestjs', defaultConfig, '-'))
     })
@@ -29,14 +29,32 @@ describe('Whitespace trim', () => {
       Object.defineProperty(String.prototype, 'trimRight', { value: undefined })
       expect(trimWS('jestjs  ', defaultConfig, '', '_')).toBe('jestjs')
     })
-    it('WS 1 char', () => {
+    it('WS newline', () => {
       expect(trimWS('jestjs\n', defaultConfig, '', '-')).toBe('jestjs')
     })
-    it('WS slurp and WS 1 char are equal with 1 char of whitespace', () => {
+    it('WS slurp and WS newline are equal with newline', () => {
       Object.defineProperty(String.prototype, 'trimRight', { value: undefined })
       expect(trimWS('jestjs ', defaultConfig, '', '_')).toBe(
         trimWS('jestjs\n', defaultConfig, '', '-')
       )
     })
+  })
+
+  describe('#trim', () => {
+    it('WS slurp both sides', () => {
+      expect(trimWS(' somestring  ', defaultConfig, '_', '_')).toBe('somestring')
+    })
+
+    it('defaultConfig.autoTrim set to false', () => {
+      expect(trimWS(' some string\n  ', getConfig({ autoTrim: false }), '', '')).toBe(
+        ' some string\n  '
+      )
+    })
+  })
+})
+
+describe('HTML Escape', () => {
+  it('properly escapes HTML characters', () => {
+    expect(XMLEscape('<p>HTML</p>')).toBe('&lt;p>HTML&lt;/p>')
   })
 })
