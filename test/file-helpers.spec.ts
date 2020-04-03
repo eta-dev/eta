@@ -9,7 +9,7 @@ templates.define('test-template', compile('HEY <%=it.name%>'))
 describe('include works', () => {
   it('simple parser works with "includeFile"', async () => {
     var renderedTemplate = render(
-      '<%= E.includeFile("simple", it) %>',
+      '<% @includeFile("simple", it) %>',
       { name: 'Ben' },
       { filename: path.join(__dirname, 'templates/placeholder.eta') }
     )
@@ -19,7 +19,7 @@ describe('include works', () => {
 
   it('"includeFile" works with "views" array', async () => {
     var renderedTemplate = render(
-      '<%= E.includeFile("randomtemplate", it) %>',
+      '<% @includeFile("randomtemplate", it) %>',
       { user: 'Ben' },
       {
         filename: path.join(__dirname, 'templates/placeholder.eta'),
@@ -31,7 +31,7 @@ describe('include works', () => {
   })
 
   it('simple parser works with "include"', async () => {
-    var renderedTemplate = render('<%= E.include("test-template", it) %>', { name: 'Ben' })
+    var renderedTemplate = render('<% @include("test-template", it) %>', { name: 'Ben' })
 
     expect(renderedTemplate).toEqual('HEY Ben')
   })
@@ -39,7 +39,7 @@ describe('include works', () => {
   test('throws if helper "includeFile" cannot find template', () => {
     expect(() => {
       render(
-        '<%= E.includeFile("missing-template", it) %>',
+        '<% @includeFile("missing-template", it) %>',
         {},
         {
           filename: path.join(__dirname, 'templates/placeholder.eta'),

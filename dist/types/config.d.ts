@@ -10,6 +10,7 @@ export interface EtaConfig {
         interpolate: string;
         raw: string;
         exec: string;
+        special: string;
     };
     e: (str: string) => string;
     plugins: Array<{

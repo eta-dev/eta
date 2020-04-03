@@ -32,7 +32,7 @@ tR+='  ';for (var i = 0, arr = it.obj[key]; i < arr.length; i++) {
 tR+='      Salutations! Index: ';tR+=E.e(i);tR+=', parent key: ';tR+=E.e(key);tR+='      \\n  ';}
 }
 }
-tR+='\\nThis is a partial: ';tR+=E.e(E.include("mypartial"));if(cb){cb(null,tR)} return tR`
+tR+='\\nThis is a partial: ';tR+=E.include("mypartial");if(cb){cb(null,tR)} return tR`
     )
   })
 })

@@ -13,4 +13,4 @@ Value: <%= it.obj[key] %>, Key: <%= key %>
 <% } %>
 <% } %>
 
-This is a partial: <%= E.include("mypartial") %>
+This is a partial: <% @include("mypartial") %>

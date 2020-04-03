@@ -133,6 +133,7 @@ function parse(str, env) {
     var buffer = [];
     var trimLeftOfNextStr = false;
     var lastIndex = 0;
+    var parseOptions = env.parse;
     templateLitReg.lastIndex = 0;
     singleQuoteReg.lastIndex = 0;
     doubleQuoteReg.lastIndex = 0;
@@ -150,7 +151,12 @@ function parse(str, env) {
             }
         }
     }
-    var prefixes = (env.parse.exec + env.parse.interpolate + env.parse.raw).split('').join('|');
+    var prefixes = (parseOptions.exec +
+        parseOptions.interpolate +
+        parseOptions.special +
+        parseOptions.raw)
+        .split('')
+        .join('|');
     var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g');
     var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + env.tags[1] + ')', 'g');
     // TODO: benchmark having the \s* on either side vs using str.trim()
@@ -171,14 +177,17 @@ function parse(str, env) {
                 parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex;
                 trimLeftOfNextStr = closeTag[2];
                 var currentType = '';
-                if (prefix === env.parse.exec) {
+                if (prefix === parseOptions.exec) {
                     currentType = 'e';
                 }
-                else if (prefix === env.parse.raw) {
+                else if (prefix === parseOptions.raw) {
                     currentType = 'r';
                 }
-                else if (prefix === env.parse.interpolate) {
+                else if (prefix === parseOptions.interpolate) {
                     currentType = 'i';
+                }
+                else if (prefix === parseOptions.special) {
+                    currentType = 's';
                 }
                 currentObj = { t: currentType, val: content };
                 break;
@@ -292,6 +301,10 @@ function compileScope(buff, env) {
                 // execute
                 returnStr += content + '\n'; // you need a \n in case you have <% } %>
             }
+            else if (type === 's') {
+                returnStr += 'tR+=E.' + content + ';';
+                // reference
+            }
         }
     }
     return returnStr;
@@ -344,7 +357,8 @@ var defaultConfig = {
     parse: {
         interpolate: '=',
         raw: '~',
-        exec: ''
+        special: '@',
+        exec: '',
     },
     async: false,
     templates: templates,
@@ -352,7 +366,7 @@ var defaultConfig = {
     plugins: [],
     useWith: false,
     e: XMLEscape,
-    include: includeHelper
+    include: includeHelper,
 };
 includeHelper.bind(defaultConfig);
 function getConfig(override, baseConfig) {

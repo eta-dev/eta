@@ -5,7 +5,7 @@ import { trimWS } from './utils'
 
 import { EtaConfig } from './config'
 
-export type TagType = 'r' | 'e' | 'i' | ''
+export type TagType = 'r' | 'e' | 'i' | 's' | ''
 
 export interface TemplateObject {
   t: TagType
@@ -26,6 +26,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   var buffer: Array<AstObject> = []
   var trimLeftOfNextStr: string | false = false
   var lastIndex = 0
+  var parseOptions = env.parse
 
   templateLitReg.lastIndex = 0
   singleQuoteReg.lastIndex = 0
@@ -54,7 +55,14 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     }
   }
 
-  var prefixes = (env.parse.exec + env.parse.interpolate + env.parse.raw).split('').join('|')
+  var prefixes = (
+    parseOptions.exec +
+    parseOptions.interpolate +
+    parseOptions.special +
+    parseOptions.raw
+  )
+    .split('')
+    .join('|')
 
   var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g')
   var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + env.tags[1] + ')', 'g')
@@ -85,12 +93,14 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
         trimLeftOfNextStr = closeTag[2]
 
         var currentType: TagType = ''
-        if (prefix === env.parse.exec) {
+        if (prefix === parseOptions.exec) {
           currentType = 'e'
-        } else if (prefix === env.parse.raw) {
+        } else if (prefix === parseOptions.raw) {
           currentType = 'r'
-        } else if (prefix === env.parse.interpolate) {
+        } else if (prefix === parseOptions.interpolate) {
           currentType = 'i'
+        } else if (prefix === parseOptions.special) {
+          currentType = 's'
         }
 
         currentObj = { t: currentType, val: content }
