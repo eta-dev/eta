@@ -25,7 +25,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine. The team wh
 
 Eta's syntax is very similar to EJS' (most templates should work with either engine), Eta has a similar API, and Eta and EJS share the same file-handling logic. Here are the differences between Eta and EJS:
 
-- Eta is more lightweight. Eta weighs less than **2KB gzipped**, while EJS is **4.4KB gzipped**
+- Eta is more lightweight. Eta weighs less than **2.5KB gzipped**, while EJS is **4.4KB gzipped**
 - Eta compiles and renders templates **_much_ faster than EJS**. Check out these benchmarks: https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html
 - Eta allows left whitespace control (with `-`), something that doesn't work in EJS because EJS uses `-` on the left side to indicate that the value shouldn't be escaped. Instead, Eta uses `~` to output a raw value
 - Eta gives you more flexibility with delimeters -- you could set them to `{{` and `}}`, for example, while with EJS this isn't possible
@@ -100,6 +100,12 @@ Display this instead
 <li><%= user.name %></li>
 <% }) %>
 </ul>
+```
+
+### Partials
+
+```
+<% @includeFile('footer') %>
 ```
 
 ## ✔️ Tests
