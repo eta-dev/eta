@@ -27,4 +27,10 @@ The Daugherty's have 5 kids:
 </ul>`
     )
   })
+
+  test('throws if helper "include" cannot find template', () => {
+    expect(() => {
+      render('<% @include("missing-template", it) %>', {})
+    }).toThrow(new Error('Could not fetch template "missing-template"'))
+  })
 })

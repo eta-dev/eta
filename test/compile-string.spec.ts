@@ -17,6 +17,11 @@ describe('Compile to String test', () => {
     expect(str).toEqual("var tR='';tR+='hi ';tR+=E.e(hey);if(cb){cb(null,tR)} return tR")
   })
 
+  it('parses a simple template with raw tag', () => {
+    var str = compileToString('hi <%~ hey %>', defaultConfig)
+    expect(str).toEqual("var tR='';tR+='hi ';tR+=hey;if(cb){cb(null,tR)} return tR")
+  })
+
   it('works with whitespace trimming', () => {
     var str = compileToString('hi\n<%- = hey-%>\n<%_ = hi_%>', defaultConfig)
     expect(str).toEqual("var tR='';tR+='hi';tR+=E.e(hey);tR+=E.e(hi);if(cb){cb(null,tR)} return tR")

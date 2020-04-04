@@ -15,9 +15,24 @@ describe('parse test', () => {
     expect(buff).toEqual(['hi ', { val: 'hey', t: 'i' }])
   })
 
+  it('parses a raw tag', () => {
+    var buff = parse('hi <%~ hey %>', defaultConfig)
+    expect(buff).toEqual(['hi ', { val: 'hey', t: 'r' }])
+  })
+
   it('works with whitespace trimming', () => {
     var buff = parse('hi\n<%- = hey-%> <%_ = hi _%>', defaultConfig)
     expect(buff).toEqual(['hi', { val: 'hey', t: 'i' }, { val: 'hi', t: 'i' }])
+  })
+
+  it('works with multiline comments', () => {
+    var buff = parse('hi <% /* comment contains delimiter %> */ %>', defaultConfig)
+    expect(buff).toEqual(['hi ', { val: '/* comment contains delimiter %> */', t: 'e' }])
+  })
+
+  it('parses with simple template literal', () => {
+    var buff = parse('hi <%= `template %> ${value}` %>', defaultConfig)
+    expect(buff).toEqual(['hi ', { val: '`template %> ${value}`', t: 'i' }])
   })
 
   it('compiles complex template', () => {
