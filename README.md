@@ -6,15 +6,15 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/nebrelbug/eta/master?label=current%20version)
-[![Travis](https://img.shields.io/travis/com/nebrelbug/eta/master.svg)](https://travis-ci.com/nebrelbug/eta)
+![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/eta-dev/eta/master?label=current%20version)
+[![Travis](https://img.shields.io/travis/com/eta-dev/eta/master.svg)](https://travis-ci.com/eta-dev/eta)
 [![All Contributors][logo]](#contributors-)
-[![Coveralls](https://img.shields.io/coveralls/nebrelbug/eta.svg)](https://coveralls.io/github/nebrelbug/eta)
-[![Dev Dependencies](https://img.shields.io/david/dev/nebrelbug/eta)](https://david-dm.org/nebrelbug/eta?type=dev)
+[![Coveralls](https://img.shields.io/coveralls/eta-dev/eta.svg)](https://coveralls.io/github/eta-dev/eta)
+[![Dev Dependencies](https://img.shields.io/david/dev/eta-dev/eta)](https://david-dm.org/eta-dev/eta?type=dev)
 
 [![documentation website](https://img.shields.io/badge/read_the_docs-website-brightgreen.svg)](https://eta.js.org)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Join the chat at https://gitter.im/eta-js/community](https://img.shields.io/gitter/room/nebrelbug/eta?color=%2346BC99)](https://gitter.im/eta-js/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/eta-dev/community](https://img.shields.io/gitter/room/eta-dev/eta?color=%2346BC99)](https://gitter.im/eta-dev/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
 
 **Summary**
@@ -26,7 +26,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine. The team wh
 Eta's syntax is very similar to EJS' (most templates should work with either engine), Eta has a similar API, and Eta and EJS share the same file-handling logic. Here are the differences between Eta and EJS:
 
 - Eta is more lightweight. Eta weighs less than **2KB gzipped**, while EJS is **4.4KB gzipped**
-- Eta compiles and renders templates **_much_ faster than EJS**. Check out these benchmarks: https://cdn.statically.io/gh/nebrelbug/eta/master/browser-tests/benchmark.html
+- Eta compiles and renders templates **_much_ faster than EJS**. Check out these benchmarks: https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html
 - Eta allows left whitespace control (with `-`), something that doesn't work in EJS because EJS uses `-` on the left side to indicate that the value shouldn't be escaped. Instead, Eta uses `~` to output a raw value
 - Eta gives you more flexibility with delimeters -- you could set them to `{{` and `}}`, for example, while with EJS this isn't possible
 - Eta adds plugin support
@@ -62,7 +62,7 @@ Additionally, Eta is a letter of the Greek alphabet, and is three letters long, 
 - 🔨 Server and browser support
 - 🔧 Caching
 - 🚀 Super Fast
-  - Check out [these benchmarks](https://cdn.statically.io/gh/nebrelbug/eta/master/browser-tests/benchmark.html)
+  - Check out [these benchmarks](https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html)
 - ⚡️ Async support
 
 ## 📜 Docs
