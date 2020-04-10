@@ -105,7 +105,15 @@ Display this instead
 ### Partials
 
 ```
-<% @includeFile('footer') %>
+<%~ E.include('mypartial') %>
+```
+
+```
+<%~ E.includeFile('./footer') %>
+```
+
+```
+<%~ E.include('users', {users: it.users}) %>
 ```
 
 ## ✔️ Tests

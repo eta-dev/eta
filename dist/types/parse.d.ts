@@ -1,5 +1,5 @@
 import { EtaConfig } from './config';
-export declare type TagType = 'r' | 'e' | 'i' | 's' | '';
+export declare type TagType = 'r' | 'e' | 'i' | '';
 export interface TemplateObject {
     t: TagType;
     val: string;

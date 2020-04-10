@@ -18,7 +18,6 @@ export interface EtaConfig {
     interpolate: string
     raw: string
     exec: string
-    special: string
   }
   e: (str: string) => string
   plugins: Array<{ processFnString?: Function; processAST?: Function }>
@@ -56,7 +55,6 @@ var defaultConfig: EtaConfig = {
   parse: {
     interpolate: '=',
     raw: '~',
-    special: '@',
     exec: ''
   },
   async: false,

@@ -157,10 +157,7 @@
               }
           }
       }
-      var prefixes = (parseOptions.exec +
-          parseOptions.interpolate +
-          parseOptions.special +
-          parseOptions.raw)
+      var prefixes = (parseOptions.exec + parseOptions.interpolate + parseOptions.raw)
           .split('')
           .join('|');
       var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g');
@@ -191,9 +188,6 @@
                   }
                   else if (prefix === parseOptions.interpolate) {
                       currentType = 'i';
-                  }
-                  else if (prefix === parseOptions.special) {
-                      currentType = 's';
                   }
                   currentObj = { t: currentType, val: content };
                   break;
@@ -307,10 +301,6 @@
                   // execute
                   returnStr += content + '\n'; // you need a \n in case you have <% } %>
               }
-              else if (type === 's') {
-                  returnStr += 'tR+=E.' + content + ';';
-                  // reference
-              }
           }
       }
       return returnStr;
@@ -363,7 +353,6 @@
       parse: {
           interpolate: '=',
           raw: '~',
-          special: '@',
           exec: ''
       },
       async: false,

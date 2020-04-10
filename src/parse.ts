@@ -5,7 +5,7 @@ import { trimWS } from './utils'
 
 import { EtaConfig } from './config'
 
-export type TagType = 'r' | 'e' | 'i' | 's' | ''
+export type TagType = 'r' | 'e' | 'i' | ''
 
 export interface TemplateObject {
   t: TagType
@@ -55,12 +55,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     }
   }
 
-  var prefixes = (
-    parseOptions.exec +
-    parseOptions.interpolate +
-    parseOptions.special +
-    parseOptions.raw
-  )
+  var prefixes = (parseOptions.exec + parseOptions.interpolate + parseOptions.raw)
     .split('')
     .join('|')
 
@@ -99,8 +94,6 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
           currentType = 'r'
         } else if (prefix === parseOptions.interpolate) {
           currentType = 'i'
-        } else if (prefix === parseOptions.special) {
-          currentType = 's'
         }
 
         currentObj = { t: currentType, val: content }

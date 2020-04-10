@@ -60,9 +60,6 @@ function compileScope (buff: Array<AstObject>, env: EtaConfig) {
       } else if (type === 'e') {
         // execute
         returnStr += content + '\n' // you need a \n in case you have <% } %>
-      } else if (type === 's') {
-        returnStr += 'tR+=E.' + content + ';'
-        // reference
       }
     }
   }

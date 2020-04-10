@@ -63,7 +63,7 @@ describe('parse test', () => {
       { t: 'e', val: '}' },
       { t: 'e', val: '}' },
       '\\nThis is a partial: ',
-      { t: 's', val: 'include("mypartial")' }
+      { t: 'r', val: 'E.include("mypartial")' }
     ])
   })
 
