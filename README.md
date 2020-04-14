@@ -75,7 +75,7 @@ We know nobody reads through the long and boring documentation in the ReadMe any
 
 ### Simple Template
 
-```
+```javascript
 var myTemplate = "<p>My favorite kind of cake is: <%= it.favoriteCake %></p>"
 
 Eta.render(myTemplate, {favoriteCake: 'Chocolate!'})
@@ -84,7 +84,7 @@ Eta.render(myTemplate, {favoriteCake: 'Chocolate!'})
 
 ### Conditionals
 
-```
+```ejs
 <% if(it.somevalue === 1) { %>
 Display this
 <% } else { %>
@@ -94,7 +94,7 @@ Display this instead
 
 ### Loops
 
-```
+```ejs
 <ul>
 <% it.users.forEach(function(user){ %>
 <li><%= user.name %></li>
@@ -104,15 +104,15 @@ Display this instead
 
 ### Partials
 
-```
+```ejs
 <%~ E.include('mypartial') %>
 ```
 
-```
+```ejs
 <%~ E.includeFile('./footer') %>
 ```
 
-```
+```ejs
 <%~ E.include('users', {users: it.users}) %>
 ```
 
