@@ -21,8 +21,13 @@
 
 Eta is a lightweight and blazing fast embedded JS templating engine. The team who created Squirrelly created it to serve as a better alternative to EJS.
 
-## Eta vs EJS
+## Eta vs Other Template Engines
 
+<details open>
+  <summary>
+  <b>Eta vs EJS</b>
+  </summary>
+  
 Eta's syntax is very similar to EJS' (most templates should work with either engine), Eta has a similar API, and Eta and EJS share the same file-handling logic. Here are the differences between Eta and EJS:
 
 - Eta is more lightweight. Eta weighs less than **2.5KB gzipped**, while EJS is **4.4KB gzipped**
@@ -33,7 +38,61 @@ Eta's syntax is very similar to EJS' (most templates should work with either eng
 - Comments in Eta use `/* ... */` which allows commenting around template tags
 - Eta parses strings correctly. _Example: `<%= "%>" %>` works in Eta, while it breaks in EJS_
 - Eta exposes Typescript types and distributes a UMD build
+- Eta supports custom tag-type indicators. _Example: you could change `<%=` to `<%*`_
+
+</details>
+
+<details>
+  <summary>
+  <b>Eta vs doT.js</b>
+  </summary>
+
+Eta and doT.js both allow embedded JavaScript, and [both have best-in-class performance](https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html) when compared to other template engines (though Eta is slightly faster with HTML-escaped templates). Here are some of the differences between Eta and doT.js:
+
+- Eta allows you to control how you strip preceding and trailing whitespace after tags.
+- It's much simpler to set custom delimiters with Eta than doT -- you don't have to rewrite every configuration Regular Expression
+- Eta supports plugins
+- Eta supports async
+- Eta parses strings and multi-line comments correctly. _Example: `<%= "%>" %>` works in Eta, while the equivalent breaks in doT_
+- Eta exposes Typescript types and distributes a UMD build
+- Eta supports runtime partials and file-handling.
+
+</details>
+
+<details>
+  <summary>
+  <b>Eta vs Handlebars</b>
+  </summary>
+  
+Eta and Handlebars are very different in some ways -- Eta is an embedded template engine, while Handlebars is a logic-less template engine. Here some additional differences between Eta and Handlebars:
+
+- Eta is more lightweight. Eta weighs less than **2.5KB gzipped**, while Handlebars is **~22KB gzipped**
+- Eta compiles and renders templates **_much_ faster than Handlebars** -- around **7x faster**. Check out these benchmarks: https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html
+- Eta allows you to set custom delimiters
+- Eta supports plugins
+- Eta exposes Typescript types and distributes a UMD build
 - Custom tag-type indicators. _Example: you could change `<%=` to `<%*`_
+- With Eta, you don't need to register tons of helpers to do simple tasks like check if one value equals another value
+- Note that Eta templates run as **trusted code** -- just like any other JavaScript you write.<br><br>If you are running user-defined/created templates on your machine, server, site, etc., you probably should go with a tool built for that purpose, like Handlebars.
+
+</details>
+
+<details>
+  <summary>
+  <b>Eta vs ES6 Template Literals</b>
+  </summary>
+
+Template literals are a super useful tool, especially for shortening simple string concatenation. But writing complete templates using template literals can quickly get out of hand. Here's a comparison of Eta and template literals:
+
+- Eta compiles templates into JavaScript functions that use string concatenation and have comparable performance with template literals
+- Eta lets you control preceding and trailing whitespace around tags
+- Eta gives you more flexibility with delimeters -- you could set them to `{{` and `}}`, for example, or set them to `${` and `}` to mimic template literals
+- Eta supports plugins
+- Eta supports comments with `/* ... */` syntax, just like in regular JavaScript. Template literals require you to stick a blank string after the comment: `/* ... */""`, which is much less readable
+- To write conditionals inside template literals, you have to use the ternary operator. Add more conditions or nested conditionals, and it quickly becomes a nightmarish mess of `? ... : ... ? ... : ...`. Writing conditionals in Eta is much simpler and more readable
+- Eta supports partials
+
+</details>
 
 ## Why Eta?
 
@@ -57,6 +116,7 @@ Additionally, Eta is a letter of the Greek alphabet, and is three letters long, 
 - 🔧 Custom delimeters
 - 📝 Easy template syntax
 - 🔧 Precompilation
+- ⚡️ 0-dependency
 - 🔨 Partials
 - 🔨 Comments
 - 🔨 Server and browser support
@@ -76,9 +136,9 @@ We know nobody reads through the long and boring documentation in the ReadMe any
 ### Simple Template
 
 ```javascript
-var myTemplate = "<p>My favorite kind of cake is: <%= it.favoriteCake %></p>"
+var myTemplate = '<p>My favorite kind of cake is: <%= it.favoriteCake %></p>'
 
-Eta.render(myTemplate, {favoriteCake: 'Chocolate!'})
+Eta.render(myTemplate, { favoriteCake: 'Chocolate!' })
 // Returns: '<p>My favorite kind of cake is: Chocolate!</p>
 ```
 
