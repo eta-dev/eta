@@ -139,7 +139,7 @@ We know nobody reads through the long and boring documentation in the ReadMe any
 var myTemplate = '<p>My favorite kind of cake is: <%= it.favoriteCake %></p>'
 
 Eta.render(myTemplate, { favoriteCake: 'Chocolate!' })
-// Returns: '<p>My favorite kind of cake is: Chocolate!</p>
+// Returns: '<p>My favorite kind of cake is: Chocolate!</p>'
 ```
 
 ### Conditionals
