@@ -57,6 +57,6 @@ describe('Whitespace trim', () => {
 
 describe('HTML Escape', () => {
   it('properly escapes HTML characters', () => {
-    expect(XMLEscape('<p>HTML</p>')).toBe('&lt;p>HTML&lt;/p>')
+    expect(XMLEscape('<p>HTML</p>')).toBe('&lt;p&gt;HTML&lt;/p&gt;')
   })
 })

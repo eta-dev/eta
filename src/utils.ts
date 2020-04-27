@@ -8,6 +8,7 @@ import { EtaConfig } from './config'
 interface EscapeMap {
   '&': '&amp;'
   '<': '&lt;'
+  '>': '&gt;'
   '"': '&quot;'
   "'": '&#39;'
   [index: string]: string
@@ -98,6 +99,7 @@ function trimWS (
 var escMap: EscapeMap = {
   '&': '&amp;',
   '<': '&lt;',
+  '>': '&gt;',
   '"': '&quot;',
   "'": '&#39;'
 }
@@ -109,8 +111,8 @@ function replaceChar (s: string): string {
 function XMLEscape (str: any) {
   // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
   var newStr = String(str)
-  if (/[&<"']/.test(newStr)) {
-    return newStr.replace(/[&<"']/g, replaceChar)
+  if (/[&<>"']/.test(newStr)) {
+    return newStr.replace(/[&<>"']/g, replaceChar)
   } else {
     return newStr
   }
