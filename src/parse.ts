@@ -28,6 +28,17 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   var lastIndex = 0
   var parseOptions = env.parse
 
+  /* Adding for EJS compatibility */
+  if (env.rmWhitespace) {
+    // Code taken directly from EJS
+    // Have to use two separate replaces here as `^` and `$` operators don't
+    // work well with `\r` and empty lines don't work well with the `m` flag.
+    // Essentially, this replaces the whitespace at the beginning and end of
+    // each line and removes multiple newlines.
+    str = str.replace(/[\r\n]+/g, '\n').replace(/^\s+|\s+$/gm, '')
+  }
+  /* End rmWhitespace option */
+
   templateLitReg.lastIndex = 0
   singleQuoteReg.lastIndex = 0
   doubleQuoteReg.lastIndex = 0

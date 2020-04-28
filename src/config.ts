@@ -12,6 +12,7 @@ type trimConfig = 'nl' | 'slurp' | false
 export interface EtaConfig {
   varName: string
   autoTrim: trimConfig | [trimConfig, trimConfig]
+  rmWhitespace: boolean
   autoEscape: boolean
   tags: [string, string]
   parse: {
@@ -50,6 +51,7 @@ function includeHelper (this: EtaConfig, templateNameOrPath: string, data: objec
 var defaultConfig: EtaConfig = {
   varName: 'it',
   autoTrim: [false, 'nl'],
+  rmWhitespace: false,
   autoEscape: true,
   tags: ['<%', '%>'],
   parse: {

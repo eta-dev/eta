@@ -4,6 +4,7 @@ declare type trimConfig = 'nl' | 'slurp' | false;
 export interface EtaConfig {
     varName: string;
     autoTrim: trimConfig | [trimConfig, trimConfig];
+    rmWhitespace: boolean;
     autoEscape: boolean;
     tags: [string, string];
     parse: {
