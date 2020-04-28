@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation, space-before-function-paren */
-/* global template, doT, ejs, Handlebars, Sqrl, Mustache, swig, Highcharts, Eta */
+/* global template, doT, ejs, Handlebars, Sqrl, Mustache, swig, Highcharts, _, Eta */
 
 // TODO: Re-enable Squirrelly when it has a stable release
 
@@ -208,6 +208,21 @@ var testList = [
       var html = ''
       for (var i = 0; i < config.calls; i++) {
         var fn = template.compile(source)
+
+        html = fn(data)
+      }
+      return html
+    }
+  },
+
+  {
+    name: 'lodash.template',
+    tester: function() {
+      var id = config.escape ? 'template' : 'template-raw'
+      var source = templateList[id]
+      var html = ''
+      for (var i = 0; i < config.calls; i++) {
+        var fn = _.template(source)
 
         html = fn(data)
       }
