@@ -166,10 +166,19 @@ function parse(str, env) {
             }
         }
     }
-    var prefixes = parseOptions.exec + parseOptions.interpolate + parseOptions.raw;
-    prefixes = prefixes.split('').reduce(function (accumulator, currentValue) {
-        return accumulator + '|' + escapeRegExp(currentValue);
-    });
+    var prefixes = [parseOptions.exec, parseOptions.interpolate, parseOptions.raw].reduce(function (accumulator, prefix) {
+        if (accumulator && prefix) {
+            return accumulator + '|' + escapeRegExp(prefix);
+        }
+        else if (prefix) {
+            // accumulator is falsy
+            return escapeRegExp(prefix);
+        }
+        else {
+            // prefix and accumulator are both falsy
+            return accumulator;
+        }
+    }, '');
     var parseOpenReg = new RegExp('([^]*?)' + escapeRegExp(env.tags[0]) + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g');
     var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + escapeRegExp(env.tags[1]) + ')', 'g');
     // TODO: benchmark having the \s* on either side vs using str.trim()
