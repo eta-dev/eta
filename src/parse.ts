@@ -22,6 +22,11 @@ var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g
 
 var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g
 
+function escapeRegExp (string: string) {
+  // From MDN
+  return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+}
+
 export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   var buffer: Array<AstObject> = []
   var trimLeftOfNextStr: string | false = false
@@ -66,12 +71,18 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     }
   }
 
-  var prefixes = (parseOptions.exec + parseOptions.interpolate + parseOptions.raw)
-    .split('')
-    .join('|')
+  var prefixes = parseOptions.exec + parseOptions.interpolate + parseOptions.raw
 
-  var parseOpenReg = new RegExp('([^]*?)' + env.tags[0] + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g')
-  var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + env.tags[1] + ')', 'g')
+  prefixes = prefixes.split('').reduce(function (accumulator, currentValue) {
+    return accumulator + '|' + escapeRegExp(currentValue)
+  })
+
+  var parseOpenReg = new RegExp(
+    '([^]*?)' + escapeRegExp(env.tags[0]) + '(-|_)?\\s*(' + prefixes + ')?\\s*',
+    'g'
+  )
+
+  var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + escapeRegExp(env.tags[1]) + ')', 'g')
   // TODO: benchmark having the \s* on either side vs using str.trim()
 
   var m
