@@ -31,7 +31,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine. The team wh
 Eta's syntax is very similar to EJS' (most templates should work with either engine), Eta has a similar API, and Eta and EJS share the same file-handling logic. Here are the differences between Eta and EJS:
 
 - Eta is more lightweight. Eta weighs less than **2.5KB gzipped**, while EJS is **4.4KB gzipped**
-- Eta compiles and renders templates **_much_ faster than EJS**. Check out these benchmarks: https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html
+- Eta compiles and renders templates **_much_ faster than EJS**. Check out these benchmarks: https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html
 - Eta allows left whitespace control (with `-`), something that doesn't work in EJS because EJS uses `-` on the left side to indicate that the value shouldn't be escaped. Instead, Eta uses `~` to output a raw value
 - Eta gives you more flexibility with delimeters -- you could set them to `{{` and `}}`, for example, while with EJS this isn't possible
 - Eta adds plugin support
@@ -47,7 +47,7 @@ Eta's syntax is very similar to EJS' (most templates should work with either eng
   <b>Eta vs doT.js</b>
   </summary>
 
-Eta and doT.js both allow embedded JavaScript, and [both have best-in-class performance](https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html) when compared to other template engines (though Eta is slightly faster with HTML-escaped templates). Here are some of the differences between Eta and doT.js:
+Eta and doT.js both allow embedded JavaScript, and [both have best-in-class performance](https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html) when compared to other template engines (though Eta is slightly faster with HTML-escaped templates). Here are some of the differences between Eta and doT.js:
 
 - Eta allows you to control how you strip preceding and trailing whitespace after tags.
 - It's much simpler to set custom delimiters with Eta than doT -- you don't have to rewrite every configuration Regular Expression
@@ -67,7 +67,7 @@ Eta and doT.js both allow embedded JavaScript, and [both have best-in-class perf
 Eta and Handlebars are very different in some ways -- Eta is an embedded template engine, while Handlebars is a logic-less template engine. Here some additional differences between Eta and Handlebars:
 
 - Eta is more lightweight. Eta weighs less than **2.5KB gzipped**, while Handlebars is **~22KB gzipped**
-- Eta compiles and renders templates **_much_ faster than Handlebars** -- around **7x faster**. Check out these benchmarks: https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html
+- Eta compiles and renders templates **_much_ faster than Handlebars** -- around **7x faster**. Check out these benchmarks: https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html
 - Eta allows you to set custom delimiters
 - Eta supports plugins
 - Eta exposes Typescript types and distributes a UMD build
@@ -122,7 +122,7 @@ Additionally, Eta is a letter of the Greek alphabet, and is three letters long, 
 - 🔨 Server and browser support
 - 🔧 Caching
 - 🚀 Super Fast
-  - Check out [these benchmarks](https://cdn.statically.io/gh/eta-dev/eta/master/browser-tests/benchmark.html)
+  - Check out [these benchmarks](https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html)
 - ⚡️ Async support
 
 ## 📜 Docs
