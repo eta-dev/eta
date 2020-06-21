@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import { trimWS, XMLEscape } from '../src/utils'
-import { defaultConfig, getConfig } from '../src/config'
+import { defaultConfig, getConfig } from '../src/index'
 
 describe('Whitespace trim', () => {
   describe('#trimLeft', () => {
