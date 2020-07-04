@@ -18,7 +18,7 @@
 
 **Summary**
 
-Eta is a lightweight and blazing fast embedded JS templating engine. The team who created Squirrelly created it to serve as a better alternative to EJS.
+Eta is a lightweight and blazing fast embedded JS templating engine. The team who created [Squirrelly](https://squirrelly.js.org) created it to serve as a better alternative to EJS.
 
 ## Eta vs Other Template Engines
 
@@ -101,7 +101,7 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 
 "Eta" means tiny in Esperanto. Plus, it can be used as an acronym for all sorts of cool phrases: "ECMAScript Template Awesomeness", "Embedded Templating Alternative", etc....
 
-Additionally, Eta is a letter of the Greek alphabet, and is three letters long, which is great for file extensions.
+Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of cool things in various mathematical fields, including efficiency) and is three letters long (perfect for a file extension).
 
 ### 🌟 Features
 
