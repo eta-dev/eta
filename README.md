@@ -185,7 +185,8 @@ To be added
 
 ## Projects using `eta`
 
-[Add yours!](https://github.com/eta-dev/eta/edit/master/README.md)
+- [Docusaurus v2](https://v2.docusaurus.io): open-source documentation framework that uses Eta to generate a SSR build
+- [Add yours!](https://github.com/eta-dev/eta/edit/master/README.md)
 
 ## Contributors
 
