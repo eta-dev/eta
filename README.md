@@ -10,7 +10,6 @@
 [![Travis](https://img.shields.io/travis/com/eta-dev/eta/master.svg)](https://travis-ci.com/eta-dev/eta)
 [![All Contributors][logo]](#contributors-)
 [![Coveralls](https://img.shields.io/coveralls/eta-dev/eta.svg)](https://coveralls.io/github/eta-dev/eta)
-[![Dev Dependencies](https://img.shields.io/david/dev/eta-dev/eta)](https://david-dm.org/eta-dev/eta?type=dev)
 
 [![documentation website](https://img.shields.io/badge/read_the_docs-website-brightgreen.svg)](https://eta.js.org)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
