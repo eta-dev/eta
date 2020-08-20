@@ -1,6 +1,6 @@
 /* global it, expect, describe */
 
-import { render, templates, compile, renderFile } from '../src/index'
+import { render, templates, compile } from '../src/index'
 
 var path = require('path')
 

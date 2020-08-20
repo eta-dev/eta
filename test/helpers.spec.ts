@@ -1,6 +1,6 @@
 /* global it, expect, describe */
 
-import { render, defaultConfig, compileToString } from '../src/index'
+import { render } from '../src/index'
 
 // SHOULD TEST COMMON ETA USAGE PATTERNS HERE
 

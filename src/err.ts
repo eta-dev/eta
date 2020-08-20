@@ -1,4 +1,5 @@
 function setPrototypeOf (obj: any, proto: any) {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   if (Object.setPrototypeOf) {
     Object.setPrototypeOf(obj, proto)
   } else {

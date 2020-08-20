@@ -22,6 +22,8 @@ export function hasOwnProp (obj: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
+// TODO: what did notConfig do?
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function copyProps<T> (toObj: T, fromObj: T, notConfig?: boolean) {
   for (var key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
@@ -76,13 +78,11 @@ function trimWS (
       str = str.replace(/^[\s\uFEFF\xA0]+/, '')
     }
   } else if (leftTrim === '-' || leftTrim === 'nl') {
-    // console.log('trimming left nl' + leftTrim)
     // nl trim
     str = str.replace(/^(?:\r\n|\n|\r)/, '')
   }
 
   if (rightTrim === '_' || rightTrim === 'slurp') {
-    // console.log('trimming right' + rightTrim)
     // full slurp
 
     // eslint-disable-next-line no-extra-boolean-cast
@@ -92,7 +92,6 @@ function trimWS (
       str = str.replace(/[\s\uFEFF\xA0]+$/, '')
     }
   } else if (rightTrim === '-' || rightTrim === 'nl') {
-    // console.log('trimming right nl' + rightTrim)
     // nl trim
     str = str.replace(/(?:\r\n|\n|\r)$/, '') // TODO: make sure this gets \r\n
   }
@@ -113,6 +112,7 @@ function replaceChar (s: string): string {
 }
 
 function XMLEscape (str: any) {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
   var newStr = String(str)
   if (/[&<>"']/.test(newStr)) {

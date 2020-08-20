@@ -1,4 +1,4 @@
-import EtaErr, { ParseErr } from './err'
+import { ParseErr } from './err'
 import { trimWS } from './utils'
 
 /* TYPES */

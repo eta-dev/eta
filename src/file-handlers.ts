@@ -19,9 +19,9 @@ interface FileOptions extends EtaConfig {
 
 interface DataObj {
   settings?: {
-    [key: string]: any
+    [key: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
   }
-  [key: string]: any
+  [key: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /* END TYPES */
@@ -103,6 +103,7 @@ function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
  * @static
  */
 
+// TODO: error if file path doesn't exist
 function includeFile (path: string, options: EtaConfig) {
   // the below creates a new options object, using the parent filepath of the old options object and the path
   var newFileOptions = getConfig({ filename: getPath(path, options) }, options)

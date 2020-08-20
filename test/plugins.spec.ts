@@ -5,10 +5,12 @@ import { AstObject } from '../src/parse'
 
 function myPlugin () {
   return {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     processAST: function (ast: Array<AstObject>, env?: EtaConfig) {
       ast.push('String to append')
       return ast
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     processFnString: function (str: string, env?: EtaConfig) {
       return str.replace(/@@num@@/, '2352.3')
     }

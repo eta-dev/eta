@@ -31,7 +31,7 @@ export interface EtaConfig {
   name?: string
   'view cache'?: boolean
   useWith?: boolean
-  [index: string]: any
+  [index: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export type PartialConfig = {
