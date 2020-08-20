@@ -36,8 +36,8 @@
   "scripts": {
     "lint": "eslint src/*.ts test/*.spec.ts examples/* --ext .js,.ts",
     "prebuild": "rimraf dist",
-    "build": "tsc --module es6 && rollup -c rollup.config.ts && typedoc --out docs --target es6 --mode modules src",
-    "quickbuild": "tsc --module es6 && rollup -c rollup.config.ts",
+    "build": "rollup -c rollup.config.ts && typedoc --out docs --target es6 --mode modules src",
+    "quickbuild": "rollup -c rollup.config.ts",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
