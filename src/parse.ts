@@ -52,7 +52,6 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
     if (strng) {
       // if string is truthy it must be of type 'string'
 
-      // TODO: benchmark replace( /(\\|')/g, '\\$1')
       strng = trimWS(
         strng,
         env,
@@ -98,7 +97,6 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   var m
 
   while ((m = parseOpenReg.exec(str))) {
-    // TODO: check if above needs exec(str) !== null. Don't think it's possible to have 0-width matches but...
     lastIndex = m[0].length + m.index
 
     var precedingString = m[1]

@@ -16,7 +16,7 @@ interface EscapeMap {
 
 /* END TYPES */
 
-export var promiseImpl = new Function('return this;')().Promise
+export var promiseImpl = new Function('return this')().Promise
 
 export function hasOwnProp (obj: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(obj, prop)

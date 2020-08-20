@@ -27,8 +27,6 @@ export default function compileToString (str: string, env: EtaConfig) {
   }
 
   return res
-
-  // TODO: is `return cb()` necessary, or could we just do `cb()`
 }
 
 function compileScope (buff: Array<AstObject>, env: EtaConfig) {

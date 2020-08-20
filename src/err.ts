@@ -16,8 +16,6 @@ EtaErr.prototype = Object.create(Error.prototype, {
   name: { value: 'Eta Error', enumerable: false }
 })
 
-// TODO: Class transpilation adds a lot to the bundle size
-
 export function ParseErr (message: string, str: string, indx: number) {
   var whitespace = str.slice(0, indx).split(/\n/)
 
