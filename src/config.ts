@@ -34,9 +34,7 @@ export interface EtaConfig {
   [index: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export type PartialConfig = {
-  [P in keyof EtaConfig]?: EtaConfig[P]
-}
+export type PartialConfig = Partial<EtaConfig>
 
 /* END TYPES */
 
