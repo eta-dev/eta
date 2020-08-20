@@ -280,7 +280,7 @@
   /* END TYPES */
   function compileToString(str, env) {
       var buffer = parse(str, env);
-      var res = "var tR='';" +
+      var res = "var tR=''\n" +
           (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
           compileScope(buffer, env) +
           'if(cb){cb(null,tR)} return tR' +
@@ -304,21 +304,21 @@
           if (typeof currentBlock === 'string') {
               var str = currentBlock;
               // we know string exists
-              returnStr += "tR+='" + str + "';";
+              returnStr += "tR+='" + str + "'\n";
           }
           else {
               var type = currentBlock.t; // ~, s, !, ?, r
               var content = currentBlock.val || '';
               if (type === 'r') {
                   // raw
-                  returnStr += 'tR+=' + content + ';';
+                  returnStr += 'tR+=' + content + '\n';
               }
               else if (type === 'i') {
                   // interpolate
                   if (env.autoEscape) {
                       content = 'E.e(' + content + ')';
                   }
-                  returnStr += 'tR+=' + content + ';';
+                  returnStr += 'tR+=' + content + '\n';
                   // reference
               }
               else if (type === 'e') {
@@ -410,7 +410,7 @@
           // Have to use generated function for this, since in envs without support,
           // it breaks in parsing
           try {
-              ctor = new Function('return (async function(){}).constructor;')();
+              ctor = new Function('return (async function(){}).constructor')();
           }
           catch (e) {
               if (e instanceof SyntaxError) {
@@ -437,7 +437,9 @@
                   '\n' +
                   Array(e.message.length + 1).join('=') +
                   '\n' +
-                  compileToString(str, options));
+                  compileToString(str, options) +
+                  '\n' // This will put an extra newline before the callstack for extra readability
+              );
           }
           else {
               throw e;

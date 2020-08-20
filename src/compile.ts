@@ -47,7 +47,8 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
           '\n' +
           Array(e.message.length + 1).join('=') +
           '\n' +
-          compileToString(str, options)
+          compileToString(str, options) +
+          '\n' // This will put an extra newline before the callstack for extra readability
       )
     } else {
       throw e

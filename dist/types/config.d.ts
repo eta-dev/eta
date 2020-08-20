@@ -28,9 +28,7 @@ export interface EtaConfig {
     useWith?: boolean;
     [index: string]: any;
 }
-export declare type PartialConfig = {
-    [P in keyof EtaConfig]?: EtaConfig[P];
-};
+export declare type PartialConfig = Partial<EtaConfig>;
 declare var defaultConfig: EtaConfig;
 declare function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig;
 export { defaultConfig, getConfig };

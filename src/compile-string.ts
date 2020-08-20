@@ -11,7 +11,7 @@ export default function compileToString (str: string, env: EtaConfig) {
   var buffer: Array<AstObject> = Parse(str, env)
 
   var res =
-    "var tR='';" +
+    "var tR=''\n" +
     (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
     compileScope(buffer, env) +
     'if(cb){cb(null,tR)} return tR' +
@@ -40,20 +40,20 @@ function compileScope (buff: Array<AstObject>, env: EtaConfig) {
       var str = currentBlock
 
       // we know string exists
-      returnStr += "tR+='" + str + "';"
+      returnStr += "tR+='" + str + "'\n"
     } else {
       var type = currentBlock.t // ~, s, !, ?, r
       var content = currentBlock.val || ''
 
       if (type === 'r') {
         // raw
-        returnStr += 'tR+=' + content + ';'
+        returnStr += 'tR+=' + content + '\n'
       } else if (type === 'i') {
         // interpolate
         if (env.autoEscape) {
           content = 'E.e(' + content + ')'
         }
-        returnStr += 'tR+=' + content + ';'
+        returnStr += 'tR+=' + content + '\n'
         // reference
       } else if (type === 'e') {
         // execute
