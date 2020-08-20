@@ -20,7 +20,7 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
     // Have to use generated function for this, since in envs without support,
     // it breaks in parsing
     try {
-      ctor = new Function('return (async function(){}).constructor;')()
+      ctor = new Function('return (async function(){}).constructor')()
     } catch (e) {
       if (e instanceof SyntaxError) {
         throw EtaErr("This environment doesn't support async/await")
