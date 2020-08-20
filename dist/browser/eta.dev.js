@@ -5,6 +5,7 @@
 }(this, (function (exports) { 'use strict';
 
   function setPrototypeOf(obj, proto) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       if (Object.setPrototypeOf) {
           Object.setPrototypeOf(obj, proto);
       }
@@ -20,7 +21,6 @@
   EtaErr.prototype = Object.create(Error.prototype, {
       name: { value: 'Eta Error', enumerable: false }
   });
-  // TODO: Class transpilation adds a lot to the bundle size
   function ParseErr(message, str, indx) {
       var whitespace = str.slice(0, indx).split(/\n/);
       var lineNo = whitespace.length;
@@ -43,10 +43,12 @@
   // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
   // TODO: only include trimLeft polyfill if not in ES6
   /* END TYPES */
-  var promiseImpl = new Function('return this;')().Promise;
+  var promiseImpl = new Function('return this')().Promise;
   function hasOwnProp(obj, prop) {
       return Object.prototype.hasOwnProperty.call(obj, prop);
   }
+  // TODO: what did notConfig do?
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function copyProps(toObj, fromObj, notConfig) {
       for (var key in fromObj) {
           if (hasOwnProp(fromObj, key)) {
@@ -91,12 +93,10 @@
           }
       }
       else if (leftTrim === '-' || leftTrim === 'nl') {
-          // console.log('trimming left nl' + leftTrim)
           // nl trim
           str = str.replace(/^(?:\r\n|\n|\r)/, '');
       }
       if (rightTrim === '_' || rightTrim === 'slurp') {
-          // console.log('trimming right' + rightTrim)
           // full slurp
           // eslint-disable-next-line no-extra-boolean-cast
           if (!!String.prototype.trimRight) {
@@ -107,7 +107,6 @@
           }
       }
       else if (rightTrim === '-' || rightTrim === 'nl') {
-          // console.log('trimming right nl' + rightTrim)
           // nl trim
           str = str.replace(/(?:\r\n|\n|\r)$/, ''); // TODO: make sure this gets \r\n
       }
@@ -124,6 +123,7 @@
       return escMap[s];
   }
   function XMLEscape(str) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
       var newStr = String(str);
       if (/[&<>"']/.test(newStr)) {
@@ -163,7 +163,6 @@
       function pushString(strng, shouldTrimRightOfString) {
           if (strng) {
               // if string is truthy it must be of type 'string'
-              // TODO: benchmark replace( /(\\|')/g, '\\$1')
               strng = trimWS(strng, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
               shouldTrimRightOfString);
               if (strng) {
@@ -192,7 +191,6 @@
       // TODO: benchmark having the \s* on either side vs using str.trim()
       var m;
       while ((m = parseOpenReg.exec(str))) {
-          // TODO: check if above needs exec(str) !== null. Don't think it's possible to have 0-width matches but...
           lastIndex = m[0].length + m.index;
           var precedingString = m[1];
           var wsLeft = m[2];
@@ -296,7 +294,6 @@
           }
       }
       return res;
-      // TODO: is `return cb()` necessary, or could we just do `cb()`
   }
   function compileScope(buff, env) {
       var i = 0;
@@ -354,8 +351,6 @@
           this.cache = {};
       };
       Cacher.prototype.load = function (cacheObj) {
-          // TODO: this will err with deep objects and `storage` or `plugins` keys.
-          // Update Feb 26: EDITED so it shouldn't err
           copyProps(this.cache, cacheObj);
       };
       return Cacher;
