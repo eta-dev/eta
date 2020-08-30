@@ -7,6 +7,9 @@ function setPrototypeOf (obj: any, proto: any) {
   }
 }
 
+// This is pretty much the only way to get nice, extended Errors
+// without using ES6
+
 export default function EtaErr (message: string): Error {
   var err = new Error(message)
   setPrototypeOf(err, EtaErr.prototype)
