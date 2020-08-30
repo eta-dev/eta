@@ -13,7 +13,7 @@ describe('File handlers test', () => {
   })
 
   it('render file with callback works', done => {
-    function cb (err: Error | null, res?: string) {
+    function cb (_err: Error | null, res?: string) {
       try {
         expect(res).toBe('Hi Ada Lovelace')
         done()
@@ -26,13 +26,13 @@ describe('File handlers test', () => {
   })
 
   it('parses a simple template w/ a callback', async () => {
-    renderFile(filePath, { name: 'Ben' }, function (err, res) {
+    renderFile(filePath, { name: 'Ben' }, function (_err, res) {
       expect(res).toEqual('Hi Ben')
     })
   })
 
   it('parses a simple template w/ cache', async () => {
-    renderFile(filePath, { name: 'Ben', cache: true }, function (err, res) {
+    renderFile(filePath, { name: 'Ben', cache: true }, function (_err, res) {
       expect(res).toEqual('Hi Ben')
     })
   })
@@ -51,7 +51,7 @@ describe('File handlers test', () => {
           'view options': { autoEscape: false }
         }
       },
-      function (err, res) {
+      function (_err, res) {
         expect(res).toEqual('Hi Ben')
       }
     )
