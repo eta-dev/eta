@@ -1,6 +1,8 @@
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
 
+import { trimLeft, trimRight } from './polyfills'
+
 /* TYPES */
 
 import { EtaConfig } from './config'
@@ -16,15 +18,13 @@ interface EscapeMap {
 
 /* END TYPES */
 
-export var promiseImpl = new Function('return this')().Promise
-
 export function hasOwnProp (obj: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
 // TODO: what did notConfig do?
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function copyProps<T> (toObj: T, fromObj: T, notConfig?: boolean) {
+export function copyProps<T> (toObj: T, fromObj: T /* notConfig?: boolean */) {
   for (var key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
       toObj[key] = fromObj[key]
@@ -71,12 +71,7 @@ function trimWS (
     // console.log('trimming left' + leftTrim)
     // full slurp
 
-    // eslint-disable-next-line no-extra-boolean-cast
-    if (!!String.prototype.trimLeft) {
-      str = str.trimLeft()
-    } else {
-      str = str.replace(/^[\s\uFEFF\xA0]+/, '')
-    }
+    str = trimLeft(str)
   } else if (leftTrim === '-' || leftTrim === 'nl') {
     // nl trim
     str = str.replace(/^(?:\r\n|\n|\r)/, '')
@@ -84,13 +79,7 @@ function trimWS (
 
   if (rightTrim === '_' || rightTrim === 'slurp') {
     // full slurp
-
-    // eslint-disable-next-line no-extra-boolean-cast
-    if (!!String.prototype.trimRight) {
-      str = str.trimRight()
-    } else {
-      str = str.replace(/[\s\uFEFF\xA0]+$/, '')
-    }
+    str = trimRight(str)
   } else if (rightTrim === '-' || rightTrim === 'nl') {
     // nl trim
     str = str.replace(/(?:\r\n|\n|\r)$/, '') // TODO: make sure this gets \r\n
