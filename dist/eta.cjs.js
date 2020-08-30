@@ -11,6 +11,8 @@ function setPrototypeOf(obj, proto) {
         obj.__proto__ = proto;
     }
 }
+// This is pretty much the only way to get nice, extended Errors
+// without using ES6
 function EtaErr(message) {
     var err = new Error(message);
     setPrototypeOf(err, EtaErr.prototype);
@@ -38,16 +40,47 @@ function ParseErr(message, str, indx) {
     throw EtaErr(message);
 }
 
-// TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
-// TODO: only include trimLeft polyfill if not in ES6
-/* END TYPES */
 var promiseImpl = new Function('return this')().Promise;
+function getAsyncFunctionConstructor() {
+    try {
+        return new Function('return (async function(){}).constructor')();
+    }
+    catch (e) {
+        if (e instanceof SyntaxError) {
+            throw EtaErr("This environment doesn't support async/await");
+        }
+        else {
+            throw e;
+        }
+    }
+}
+function trimLeft(str) {
+    // eslint-disable-next-line no-extra-boolean-cast
+    if (!!String.prototype.trimLeft) {
+        return str.trimLeft();
+    }
+    else {
+        return str.replace(/^\s+/, '');
+    }
+}
+function trimRight(str) {
+    // eslint-disable-next-line no-extra-boolean-cast
+    if (!!String.prototype.trimRight) {
+        return str.trimRight();
+    }
+    else {
+        return str.replace(/\s+$/, ''); // TODO: do we really need to replace BOM's?
+    }
+}
+
+// TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
+/* END TYPES */
 function hasOwnProp(obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 // TODO: what did notConfig do?
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function copyProps(toObj, fromObj, notConfig) {
+function copyProps(toObj, fromObj /* notConfig?: boolean */) {
     for (var key in fromObj) {
         if (hasOwnProp(fromObj, key)) {
             toObj[key] = fromObj[key];
@@ -82,13 +115,7 @@ function trimWS(str, env, wsLeft, wsRight) {
     if (leftTrim === '_' || leftTrim === 'slurp') {
         // console.log('trimming left' + leftTrim)
         // full slurp
-        // eslint-disable-next-line no-extra-boolean-cast
-        if (!!String.prototype.trimLeft) {
-            str = str.trimLeft();
-        }
-        else {
-            str = str.replace(/^[\s\uFEFF\xA0]+/, '');
-        }
+        str = trimLeft(str);
     }
     else if (leftTrim === '-' || leftTrim === 'nl') {
         // nl trim
@@ -96,13 +123,7 @@ function trimWS(str, env, wsLeft, wsRight) {
     }
     if (rightTrim === '_' || rightTrim === 'slurp') {
         // full slurp
-        // eslint-disable-next-line no-extra-boolean-cast
-        if (!!String.prototype.trimRight) {
-            str = str.trimRight();
-        }
-        else {
-            str = str.replace(/[\s\uFEFF\xA0]+$/, '');
-        }
+        str = trimRight(str);
     }
     else if (rightTrim === '-' || rightTrim === 'nl') {
         // nl trim
@@ -349,7 +370,7 @@ var Cacher = /** @class */ (function () {
         this.cache = {};
     };
     Cacher.prototype.load = function (cacheObj) {
-        copyProps(this.cache, cacheObj);
+        copyProps(this.cache, cacheObj /* true */); // Why the 3rd argument?
     };
     return Cacher;
 }());
@@ -405,19 +426,7 @@ function compile(str, env) {
     /* ASYNC HANDLING */
     // The below code is modified from mde/ejs. All credit should go to them.
     if (options.async) {
-        // Have to use generated function for this, since in envs without support,
-        // it breaks in parsing
-        try {
-            ctor = new Function('return (async function(){}).constructor')();
-        }
-        catch (e) {
-            if (e instanceof SyntaxError) {
-                throw EtaErr("This environment doesn't support async/await");
-            }
-            else {
-                throw e;
-            }
-        }
+        ctor = getAsyncFunctionConstructor();
     }
     else {
         ctor = Function;
@@ -691,7 +700,7 @@ function render(template, data, env, cb) {
     }
 }
 
-/* Export file stuff */
+//@denoify-ignore
 /* TYPES */
 /* END TYPES */
 defaultConfig.includeFile = includeFileHelper;
