@@ -8,6 +8,4 @@ import { TemplateFunction } from './compile'
 
 var templates = new Cacher<TemplateFunction>({})
 
-/* ASYNC LOOP FNs */
-
 export { templates }
