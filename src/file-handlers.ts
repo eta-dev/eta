@@ -4,7 +4,8 @@ import EtaErr from './err'
 import compile from './compile'
 import { getConfig } from './config'
 import { getPath, readFile, loadFile } from './file-utils'
-import { promiseImpl, copyProps } from './utils'
+import { copyProps } from './utils'
+import { promiseImpl } from './polyfills'
 
 /* TYPES */
 

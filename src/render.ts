@@ -1,6 +1,6 @@
 import compile from './compile'
 import { getConfig } from './config'
-import { promiseImpl } from './utils'
+import { promiseImpl } from './polyfills'
 import EtaErr from './err'
 
 /* TYPES */

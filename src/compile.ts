@@ -6,6 +6,7 @@ import EtaErr from './err'
 
 import { EtaConfig, PartialConfig } from './config'
 import { CallbackFn } from './file-handlers'
+import { getAsyncFunctionConstructor } from './polyfills'
 export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn) => string
 
 /* END TYPES */
@@ -17,17 +18,7 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.
   if (options.async) {
-    // Have to use generated function for this, since in envs without support,
-    // it breaks in parsing
-    try {
-      ctor = new Function('return (async function(){}).constructor')()
-    } catch (e) {
-      if (e instanceof SyntaxError) {
-        throw EtaErr("This environment doesn't support async/await")
-      } else {
-        throw e
-      }
-    }
+    ctor = getAsyncFunctionConstructor() as FunctionConstructor
   } else {
     ctor = Function
   }
