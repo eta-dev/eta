@@ -1,10 +1,10 @@
-import { copyProps } from './utils.ts'
+import { copyProps } from "./utils.ts";
 
 /* TYPES */
 
 interface Dict<T> {
   // Basically, an object where all keys point to a value of the same type
-  [key: string]: T
+  [key: string]: T;
 }
 
 /* END TYPES */
@@ -12,23 +12,23 @@ interface Dict<T> {
 class Cacher<T> {
   constructor(private cache: Dict<T>) {}
   define(key: string, val: T) {
-    this.cache[key] = val
+    this.cache[key] = val;
   }
   get(key: string) {
     // string | array.
     // TODO: allow array of keys to look down
     // TODO: create plugin to allow referencing helpers, filters with dot notation
-    return this.cache[key]
+    return this.cache[key];
   }
   remove(key: string) {
-    delete this.cache[key]
+    delete this.cache[key];
   }
   reset() {
-    this.cache = {}
+    this.cache = {};
   }
   load(cacheObj: Dict<T>) {
-    copyProps(this.cache, cacheObj /* true */) // Why the 3rd argument?
+    copyProps(this.cache, cacheObj /* true */); // Why the 3rd argument?
   }
 }
 
-export { Cacher }
+export { Cacher };

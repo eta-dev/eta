@@ -1,24 +1,24 @@
-var fs = require('fs')
-var path = require('path')
-var _BOM = /^\uFEFF/
+var fs = require("fs");
+var path = require("path");
+var _BOM = /^\uFEFF/;
 
 // express is set like: app.engine('html', require('eta').renderFile)
 
-import EtaErr from './err'
-import Compile from './compile'
-import { getConfig } from './config'
+import EtaErr from "./err";
+import Compile from "./compile";
+import { getConfig } from "./config";
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from './config'
-import { TemplateFunction } from './compile'
+import { EtaConfig, PartialConfig } from "./config";
+import { TemplateFunction } from "./compile";
 
 interface PartialFileConfig extends PartialConfig {
-  filename: string
+  filename: string;
 }
 
 interface FileConfig extends EtaConfig {
-  filename: string
+  filename: string;
 }
 
 /* END TYPES */
@@ -33,16 +33,20 @@ interface FileConfig extends EtaConfig {
  * @return {String}
  */
 
-function getWholeFilePath (name: string, parentfile: string, isDirectory?: boolean) {
+function getWholeFilePath(
+  name: string,
+  parentfile: string,
+  isDirectory?: boolean,
+) {
   var includePath = path.resolve(
     isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
-    name // file
-  )
-  var ext = path.extname(name)
+    name, // file
+  );
+  var ext = path.extname(name);
   if (!ext) {
-    includePath += '.eta'
+    includePath += ".eta";
   }
-  return includePath
+  return includePath;
 }
 
 /**
@@ -53,22 +57,26 @@ function getWholeFilePath (name: string, parentfile: string, isDirectory?: boole
  * @return {String}
  */
 
-function getPath (path: string, options: EtaConfig) {
-  var includePath
-  var filePath
-  var views = options.views
-  var match = /^[A-Za-z]+:\\|^\//.exec(path)
+function getPath(path: string, options: EtaConfig) {
+  var includePath;
+  var filePath;
+  var views = options.views;
+  var match = /^[A-Za-z]+:\\|^\//.exec(path);
 
   // Abs path
   if (match && match.length) {
-    includePath = getWholeFilePath(path.replace(/^\/*/, ''), options.root || '/', true)
+    includePath = getWholeFilePath(
+      path.replace(/^\/*/, ""),
+      options.root || "/",
+      true,
+    );
   } else {
     // Relative paths
     // Look relative to a passed filename first
     if (options.filename) {
-      filePath = getWholeFilePath(path, options.filename)
+      filePath = getWholeFilePath(path, options.filename);
       if (fs.existsSync(filePath)) {
-        includePath = filePath
+        includePath = filePath;
       }
     }
     // Then look in any views directories
@@ -76,37 +84,40 @@ function getPath (path: string, options: EtaConfig) {
       if (
         Array.isArray(views) &&
         views.some(function (v) {
-          filePath = getWholeFilePath(path, v, true)
-          return fs.existsSync(filePath)
+          filePath = getWholeFilePath(path, v, true);
+          return fs.existsSync(filePath);
         })
       ) {
-        includePath = filePath
+        includePath = filePath;
       }
     }
     if (!includePath) {
-      throw EtaErr('Could not find the include file "' + path + '"')
+      throw EtaErr('Could not find the include file "' + path + '"');
     }
   }
-  return includePath
+  return includePath;
 }
 
-function readFile (filePath: string) {
+function readFile(filePath: string) {
   return fs
     .readFileSync(filePath)
     .toString()
-    .replace(_BOM, '') // TODO: is replacing BOM's necessary?
+    .replace(_BOM, ""); // TODO: is replacing BOM's necessary?
 }
 
-function loadFile (filePath: string, options: PartialFileConfig): TemplateFunction {
-  var config = getConfig(options)
-  var template = readFile(filePath)
+function loadFile(
+  filePath: string,
+  options: PartialFileConfig,
+): TemplateFunction {
+  var config = getConfig(options);
+  var template = readFile(filePath);
   try {
-    var compiledTemplate = Compile(template, config)
-    config.templates.define((config as FileConfig).filename, compiledTemplate)
-    return compiledTemplate
+    var compiledTemplate = Compile(template, config);
+    config.templates.define((config as FileConfig).filename, compiledTemplate);
+    return compiledTemplate;
   } catch (e) {
-    throw EtaErr('Loading file: ' + filePath + ' failed')
+    throw EtaErr("Loading file: " + filePath + " failed");
   }
 }
 
-export { getPath, readFile, loadFile }
+export { getPath, readFile, loadFile };

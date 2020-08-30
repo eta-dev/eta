@@ -1,11 +1,11 @@
-import { Cacher } from './storage.ts'
+import { Cacher } from "./storage.ts";
 
 /* TYPES */
 
-import { TemplateFunction } from './compile.ts'
+import { TemplateFunction } from "./compile.ts";
 
 /* END TYPES */
 
-var templates = new Cacher<TemplateFunction>({})
+var templates = new Cacher<TemplateFunction>({});
 
-export { templates }
+export { templates };
