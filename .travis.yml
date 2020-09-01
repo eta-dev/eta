@@ -6,7 +6,7 @@ notifications:
   email: false
 node_js:
   - '10'
-  - '11'
+  - '12'
 script:
   - yarn test:prod && yarn build
 after_success:
