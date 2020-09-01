@@ -3,7 +3,7 @@ import * as Eta from '../src/index'
 import { EtaConfig } from '../src/config'
 import { AstObject } from '../src/parse'
 
-function myPlugin () {
+function myPlugin() {
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     processAST: function (ast: Array<AstObject>, _env?: EtaConfig) {
@@ -13,7 +13,7 @@ function myPlugin () {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     processFnString: function (str: string, _env?: EtaConfig) {
       return str.replace(/@@num@@/, '2352.3')
-    }
+    },
   }
 }
 

@@ -22,7 +22,7 @@ describe('Simple Render checks', () => {
     it('Rendering function works', async () => {
       let template = 'Hello <%= await it.getName() %>!'
       let getName = () => {
-        return new Promise(res => {
+        return new Promise((res) => {
           setTimeout(() => {
             res('Ada')
           }, 20)

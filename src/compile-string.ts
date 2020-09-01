@@ -7,7 +7,7 @@ import { AstObject } from './parse'
 
 /* END TYPES */
 
-export default function compileToString (str: string, env: EtaConfig) {
+export default function compileToString(str: string, env: EtaConfig) {
   var buffer: Array<AstObject> = Parse(str, env)
 
   var res =
@@ -29,7 +29,7 @@ export default function compileToString (str: string, env: EtaConfig) {
   return res
 }
 
-function compileScope (buff: Array<AstObject>, env: EtaConfig) {
+function compileScope(buff: Array<AstObject>, env: EtaConfig) {
   var i = 0
   var buffLength = buff.length
   var returnStr = ''

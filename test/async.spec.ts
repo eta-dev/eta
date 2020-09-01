@@ -2,15 +2,15 @@
 
 import * as Eta from '../src/index'
 
-function resolveAfter2Seconds (val: string): Promise<string> {
-  return new Promise(resolve => {
+function resolveAfter2Seconds(val: string): Promise<string> {
+  return new Promise((resolve) => {
     setTimeout(() => {
       resolve(val)
     }, 20)
   })
 }
 
-async function asyncTest () {
+async function asyncTest() {
   const result = await resolveAfter2Seconds('HI FROM ASYNC')
   return result
 }

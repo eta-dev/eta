@@ -11,7 +11,7 @@ import { CallbackFn } from './file-handlers'
 
 /* END TYPES */
 
-function handleCache (template: string | TemplateFunction, options: EtaConfig): TemplateFunction {
+function handleCache(template: string | TemplateFunction, options: EtaConfig): TemplateFunction {
   var templateFunc
 
   if (options.cache && options.name && options.templates.get(options.name)) {
@@ -31,7 +31,7 @@ function handleCache (template: string | TemplateFunction, options: EtaConfig): 
   return templateFunc
 }
 
-export default function render (
+export default function render(
   template: string | TemplateFunction,
   data: object,
   env?: PartialConfig,

@@ -1,4 +1,4 @@
-function setPrototypeOf (obj: any, proto: any) {
+function setPrototypeOf(obj: any, proto: any) {
   // eslint-disable-line @typescript-eslint/no-explicit-any
   if (Object.setPrototypeOf) {
     Object.setPrototypeOf(obj, proto)
@@ -10,17 +10,17 @@ function setPrototypeOf (obj: any, proto: any) {
 // This is pretty much the only way to get nice, extended Errors
 // without using ES6
 
-export default function EtaErr (message: string): Error {
+export default function EtaErr(message: string): Error {
   var err = new Error(message)
   setPrototypeOf(err, EtaErr.prototype)
   return err
 }
 
 EtaErr.prototype = Object.create(Error.prototype, {
-  name: { value: 'Eta Error', enumerable: false }
+  name: { value: 'Eta Error', enumerable: false },
 })
 
-export function ParseErr (message: string, str: string, indx: number) {
+export function ParseErr(message: string, str: string, indx: number) {
   var whitespace = str.slice(0, indx).split(/\n/)
 
   var lineNo = whitespace.length

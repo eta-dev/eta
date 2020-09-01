@@ -41,7 +41,7 @@ interface DataObj {
  * @static
  */
 
-function handleCache (options: FileOptions): TemplateFunction {
+function handleCache(options: FileOptions): TemplateFunction {
   var filename = options.filename
 
   if (options.cache) {
@@ -67,7 +67,7 @@ function handleCache (options: FileOptions): TemplateFunction {
  * @static
  */
 
-function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
+function tryHandleCache(options: FileOptions, data: object, cb: CallbackFn) {
   var result
   if (!cb) {
     // No callback, try returning a promise
@@ -105,14 +105,14 @@ function tryHandleCache (options: FileOptions, data: object, cb: CallbackFn) {
  */
 
 // TODO: error if file path doesn't exist
-function includeFile (path: string, options: EtaConfig) {
+function includeFile(path: string, options: EtaConfig) {
   // the below creates a new options object, using the parent filepath of the old options object and the path
   var newFileOptions = getConfig({ filename: getPath(path, options) }, options)
   // TODO: make sure properties are currectly copied over
   return handleCache(newFileOptions as FileOptions)
 }
 
-function renderFile (filename: string, data: DataObj, cb?: CallbackFn) {
+function renderFile(filename: string, data: DataObj, cb?: CallbackFn) {
   var Config: FileOptions = getConfig((data as PartialConfig) || {}) as FileOptions
   // TODO: make sure above doesn't error. We do set filename down below
 

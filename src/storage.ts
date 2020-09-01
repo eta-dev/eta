@@ -10,23 +10,23 @@ interface Dict<T> {
 /* END TYPES */
 
 class Cacher<T> {
-  constructor (private cache: Dict<T>) {}
-  define (key: string, val: T) {
+  constructor(private cache: Dict<T>) {}
+  define(key: string, val: T) {
     this.cache[key] = val
   }
-  get (key: string) {
+  get(key: string) {
     // string | array.
     // TODO: allow array of keys to look down
     // TODO: create plugin to allow referencing helpers, filters with dot notation
     return this.cache[key]
   }
-  remove (key: string) {
+  remove(key: string) {
     delete this.cache[key]
   }
-  reset () {
+  reset() {
     this.cache = {}
   }
-  load (cacheObj: Dict<T>) {
+  load(cacheObj: Dict<T>) {
     copyProps(this.cache, cacheObj)
   }
 }

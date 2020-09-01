@@ -2,7 +2,7 @@ import EtaErr from './err'
 
 export var promiseImpl = new Function('return this')().Promise
 
-export function getAsyncFunctionConstructor (): Function {
+export function getAsyncFunctionConstructor(): Function {
   try {
     return new Function('return (async function(){}).constructor')()
   } catch (e) {
@@ -14,7 +14,7 @@ export function getAsyncFunctionConstructor (): Function {
   }
 }
 
-export function trimLeft (str: string): string {
+export function trimLeft(str: string): string {
   // eslint-disable-next-line no-extra-boolean-cast
   if (!!String.prototype.trimLeft) {
     return str.trimLeft()
@@ -23,7 +23,7 @@ export function trimLeft (str: string): string {
   }
 }
 
-export function trimRight (str: string): string {
+export function trimRight(str: string): string {
   // eslint-disable-next-line no-extra-boolean-cast
   if (!!String.prototype.trimRight) {
     return str.trimRight()

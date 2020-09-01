@@ -10,6 +10,6 @@ interface GenericData {
 
 /* END TYPES */
 
-export function includeFileHelper (this: EtaConfig, path: string, data: GenericData): string {
+export function includeFileHelper(this: EtaConfig, path: string, data: GenericData): string {
   return includeFile(path, this)(data, this)
 }

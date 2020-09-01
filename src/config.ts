@@ -38,7 +38,7 @@ export type PartialConfig = Partial<EtaConfig>
 
 /* END TYPES */
 
-function includeHelper (this: EtaConfig, templateNameOrPath: string, data: object): string {
+function includeHelper(this: EtaConfig, templateNameOrPath: string, data: object): string {
   var template = this.templates.get(templateNameOrPath)
   if (!template) {
     throw EtaErr('Could not fetch template "' + templateNameOrPath + '"')
@@ -55,7 +55,7 @@ var defaultConfig: EtaConfig = {
   parse: {
     interpolate: '=',
     raw: '~',
-    exec: ''
+    exec: '',
   },
   async: false,
   templates: templates,
@@ -63,12 +63,12 @@ var defaultConfig: EtaConfig = {
   plugins: [],
   useWith: false,
   e: XMLEscape,
-  include: includeHelper
+  include: includeHelper,
 }
 
 includeHelper.bind(defaultConfig)
 
-function getConfig (override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
+function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
   // TODO: run more tests on this
 
   var res: PartialConfig = {} // Linked

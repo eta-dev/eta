@@ -11,7 +11,7 @@ export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn
 
 /* END TYPES */
 
-export default function compile (str: string, env?: PartialConfig): TemplateFunction {
+export default function compile(str: string, env?: PartialConfig): TemplateFunction {
   var options: EtaConfig = getConfig(env || {})
   var ctor // constructor
 

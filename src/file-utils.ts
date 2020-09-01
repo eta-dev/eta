@@ -33,7 +33,7 @@ interface FileConfig extends EtaConfig {
  * @return {String}
  */
 
-function getWholeFilePath (name: string, parentfile: string, isDirectory?: boolean) {
+function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolean) {
   var includePath = path.resolve(
     isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
     name // file
@@ -53,7 +53,7 @@ function getWholeFilePath (name: string, parentfile: string, isDirectory?: boole
  * @return {String}
  */
 
-function getPath (path: string, options: EtaConfig) {
+function getPath(path: string, options: EtaConfig) {
   var includePath
   var filePath
   var views = options.views
@@ -90,14 +90,11 @@ function getPath (path: string, options: EtaConfig) {
   return includePath
 }
 
-function readFile (filePath: string) {
-  return fs
-    .readFileSync(filePath)
-    .toString()
-    .replace(_BOM, '') // TODO: is replacing BOM's necessary?
+function readFile(filePath: string) {
+  return fs.readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
 }
 
-function loadFile (filePath: string, options: PartialFileConfig): TemplateFunction {
+function loadFile(filePath: string, options: PartialFileConfig): TemplateFunction {
   var config = getConfig(options)
   var template = readFile(filePath)
   try {

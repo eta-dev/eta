@@ -12,8 +12,8 @@ describe('File handlers test', () => {
     expect(renderedFile).toEqual('Hi Ben')
   })
 
-  it('render file with callback works', done => {
-    function cb (_err: Error | null, res?: string) {
+  it('render file with callback works', (done) => {
+    function cb(_err: Error | null, res?: string) {
       try {
         expect(res).toBe('Hi Ada Lovelace')
         done()
@@ -48,8 +48,8 @@ describe('File handlers test', () => {
         settings: {
           views: ['templates', 'othertemplates'],
           'view cache': true,
-          'view options': { autoEscape: false }
-        }
+          'view options': { autoEscape: false },
+        },
       },
       function (_err, res) {
         expect(res).toEqual('Hi Ben')

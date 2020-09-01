@@ -22,12 +22,12 @@ var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g
 
 var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g
 
-function escapeRegExp (string: string) {
+function escapeRegExp(string: string) {
   // From MDN
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
-export default function parse (str: string, env: EtaConfig): Array<AstObject> {
+export default function parse(str: string, env: EtaConfig): Array<AstObject> {
   var buffer: Array<AstObject> = []
   var trimLeftOfNextStr: string | false = false
   var lastIndex = 0
@@ -48,7 +48,7 @@ export default function parse (str: string, env: EtaConfig): Array<AstObject> {
   singleQuoteReg.lastIndex = 0
   doubleQuoteReg.lastIndex = 0
 
-  function pushString (strng: string, shouldTrimRightOfString?: string | false) {
+  function pushString(strng: string, shouldTrimRightOfString?: string | false) {
     if (strng) {
       // if string is truthy it must be of type 'string'
 

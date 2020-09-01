@@ -18,12 +18,12 @@ interface EscapeMap {
 
 /* END TYPES */
 
-export function hasOwnProp (obj: object, prop: string) {
+export function hasOwnProp(obj: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function copyProps<T> (toObj: T, fromObj: T) {
+export function copyProps<T>(toObj: T, fromObj: T) {
   for (var key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
       toObj[key] = fromObj[key]
@@ -32,7 +32,7 @@ export function copyProps<T> (toObj: T, fromObj: T) {
   return toObj
 }
 
-function trimWS (
+function trimWS(
   str: string,
   env: EtaConfig,
   wsLeft: string | false,
@@ -92,14 +92,14 @@ var escMap: EscapeMap = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  "'": '&#39;'
+  "'": '&#39;',
 }
 
-function replaceChar (s: string): string {
+function replaceChar(s: string): string {
   return escMap[s]
 }
 
-function XMLEscape (str: any) {
+function XMLEscape(str: any) {
   // eslint-disable-line @typescript-eslint/no-explicit-any
   // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
   var newStr = String(str)
