@@ -39,7 +39,7 @@
     "build": "denoify && rollup -c rollup.config.ts && typedoc --tsconfig tsconfig.json --target es6 src && deno fmt deno_dist/*.ts",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage && npm run test:deno",
-    "test:deno": "deno test test/*.deno.spec.ts --unstable",
+    "test:deno": "deno test test/deno/*.spec.ts --unstable",
     "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "deploy-docs": "ts-node tools/gh-pages-publish",
@@ -64,7 +64,7 @@
       ".(ts)": "ts-jest"
     },
     "testEnvironment": "node",
-    "testRegex": "\\/test\\/.*(?<!deno)\\.(test|spec)\\.(ts|js)$",
+    "testRegex": "\\/test\\/(?!deno\\/).*(\\.spec\\.ts)$",
     "moduleFileExtensions": [
       "ts",
       "js"
@@ -72,6 +72,7 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "/test/",
+      "/test/deno/",
       "/src/*.deno.ts"
     ],
     "testPathIgnorePatterns": [
