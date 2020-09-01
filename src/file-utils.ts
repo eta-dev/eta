@@ -1,5 +1,4 @@
-var fs = require('fs')
-var path = require('path')
+import { fs, path, readFileSync } from './file-methods'
 var _BOM = /^\uFEFF/
 
 // express is set like: app.engine('html', require('eta').renderFile)
@@ -91,7 +90,7 @@ function getPath(path: string, options: EtaConfig) {
 }
 
 function readFile(filePath: string) {
-  return fs.readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
+  return readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
 }
 
 function loadFile(filePath: string, options: PartialFileConfig): TemplateFunction {
