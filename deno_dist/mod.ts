@@ -1,6 +1,6 @@
 /* Export file stuff */
-import { includeFileHelper } from "./file-helpers";
-import { defaultConfig } from "./config";
+import { includeFileHelper } from "./file-helpers.ts";
+import { defaultConfig } from "./config.ts";
 
 /* TYPES */
 
@@ -9,14 +9,14 @@ import { defaultConfig } from "./config";
 defaultConfig.includeFile = includeFileHelper;
 includeFileHelper.bind(defaultConfig);
 
-export { renderFile, renderFile as __express } from "./file-handlers";
-export { loadFile } from "./file-utils";
+export { renderFile, renderFile as __express } from "./file-handlers.ts";
+export { loadFile } from "./file-utils.ts";
 
 /* End file stuff */
 
-export { default as compileToString } from "./compile-string";
-export { default as compile } from "./compile";
-export { default as parse } from "./parse";
-export { default as render } from "./render";
-export { templates } from "./containers";
-export { defaultConfig, getConfig } from "./config";
+export { default as compileToString } from "./compile-string.ts";
+export { default as compile } from "./compile.ts";
+export { default as parse } from "./parse.ts";
+export { default as render } from "./render.ts";
+export { templates } from "./containers.ts";
+export { defaultConfig, getConfig } from "./config.ts";
