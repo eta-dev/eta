@@ -7,7 +7,11 @@ notifications:
 node_js:
   - '10'
   - '12'
+before_install: # Install Deno
+  - curl -fsSL https://deno.land/x/install/install.sh | sh
+  - export PATH="$HOME/.deno/bin:$PATH"
 script:
+  - deno --version # Log the Deno version
   - yarn test:prod && yarn build
 after_success:
   - yarn travis-deploy-once "yarn report-coverage"
