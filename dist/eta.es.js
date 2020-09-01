@@ -695,7 +695,7 @@ function render(template, data, env, cb) {
     }
 }
 
-//@denoify-ignore
+// @denoify-ignore
 /* TYPES */
 /* END TYPES */
 defaultConfig.includeFile = includeFileHelper;
