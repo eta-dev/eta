@@ -146,7 +146,7 @@ var config = {
   escape: true
 }
 
-function getParameterByName(name) {
+function getParameterByName (name) {
   var url = window.location.href
   var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
   var results = regex.exec(url)
@@ -186,7 +186,7 @@ for (var i = 0; i < config.length; i++) {
 var testList = [
   {
     name: 'art-template',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'template' : 'template-raw'
       var source = templateList[id]
       //   console.log(fn.toString())
@@ -202,7 +202,7 @@ var testList = [
 
   {
     name: 'art-template / fast mode',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'template-fast-mode' : 'template-fast-mode-raw'
       var source = templateList[id]
       var html = ''
@@ -217,7 +217,7 @@ var testList = [
 
   {
     name: 'lodash.template',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'template' : 'template-raw'
       var source = templateList[id]
       var html = ''
@@ -232,7 +232,7 @@ var testList = [
 
   {
     name: 'doT',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'dot' : 'dot-raw'
       var source = templateList[id]
       var html = ''
@@ -247,7 +247,7 @@ var testList = [
 
   {
     name: 'ejs',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'template' : 'template-raw'
       var source = templateList[id]
       var html = ''
@@ -262,7 +262,7 @@ var testList = [
 
   {
     name: 'Jade / pug',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'pug' : 'pug-raw'
       var source = templateList[id]
       var pug = require('pug')
@@ -278,7 +278,7 @@ var testList = [
 
   {
     name: 'Handlebars',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'handlebars' : 'handlebars-raw'
       var source = templateList[id]
       var html = ''
@@ -324,7 +324,7 @@ var testList = [
   // },
   {
     name: 'Eta',
-    tester: function() {
+    tester: function () {
       if (!config.escape) {
         Eta.defaultConfig.autoEscape = false
       }
@@ -340,7 +340,7 @@ var testList = [
   },
   {
     name: 'Mustache',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'mustache' : 'mustache-raw'
       var source = templateList[id]
       var html = ''
@@ -355,7 +355,7 @@ var testList = [
 
   {
     name: 'swig',
-    tester: function() {
+    tester: function () {
       var id = config.escape ? 'swig' : 'swig-raw'
       var source = templateList[id]
       var html = ''
@@ -383,16 +383,16 @@ Highcharts.setOptions({
   ]
 })
 
-var runTest = function(callback) {
-  var list = testList.filter(function(test) {
+var runTest = function (callback) {
+  var list = testList.filter(function (test) {
     return !config.escape || test.supportEscape !== false
   })
 
-  var Timer = function() {
+  var Timer = function () {
     this.startTime = window.performance.now()
   }
 
-  Timer.prototype.stop = function() {
+  Timer.prototype.stop = function () {
     return window.performance.now() - this.startTime
   }
 
@@ -436,7 +436,7 @@ var runTest = function(callback) {
     },
 
     tooltip: {
-      formatter: function() {
+      formatter: function () {
         return '<b>' + this.x + '</b><br/>' + this.y + ' ops/sec'
       }
     },
@@ -448,7 +448,7 @@ var runTest = function(callback) {
       bar: {
         dataLabels: {
           enabled: true,
-          formatter: function() {
+          formatter: function () {
             return this.y + ' ops/sec'
           }
         }
@@ -461,7 +461,7 @@ var runTest = function(callback) {
     ]
   })
 
-  function tester(target) {
+  function tester (target) {
     var time = new Timer()
     var html = target.tester()
     var endTime = time.stop()
@@ -482,7 +482,7 @@ var runTest = function(callback) {
 
     target = list.shift()
 
-    setTimeout(function() {
+    setTimeout(function () {
       tester(target)
     }, 500)
   }
@@ -491,16 +491,16 @@ var runTest = function(callback) {
   tester(target)
 }
 
-window['restart'] = function(key, value) {
+window['restart'] = function (key, value) {
   config[key] = value
 }
 
-function getLink() {
+function getLink () {
   window.location.search =
     'length=' + config.length + '&calls=' + config.calls + '&escape=' + config.escape
 }
 
-window['app'] = function(selector) {
+window['app'] = function (selector) {
   var app = document.querySelector(selector)
   var body = `
 <h1>Eta Browser Benchmarks</h1>
@@ -535,16 +535,16 @@ window['app'] = function(selector) {
 
   document.getElementById('get-link').addEventListener('click', getLink)
 
-  document.getElementById('button-start').onclick = function() {
+  document.getElementById('button-start').onclick = function () {
     var elem = this
     this.disabled = true
-    runTest(function() {
+    runTest(function () {
       elem.style.display = 'none'
       document.getElementById('button-restart').style.display = ''
     })
   }
 
-  document.getElementById('button-restart').onclick = function() {
+  document.getElementById('button-restart').onclick = function () {
     window.location.reload()
   }
 }

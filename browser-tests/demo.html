@@ -201,10 +201,10 @@ Partial: <%~ E.include("mypartial") %>
     </div>
     <script>
       /* global Eta */
-      window.onload = function() {
+      window.onload = function () {
         Eta.templates.define('mypartial', Eta.compile('This is a partial'))
 
-        function escape(str) {
+        function escape (str) {
           // To handle escaping for the function result
           var escMap = {
             '&': '&amp;',
@@ -215,7 +215,7 @@ Partial: <%~ E.include("mypartial") %>
             '/': '&#x2F;'
           }
 
-          function replaceChar(s) {
+          function replaceChar (s) {
             return escMap[s]
           }
           var newStr = String(str)
@@ -226,7 +226,7 @@ Partial: <%~ E.include("mypartial") %>
           }
         }
 
-        function render() {
+        function render () {
           console.clear()
           var options = JSON.parse('{' + document.getElementById('data').value + '}')
           console.log(JSON.stringify(options))
@@ -237,7 +237,7 @@ Partial: <%~ E.include("mypartial") %>
             if (!Eta.defaultConfig.async) {
               document.getElementById('result').innerHTML = Eta.render(template, options)
             } else {
-              Eta.render(template, options).then(function(res) {
+              Eta.render(template, options).then(function (res) {
                 document.getElementById('result').innerHTML = res
               })
             }
