@@ -1,11 +1,11 @@
-import compile from './compile'
-import { getConfig } from './config'
+import compile from './compile.ts'
+import { getConfig } from './config.ts'
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from './config'
-import { TemplateFunction } from './compile'
-import { CallbackFn } from './file-handlers'
+import { EtaConfig, PartialConfig } from './config.ts'
+import { TemplateFunction } from './compile.ts'
+import { CallbackFn } from './file-handlers.ts'
 
 /* END TYPES */
 
