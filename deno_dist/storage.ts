@@ -27,7 +27,7 @@ class Cacher<T> {
     this.cache = {};
   }
   load(cacheObj: Dict<T>) {
-    copyProps(this.cache, cacheObj /* true */); // Why the 3rd argument?
+    copyProps(this.cache, cacheObj);
   }
 }
 

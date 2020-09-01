@@ -1,7 +1,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.Eta = {}));
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Eta = {}));
 }(this, (function (exports) { 'use strict';
 
   function setPrototypeOf(obj, proto) {
@@ -80,9 +80,8 @@
   function hasOwnProp(obj, prop) {
       return Object.prototype.hasOwnProperty.call(obj, prop);
   }
-  // TODO: what did notConfig do?
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function copyProps(toObj, fromObj /* notConfig?: boolean */) {
+  function copyProps(toObj, fromObj) {
       for (var key in fromObj) {
           if (hasOwnProp(fromObj, key)) {
               toObj[key] = fromObj[key];
@@ -372,7 +371,7 @@
           this.cache = {};
       };
       Cacher.prototype.load = function (cacheObj) {
-          copyProps(this.cache, cacheObj /* true */); // Why the 3rd argument?
+          copyProps(this.cache, cacheObj);
       };
       return Cacher;
   }());
