@@ -15,7 +15,7 @@ function EtaErr(message) {
     return err;
 }
 EtaErr.prototype = Object.create(Error.prototype, {
-    name: { value: 'Eta Error', enumerable: false }
+    name: { value: 'Eta Error', enumerable: false },
 });
 function ParseErr(message, str, indx) {
     var whitespace = str.slice(0, indx).split(/\n/);
@@ -131,7 +131,7 @@ var escMap = {
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;'
+    "'": '&#39;',
 };
 function replaceChar(s) {
     return escMap[s];
@@ -390,7 +390,7 @@ var defaultConfig = {
     parse: {
         interpolate: '=',
         raw: '~',
-        exec: ''
+        exec: '',
     },
     async: false,
     templates: templates,
@@ -398,7 +398,7 @@ var defaultConfig = {
     plugins: [],
     useWith: false,
     e: XMLEscape,
-    include: includeHelper
+    include: includeHelper,
 };
 includeHelper.bind(defaultConfig);
 function getConfig(override, baseConfig) {
@@ -451,6 +451,8 @@ function compile(str, env) {
 
 var fs = require('fs');
 var path = require('path');
+var readFileSync = fs.readFileSync;
+
 var _BOM = /^\uFEFF/;
 /* END TYPES */
 /**
@@ -514,10 +516,7 @@ function getPath(path, options) {
     return includePath;
 }
 function readFile(filePath) {
-    return fs
-        .readFileSync(filePath)
-        .toString()
-        .replace(_BOM, ''); // TODO: is replacing BOM's necessary?
+    return readFileSync(filePath).toString().replace(_BOM, ''); // TODO: is replacing BOM's necessary?
 }
 function loadFile(filePath, options) {
     var config = getConfig(options);

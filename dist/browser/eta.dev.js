@@ -21,7 +21,7 @@
       return err;
   }
   EtaErr.prototype = Object.create(Error.prototype, {
-      name: { value: 'Eta Error', enumerable: false }
+      name: { value: 'Eta Error', enumerable: false },
   });
   function ParseErr(message, str, indx) {
       var whitespace = str.slice(0, indx).split(/\n/);
@@ -137,7 +137,7 @@
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#39;'
+      "'": '&#39;',
   };
   function replaceChar(s) {
       return escMap[s];
@@ -396,7 +396,7 @@
       parse: {
           interpolate: '=',
           raw: '~',
-          exec: ''
+          exec: '',
       },
       async: false,
       templates: templates,
@@ -404,7 +404,7 @@
       plugins: [],
       useWith: false,
       e: XMLEscape,
-      include: includeHelper
+      include: includeHelper,
   };
   includeHelper.bind(defaultConfig);
   function getConfig(override, baseConfig) {
