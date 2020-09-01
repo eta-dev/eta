@@ -1,3 +1,5 @@
+// @denoify-ignore
+
 /* Export file stuff */
 import { includeFileHelper } from './file-helpers'
 import { defaultConfig } from './config'
