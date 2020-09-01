@@ -1,17 +1,16 @@
-var fs = require("fs");
-var path = require("path");
+import { fs, path, readFileSync } from "./file-methods.ts";
 var _BOM = /^\uFEFF/;
 
 // express is set like: app.engine('html', require('eta').renderFile)
 
-import EtaErr from "./err";
-import Compile from "./compile";
-import { getConfig } from "./config";
+import EtaErr from "./err.ts";
+import Compile from "./compile.ts";
+import { getConfig } from "./config.ts";
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from "./config";
-import { TemplateFunction } from "./compile";
+import { EtaConfig, PartialConfig } from "./config.ts";
+import { TemplateFunction } from "./compile.ts";
 
 interface PartialFileConfig extends PartialConfig {
   filename: string;
@@ -99,10 +98,7 @@ function getPath(path: string, options: EtaConfig) {
 }
 
 function readFile(filePath: string) {
-  return fs
-    .readFileSync(filePath)
-    .toString()
-    .replace(_BOM, ""); // TODO: is replacing BOM's necessary?
+  return readFileSync(filePath).toString().replace(_BOM, ""); // TODO: is replacing BOM's necessary?
 }
 
 function loadFile(
