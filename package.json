@@ -45,7 +45,8 @@
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "commit": "git-cz",
     "travis-deploy-once": "travis-deploy-once --pro",
-    "format": "prettier-standard --format '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts"
+    "format": "prettier-standard --format '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
+    "release": "np"
   },
   "lint-staged": {
     "{src,test}/**/!(*.deno).ts": [
