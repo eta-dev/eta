@@ -1,5 +1,7 @@
 import compile from "./compile.ts";
 import { getConfig } from "./config.ts";
+import { promiseImpl } from "./polyfills.ts";
+import EtaErr from "./err.ts";
 
 /* TYPES */
 
@@ -44,14 +46,20 @@ export default function render(
     var result;
     if (!cb) {
       // No callback, try returning a promise
-      return new Promise(function (resolve: Function, reject: Function) {
-        try {
-          result = handleCache(template, options)(data, options);
-          resolve(result);
-        } catch (err) {
-          reject(err);
-        }
-      });
+      if (typeof promiseImpl === "function") {
+        return new promiseImpl(function (resolve: Function, reject: Function) {
+          try {
+            result = handleCache(template, options)(data, options);
+            resolve(result);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      } else {
+        throw EtaErr(
+          "Please provide a callback function, this env doesn't support Promises",
+        );
+      }
     } else {
       try {
         handleCache(template, options)(data, options, cb);
