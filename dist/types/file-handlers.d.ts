@@ -18,6 +18,6 @@ interface DataObj {
  * Depending on the value of `options.client`, either type might be returned
  * @static
  */
-declare function includeFile(path: string, options: EtaConfig): TemplateFunction;
+declare function includeFile(path: string, options: EtaConfig): [TemplateFunction, EtaConfig];
 declare function renderFile(filename: string, data: DataObj, cb?: CallbackFn): any;
 export { includeFile, renderFile };

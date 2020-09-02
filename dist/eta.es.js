@@ -613,33 +613,60 @@ function includeFile(path, options) {
     // the below creates a new options object, using the parent filepath of the old options object and the path
     var newFileOptions = getConfig({ filename: getPath(path, options) }, options);
     // TODO: make sure properties are currectly copied over
-    return handleCache(newFileOptions);
+    return [handleCache(newFileOptions), newFileOptions];
 }
-function renderFile(filename, data, cb) {
-    var Config = getConfig(data || {});
-    // TODO: make sure above doesn't error. We do set filename down below
-    if (data.settings) {
-        // Pull a few things from known locations
-        if (data.settings.views) {
-            Config.views = data.settings.views;
-        }
-        if (data.settings['view cache']) {
-            Config.cache = true;
-        }
-        // Undocumented after Express 2, but still usable, esp. for
-        // items that are unsafe to be passed along with data, like `root`
-        var viewOpts = data.settings['view options'];
-        if (viewOpts) {
-            copyProps(Config, viewOpts);
+function renderFile(filename, data, config, cb) {
+    // Here we have some function overloading.
+    // Essentially, the first 2 arguments to renderFile should always be the filename and data
+    // However, with Express, configuration options will be passed along with the data.
+    // Thus, Express will call renderFile with (filename, dataAndOptions, cb)
+    // And we want to also make (filename, data, options, cb) available
+    var Config;
+    var callback;
+    // First, assign our callback function to `callback`
+    // We can leave it undefined if neither parameter is a function;
+    // Callbacks are optional
+    if (typeof cb === 'function') {
+        // The 4th argument is the callback
+        callback = cb;
+    }
+    else if (typeof config === 'function') {
+        // The 3rd arg is the callback
+        callback = config;
+    }
+    // If there is a config object passed in explicitly, use it
+    if (typeof config === 'object') {
+        Config = getConfig(config || {});
+    }
+    else {
+        // Otherwise, get the config from the data object
+        // And then grab some config options from data.settings
+        // Which is where Express sometimes stores them
+        Config = getConfig(data || {});
+        if (data.settings) {
+            // Pull a few things from known locations
+            if (data.settings.views) {
+                Config.views = data.settings.views;
+            }
+            if (data.settings['view cache']) {
+                Config.cache = true;
+            }
+            // Undocumented after Express 2, but still usable, esp. for
+            // items that are unsafe to be passed along with data, like `root`
+            var viewOpts = data.settings['view options'];
+            if (viewOpts) {
+                copyProps(Config, viewOpts);
+            }
         }
     }
-    Config.filename = filename; // Make sure filename is right
-    return tryHandleCache(Config, data, cb);
+    Config.filename = filename; // Set filename option
+    return tryHandleCache(Config, data, callback);
 }
 
 /* END TYPES */
 function includeFileHelper(path, data) {
-    return includeFile(path, this)(data, this);
+    var templateAndConfig = includeFile(path, this);
+    return templateAndConfig[0](data, templateAndConfig[1]);
 }
 
 /* END TYPES */
