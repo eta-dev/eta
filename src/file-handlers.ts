@@ -67,7 +67,7 @@ function handleCache(options: FileOptions): TemplateFunction {
  * @static
  */
 
-function tryHandleCache(options: FileOptions, data: object, cb: CallbackFn) {
+function tryHandleCache(options: FileOptions, data: object, cb: CallbackFn | undefined) {
   var result
   if (!cb) {
     // No callback, try returning a promise
@@ -105,37 +105,65 @@ function tryHandleCache(options: FileOptions, data: object, cb: CallbackFn) {
  */
 
 // TODO: error if file path doesn't exist
-function includeFile(path: string, options: EtaConfig) {
+function includeFile(path: string, options: EtaConfig): [TemplateFunction, EtaConfig] {
   // the below creates a new options object, using the parent filepath of the old options object and the path
   var newFileOptions = getConfig({ filename: getPath(path, options) }, options)
   // TODO: make sure properties are currectly copied over
-  return handleCache(newFileOptions as FileOptions)
+  return [handleCache(newFileOptions as FileOptions), newFileOptions]
 }
 
-function renderFile(filename: string, data: DataObj, cb?: CallbackFn) {
-  var Config: FileOptions = getConfig((data as PartialConfig) || {}) as FileOptions
-  // TODO: make sure above doesn't error. We do set filename down below
+function renderFile(filename: string, data: DataObj, cb?: CallbackFn): any
 
-  if (data.settings) {
-    // Pull a few things from known locations
-    if (data.settings.views) {
-      Config.views = data.settings.views
-    }
-    if (data.settings['view cache']) {
-      Config.cache = true
-    }
-    // Undocumented after Express 2, but still usable, esp. for
-    // items that are unsafe to be passed along with data, like `root`
-    var viewOpts = data.settings['view options']
+function renderFile(filename: string, data: DataObj, config?: PartialConfig, cb?: CallbackFn) {
+  // Here we have some function overloading.
+  // Essentially, the first 2 arguments to renderFile should always be the filename and data
+  // However, with Express, configuration options will be passed along with the data.
+  // Thus, Express will call renderFile with (filename, dataAndOptions, cb)
+  // And we want to also make (filename, data, options, cb) available
 
-    if (viewOpts) {
-      copyProps(Config, viewOpts)
+  var Config: FileOptions
+  var callback: CallbackFn | undefined
+
+  // First, assign our callback function to `callback`
+  // We can leave it undefined if neither parameter is a function;
+  // Callbacks are optional
+  if (typeof cb === 'function') {
+    // The 4th argument is the callback
+    callback = cb
+  } else if (typeof config === 'function') {
+    // The 3rd arg is the callback
+    callback = config
+  }
+
+  // If there is a config object passed in explicitly, use it
+  if (typeof config === 'object') {
+    Config = getConfig((config as PartialConfig) || {}) as FileOptions
+  } else {
+    // Otherwise, get the config from the data object
+    // And then grab some config options from data.settings
+    // Which is where Express sometimes stores them
+    Config = getConfig((data as PartialConfig) || {}) as FileOptions
+    if (data.settings) {
+      // Pull a few things from known locations
+      if (data.settings.views) {
+        Config.views = data.settings.views
+      }
+      if (data.settings['view cache']) {
+        Config.cache = true
+      }
+      // Undocumented after Express 2, but still usable, esp. for
+      // items that are unsafe to be passed along with data, like `root`
+      var viewOpts = data.settings['view options']
+
+      if (viewOpts) {
+        copyProps(Config, viewOpts)
+      }
     }
   }
 
-  Config.filename = filename // Make sure filename is right
+  Config.filename = filename // Set filename option
 
-  return tryHandleCache(Config, data, cb as CallbackFn)
+  return tryHandleCache(Config, data, callback)
 }
 
 export { includeFile, renderFile }
