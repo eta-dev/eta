@@ -10,6 +10,10 @@ interface GenericData {
 
 /* END TYPES */
 
+/**
+ * Called with `E.includeFile(path, data)`
+ */
+
 export function includeFileHelper(
   this: EtaConfig,
   path: string,

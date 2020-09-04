@@ -3,29 +3,59 @@
 import EtaErr from "./err.ts";
 import compile from "./compile.ts";
 import { getConfig } from "./config.ts";
-import { getPath, readFile, loadFile } from "./file-utils.ts";
+import { getPath, readFile } from "./file-utils.ts";
 import { copyProps } from "./utils.ts";
 import { promiseImpl } from "./polyfills.ts";
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from "./config.ts";
+import { EtaConfig, PartialConfig, EtaConfigWithFilename } from "./config.ts";
 import { TemplateFunction } from "./compile.ts";
 
 export type CallbackFn = (err: Error | null, str?: string) => void;
 
-interface FileOptions extends EtaConfig {
-  filename: string;
-}
-
 interface DataObj {
+  /** Express.js settings may be stored here */
   settings?: {
     [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   };
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
+interface PartialConfigWithFilename extends Partial<EtaConfig> {
+  filename: string;
+}
+
 /* END TYPES */
+
+/**
+ * Reads a template, compiles it into a function, caches it if caching isn't disabled, returns the function
+ *
+ * @param filePath Absolute path to template file
+ * @param options Eta configuration overrides
+ * @param noCache Optionally, make Eta not cache the template
+ */
+
+export function loadFile(
+  filePath: string,
+  options: PartialConfigWithFilename,
+  noCache?: boolean,
+): TemplateFunction {
+  var config = getConfig(options);
+  var template = readFile(filePath);
+  try {
+    var compiledTemplate = compile(template, config);
+    if (!noCache) {
+      config.templates.define(
+        (config as EtaConfigWithFilename).filename,
+        compiledTemplate,
+      );
+    }
+    return compiledTemplate;
+  } catch (e) {
+    throw EtaErr("Loading file: " + filePath + " failed:\n\n" + e.message);
+  }
+}
 
 /**
  * Get the template from a string or a file, either compiled on-the-fly or
@@ -34,26 +64,24 @@ interface DataObj {
  * If `options.cache` is true, this function reads the file from
  * `options.filename` so it must be set prior to calling this function.
  *
- * @param {Options} options   compilation options
- * @param {String} [template] template source
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `options.client`, either type might be returned.
- * @static
+ * @param options   compilation options
+ * @return Eta template function
  */
 
-function handleCache(options: FileOptions): TemplateFunction {
+function handleCache(options: EtaConfigWithFilename): TemplateFunction {
   var filename = options.filename;
 
   if (options.cache) {
     var func = options.templates.get(filename);
     if (func) {
       return func;
-    } else {
-      return loadFile(filename, options);
     }
+
+    return loadFile(filename, options);
   }
 
-  return compile(readFile(filename), options);
+  // Caching is disabled, so pass noCache = true
+  return loadFile(filename, options, true);
 }
 
 /**
@@ -61,39 +89,43 @@ function handleCache(options: FileOptions): TemplateFunction {
  * callback with the result. If an error occurs, call the callback with
  * the error. Used by renderFile().
  *
- * @param {Options} options    compilation options
- * @param {Object} data        template data
- * @param {RenderFileCallback} cb callback
- * @static
+ * @param data template data
+ * @param options compilation options
+ * @param cb callback
  */
 
 function tryHandleCache(
-  options: FileOptions,
   data: object,
+  options: EtaConfigWithFilename,
   cb: CallbackFn | undefined,
 ) {
-  var result;
-  if (!cb) {
+  if (cb) {
+    try {
+      // Note: if there is an error while rendering the template,
+      // It will bubble up and be caught here
+      var templateFn = handleCache(options);
+      templateFn(data, options, cb);
+    } catch (err) {
+      return cb(err);
+    }
+  } else {
     // No callback, try returning a promise
     if (typeof promiseImpl === "function") {
-      return new promiseImpl(function (resolve: Function, reject: Function) {
-        try {
-          result = handleCache(options)(data, options);
-          resolve(result);
-        } catch (err) {
-          reject(err);
-        }
-      });
+      return new promiseImpl<string>(
+        function (resolve: Function, reject: Function) {
+          try {
+            var templateFn = handleCache(options);
+            var result = templateFn(data, options);
+            resolve(result);
+          } catch (err) {
+            reject(err);
+          }
+        },
+      );
     } else {
       throw EtaErr(
         "Please provide a callback function, this env doesn't support Promises",
       );
-    }
-  } else {
-    try {
-      handleCache(options)(data, options, cb);
-    } catch (err) {
-      return cb(err);
     }
   }
 }
@@ -103,14 +135,18 @@ function tryHandleCache(
  *
  * If `options.cache` is `true`, then the template is cached.
  *
- * @param {String}  path    path for the specified file
- * @param {Options} options compilation options
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `options.client`, either type might be returned
- * @static
+ * This returns a template function and the config object with which that template function should be called.
+ *
+ * @remarks
+ *
+ * It's important that this returns a config object with `filename` set.
+ * Otherwise, the included file would not be able to use relative paths
+ *
+ * @param path path for the specified file (if relative, specify `views` on `options`)
+ * @param options compilation options
+ * @return [Eta template function, new config object]
  */
 
-// TODO: error if file path doesn't exist
 function includeFile(
   path: string,
   options: EtaConfig,
@@ -118,8 +154,42 @@ function includeFile(
   // the below creates a new options object, using the parent filepath of the old options object and the path
   var newFileOptions = getConfig({ filename: getPath(path, options) }, options);
   // TODO: make sure properties are currectly copied over
-  return [handleCache(newFileOptions as FileOptions), newFileOptions];
+  return [handleCache(newFileOptions as EtaConfigWithFilename), newFileOptions];
 }
+
+/**
+ * Render a template from a filepath.
+ *
+ * @param filepath Path to template file. If relative, specify `views` on the config object
+ *
+ * This can take two different function signatures:
+ *
+ * - `renderFile(filename, dataAndConfig, [cb])`
+ *   - Eta will merge `dataAndConfig` into `eta.defaultConfig`
+ * - `renderFile(filename, data, [config], [cb])`
+ *
+ * Note that renderFile does not immediately return the rendered result. If you pass in a callback function, it will be called with `(err, res)`. Otherwise, `renderFile` will return a `Promise` that resolves to the render result.
+ *
+ * **Examples**
+ *
+ * ```js
+ * eta.renderFile("./template.eta", data, {cache: true}, function (err, rendered) {
+ *   if (err) console.log(err)
+ *   console.log(rendered)
+ * })
+ *
+ * let rendered = await eta.renderFile("./template.eta", data, {cache: true})
+ *
+ * let rendered = await eta.renderFile("./template", {...data, cache: true})
+ * ```
+ */
+
+function renderFile(
+  filename: string,
+  data: DataObj,
+  config?: PartialConfig,
+  cb?: CallbackFn,
+): any;
 
 function renderFile(filename: string, data: DataObj, cb?: CallbackFn): any;
 
@@ -129,13 +199,15 @@ function renderFile(
   config?: PartialConfig,
   cb?: CallbackFn,
 ) {
-  // Here we have some function overloading.
-  // Essentially, the first 2 arguments to renderFile should always be the filename and data
-  // However, with Express, configuration options will be passed along with the data.
-  // Thus, Express will call renderFile with (filename, dataAndOptions, cb)
-  // And we want to also make (filename, data, options, cb) available
+  /*
+  Here we have some function overloading.
+  Essentially, the first 2 arguments to renderFile should always be the filename and data
+  However, with Express, configuration options will be passed along with the data.
+  Thus, Express will call renderFile with (filename, dataAndOptions, cb)
+  And we want to also make (filename, data, options, cb) available
+  */
 
-  var Config: FileOptions;
+  var renderConfig: EtaConfigWithFilename;
   var callback: CallbackFn | undefined;
 
   // First, assign our callback function to `callback`
@@ -151,33 +223,39 @@ function renderFile(
 
   // If there is a config object passed in explicitly, use it
   if (typeof config === "object") {
-    Config = getConfig((config as PartialConfig) || {}) as FileOptions;
+    renderConfig = getConfig(
+      (config as PartialConfig) || {},
+    ) as EtaConfigWithFilename;
   } else {
     // Otherwise, get the config from the data object
     // And then grab some config options from data.settings
     // Which is where Express sometimes stores them
-    Config = getConfig((data as PartialConfig) || {}) as FileOptions;
+    renderConfig = getConfig(
+      (data as PartialConfig) || {},
+    ) as EtaConfigWithFilename;
     if (data.settings) {
       // Pull a few things from known locations
       if (data.settings.views) {
-        Config.views = data.settings.views;
+        renderConfig.views = data.settings.views;
       }
       if (data.settings["view cache"]) {
-        Config.cache = true;
+        renderConfig.cache = true;
       }
       // Undocumented after Express 2, but still usable, esp. for
       // items that are unsafe to be passed along with data, like `root`
       var viewOpts = data.settings["view options"];
 
       if (viewOpts) {
-        copyProps(Config, viewOpts);
+        copyProps(renderConfig, viewOpts);
       }
     }
   }
 
-  Config.filename = filename; // Set filename option
+  // Set the filename option on the template
+  // This will first try to resolve the file path (see getPath for details)
+  renderConfig.filename = getPath(filename, renderConfig);
 
-  return tryHandleCache(Config, data, callback);
+  return tryHandleCache(data, renderConfig, callback);
 }
 
 export { includeFile, renderFile };

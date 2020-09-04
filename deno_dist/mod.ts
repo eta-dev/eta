@@ -2,15 +2,14 @@
 import { includeFileHelper } from "./file-helpers.ts";
 import { defaultConfig } from "./config.ts";
 
-/* TYPES */
-
-/* END TYPES */
-
 defaultConfig.includeFile = includeFileHelper;
 includeFileHelper.bind(defaultConfig);
 
-export { renderFile, renderFile as __express } from "./file-handlers.ts";
-export { loadFile } from "./file-utils.ts";
+export {
+  loadFile,
+  renderFile,
+  renderFile as __express,
+} from "./file-handlers.ts";
 
 /* End file stuff */
 

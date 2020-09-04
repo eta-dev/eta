@@ -1,5 +1,4 @@
-export { renderFile, renderFile as __express } from './file-handlers';
-export { loadFile } from './file-utils';
+export { loadFile, renderFile, renderFile as __express } from './file-handlers';
 export { default as compileToString } from './compile-string';
 export { default as compile } from './compile';
 export { default as parse } from './parse';
