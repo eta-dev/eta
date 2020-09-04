@@ -34,21 +34,21 @@
     "node": ">=6.0.0"
   },
   "scripts": {
+    "build": "denoify && rollup -c rollup.config.ts && typedoc --tsconfig tsconfig.json --target es6 src && deno fmt deno_dist/*.ts",
+    "commit": "git-cz",
+    "deploy-docs": "ts-node tools/gh-pages-publish",
+    "format": "prettier --write '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
     "lint": "eslint src/*.ts test/*.spec.ts examples/* --ext .js,.ts",
     "prebuild": "rimraf dist && rimraf deno_dist",
-    "build": "denoify && rollup -c rollup.config.ts && typedoc --tsconfig tsconfig.json --target es6 src && deno fmt deno_dist/*.ts",
-    "start": "rollup -c rollup.config.ts -w",
+    "release": "np",
+    "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "size": "size-limit",
+    "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage && npm run test:deno && npm run size",
     "test:deno": "deno test test/deno/*.spec.ts --unstable --allow-read",
-    "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
-    "deploy-docs": "ts-node tools/gh-pages-publish",
-    "report-coverage": "cat ./coverage/lcov.info | coveralls",
-    "commit": "git-cz",
-    "travis-deploy-once": "travis-deploy-once --pro",
-    "format": "prettier --write '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
-    "release": "np"
+    "test:watch": "jest --coverage --watch",
+    "travis-deploy-once": "travis-deploy-once --pro"
   },
   "size-limit": [
     {
