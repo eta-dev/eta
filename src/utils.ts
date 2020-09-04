@@ -32,22 +32,26 @@ export function copyProps<T>(toObj: T, fromObj: T) {
   return toObj
 }
 
+/**
+ * Takes a string within a template and trims it, based on the preceding tag's whitespace control and `config.autoTrim`
+ */
+
 function trimWS(
   str: string,
-  env: EtaConfig,
+  config: EtaConfig,
   wsLeft: string | false,
   wsRight?: string | false
 ): string {
   var leftTrim
   var rightTrim
 
-  if (Array.isArray(env.autoTrim)) {
+  if (Array.isArray(config.autoTrim)) {
     // kinda confusing
     // but _}} will trim the left side of the following string
-    leftTrim = env.autoTrim[1]
-    rightTrim = env.autoTrim[0]
+    leftTrim = config.autoTrim[1]
+    rightTrim = config.autoTrim[0]
   } else {
-    leftTrim = rightTrim = env.autoTrim
+    leftTrim = rightTrim = config.autoTrim
   }
 
   if (wsLeft || wsLeft === false) {
@@ -87,6 +91,10 @@ function trimWS(
   return str
 }
 
+/**
+ * A map of special HTML characters to their XML-escaped equivalents
+ */
+
 var escMap: EscapeMap = {
   '&': '&amp;',
   '<': '&lt;',
@@ -98,6 +106,13 @@ var escMap: EscapeMap = {
 function replaceChar(s: string): string {
   return escMap[s]
 }
+
+/**
+ * XML-escapes an input value after converting it to a string
+ *
+ * @param str - Input value (usually a string)
+ * @returns XML-escaped string
+ */
 
 function XMLEscape(str: any) {
   // eslint-disable-line @typescript-eslint/no-explicit-any

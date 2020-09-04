@@ -1,6 +1,14 @@
 import EtaErr from './err'
 
-export var promiseImpl = new Function('return this')().Promise
+/**
+ * @returns The global Promise function
+ */
+
+export var promiseImpl: PromiseConstructor = new Function('return this')().Promise
+
+/**
+ * @returns A new AsyncFunction constuctor
+ */
 
 export function getAsyncFunctionConstructor(): Function {
   try {
@@ -14,6 +22,14 @@ export function getAsyncFunctionConstructor(): Function {
   }
 }
 
+/**
+ * str.trimLeft polyfill
+ *
+ * @param str - Input string
+ * @returns The string with left whitespace removed
+ *
+ */
+
 export function trimLeft(str: string): string {
   // eslint-disable-next-line no-extra-boolean-cast
   if (!!String.prototype.trimLeft) {
@@ -22,6 +38,14 @@ export function trimLeft(str: string): string {
     return str.replace(/^\s+/, '')
   }
 }
+
+/**
+ * str.trimRight polyfill
+ *
+ * @param str - Input string
+ * @returns The string with right whitespace removed
+ *
+ */
 
 export function trimRight(str: string): string {
   // eslint-disable-next-line no-extra-boolean-cast

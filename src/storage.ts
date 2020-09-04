@@ -1,16 +1,13 @@
 import { copyProps } from './utils'
 
-/* TYPES */
-
-interface Dict<T> {
-  // Basically, an object where all keys point to a value of the same type
-  [key: string]: T
-}
-
-/* END TYPES */
-
+/**
+ * Handles storage and accessing of values
+ * 
+ * In this case, we use it to store compiled template functions
+ * Indexed by their `name` or `filename`
+ */
 class Cacher<T> {
-  constructor(private cache: Dict<T>) {}
+  constructor(private cache: Record<string, T>) {}
   define(key: string, val: T) {
     this.cache[key] = val
   }
@@ -26,7 +23,7 @@ class Cacher<T> {
   reset() {
     this.cache = {}
   }
-  load(cacheObj: Dict<T>) {
+  load(cacheObj: Record<string, T>) {
     copyProps(this.cache, cacheObj)
   }
 }

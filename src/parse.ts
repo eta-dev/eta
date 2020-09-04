@@ -22,6 +22,8 @@ var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g
 
 var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g
 
+/** Escape special regular expression characters inside a string */
+
 function escapeRegExp(string: string) {
   // From MDN
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
@@ -61,9 +63,9 @@ export default function parse(str: string, env: EtaConfig): Array<AstObject> {
 
       if (strng) {
         // replace \ with \\, ' with \'
+        // we're going to convert all CRLF to LF so it doesn't take more than one replace
 
         strng = strng.replace(/\\|'/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n')
-        // we're going to convert all CRLF to LF so it doesn't take more than one replace
 
         buffer.push(strng)
       }
