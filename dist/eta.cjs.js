@@ -469,6 +469,7 @@ function includeHelper(templateNameOrPath, data) {
     }
     return template(data, this);
 }
+/** Eta's base (global) configuration */
 var defaultConfig = {
     varName: 'it',
     autoTrim: [false, 'nl'],
@@ -512,6 +513,10 @@ function getConfig(override, baseConfig) {
         copyProps(res, override);
     }
     return res;
+}
+/** Update Eta's base config */
+function configure(options) {
+    return copyProps(defaultConfig, options);
 }
 
 /* END TYPES */
@@ -906,6 +911,8 @@ includeFileHelper.bind(defaultConfig);
 exports.__express = renderFile;
 exports.compile = compile;
 exports.compileToString = compileToString;
+exports.config = defaultConfig;
+exports.configure = configure;
 exports.defaultConfig = defaultConfig;
 exports.getConfig = getConfig;
 exports.loadFile = loadFile;

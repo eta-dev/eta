@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import { render } from '../src/index'
-import { defaultConfig } from '../src/config'
+import { defaultConfig, configure } from '../src/config'
 
 describe('Config Tests', () => {
   it('Renders a simple template with default env', () => {
@@ -17,5 +17,15 @@ describe('Config Tests', () => {
   it('Renders a simple template with stored env', () => {
     var res = render('<%= it.html %>', { html: '<p>Hi</p>' }, { autoEscape: false })
     expect(res).toEqual('<p>Hi</p>') // not escaped
+  })
+
+  it('Configure command works', () => {
+    var updatedConfig = configure({ tags: ['{{', '}}'] })
+
+    var res = render('{{= it.name }}', { name: 'John Appleseed' })
+    expect(res).toEqual('John Appleseed')
+
+    expect(defaultConfig).toEqual(updatedConfig)
+    expect(defaultConfig.tags).toEqual(['{{', '}}'])
   })
 })

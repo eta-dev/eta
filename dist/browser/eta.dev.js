@@ -471,6 +471,7 @@
       }
       return template(data, this);
   }
+  /** Eta's base (global) configuration */
   var defaultConfig = {
       varName: 'it',
       autoTrim: [false, 'nl'],

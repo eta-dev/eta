@@ -75,6 +75,7 @@ function includeHelper(this: EtaConfig, templateNameOrPath: string, data: object
   return template(data, this)
 }
 
+/** Eta's base (global) configuration */
 var defaultConfig: EtaConfig = {
   varName: 'it',
   autoTrim: [false, 'nl'],
@@ -127,4 +128,10 @@ function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
   return res as EtaConfig
 }
 
-export { defaultConfig, getConfig }
+/** Update Eta's base config */
+
+function configure(options: PartialConfig) {
+  return copyProps(defaultConfig, options)
+}
+
+export { defaultConfig, getConfig, configure }
