@@ -516,6 +516,10 @@
       }
       return res;
   }
+  /** Update Eta's base config */
+  function configure(options) {
+      return copyProps(defaultConfig, options);
+  }
 
   /* END TYPES */
   /**
@@ -645,6 +649,8 @@
 
   exports.compile = compile;
   exports.compileToString = compileToString;
+  exports.config = defaultConfig;
+  exports.configure = configure;
   exports.defaultConfig = defaultConfig;
   exports.getConfig = getConfig;
   exports.parse = parse;
