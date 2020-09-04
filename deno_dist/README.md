@@ -1,4 +1,4 @@
-<h1 align="center">eta (η)</h1>
+<h1 align="center" style="text-align: center" >eta (η)</h1>
 
 <p align="center">
   <a href="https://eta.js.org">Documentation</a> -
@@ -15,7 +15,9 @@
 
 <div align="center">
 
-![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/eta-dev/eta/master?label=current%20version)
+[![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/eta-dev/eta/master?label=current%20version)](https://www.npmjs.com/package/eta)
+[![deno module](https://img.shields.io/badge/deno-module-informational?logo=deno)](https://deno.land/x/eta)
+[![deno doc](https://img.shields.io/badge/deno-doc-informational?logo=deno)](https://doc.deno.land/https/deno.land/x/eta/mod.ts)
 [![Travis](https://img.shields.io/travis/com/eta-dev/eta/master.svg)](https://travis-ci.com/eta-dev/eta)
 [![All Contributors][logo]](#contributors-)
 [![Coveralls](https://img.shields.io/coveralls/eta-dev/eta.svg)](https://coveralls.io/github/eta-dev/eta)
