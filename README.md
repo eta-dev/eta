@@ -29,7 +29,8 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
 
 ### 🌟 Features
 
-- 📦 0 dependencies; 2.3KB minzipped
+- 📦 0 dependencies
+- 💡 2.3KB minzipped; size restricted to <3KB forever with [size-limit](https://github.com/ai/size-limit)
 - ⚡️ Written in TypeScript
 - ✨ Deno support (+ Node and browser)
 - 🚀 Super Fast
