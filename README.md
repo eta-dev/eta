@@ -1,4 +1,11 @@
-# eta (η)
+<h1 align="center">eta (η)</h1>
+
+<p align="center">
+  <a href="https://eta.js.org">Documentation</a> -
+  <a href="https://gitter.im/eta-dev/community">Chat</a> -
+  <a href="https://runkit.com/nebrelbug/eta-simple-demo">RunKit Demo</a> -
+  <a href="https://eta.js.org/playground">Playground</a>
+</p>
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
@@ -6,21 +13,40 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
+<div align="center">
+
 ![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/eta-dev/eta/master?label=current%20version)
 [![Travis](https://img.shields.io/travis/com/eta-dev/eta/master.svg)](https://travis-ci.com/eta-dev/eta)
 [![All Contributors][logo]](#contributors-)
 [![Coveralls](https://img.shields.io/coveralls/eta-dev/eta.svg)](https://coveralls.io/github/eta-dev/eta)
-
-[![documentation website](https://img.shields.io/badge/read_the_docs-website-brightgreen.svg)](https://eta.js.org)
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![Join the chat at https://gitter.im/eta-dev/community](https://img.shields.io/gitter/room/eta-dev/eta?color=%2346BC99)](https://gitter.im/eta-dev/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
+
+</div>
 
 **Summary**
 
-Eta is a lightweight and blazing fast embedded JS templating engine. The team who created [Squirrelly](https://squirrelly.js.org) created it to serve as a better alternative to EJS.
+Eta is a lightweight and blazing fast embedded JS templating engine that works inside Node, Deno, and the browser. Created by the developers of [Squirrelly](https://squirrelly.js.org), it's written in TypeScript and emphasizes phenomenal performance, configurability, and low bundle size.
 
-## Eta vs Other Template Engines
+### 🌟 Features
+
+- 📦 0 dependencies; 2.3KB minzipped
+- ⚡️ Written in TypeScript
+- ✨ Deno support (+ Node and browser)
+- 🚀 Super Fast
+  - Check out [these benchmarks](https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html)
+- 🔧 Configurable
+  - Plugins, custom delimiters, caching
+- 🔨 Powerful
+  - Precompilation, partials, async
+  - 🚀 ExpressJS support out-of-the-box
+- 🔥 Reliable
+  - Better quotes/comments support
+    - _ex._ `<%= someval + "string %>" %>` compiles correctly, while it fails with doT or EJS
+  - Great error reporting
+- ⚡️ Exports ES Modules as well as UMD
+- 📝 Easy template syntax
+
+## Eta vs other template engines
 
 <details open>
   <summary>
@@ -102,27 +128,6 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 "Eta" means tiny in Esperanto. Plus, it can be used as an acronym for all sorts of cool phrases: "ECMAScript Template Awesomeness", "Embedded Templating Alternative", etc....
 
 Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of cool things in various mathematical fields, including efficiency) and is three letters long (perfect for a file extension).
-
-### 🌟 Features
-
-- 🔧 Great error reporting
-- 📦 0 dependencies
-- 🔧 Better quotes/comments support
-  - _ex. `<%= someval + "string %>" %>`_ compiles correctly, while it fails with doT or EJS
-- ⚡️ Exports ES Modules as well as UMD
-- 🔧 ExpressJS support out-of-the-box
-- 🔨 Loops
-- 🔧 Custom delimeters
-- 📝 Easy template syntax
-- 🔧 Precompilation
-- ⚡️ 0-dependency
-- 🔨 Partials
-- 🔨 Comments
-- 🔨 Server and browser support
-- 🔧 Caching
-- 🚀 Super Fast
-  - Check out [these benchmarks](https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html)
-- ⚡️ Async support
 
 ## 📜 Docs
 
@@ -212,5 +217,5 @@ This project follows the [all-contributors](https://github.com/kentcdodds/all-co
 
 ## Credits
 
-- Async support and file handling were added based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified to throw an Eta Error.
+- Async support and file handling were added based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified and refactored to some extent.
 - Syntax and some parts of compilation are heavily based off EJS, Nunjucks, and doT.
