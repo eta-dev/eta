@@ -771,6 +771,7 @@ function renderFile(filename, data, config, cb) {
     */
     var renderConfig;
     var callback;
+    data = data || {}; // If data is undefined, we don't want accessing data.settings to error
     // First, assign our callback function to `callback`
     // We can leave it undefined if neither parameter is a function;
     // Callbacks are optional
@@ -790,7 +791,7 @@ function renderFile(filename, data, config, cb) {
         // Otherwise, get the config from the data object
         // And then grab some config options from data.settings
         // Which is where Express sometimes stores them
-        renderConfig = getConfig(data || {});
+        renderConfig = getConfig(data);
         if (data.settings) {
             // Pull a few things from known locations
             if (data.settings.views) {

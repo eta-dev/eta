@@ -209,6 +209,7 @@ function renderFile(
 
   var renderConfig: EtaConfigWithFilename;
   var callback: CallbackFn | undefined;
+  data = data || {}; // If data is undefined, we don't want accessing data.settings to error
 
   // First, assign our callback function to `callback`
   // We can leave it undefined if neither parameter is a function;
@@ -230,9 +231,7 @@ function renderFile(
     // Otherwise, get the config from the data object
     // And then grab some config options from data.settings
     // Which is where Express sometimes stores them
-    renderConfig = getConfig(
-      (data as PartialConfig) || {},
-    ) as EtaConfigWithFilename;
+    renderConfig = getConfig(data as PartialConfig) as EtaConfigWithFilename;
     if (data.settings) {
       // Pull a few things from known locations
       if (data.settings.views) {
