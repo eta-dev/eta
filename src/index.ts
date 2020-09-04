@@ -1,16 +1,13 @@
+// @denoify-ignore
+
 /* Export file stuff */
 import { includeFileHelper } from './file-helpers'
 import { defaultConfig } from './config'
 
-/* TYPES */
-
-/* END TYPES */
-
 defaultConfig.includeFile = includeFileHelper
 includeFileHelper.bind(defaultConfig)
 
-export { renderFile, renderFile as __express } from './file-handlers'
-export { loadFile } from './file-utils'
+export { loadFile, renderFile, renderFile as __express } from './file-handlers'
 
 /* End file stuff */
 

@@ -10,9 +10,11 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "declarationDir": "dist/types",
-    "outDir": "build"
+    "outDir": "dist"
   },
   "include": ["src"],
-  "exclude": ["node_modules", "typings"]
+  "exclude": ["node_modules", "typings", "dist", "deno_dist", "src/*.deno.ts"]
 }

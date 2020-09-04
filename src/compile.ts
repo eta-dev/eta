@@ -6,28 +6,35 @@ import EtaErr from './err'
 
 import { EtaConfig, PartialConfig } from './config'
 import { CallbackFn } from './file-handlers'
+import { getAsyncFunctionConstructor } from './polyfills'
 export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn) => string
 
 /* END TYPES */
 
-export default function compile (str: string, env?: PartialConfig): TemplateFunction {
-  var options: EtaConfig = getConfig(env || {})
+/**
+ * Takes a template string and returns a template function that can be called with (data, config, [cb])
+ *
+ * @param str - The template string
+ * @param config - A custom configuration object (optional)
+ *
+ * **Example**
+ * 
+ * ```js
+ * let compiledFn = eta.compile("Hi <%= it.user %>")
+ * // function anonymous()
+ * let compiledFnStr = compiledFn.toString()
+ * // "function anonymous(it,E,cb\n) {\nvar tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
+ * ```
+ */
+
+export default function compile(str: string, config?: PartialConfig): TemplateFunction {
+  var options: EtaConfig = getConfig(config || {})
   var ctor // constructor
 
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.
   if (options.async) {
-    // Have to use generated function for this, since in envs without support,
-    // it breaks in parsing
-    try {
-      ctor = new Function('return (async function(){}).constructor;')()
-    } catch (e) {
-      if (e instanceof SyntaxError) {
-        throw EtaErr("This environment doesn't support async/await")
-      } else {
-        throw e
-      }
-    }
+    ctor = getAsyncFunctionConstructor() as FunctionConstructor
   } else {
     ctor = Function
   }
@@ -47,7 +54,8 @@ export default function compile (str: string, env?: PartialConfig): TemplateFunc
           '\n' +
           Array(e.message.length + 1).join('=') +
           '\n' +
-          compileToString(str, options)
+          compileToString(str, options) +
+          '\n' // This will put an extra newline before the callstack for extra readability
       )
     } else {
       throw e

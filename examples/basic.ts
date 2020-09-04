@@ -1,11 +1,4 @@
 var Eta = require('../dist/eta.cjs')
-// var template = `
-
-// {{=it.value}}
-
-// {{=it.value}}
-// {{/*this is a comment */}}
-// `
 
 var template = `
 <%=it.value%>

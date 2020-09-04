@@ -1,16 +1,20 @@
-import { EtaConfig, PartialConfig } from './config';
-import { TemplateFunction } from './compile';
-interface PartialFileConfig extends PartialConfig {
-    filename: string;
-}
+import { EtaConfig } from './config';
 /**
- * Get the path to the included file by Options
+ * Get the absolute path to an included template
  *
- * @param  {String}  path    specified path
- * @param  {Options} options compilation options
- * @return {String}
+ * If this is called with an absolute path (for example, starting with '/' or 'C:\') then Eta will return the filepath.
+ *
+ * If this is called with a relative path, Eta will:
+ * - Look relative to the current template (if the current template has the `filename` property)
+ * - Look inside each directory in options.views
+ *
+ * @param path    specified path
+ * @param options compilation options
+ * @return absolute path to template
  */
-declare function getPath(path: string, options: EtaConfig): any;
+declare function getPath(path: string, options: EtaConfig): string;
+/**
+ * Reads a file synchronously
+ */
 declare function readFile(filePath: string): any;
-declare function loadFile(filePath: string, options: PartialFileConfig): TemplateFunction;
-export { getPath, readFile, loadFile };
+export { getPath, readFile };

@@ -1,4 +1,5 @@
 function setPrototypeOf(obj, proto) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     if (Object.setPrototypeOf) {
         Object.setPrototypeOf(obj, proto);
     }
@@ -6,6 +7,19 @@ function setPrototypeOf(obj, proto) {
         obj.__proto__ = proto;
     }
 }
+// This is pretty much the only way to get nice, extended Errors
+// without using ES6
+/**
+ * This returns a new Error with a custom prototype. Note that it's _not_ a constructor
+ *
+ * @param message Error message
+ *
+ * **Example**
+ *
+ * ```js
+ * throw EtaErr("template not found")
+ * ```
+ */
 function EtaErr(message) {
     var err = new Error(message);
     setPrototypeOf(err, EtaErr.prototype);
@@ -14,7 +28,9 @@ function EtaErr(message) {
 EtaErr.prototype = Object.create(Error.prototype, {
     name: { value: 'Eta Error', enumerable: false }
 });
-// TODO: Class transpilation adds a lot to the bundle size
+/**
+ * Throws an EtaErr with a nicely formatted error and message showing where in the template the error occurred.
+ */
 function ParseErr(message, str, indx) {
     var whitespace = str.slice(0, indx).split(/\n/);
     var lineNo = whitespace.length;
@@ -34,14 +50,66 @@ function ParseErr(message, str, indx) {
     throw EtaErr(message);
 }
 
+/**
+ * @returns The global Promise function
+ */
+var promiseImpl = new Function('return this')().Promise;
+/**
+ * @returns A new AsyncFunction constuctor
+ */
+function getAsyncFunctionConstructor() {
+    try {
+        return new Function('return (async function(){}).constructor')();
+    }
+    catch (e) {
+        if (e instanceof SyntaxError) {
+            throw EtaErr("This environment doesn't support async/await");
+        }
+        else {
+            throw e;
+        }
+    }
+}
+/**
+ * str.trimLeft polyfill
+ *
+ * @param str - Input string
+ * @returns The string with left whitespace removed
+ *
+ */
+function trimLeft(str) {
+    // eslint-disable-next-line no-extra-boolean-cast
+    if (!!String.prototype.trimLeft) {
+        return str.trimLeft();
+    }
+    else {
+        return str.replace(/^\s+/, '');
+    }
+}
+/**
+ * str.trimRight polyfill
+ *
+ * @param str - Input string
+ * @returns The string with right whitespace removed
+ *
+ */
+function trimRight(str) {
+    // eslint-disable-next-line no-extra-boolean-cast
+    if (!!String.prototype.trimRight) {
+        return str.trimRight();
+    }
+    else {
+        return str.replace(/\s+$/, ''); // TODO: do we really need to replace BOM's?
+    }
+}
+
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
-// TODO: only include trimLeft polyfill if not in ES6
 /* END TYPES */
-var promiseImpl = new Function('return this;')().Promise;
 function hasOwnProp(obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop);
 }
-function copyProps(toObj, fromObj, notConfig) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function copyProps(toObj, fromObj) {
     for (var key in fromObj) {
         if (hasOwnProp(fromObj, key)) {
             toObj[key] = fromObj[key];
@@ -49,17 +117,20 @@ function copyProps(toObj, fromObj, notConfig) {
     }
     return toObj;
 }
-function trimWS(str, env, wsLeft, wsRight) {
+/**
+ * Takes a string within a template and trims it, based on the preceding tag's whitespace control and `config.autoTrim`
+ */
+function trimWS(str, config, wsLeft, wsRight) {
     var leftTrim;
     var rightTrim;
-    if (Array.isArray(env.autoTrim)) {
+    if (Array.isArray(config.autoTrim)) {
         // kinda confusing
         // but _}} will trim the left side of the following string
-        leftTrim = env.autoTrim[1];
-        rightTrim = env.autoTrim[0];
+        leftTrim = config.autoTrim[1];
+        rightTrim = config.autoTrim[0];
     }
     else {
-        leftTrim = rightTrim = env.autoTrim;
+        leftTrim = rightTrim = config.autoTrim;
     }
     if (wsLeft || wsLeft === false) {
         leftTrim = wsLeft;
@@ -76,48 +147,43 @@ function trimWS(str, env, wsLeft, wsRight) {
     if (leftTrim === '_' || leftTrim === 'slurp') {
         // console.log('trimming left' + leftTrim)
         // full slurp
-        // eslint-disable-next-line no-extra-boolean-cast
-        if (!!String.prototype.trimLeft) {
-            str = str.trimLeft();
-        }
-        else {
-            str = str.replace(/^[\s\uFEFF\xA0]+/, '');
-        }
+        str = trimLeft(str);
     }
     else if (leftTrim === '-' || leftTrim === 'nl') {
-        // console.log('trimming left nl' + leftTrim)
         // nl trim
         str = str.replace(/^(?:\r\n|\n|\r)/, '');
     }
     if (rightTrim === '_' || rightTrim === 'slurp') {
-        // console.log('trimming right' + rightTrim)
         // full slurp
-        // eslint-disable-next-line no-extra-boolean-cast
-        if (!!String.prototype.trimRight) {
-            str = str.trimRight();
-        }
-        else {
-            str = str.replace(/[\s\uFEFF\xA0]+$/, '');
-        }
+        str = trimRight(str);
     }
     else if (rightTrim === '-' || rightTrim === 'nl') {
-        // console.log('trimming right nl' + rightTrim)
         // nl trim
         str = str.replace(/(?:\r\n|\n|\r)$/, ''); // TODO: make sure this gets \r\n
     }
     return str;
 }
+/**
+ * A map of special HTML characters to their XML-escaped equivalents
+ */
 var escMap = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;'
+    "'": '&#39;',
 };
 function replaceChar(s) {
     return escMap[s];
 }
+/**
+ * XML-escapes an input value after converting it to a string
+ *
+ * @param str - Input value (usually a string)
+ * @returns XML-escaped string
+ */
 function XMLEscape(str) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
     var newStr = String(str);
     if (/[&<>"']/.test(newStr)) {
@@ -132,6 +198,7 @@ function XMLEscape(str) {
 var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g;
 var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g;
 var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
+/** Escape special regular expression characters inside a string */
 function escapeRegExp(string) {
     // From MDN
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -157,13 +224,12 @@ function parse(str, env) {
     function pushString(strng, shouldTrimRightOfString) {
         if (strng) {
             // if string is truthy it must be of type 'string'
-            // TODO: benchmark replace( /(\\|')/g, '\\$1')
             strng = trimWS(strng, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
             shouldTrimRightOfString);
             if (strng) {
                 // replace \ with \\, ' with \'
-                strng = strng.replace(/\\|'/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n');
                 // we're going to convert all CRLF to LF so it doesn't take more than one replace
+                strng = strng.replace(/\\|'/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n');
                 buffer.push(strng);
             }
         }
@@ -186,7 +252,6 @@ function parse(str, env) {
     // TODO: benchmark having the \s* on either side vs using str.trim()
     var m;
     while ((m = parseOpenReg.exec(str))) {
-        // TODO: check if above needs exec(str) !== null. Don't think it's possible to have 0-width matches but...
         lastIndex = m[0].length + m.index;
         var precedingString = m[1];
         var wsLeft = m[2];
@@ -274,9 +339,19 @@ function parse(str, env) {
 }
 
 /* END TYPES */
+/**
+ * Compiles a template string to a function string. Most often users just use `compile()`, which calls `compileToString` and creates a new function using the result
+ *
+ * **Example**
+ *
+ * ```js
+ * compileToString("Hi <%= it.user %>", eta.defaultConfig)
+ * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
+ * ```
+ */
 function compileToString(str, env) {
     var buffer = parse(str, env);
-    var res = "var tR='';" +
+    var res = "var tR=''\n" +
         (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
         compileScope(buffer, env) +
         'if(cb){cb(null,tR)} return tR' +
@@ -290,8 +365,19 @@ function compileToString(str, env) {
         }
     }
     return res;
-    // TODO: is `return cb()` necessary, or could we just do `cb()`
 }
+/**
+ * Loops through the AST generated by `parse` and transform each item into JS calls
+ *
+ * **Example**
+ *
+ * ```js
+ * // AST version of 'Hi <%= it.user %>'
+ * let templateAST = ['Hi ', { val: 'it.user', t: 'i' }]
+ * compileScope(templateAST, eta.defaultConfig)
+ * // "tR+='Hi ';tR+=E.e(it.user);"
+ * ```
+ */
 function compileScope(buff, env) {
     var i = 0;
     var buffLength = buff.length;
@@ -301,21 +387,21 @@ function compileScope(buff, env) {
         if (typeof currentBlock === 'string') {
             var str = currentBlock;
             // we know string exists
-            returnStr += "tR+='" + str + "';";
+            returnStr += "tR+='" + str + "'\n";
         }
         else {
             var type = currentBlock.t; // ~, s, !, ?, r
             var content = currentBlock.val || '';
             if (type === 'r') {
                 // raw
-                returnStr += 'tR+=' + content + ';';
+                returnStr += 'tR+=' + content + '\n';
             }
             else if (type === 'i') {
                 // interpolate
                 if (env.autoEscape) {
                     content = 'E.e(' + content + ')';
                 }
-                returnStr += 'tR+=' + content + ';';
+                returnStr += 'tR+=' + content + '\n';
                 // reference
             }
             else if (type === 'e') {
@@ -327,7 +413,12 @@ function compileScope(buff, env) {
     return returnStr;
 }
 
-/* END TYPES */
+/**
+ * Handles storage and accessing of values
+ *
+ * In this case, we use it to store compiled template functions
+ * Indexed by their `name` or `filename`
+ */
 var Cacher = /** @class */ (function () {
     function Cacher(cache) {
         this.cache = cache;
@@ -348,17 +439,25 @@ var Cacher = /** @class */ (function () {
         this.cache = {};
     };
     Cacher.prototype.load = function (cacheObj) {
-        // TODO: this will err with deep objects and `storage` or `plugins` keys.
-        // Update Feb 26: EDITED so it shouldn't err
         copyProps(this.cache, cacheObj);
     };
     return Cacher;
 }());
 
 /* END TYPES */
+/**
+ * Eta's template storage
+ *
+ * Stores partials and cached templates
+ */
 var templates = new Cacher({});
 
 /* END TYPES */
+/**
+ * Include a template based on its name (or filepath, if it's already been cached).
+ *
+ * Called like `E.include(templateNameOrPath, data)`
+ */
 function includeHelper(templateNameOrPath, data) {
     var template = this.templates.get(templateNameOrPath);
     if (!template) {
@@ -375,7 +474,7 @@ var defaultConfig = {
     parse: {
         interpolate: '=',
         raw: '~',
-        exec: ''
+        exec: '',
     },
     async: false,
     templates: templates,
@@ -383,9 +482,21 @@ var defaultConfig = {
     plugins: [],
     useWith: false,
     e: XMLEscape,
-    include: includeHelper
+    include: includeHelper,
 };
 includeHelper.bind(defaultConfig);
+/**
+ * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into defaultConfig, and returns the result
+ *
+ * @param override Partial configuration object
+ * @param baseConfig Partial configuration object to merge before `override`
+ *
+ * **Example**
+ *
+ * ```js
+ * let customConfig = getConfig({tags: ['!#', '#!']})
+ * ```
+ */
 function getConfig(override, baseConfig) {
     // TODO: run more tests on this
     var res = {}; // Linked
@@ -400,25 +511,28 @@ function getConfig(override, baseConfig) {
 }
 
 /* END TYPES */
-function compile(str, env) {
-    var options = getConfig(env || {});
+/**
+ * Takes a template string and returns a template function that can be called with (data, config, [cb])
+ *
+ * @param str - The template string
+ * @param config - A custom configuration object (optional)
+ *
+ * **Example**
+ *
+ * ```js
+ * let compiledFn = eta.compile("Hi <%= it.user %>")
+ * // function anonymous()
+ * let compiledFnStr = compiledFn.toString()
+ * // "function anonymous(it,E,cb\n) {\nvar tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
+ * ```
+ */
+function compile(str, config) {
+    var options = getConfig(config || {});
     var ctor; // constructor
     /* ASYNC HANDLING */
     // The below code is modified from mde/ejs. All credit should go to them.
     if (options.async) {
-        // Have to use generated function for this, since in envs without support,
-        // it breaks in parsing
-        try {
-            ctor = new Function('return (async function(){}).constructor;')();
-        }
-        catch (e) {
-            if (e instanceof SyntaxError) {
-                throw EtaErr("This environment doesn't support async/await");
-            }
-            else {
-                throw e;
-            }
-        }
+        ctor = getAsyncFunctionConstructor();
     }
     else {
         ctor = Function;
@@ -436,7 +550,9 @@ function compile(str, env) {
                 '\n' +
                 Array(e.message.length + 1).join('=') +
                 '\n' +
-                compileToString(str, options));
+                compileToString(str, options) +
+                '\n' // This will put an extra newline before the callstack for extra readability
+            );
         }
         else {
             throw e;
@@ -446,16 +562,20 @@ function compile(str, env) {
 
 var fs = require('fs');
 var path = require('path');
+var readFileSync = fs.readFileSync;
+
 var _BOM = /^\uFEFF/;
 /* END TYPES */
 /**
  * Get the path to the included file from the parent file path and the
  * specified path.
  *
- * @param {String}  name       specified path
- * @param {String}  parentfile parent file path
- * @param {Boolean} [isDir=false] whether parent file path is a directory
- * @return {String}
+ * If `name` does not have an extension, it will default to `.eta`
+ *
+ * @param name specified path
+ * @param parentfile parent file path
+ * @param isDirectory whether parentfile is a directory
+ * @return absolute path to template
  */
 function getWholeFilePath(name, parentfile, isDirectory) {
     var includePath = path.resolve(isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
@@ -468,11 +588,17 @@ function getWholeFilePath(name, parentfile, isDirectory) {
     return includePath;
 }
 /**
- * Get the path to the included file by Options
+ * Get the absolute path to an included template
  *
- * @param  {String}  path    specified path
- * @param  {Options} options compilation options
- * @return {String}
+ * If this is called with an absolute path (for example, starting with '/' or 'C:\') then Eta will return the filepath.
+ *
+ * If this is called with a relative path, Eta will:
+ * - Look relative to the current template (if the current template has the `filename` property)
+ * - Look inside each directory in options.views
+ *
+ * @param path    specified path
+ * @param options compilation options
+ * @return absolute path to template
  */
 function getPath(path, options) {
     var includePath;
@@ -493,13 +619,22 @@ function getPath(path, options) {
             }
         }
         // Then look in any views directories
+        // TODO: write tests for if views is a string
         if (!includePath) {
+            // Loop through each views directory and search for the file.
             if (Array.isArray(views) &&
                 views.some(function (v) {
                     filePath = getWholeFilePath(path, v, true);
                     return fs.existsSync(filePath);
                 })) {
                 includePath = filePath;
+            }
+            else if (typeof views === 'string') {
+                // Search for the file if views is a single directory
+                filePath = getWholeFilePath(path, views, true);
+                if (fs.existsSync(filePath)) {
+                    includePath = filePath;
+                }
             }
         }
         if (!includePath) {
@@ -508,27 +643,36 @@ function getPath(path, options) {
     }
     return includePath;
 }
+/**
+ * Reads a file synchronously
+ */
 function readFile(filePath) {
-    return fs
-        .readFileSync(filePath)
-        .toString()
-        .replace(_BOM, ''); // TODO: is replacing BOM's necessary?
-}
-function loadFile(filePath, options) {
-    var config = getConfig(options);
-    var template = readFile(filePath);
-    try {
-        var compiledTemplate = compile(template, config);
-        config.templates.define(config.filename, compiledTemplate);
-        return compiledTemplate;
-    }
-    catch (e) {
-        throw EtaErr('Loading file: ' + filePath + ' failed');
-    }
+    return readFileSync(filePath).toString().replace(_BOM, ''); // TODO: is replacing BOM's necessary?
 }
 
 // express is set like: app.engine('html', require('eta').renderFile)
 /* END TYPES */
+/**
+ * Reads a template, compiles it into a function, caches it if caching isn't disabled, returns the function
+ *
+ * @param filePath Absolute path to template file
+ * @param options Eta configuration overrides
+ * @param noCache Optionally, make Eta not cache the template
+ */
+function loadFile(filePath, options, noCache) {
+    var config = getConfig(options);
+    var template = readFile(filePath);
+    try {
+        var compiledTemplate = compile(template, config);
+        if (!noCache) {
+            config.templates.define(config.filename, compiledTemplate);
+        }
+        return compiledTemplate;
+    }
+    catch (e) {
+        throw EtaErr('Loading file: ' + filePath + ' failed:\n\n' + e.message);
+    }
+}
 /**
  * Get the template from a string or a file, either compiled on-the-fly or
  * read from cache (if enabled), and cache the template if needed.
@@ -536,11 +680,8 @@ function loadFile(filePath, options) {
  * If `options.cache` is true, this function reads the file from
  * `options.filename` so it must be set prior to calling this function.
  *
- * @param {Options} options   compilation options
- * @param {String} [template] template source
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `options.client`, either type might be returned.
- * @static
+ * @param options   compilation options
+ * @return Eta template function
  */
 function handleCache(options) {
     var filename = options.filename;
@@ -549,30 +690,39 @@ function handleCache(options) {
         if (func) {
             return func;
         }
-        else {
-            return loadFile(filename, options);
-        }
+        return loadFile(filename, options);
     }
-    return compile(readFile(filename), options);
+    // Caching is disabled, so pass noCache = true
+    return loadFile(filename, options, true);
 }
 /**
  * Try calling handleCache with the given options and data and call the
  * callback with the result. If an error occurs, call the callback with
  * the error. Used by renderFile().
  *
- * @param {Options} options    compilation options
- * @param {Object} data        template data
- * @param {RenderFileCallback} cb callback
- * @static
+ * @param data template data
+ * @param options compilation options
+ * @param cb callback
  */
-function tryHandleCache(options, data, cb) {
-    var result;
-    if (!cb) {
+function tryHandleCache(data, options, cb) {
+    if (cb) {
+        try {
+            // Note: if there is an error while rendering the template,
+            // It will bubble up and be caught here
+            var templateFn = handleCache(options);
+            templateFn(data, options, cb);
+        }
+        catch (err) {
+            return cb(err);
+        }
+    }
+    else {
         // No callback, try returning a promise
         if (typeof promiseImpl === 'function') {
             return new promiseImpl(function (resolve, reject) {
                 try {
-                    result = handleCache(options)(data, options);
+                    var templateFn = handleCache(options);
+                    var result = templateFn(data, options);
                     resolve(result);
                 }
                 catch (err) {
@@ -584,67 +734,89 @@ function tryHandleCache(options, data, cb) {
             throw EtaErr("Please provide a callback function, this env doesn't support Promises");
         }
     }
-    else {
-        try {
-            handleCache(options)(data, options, cb);
-        }
-        catch (err) {
-            return cb(err);
-        }
-    }
 }
 /**
  * Get the template function.
  *
  * If `options.cache` is `true`, then the template is cached.
  *
- * @param {String}  path    path for the specified file
- * @param {Options} options compilation options
- * @return {(TemplateFunction|ClientFunction)}
- * Depending on the value of `options.client`, either type might be returned
- * @static
+ * This returns a template function and the config object with which that template function should be called.
+ *
+ * @remarks
+ *
+ * It's important that this returns a config object with `filename` set.
+ * Otherwise, the included file would not be able to use relative paths
+ *
+ * @param path path for the specified file (if relative, specify `views` on `options`)
+ * @param options compilation options
+ * @return [Eta template function, new config object]
  */
 function includeFile(path, options) {
     // the below creates a new options object, using the parent filepath of the old options object and the path
     var newFileOptions = getConfig({ filename: getPath(path, options) }, options);
     // TODO: make sure properties are currectly copied over
-    return handleCache(newFileOptions);
+    return [handleCache(newFileOptions), newFileOptions];
 }
-function renderFile(filename, data, cb) {
-    var Config = getConfig(data || {});
-    // TODO: make sure above doesn't error. We do set filename down below
-    if (data.settings) {
-        // Pull a few things from known locations
-        if (data.settings.views) {
-            Config.views = data.settings.views;
-        }
-        if (data.settings['view cache']) {
-            Config.cache = true;
-        }
-        // Undocumented after Express 2, but still usable, esp. for
-        // items that are unsafe to be passed along with data, like `root`
-        var viewOpts = data.settings['view options'];
-        if (viewOpts) {
-            copyProps(Config, viewOpts);
+function renderFile(filename, data, config, cb) {
+    /*
+    Here we have some function overloading.
+    Essentially, the first 2 arguments to renderFile should always be the filename and data
+    However, with Express, configuration options will be passed along with the data.
+    Thus, Express will call renderFile with (filename, dataAndOptions, cb)
+    And we want to also make (filename, data, options, cb) available
+    */
+    var renderConfig;
+    var callback;
+    // First, assign our callback function to `callback`
+    // We can leave it undefined if neither parameter is a function;
+    // Callbacks are optional
+    if (typeof cb === 'function') {
+        // The 4th argument is the callback
+        callback = cb;
+    }
+    else if (typeof config === 'function') {
+        // The 3rd arg is the callback
+        callback = config;
+    }
+    // If there is a config object passed in explicitly, use it
+    if (typeof config === 'object') {
+        renderConfig = getConfig(config || {});
+    }
+    else {
+        // Otherwise, get the config from the data object
+        // And then grab some config options from data.settings
+        // Which is where Express sometimes stores them
+        renderConfig = getConfig(data || {});
+        if (data.settings) {
+            // Pull a few things from known locations
+            if (data.settings.views) {
+                renderConfig.views = data.settings.views;
+            }
+            if (data.settings['view cache']) {
+                renderConfig.cache = true;
+            }
+            // Undocumented after Express 2, but still usable, esp. for
+            // items that are unsafe to be passed along with data, like `root`
+            var viewOpts = data.settings['view options'];
+            if (viewOpts) {
+                copyProps(renderConfig, viewOpts);
+            }
         }
     }
-    Config.filename = filename; // Make sure filename is right
-    return tryHandleCache(Config, data, cb);
+    // Set the filename option on the template
+    // This will first try to resolve the file path (see getPath for details)
+    renderConfig.filename = getPath(filename, renderConfig);
+    return tryHandleCache(data, renderConfig, callback);
 }
 
 /* END TYPES */
+/**
+ * Called with `E.includeFile(path, data)`
+ */
 function includeFileHelper(path, data) {
-    return includeFile(path, this)(data, this);
+    var templateAndConfig = includeFile(path, this);
+    return templateAndConfig[0](data, templateAndConfig[1]);
 }
-// export function extendsFileHelper(path: string, data: GenericData, config: EtaConfig): string {
-//   var data: GenericData = content.params[1] || {}
-//   data.content = content.exec()
-//   for (var i = 0; i < blocks.length; i++) {
-//     var currentBlock = blocks[i]
-//     data[currentBlock.name] = currentBlock.exec()
-//   }
-//   return includeFile(content.params[0], config)(data, config)
-// }
 
 /* END TYPES */
 function handleCache$1(template, options) {
@@ -658,16 +830,48 @@ function handleCache$1(template, options) {
     else {
         templateFunc = compile(template, options);
     }
+    // Note that we don't have to check if it already exists in the cache;
+    // it would have returned earlier if it had
     if (options.cache && options.name) {
         options.templates.define(options.name, templateFunc);
     }
     return templateFunc;
 }
-function render(template, data, env, cb) {
-    var options = getConfig(env || {});
+/**
+ * Render a template
+ *
+ * If `template` is a string, Eta will compile it to a function and then call it with the provided data.
+ * If `template` is a template function, Eta will call it with the provided data.
+ *
+ * If `config.async` is `false`, Eta will return the rendered template.
+ *
+ * If `config.async` is `true` and there's a callback function, Eta will call the callback with `(err, renderedTemplate)`.
+ * If `config.async` is `true` and there's not a callback function, Eta will return a Promise that resolves to the rendered template
+ *
+ * If `config.cache` is `true` and `config` has a `name` or `filename` property, Eta will cache the template on the first render and use the cached template for all subsequent renders.
+ *
+ * @param template Template string or template function
+ * @param data Data to render the template with
+ * @param config Optional config options
+ * @param cb Callback function
+ */
+function render(template, data, config, cb) {
+    var options = getConfig(config || {});
     if (options.async) {
         var result;
-        if (!cb) {
+        if (cb) {
+            // If user passes callback
+            try {
+                // Note: if there is an error while rendering the template,
+                // It will bubble up and be caught here
+                var templateFn = handleCache$1(template, options);
+                templateFn(data, options, cb);
+            }
+            catch (err) {
+                return cb(err);
+            }
+        }
+        else {
             // No callback, try returning a promise
             if (typeof promiseImpl === 'function') {
                 return new promiseImpl(function (resolve, reject) {
@@ -684,23 +888,13 @@ function render(template, data, env, cb) {
                 throw EtaErr("Please provide a callback function, this env doesn't support Promises");
             }
         }
-        else {
-            try {
-                handleCache$1(template, options)(data, options, cb);
-            }
-            catch (err) {
-                return cb(err);
-            }
-        }
     }
     else {
         return handleCache$1(template, options)(data, options);
     }
 }
 
-/* Export file stuff */
-/* TYPES */
-/* END TYPES */
+// @denoify-ignore
 defaultConfig.includeFile = includeFileHelper;
 includeFileHelper.bind(defaultConfig);
 

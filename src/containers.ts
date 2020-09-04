@@ -1,15 +1,17 @@
 import { Cacher } from './storage'
-import EtaErr from './err'
 
 /* TYPES */
 
-import { EtaConfig } from './config'
 import { TemplateFunction } from './compile'
 
 /* END TYPES */
 
-var templates = new Cacher<TemplateFunction>({})
+/**
+ * Eta's template storage
+ * 
+ * Stores partials and cached templates
+ */
 
-/* ASYNC LOOP FNs */
+var templates = new Cacher<TemplateFunction>({})
 
 export { templates }

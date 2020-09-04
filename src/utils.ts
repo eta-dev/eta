@@ -1,6 +1,8 @@
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
 
+import { trimLeft, trimRight } from './polyfills'
+
 /* TYPES */
 
 import { EtaConfig } from './config'
@@ -16,13 +18,12 @@ interface EscapeMap {
 
 /* END TYPES */
 
-export var promiseImpl = new Function('return this;')().Promise
-
-export function hasOwnProp (obj: object, prop: string) {
+export function hasOwnProp(obj: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
-export function copyProps<T> (toObj: T, fromObj: T, notConfig?: boolean) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function copyProps<T>(toObj: T, fromObj: T) {
   for (var key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
       toObj[key] = fromObj[key]
@@ -31,22 +32,26 @@ export function copyProps<T> (toObj: T, fromObj: T, notConfig?: boolean) {
   return toObj
 }
 
-function trimWS (
+/**
+ * Takes a string within a template and trims it, based on the preceding tag's whitespace control and `config.autoTrim`
+ */
+
+function trimWS(
   str: string,
-  env: EtaConfig,
+  config: EtaConfig,
   wsLeft: string | false,
   wsRight?: string | false
 ): string {
   var leftTrim
   var rightTrim
 
-  if (Array.isArray(env.autoTrim)) {
+  if (Array.isArray(config.autoTrim)) {
     // kinda confusing
     // but _}} will trim the left side of the following string
-    leftTrim = env.autoTrim[1]
-    rightTrim = env.autoTrim[0]
+    leftTrim = config.autoTrim[1]
+    rightTrim = config.autoTrim[0]
   } else {
-    leftTrim = rightTrim = env.autoTrim
+    leftTrim = rightTrim = config.autoTrim
   }
 
   if (wsLeft || wsLeft === false) {
@@ -69,30 +74,16 @@ function trimWS (
     // console.log('trimming left' + leftTrim)
     // full slurp
 
-    // eslint-disable-next-line no-extra-boolean-cast
-    if (!!String.prototype.trimLeft) {
-      str = str.trimLeft()
-    } else {
-      str = str.replace(/^[\s\uFEFF\xA0]+/, '')
-    }
+    str = trimLeft(str)
   } else if (leftTrim === '-' || leftTrim === 'nl') {
-    // console.log('trimming left nl' + leftTrim)
     // nl trim
     str = str.replace(/^(?:\r\n|\n|\r)/, '')
   }
 
   if (rightTrim === '_' || rightTrim === 'slurp') {
-    // console.log('trimming right' + rightTrim)
     // full slurp
-
-    // eslint-disable-next-line no-extra-boolean-cast
-    if (!!String.prototype.trimRight) {
-      str = str.trimRight()
-    } else {
-      str = str.replace(/[\s\uFEFF\xA0]+$/, '')
-    }
+    str = trimRight(str)
   } else if (rightTrim === '-' || rightTrim === 'nl') {
-    // console.log('trimming right nl' + rightTrim)
     // nl trim
     str = str.replace(/(?:\r\n|\n|\r)$/, '') // TODO: make sure this gets \r\n
   }
@@ -100,19 +91,31 @@ function trimWS (
   return str
 }
 
+/**
+ * A map of special HTML characters to their XML-escaped equivalents
+ */
+
 var escMap: EscapeMap = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  "'": '&#39;'
+  "'": '&#39;',
 }
 
-function replaceChar (s: string): string {
+function replaceChar(s: string): string {
   return escMap[s]
 }
 
-function XMLEscape (str: any) {
+/**
+ * XML-escapes an input value after converting it to a string
+ *
+ * @param str - Input value (usually a string)
+ * @returns XML-escaped string
+ */
+
+function XMLEscape(str: any) {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
   var newStr = String(str)
   if (/[&<>"']/.test(newStr)) {

@@ -1,0 +1,57 @@
+import { assertEquals, assertThrows } from 'https://deno.land/std@0.67.0/testing/asserts.ts'
+import * as path from 'https://deno.land/std@0.66.0/path/mod.ts'
+const __dirname = new URL('.', import.meta.url).pathname
+
+import { render, templates, compile } from '../../deno_dist/mod.ts'
+
+templates.define('test-template', compile('Saluton <%=it.name%>'))
+
+Deno.test('include works', async () => {
+  var renderedTemplate = render('<%~ E.include("test-template", it) %>', { name: 'Ada' })
+
+  assertEquals(renderedTemplate, 'Saluton Ada')
+})
+
+Deno.test('includeFile works w/ filename prop', async () => {
+  var renderedTemplate = render(
+    '<%~ E.includeFile("simple", it) %>',
+    { name: 'Ada' },
+    { filename: path.join(__dirname, '../templates/placeholder.eta') }
+  )
+
+  assertEquals(renderedTemplate, 'Hi Ada')
+})
+
+Deno.test('"includeFile" works with "views" array', async () => {
+  var renderedTemplate = render(
+    '<%~ E.includeFile("randomtemplate", it) %>',
+    { user: 'Ben' },
+    { views: [path.join(__dirname, '../templates'), path.join(__dirname, '../othertemplates')] }
+  )
+
+  assertEquals(renderedTemplate, 'This is a random template. Hey Ben')
+})
+
+Deno.test('"includeFile" works with "views" array', async () => {
+  var renderedTemplate = render(
+    '<%~ E.includeFile("randomtemplate", it) %>',
+    { user: 'Ben' },
+    { views: [path.join(__dirname, '../templates'), path.join(__dirname, '../othertemplates')] }
+  )
+
+  assertEquals(renderedTemplate, 'This is a random template. Hey Ben')
+})
+
+Deno.test('throws if helper "includeFile" cannot find template', () => {
+  assertThrows(
+    () => {
+      render(
+        '<%~ E.includeFile("imaginary-template", it) %>',
+        { user: 'Ben' },
+        { views: [path.join(__dirname, '../templates'), path.join(__dirname, '../othertemplates')] }
+      )
+    },
+    Error,
+    'Could not find the include file "imaginary-template"'
+  )
+})

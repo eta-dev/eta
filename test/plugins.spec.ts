@@ -3,15 +3,17 @@ import * as Eta from '../src/index'
 import { EtaConfig } from '../src/config'
 import { AstObject } from '../src/parse'
 
-function myPlugin () {
+function myPlugin() {
   return {
-    processAST: function (ast: Array<AstObject>, env?: EtaConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    processAST: function (ast: Array<AstObject>, _env?: EtaConfig) {
       ast.push('String to append')
       return ast
     },
-    processFnString: function (str: string, env?: EtaConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    processFnString: function (str: string, _env?: EtaConfig) {
       return str.replace(/@@num@@/, '2352.3')
-    }
+    },
   }
 }
 

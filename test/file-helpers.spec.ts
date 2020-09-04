@@ -1,6 +1,6 @@
 /* global it, expect, describe */
 
-import { render, templates, compile, renderFile } from '../src/index'
+import { render, templates, compile } from '../src/index'
 
 var path = require('path')
 
@@ -23,7 +23,7 @@ describe('include works', () => {
       { user: 'Ben' },
       {
         filename: path.join(__dirname, 'templates/placeholder.eta'),
-        views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')]
+        views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')],
       }
     )
 
@@ -43,7 +43,7 @@ describe('include works', () => {
         {},
         {
           filename: path.join(__dirname, 'templates/placeholder.eta'),
-          views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')]
+          views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')],
         }
       )
     }).toThrow(new Error('Could not find the include file "missing-template"'))

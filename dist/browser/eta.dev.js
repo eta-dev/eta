@@ -1,10 +1,11 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.Eta = {}));
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Eta = {}));
 }(this, (function (exports) { 'use strict';
 
   function setPrototypeOf(obj, proto) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       if (Object.setPrototypeOf) {
           Object.setPrototypeOf(obj, proto);
       }
@@ -12,6 +13,19 @@
           obj.__proto__ = proto;
       }
   }
+  // This is pretty much the only way to get nice, extended Errors
+  // without using ES6
+  /**
+   * This returns a new Error with a custom prototype. Note that it's _not_ a constructor
+   *
+   * @param message Error message
+   *
+   * **Example**
+   *
+   * ```js
+   * throw EtaErr("template not found")
+   * ```
+   */
   function EtaErr(message) {
       var err = new Error(message);
       setPrototypeOf(err, EtaErr.prototype);
@@ -20,7 +34,9 @@
   EtaErr.prototype = Object.create(Error.prototype, {
       name: { value: 'Eta Error', enumerable: false }
   });
-  // TODO: Class transpilation adds a lot to the bundle size
+  /**
+   * Throws an EtaErr with a nicely formatted error and message showing where in the template the error occurred.
+   */
   function ParseErr(message, str, indx) {
       var whitespace = str.slice(0, indx).split(/\n/);
       var lineNo = whitespace.length;
@@ -40,14 +56,66 @@
       throw EtaErr(message);
   }
 
+  /**
+   * @returns The global Promise function
+   */
+  var promiseImpl = new Function('return this')().Promise;
+  /**
+   * @returns A new AsyncFunction constuctor
+   */
+  function getAsyncFunctionConstructor() {
+      try {
+          return new Function('return (async function(){}).constructor')();
+      }
+      catch (e) {
+          if (e instanceof SyntaxError) {
+              throw EtaErr("This environment doesn't support async/await");
+          }
+          else {
+              throw e;
+          }
+      }
+  }
+  /**
+   * str.trimLeft polyfill
+   *
+   * @param str - Input string
+   * @returns The string with left whitespace removed
+   *
+   */
+  function trimLeft(str) {
+      // eslint-disable-next-line no-extra-boolean-cast
+      if (!!String.prototype.trimLeft) {
+          return str.trimLeft();
+      }
+      else {
+          return str.replace(/^\s+/, '');
+      }
+  }
+  /**
+   * str.trimRight polyfill
+   *
+   * @param str - Input string
+   * @returns The string with right whitespace removed
+   *
+   */
+  function trimRight(str) {
+      // eslint-disable-next-line no-extra-boolean-cast
+      if (!!String.prototype.trimRight) {
+          return str.trimRight();
+      }
+      else {
+          return str.replace(/\s+$/, ''); // TODO: do we really need to replace BOM's?
+      }
+  }
+
   // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
-  // TODO: only include trimLeft polyfill if not in ES6
   /* END TYPES */
-  var promiseImpl = new Function('return this;')().Promise;
   function hasOwnProp(obj, prop) {
       return Object.prototype.hasOwnProperty.call(obj, prop);
   }
-  function copyProps(toObj, fromObj, notConfig) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function copyProps(toObj, fromObj) {
       for (var key in fromObj) {
           if (hasOwnProp(fromObj, key)) {
               toObj[key] = fromObj[key];
@@ -55,17 +123,20 @@
       }
       return toObj;
   }
-  function trimWS(str, env, wsLeft, wsRight) {
+  /**
+   * Takes a string within a template and trims it, based on the preceding tag's whitespace control and `config.autoTrim`
+   */
+  function trimWS(str, config, wsLeft, wsRight) {
       var leftTrim;
       var rightTrim;
-      if (Array.isArray(env.autoTrim)) {
+      if (Array.isArray(config.autoTrim)) {
           // kinda confusing
           // but _}} will trim the left side of the following string
-          leftTrim = env.autoTrim[1];
-          rightTrim = env.autoTrim[0];
+          leftTrim = config.autoTrim[1];
+          rightTrim = config.autoTrim[0];
       }
       else {
-          leftTrim = rightTrim = env.autoTrim;
+          leftTrim = rightTrim = config.autoTrim;
       }
       if (wsLeft || wsLeft === false) {
           leftTrim = wsLeft;
@@ -82,48 +153,43 @@
       if (leftTrim === '_' || leftTrim === 'slurp') {
           // console.log('trimming left' + leftTrim)
           // full slurp
-          // eslint-disable-next-line no-extra-boolean-cast
-          if (!!String.prototype.trimLeft) {
-              str = str.trimLeft();
-          }
-          else {
-              str = str.replace(/^[\s\uFEFF\xA0]+/, '');
-          }
+          str = trimLeft(str);
       }
       else if (leftTrim === '-' || leftTrim === 'nl') {
-          // console.log('trimming left nl' + leftTrim)
           // nl trim
           str = str.replace(/^(?:\r\n|\n|\r)/, '');
       }
       if (rightTrim === '_' || rightTrim === 'slurp') {
-          // console.log('trimming right' + rightTrim)
           // full slurp
-          // eslint-disable-next-line no-extra-boolean-cast
-          if (!!String.prototype.trimRight) {
-              str = str.trimRight();
-          }
-          else {
-              str = str.replace(/[\s\uFEFF\xA0]+$/, '');
-          }
+          str = trimRight(str);
       }
       else if (rightTrim === '-' || rightTrim === 'nl') {
-          // console.log('trimming right nl' + rightTrim)
           // nl trim
           str = str.replace(/(?:\r\n|\n|\r)$/, ''); // TODO: make sure this gets \r\n
       }
       return str;
   }
+  /**
+   * A map of special HTML characters to their XML-escaped equivalents
+   */
   var escMap = {
       '&': '&amp;',
       '<': '&lt;',
       '>': '&gt;',
       '"': '&quot;',
-      "'": '&#39;'
+      "'": '&#39;',
   };
   function replaceChar(s) {
       return escMap[s];
   }
+  /**
+   * XML-escapes an input value after converting it to a string
+   *
+   * @param str - Input value (usually a string)
+   * @returns XML-escaped string
+   */
   function XMLEscape(str) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
       var newStr = String(str);
       if (/[&<>"']/.test(newStr)) {
@@ -138,6 +204,7 @@
   var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g;
   var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g;
   var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
+  /** Escape special regular expression characters inside a string */
   function escapeRegExp(string) {
       // From MDN
       return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
@@ -163,13 +230,12 @@
       function pushString(strng, shouldTrimRightOfString) {
           if (strng) {
               // if string is truthy it must be of type 'string'
-              // TODO: benchmark replace( /(\\|')/g, '\\$1')
               strng = trimWS(strng, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
               shouldTrimRightOfString);
               if (strng) {
                   // replace \ with \\, ' with \'
-                  strng = strng.replace(/\\|'/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n');
                   // we're going to convert all CRLF to LF so it doesn't take more than one replace
+                  strng = strng.replace(/\\|'/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n');
                   buffer.push(strng);
               }
           }
@@ -192,7 +258,6 @@
       // TODO: benchmark having the \s* on either side vs using str.trim()
       var m;
       while ((m = parseOpenReg.exec(str))) {
-          // TODO: check if above needs exec(str) !== null. Don't think it's possible to have 0-width matches but...
           lastIndex = m[0].length + m.index;
           var precedingString = m[1];
           var wsLeft = m[2];
@@ -280,9 +345,19 @@
   }
 
   /* END TYPES */
+  /**
+   * Compiles a template string to a function string. Most often users just use `compile()`, which calls `compileToString` and creates a new function using the result
+   *
+   * **Example**
+   *
+   * ```js
+   * compileToString("Hi <%= it.user %>", eta.defaultConfig)
+   * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
+   * ```
+   */
   function compileToString(str, env) {
       var buffer = parse(str, env);
-      var res = "var tR='';" +
+      var res = "var tR=''\n" +
           (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
           compileScope(buffer, env) +
           'if(cb){cb(null,tR)} return tR' +
@@ -296,8 +371,19 @@
           }
       }
       return res;
-      // TODO: is `return cb()` necessary, or could we just do `cb()`
   }
+  /**
+   * Loops through the AST generated by `parse` and transform each item into JS calls
+   *
+   * **Example**
+   *
+   * ```js
+   * // AST version of 'Hi <%= it.user %>'
+   * let templateAST = ['Hi ', { val: 'it.user', t: 'i' }]
+   * compileScope(templateAST, eta.defaultConfig)
+   * // "tR+='Hi ';tR+=E.e(it.user);"
+   * ```
+   */
   function compileScope(buff, env) {
       var i = 0;
       var buffLength = buff.length;
@@ -307,21 +393,21 @@
           if (typeof currentBlock === 'string') {
               var str = currentBlock;
               // we know string exists
-              returnStr += "tR+='" + str + "';";
+              returnStr += "tR+='" + str + "'\n";
           }
           else {
               var type = currentBlock.t; // ~, s, !, ?, r
               var content = currentBlock.val || '';
               if (type === 'r') {
                   // raw
-                  returnStr += 'tR+=' + content + ';';
+                  returnStr += 'tR+=' + content + '\n';
               }
               else if (type === 'i') {
                   // interpolate
                   if (env.autoEscape) {
                       content = 'E.e(' + content + ')';
                   }
-                  returnStr += 'tR+=' + content + ';';
+                  returnStr += 'tR+=' + content + '\n';
                   // reference
               }
               else if (type === 'e') {
@@ -333,7 +419,12 @@
       return returnStr;
   }
 
-  /* END TYPES */
+  /**
+   * Handles storage and accessing of values
+   *
+   * In this case, we use it to store compiled template functions
+   * Indexed by their `name` or `filename`
+   */
   var Cacher = /** @class */ (function () {
       function Cacher(cache) {
           this.cache = cache;
@@ -354,17 +445,25 @@
           this.cache = {};
       };
       Cacher.prototype.load = function (cacheObj) {
-          // TODO: this will err with deep objects and `storage` or `plugins` keys.
-          // Update Feb 26: EDITED so it shouldn't err
           copyProps(this.cache, cacheObj);
       };
       return Cacher;
   }());
 
   /* END TYPES */
+  /**
+   * Eta's template storage
+   *
+   * Stores partials and cached templates
+   */
   var templates = new Cacher({});
 
   /* END TYPES */
+  /**
+   * Include a template based on its name (or filepath, if it's already been cached).
+   *
+   * Called like `E.include(templateNameOrPath, data)`
+   */
   function includeHelper(templateNameOrPath, data) {
       var template = this.templates.get(templateNameOrPath);
       if (!template) {
@@ -381,7 +480,7 @@
       parse: {
           interpolate: '=',
           raw: '~',
-          exec: ''
+          exec: '',
       },
       async: false,
       templates: templates,
@@ -389,9 +488,21 @@
       plugins: [],
       useWith: false,
       e: XMLEscape,
-      include: includeHelper
+      include: includeHelper,
   };
   includeHelper.bind(defaultConfig);
+  /**
+   * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into defaultConfig, and returns the result
+   *
+   * @param override Partial configuration object
+   * @param baseConfig Partial configuration object to merge before `override`
+   *
+   * **Example**
+   *
+   * ```js
+   * let customConfig = getConfig({tags: ['!#', '#!']})
+   * ```
+   */
   function getConfig(override, baseConfig) {
       // TODO: run more tests on this
       var res = {}; // Linked
@@ -406,25 +517,28 @@
   }
 
   /* END TYPES */
-  function compile(str, env) {
-      var options = getConfig(env || {});
+  /**
+   * Takes a template string and returns a template function that can be called with (data, config, [cb])
+   *
+   * @param str - The template string
+   * @param config - A custom configuration object (optional)
+   *
+   * **Example**
+   *
+   * ```js
+   * let compiledFn = eta.compile("Hi <%= it.user %>")
+   * // function anonymous()
+   * let compiledFnStr = compiledFn.toString()
+   * // "function anonymous(it,E,cb\n) {\nvar tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
+   * ```
+   */
+  function compile(str, config) {
+      var options = getConfig(config || {});
       var ctor; // constructor
       /* ASYNC HANDLING */
       // The below code is modified from mde/ejs. All credit should go to them.
       if (options.async) {
-          // Have to use generated function for this, since in envs without support,
-          // it breaks in parsing
-          try {
-              ctor = new Function('return (async function(){}).constructor;')();
-          }
-          catch (e) {
-              if (e instanceof SyntaxError) {
-                  throw EtaErr("This environment doesn't support async/await");
-              }
-              else {
-                  throw e;
-              }
-          }
+          ctor = getAsyncFunctionConstructor();
       }
       else {
           ctor = Function;
@@ -442,7 +556,9 @@
                   '\n' +
                   Array(e.message.length + 1).join('=') +
                   '\n' +
-                  compileToString(str, options));
+                  compileToString(str, options) +
+                  '\n' // This will put an extra newline before the callstack for extra readability
+              );
           }
           else {
               throw e;
@@ -462,16 +578,48 @@
       else {
           templateFunc = compile(template, options);
       }
+      // Note that we don't have to check if it already exists in the cache;
+      // it would have returned earlier if it had
       if (options.cache && options.name) {
           options.templates.define(options.name, templateFunc);
       }
       return templateFunc;
   }
-  function render(template, data, env, cb) {
-      var options = getConfig(env || {});
+  /**
+   * Render a template
+   *
+   * If `template` is a string, Eta will compile it to a function and then call it with the provided data.
+   * If `template` is a template function, Eta will call it with the provided data.
+   *
+   * If `config.async` is `false`, Eta will return the rendered template.
+   *
+   * If `config.async` is `true` and there's a callback function, Eta will call the callback with `(err, renderedTemplate)`.
+   * If `config.async` is `true` and there's not a callback function, Eta will return a Promise that resolves to the rendered template
+   *
+   * If `config.cache` is `true` and `config` has a `name` or `filename` property, Eta will cache the template on the first render and use the cached template for all subsequent renders.
+   *
+   * @param template Template string or template function
+   * @param data Data to render the template with
+   * @param config Optional config options
+   * @param cb Callback function
+   */
+  function render(template, data, config, cb) {
+      var options = getConfig(config || {});
       if (options.async) {
           var result;
-          if (!cb) {
+          if (cb) {
+              // If user passes callback
+              try {
+                  // Note: if there is an error while rendering the template,
+                  // It will bubble up and be caught here
+                  var templateFn = handleCache(template, options);
+                  templateFn(data, options, cb);
+              }
+              catch (err) {
+                  return cb(err);
+              }
+          }
+          else {
               // No callback, try returning a promise
               if (typeof promiseImpl === 'function') {
                   return new promiseImpl(function (resolve, reject) {
@@ -486,14 +634,6 @@
               }
               else {
                   throw EtaErr("Please provide a callback function, this env doesn't support Promises");
-              }
-          }
-          else {
-              try {
-                  handleCache(template, options)(data, options, cb);
-              }
-              catch (err) {
-                  return cb(err);
               }
           }
       }

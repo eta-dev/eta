@@ -1,13 +1,16 @@
-interface Dict<T> {
-    [key: string]: T;
-}
+/**
+ * Handles storage and accessing of values
+ *
+ * In this case, we use it to store compiled template functions
+ * Indexed by their `name` or `filename`
+ */
 declare class Cacher<T> {
     private cache;
-    constructor(cache: Dict<T>);
+    constructor(cache: Record<string, T>);
     define(key: string, val: T): void;
     get(key: string): T;
     remove(key: string): void;
     reset(): void;
-    load(cacheObj: Dict<T>): void;
+    load(cacheObj: Record<string, T>): void;
 }
 export { Cacher };
