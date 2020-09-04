@@ -29,14 +29,14 @@ function escapeRegExp(string: string) {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
-export default function parse(str: string, env: EtaConfig): Array<AstObject> {
+export default function parse(str: string, config: EtaConfig): Array<AstObject> {
   var buffer: Array<AstObject> = []
   var trimLeftOfNextStr: string | false = false
   var lastIndex = 0
-  var parseOptions = env.parse
+  var parseOptions = config.parse
 
   /* Adding for EJS compatibility */
-  if (env.rmWhitespace) {
+  if (config.rmWhitespace) {
     // Code taken directly from EJS
     // Have to use two separate replaces here as `^` and `$` operators don't
     // work well with `\r` and empty lines don't work well with the `m` flag.
@@ -56,7 +56,7 @@ export default function parse(str: string, env: EtaConfig): Array<AstObject> {
 
       strng = trimWS(
         strng,
-        env,
+        config,
         trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
         shouldTrimRightOfString
       )
@@ -89,11 +89,14 @@ export default function parse(str: string, env: EtaConfig): Array<AstObject> {
   '')
 
   var parseOpenReg = new RegExp(
-    '([^]*?)' + escapeRegExp(env.tags[0]) + '(-|_)?\\s*(' + prefixes + ')?\\s*',
+    '([^]*?)' + escapeRegExp(config.tags[0]) + '(-|_)?\\s*(' + prefixes + ')?\\s*',
     'g'
   )
 
-  var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + escapeRegExp(env.tags[1]) + ')', 'g')
+  var parseCloseReg = new RegExp(
+    '\'|"|`|\\/\\*|(\\s*(-|_)?' + escapeRegExp(config.tags[1]) + ')',
+    'g'
+  )
   // TODO: benchmark having the \s* on either side vs using str.trim()
 
   var m
@@ -177,11 +180,11 @@ export default function parse(str: string, env: EtaConfig): Array<AstObject> {
 
   pushString(str.slice(lastIndex, str.length), false)
 
-  if (env.plugins) {
-    for (var i = 0; i < env.plugins.length; i++) {
-      var plugin = env.plugins[i]
+  if (config.plugins) {
+    for (var i = 0; i < config.plugins.length; i++) {
+      var plugin = config.plugins[i]
       if (plugin.processAST) {
-        buffer = plugin.processAST(buffer, env)
+        buffer = plugin.processAST(buffer, config)
       }
     }
   }

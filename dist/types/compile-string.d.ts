@@ -9,4 +9,4 @@ import { EtaConfig } from './config';
  * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
  * ```
  */
-export default function compileToString(str: string, env: EtaConfig): string;
+export default function compileToString(str: string, config: EtaConfig): string;

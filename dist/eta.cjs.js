@@ -207,13 +207,13 @@ function escapeRegExp(string) {
     // From MDN
     return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
-function parse(str, env) {
+function parse(str, config) {
     var buffer = [];
     var trimLeftOfNextStr = false;
     var lastIndex = 0;
-    var parseOptions = env.parse;
+    var parseOptions = config.parse;
     /* Adding for EJS compatibility */
-    if (env.rmWhitespace) {
+    if (config.rmWhitespace) {
         // Code taken directly from EJS
         // Have to use two separate replaces here as `^` and `$` operators don't
         // work well with `\r` and empty lines don't work well with the `m` flag.
@@ -228,7 +228,7 @@ function parse(str, env) {
     function pushString(strng, shouldTrimRightOfString) {
         if (strng) {
             // if string is truthy it must be of type 'string'
-            strng = trimWS(strng, env, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
+            strng = trimWS(strng, config, trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
             shouldTrimRightOfString);
             if (strng) {
                 // replace \ with \\, ' with \'
@@ -251,8 +251,8 @@ function parse(str, env) {
             return accumulator;
         }
     }, '');
-    var parseOpenReg = new RegExp('([^]*?)' + escapeRegExp(env.tags[0]) + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g');
-    var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + escapeRegExp(env.tags[1]) + ')', 'g');
+    var parseOpenReg = new RegExp('([^]*?)' + escapeRegExp(config.tags[0]) + '(-|_)?\\s*(' + prefixes + ')?\\s*', 'g');
+    var parseCloseReg = new RegExp('\'|"|`|\\/\\*|(\\s*(-|_)?' + escapeRegExp(config.tags[1]) + ')', 'g');
     // TODO: benchmark having the \s* on either side vs using str.trim()
     var m;
     while ((m = parseOpenReg.exec(str))) {
@@ -331,11 +331,11 @@ function parse(str, env) {
         }
     }
     pushString(str.slice(lastIndex, str.length), false);
-    if (env.plugins) {
-        for (var i = 0; i < env.plugins.length; i++) {
-            var plugin = env.plugins[i];
+    if (config.plugins) {
+        for (var i = 0; i < config.plugins.length; i++) {
+            var plugin = config.plugins[i];
             if (plugin.processAST) {
-                buffer = plugin.processAST(buffer, env);
+                buffer = plugin.processAST(buffer, config);
             }
         }
     }
@@ -353,18 +353,18 @@ function parse(str, env) {
  * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
  * ```
  */
-function compileToString(str, env) {
-    var buffer = parse(str, env);
+function compileToString(str, config) {
+    var buffer = parse(str, config);
     var res = "var tR=''\n" +
-        (env.useWith ? 'with(' + env.varName + '||{}){' : '') +
-        compileScope(buffer, env) +
+        (config.useWith ? 'with(' + config.varName + '||{}){' : '') +
+        compileScope(buffer, config) +
         'if(cb){cb(null,tR)} return tR' +
-        (env.useWith ? '}' : '');
-    if (env.plugins) {
-        for (var i = 0; i < env.plugins.length; i++) {
-            var plugin = env.plugins[i];
+        (config.useWith ? '}' : '');
+    if (config.plugins) {
+        for (var i = 0; i < config.plugins.length; i++) {
+            var plugin = config.plugins[i];
             if (plugin.processFnString) {
-                res = plugin.processFnString(res, env);
+                res = plugin.processFnString(res, config);
             }
         }
     }
@@ -382,7 +382,7 @@ function compileToString(str, env) {
  * // "tR+='Hi ';tR+=E.e(it.user);"
  * ```
  */
-function compileScope(buff, env) {
+function compileScope(buff, config) {
     var i = 0;
     var buffLength = buff.length;
     var returnStr = '';
@@ -402,7 +402,7 @@ function compileScope(buff, env) {
             }
             else if (type === 'i') {
                 // interpolate
-                if (env.autoEscape) {
+                if (config.autoEscape) {
                     content = 'E.e(' + content + ')';
                 }
                 returnStr += 'tR+=' + content + '\n';
