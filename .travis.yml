@@ -1,7 +1,9 @@
 language: node_js
 cache:
+  yarn: true
   directories:
     - ~/.npm
+    - '$HOME/.deno'
 notifications:
   email: false
 node_js:
