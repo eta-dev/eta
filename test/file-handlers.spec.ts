@@ -1,7 +1,11 @@
 /* global it, expect, describe */
 
 import { renderFile, __express, templates, compile } from '../src/index'
-import EtaErr from '../src/err'
+
+// So we can build a RegEx to test our errors against
+export function buildRegEx(string: string) {
+  return RegExp(string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n'))
+}
 
 var path = require('path'),
   filePath = path.join(__dirname, 'templates/simple.eta'),
@@ -104,18 +108,14 @@ describe('renderFile error tests', () => {
   it('render file with callback works on error', (done) => {
     function cb(err: Error, _res?: string) {
       expect(err).toBeTruthy()
-      expect(err.message)
-        .toEqual(`Loading file: /home/nebrelbug/Coding/eta/test/templates/badsyntax.eta failed:
-
-Bad template syntax
-
-Unexpected token '='
-====================
+      expect(err.message).toMatch(
+        buildRegEx(`
 var tR=''
 tR+='Hi '
 tR+=E.e(badSyntax(=!)
 if(cb){cb(null,tR)} return tR
 `)
+      )
       done()
     }
 
@@ -126,7 +126,20 @@ if(cb){cb(null,tR)} return tR
     await expect(async () => {
       await renderFile(errFilePath, {})
     }).rejects.toThrow(
-      EtaErr(`Loading file: /home/nebrelbug/Coding/eta/test/templates/badsyntax.eta failed:
+      buildRegEx(`
+var tR=''
+tR+='Hi '
+tR+=E.e(badSyntax(=!)
+if(cb){cb(null,tR)} return tR
+`)
+    )
+  })
+})
+
+// NOTE: the errors will really look like this:
+
+/*
+Loading file: /home/nebrelbug/Coding/eta/test/templates/badsyntax.eta failed:
 
 Bad template syntax
 
@@ -136,7 +149,6 @@ var tR=''
 tR+='Hi '
 tR+=E.e(badSyntax(=!)
 if(cb){cb(null,tR)} return tR
-`)
-    )
-  })
-})
+*/
+
+// Unfortunately, Node throws different errors ("Unexpected token '='", "Unexpected token =", "Invalid or unexpected token") depending on the version so we can't test against the first part of the string.

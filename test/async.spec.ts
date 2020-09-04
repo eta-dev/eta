@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import * as Eta from '../src/index'
-import EtaErr from '../src/err'
+import { buildRegEx } from './file-handlers.spec'
 
 function resolveAfter2Seconds(val: string): Promise<string> {
   return new Promise((resolve) => {
@@ -46,10 +46,7 @@ describe('Async Render checks', () => {
       await expect(async () => {
         await Eta.render('<%= @#$%^ %>', {}, { async: true })
       }).rejects.toThrow(
-        EtaErr(`Bad template syntax
-
-Invalid or unexpected token
-===========================
+        buildRegEx(`
 var tR=''
 tR+=E.e(@#$%^)
 if(cb){cb(null,tR)} return tR
@@ -60,14 +57,13 @@ if(cb){cb(null,tR)} return tR
     it('Async template w/ syntax error passes error to callback', (done) => {
       function cb(err: Error | null, _res?: string) {
         expect(err).toBeTruthy()
-        expect((err as Error).message).toEqual(`Bad template syntax
-
-Invalid or unexpected token
-===========================
+        expect((err as Error).message).toMatch(
+          buildRegEx(`
 var tR=''
 tR+=E.e(@#$%^)
 if(cb){cb(null,tR)} return tR
 `)
+        )
         done()
       }
 

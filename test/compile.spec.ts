@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import { compile } from '../src/index'
-import EtaErr from '../src/err'
+import { buildRegEx } from './file-handlers.spec'
 
 var fs = require('fs'),
   path = require('path'),
@@ -30,10 +30,7 @@ describe('Compile test', () => {
     expect(() => {
       compile('<% hi (=h) %>')
     }).toThrow(
-      EtaErr(`Bad template syntax
-
-Unexpected token '='
-====================
+      buildRegEx(`
 var tR=''
 hi (=h)
 if(cb){cb(null,tR)} return tR
