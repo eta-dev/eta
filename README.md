@@ -39,7 +39,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
   - Plugins, custom delimiters, caching
 - 🔨 Powerful
   - Precompilation, partials, async
-  - 🚀 ExpressJS support out-of-the-box
+  - ExpressJS support out-of-the-box
 - 🔥 Reliable
   - Better quotes/comments support
     - _ex._ `<%= someval + "string %>" %>` compiles correctly, while it fails with doT or EJS
