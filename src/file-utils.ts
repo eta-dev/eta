@@ -4,21 +4,10 @@ var _BOM = /^\uFEFF/
 // express is set like: app.engine('html', require('eta').renderFile)
 
 import EtaErr from './err'
-import Compile from './compile'
-import { getConfig } from './config'
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from './config'
-import { TemplateFunction } from './compile'
-
-interface PartialFileConfig extends PartialConfig {
-  filename: string
-}
-
-interface FileConfig extends EtaConfig {
-  filename: string
-}
+import { EtaConfig } from './config'
 
 /* END TYPES */
 
@@ -26,13 +15,15 @@ interface FileConfig extends EtaConfig {
  * Get the path to the included file from the parent file path and the
  * specified path.
  *
- * @param {String}  name       specified path
- * @param {String}  parentfile parent file path
- * @param {Boolean} [isDir=false] whether parent file path is a directory
- * @return {String}
+ * If `name` does not have an extension, it will default to `.eta`
+ *
+ * @param name specified path
+ * @param parentfile parent file path
+ * @param isDirectory whether parentfile is a directory
+ * @return absolute path to template
  */
 
-function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolean) {
+function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolean): string {
   var includePath = path.resolve(
     isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
     name // file
@@ -45,11 +36,17 @@ function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolea
 }
 
 /**
- * Get the path to the included file by Options
+ * Get the absolute path to an included template
  *
- * @param  {String}  path    specified path
- * @param  {Options} options compilation options
- * @return {String}
+ * If this is called with an absolute path (for example, starting with '/' or 'C:\') then Eta will return the filepath.
+ *
+ * If this is called with a relative path, Eta will:
+ * - Look relative to the current template (if the current template has the `filename` property)
+ * - Look inside each directory in options.views
+ *
+ * @param path    specified path
+ * @param options compilation options
+ * @return absolute path to template
  */
 
 function getPath(path: string, options: EtaConfig) {
@@ -71,7 +68,9 @@ function getPath(path: string, options: EtaConfig) {
       }
     }
     // Then look in any views directories
+    // TODO: write tests for if views is a string
     if (!includePath) {
+      // Loop through each views directory and search for the file.
       if (
         Array.isArray(views) &&
         views.some(function (v) {
@@ -80,6 +79,12 @@ function getPath(path: string, options: EtaConfig) {
         })
       ) {
         includePath = filePath
+      } else if (typeof views === 'string') {
+        // Search for the file if views is a single directory
+        filePath = getWholeFilePath(path, views, true)
+        if (fs.existsSync(filePath)) {
+          includePath = filePath
+        }
       }
     }
     if (!includePath) {
@@ -89,20 +94,12 @@ function getPath(path: string, options: EtaConfig) {
   return includePath
 }
 
+/**
+ * Reads a file synchronously
+ */
+
 function readFile(filePath: string) {
   return readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
 }
 
-function loadFile(filePath: string, options: PartialFileConfig): TemplateFunction {
-  var config = getConfig(options)
-  var template = readFile(filePath)
-  try {
-    var compiledTemplate = Compile(template, config)
-    config.templates.define((config as FileConfig).filename, compiledTemplate)
-    return compiledTemplate
-  } catch (e) {
-    throw EtaErr('Loading file: ' + filePath + ' failed')
-  }
-}
-
-export { getPath, readFile, loadFile }
+export { getPath, readFile }
