@@ -1,6 +1,8 @@
 /* global it, expect, describe */
 
 import { compile } from '../src/index'
+import EtaErr from '../src/err'
+
 var fs = require('fs'),
   path = require('path'),
   filePath = path.join(__dirname, 'templates/complex.eta')
@@ -27,6 +29,15 @@ describe('Compile test', () => {
   test('throws with bad inner JS syntax', () => {
     expect(() => {
       compile('<% hi (=h) %>')
-    }).toThrow()
+    }).toThrow(
+      EtaErr(`Bad template syntax
+
+Unexpected token '='
+====================
+var tR=''
+hi (=h)
+if(cb){cb(null,tR)} return tR
+`)
+    )
   })
 })
