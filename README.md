@@ -1,4 +1,4 @@
-<h1 align="center">eta (η)</h1>
+<h1 align="center" style="text-align: center" >eta (η)</h1>
 
 <p align="center">
   <a href="https://eta.js.org">Documentation</a> -
