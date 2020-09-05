@@ -30,7 +30,7 @@ function EtaErr(message) {
     return err;
 }
 EtaErr.prototype = Object.create(Error.prototype, {
-    name: { value: 'Eta Error', enumerable: false }
+    name: { value: 'Eta Error', enumerable: false },
 });
 /**
  * Throws an EtaErr with a nicely formatted error and message showing where in the template the error occurred.

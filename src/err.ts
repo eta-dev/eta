@@ -14,9 +14,9 @@ function setPrototypeOf(obj: any, proto: any) {
  * This returns a new Error with a custom prototype. Note that it's _not_ a constructor
  *
  * @param message Error message
- * 
+ *
  * **Example**
- * 
+ *
  * ```js
  * throw EtaErr("template not found")
  * ```
@@ -29,7 +29,7 @@ export default function EtaErr(message: string): Error {
 }
 
 EtaErr.prototype = Object.create(Error.prototype, {
-  name: { value: 'Eta Error', enumerable: false }
+  name: { value: 'Eta Error', enumerable: false },
 })
 
 /**
