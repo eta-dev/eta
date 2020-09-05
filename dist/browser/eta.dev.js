@@ -351,7 +351,7 @@
    * **Example**
    *
    * ```js
-   * compileToString("Hi <%= it.user %>", eta.defaultConfig)
+   * compileToString("Hi <%= it.user %>", eta.config)
    * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
    * ```
    */
@@ -380,7 +380,7 @@
    * ```js
    * // AST version of 'Hi <%= it.user %>'
    * let templateAST = ['Hi ', { val: 'it.user', t: 'i' }]
-   * compileScope(templateAST, eta.defaultConfig)
+   * compileScope(templateAST, eta.config)
    * // "tR+='Hi ';tR+=E.e(it.user);"
    * ```
    */
@@ -472,7 +472,7 @@
       return template(data, this);
   }
   /** Eta's base (global) configuration */
-  var defaultConfig = {
+  var config = {
       varName: 'it',
       autoTrim: [false, 'nl'],
       rmWhitespace: false,
@@ -491,9 +491,9 @@
       e: XMLEscape,
       include: includeHelper,
   };
-  includeHelper.bind(defaultConfig);
+  includeHelper.bind(config);
   /**
-   * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into defaultConfig, and returns the result
+   * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into eta.config, and returns the result
    *
    * @param override Partial configuration object
    * @param baseConfig Partial configuration object to merge before `override`
@@ -507,7 +507,7 @@
   function getConfig(override, baseConfig) {
       // TODO: run more tests on this
       var res = {}; // Linked
-      copyProps(res, defaultConfig); // Creates deep clone of defaultConfig, 1 layer deep
+      copyProps(res, config); // Creates deep clone of eta.config, 1 layer deep
       if (baseConfig) {
           copyProps(res, baseConfig);
       }
@@ -518,7 +518,7 @@
   }
   /** Update Eta's base config */
   function configure(options) {
-      return copyProps(defaultConfig, options);
+      return copyProps(config, options);
   }
 
   /* END TYPES */
@@ -649,9 +649,9 @@
 
   exports.compile = compile;
   exports.compileToString = compileToString;
-  exports.config = defaultConfig;
+  exports.config = config;
   exports.configure = configure;
-  exports.defaultConfig = defaultConfig;
+  exports.defaultConfig = config;
   exports.getConfig = getConfig;
   exports.parse = parse;
   exports.render = render;

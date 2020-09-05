@@ -13,7 +13,7 @@ import { AstObject } from './parse'
  * **Example**
  *
  * ```js
- * compileToString("Hi <%= it.user %>", eta.defaultConfig)
+ * compileToString("Hi <%= it.user %>", eta.config)
  * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
  * ```
  */
@@ -48,7 +48,7 @@ export default function compileToString(str: string, config: EtaConfig) {
  * ```js
  * // AST version of 'Hi <%= it.user %>'
  * let templateAST = ['Hi ', { val: 'it.user', t: 'i' }]
- * compileScope(templateAST, eta.defaultConfig)
+ * compileScope(templateAST, eta.config)
  * // "tR+='Hi ';tR+=E.e(it.user);"
  * ```
  */

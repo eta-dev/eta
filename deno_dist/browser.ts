@@ -4,8 +4,8 @@ export { default as parse } from "./parse.ts";
 export { default as render } from "./render.ts";
 export { templates } from "./containers.ts";
 export {
-  defaultConfig,
-  defaultConfig as config,
+  config,
+  config as defaultConfig,
   getConfig,
   configure,
 } from "./config.ts";

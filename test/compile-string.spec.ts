@@ -1,6 +1,5 @@
 /* global it, expect, describe */
-import { compileToString } from '../src/index'
-import { defaultConfig } from '../src/config'
+import { compileToString, defaultConfig } from '../src/index'
 
 var fs = require('fs'),
   path = require('path'),
@@ -8,9 +7,6 @@ var fs = require('fs'),
 
 const complexTemplate = fs.readFileSync(filePath, 'utf8')
 
-/**
- * Dummy test
- */
 describe('Compile to String test', () => {
   it('parses a simple template', () => {
     var str = compileToString('hi <%= hey %>', defaultConfig)

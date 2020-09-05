@@ -4,4 +4,4 @@ export { default as compile } from './compile';
 export { default as parse } from './parse';
 export { default as render } from './render';
 export { templates } from './containers';
-export { defaultConfig, defaultConfig as config, getConfig, configure } from './config';
+export { config, config as defaultConfig, getConfig, configure } from './config';

@@ -5,7 +5,7 @@ import { EtaConfig } from './config';
  * **Example**
  *
  * ```js
- * compileToString("Hi <%= it.user %>", eta.defaultConfig)
+ * compileToString("Hi <%= it.user %>", eta.config)
  * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
  * ```
  */

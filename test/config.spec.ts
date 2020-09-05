@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
-import { render } from '../src/index'
-import { defaultConfig, configure } from '../src/config'
+import { render, defaultConfig } from '../src/index'
+import { config, configure } from '../src/config'
 
 describe('Config Tests', () => {
   it('Renders a simple template with default env', () => {
@@ -27,5 +27,9 @@ describe('Config Tests', () => {
 
     expect(defaultConfig).toEqual(updatedConfig)
     expect(defaultConfig.tags).toEqual(['{{', '}}'])
+  })
+
+  it('config and defaultConfig are the same object', () => {
+    expect(defaultConfig).toEqual(config)
   })
 })
