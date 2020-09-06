@@ -13,7 +13,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-<div align="center">
+<p align="center">
 
 [![GitHub package.json version (master)](https://img.shields.io/github/package-json/v/eta-dev/eta/master?label=current%20version)](https://www.npmjs.com/package/eta)
 [![deno module](https://img.shields.io/badge/deno-module-informational?logo=deno)](https://deno.land/x/eta)
@@ -22,7 +22,7 @@
 [![Coveralls](https://img.shields.io/coveralls/eta-dev/eta.svg)](https://coveralls.io/github/eta-dev/eta)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
 
-</div>
+</p>
 
 **Summary**
 
