@@ -51,9 +51,10 @@ export interface EtaConfigWithFilename extends EtaConfig {
     filename: string;
 }
 export declare type PartialConfig = Partial<EtaConfig>;
-declare var defaultConfig: EtaConfig;
+/** Eta's base (global) configuration */
+declare var config: EtaConfig;
 /**
- * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into defaultConfig, and returns the result
+ * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into eta.config, and returns the result
  *
  * @param override Partial configuration object
  * @param baseConfig Partial configuration object to merge before `override`
@@ -65,4 +66,6 @@ declare var defaultConfig: EtaConfig;
  * ```
  */
 declare function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig;
-export { defaultConfig, getConfig };
+/** Update Eta's base config */
+declare function configure(options: PartialConfig): Partial<EtaConfig>;
+export { config, getConfig, configure };

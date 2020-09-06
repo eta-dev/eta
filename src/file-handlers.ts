@@ -151,7 +151,7 @@ function includeFile(path: string, options: EtaConfig): [TemplateFunction, EtaCo
  * This can take two different function signatures:
  *
  * - `renderFile(filename, dataAndConfig, [cb])`
- *   - Eta will merge `dataAndConfig` into `eta.defaultConfig`
+ *   - Eta will merge `dataAndConfig` into `eta.config`
  * - `renderFile(filename, data, [config], [cb])`
  *
  * Note that renderFile does not immediately return the rendered result. If you pass in a callback function, it will be called with `(err, res)`. Otherwise, `renderFile` will return a `Promise` that resolves to the render result.

@@ -18,7 +18,7 @@ export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn
  * @param config - A custom configuration object (optional)
  *
  * **Example**
- * 
+ *
  * ```js
  * let compiledFn = eta.compile("Hi <%= it.user %>")
  * // function anonymous()

@@ -8,7 +8,7 @@ import { TemplateFunction } from "./compile.ts";
 
 /**
  * Eta's template storage
- * 
+ *
  * Stores partials and cached templates
  */
 

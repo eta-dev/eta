@@ -26,7 +26,7 @@ function EtaErr(message) {
     return err;
 }
 EtaErr.prototype = Object.create(Error.prototype, {
-    name: { value: 'Eta Error', enumerable: false }
+    name: { value: 'Eta Error', enumerable: false },
 });
 /**
  * Throws an EtaErr with a nicely formatted error and message showing where in the template the error occurred.
@@ -345,7 +345,7 @@ function parse(str, config) {
  * **Example**
  *
  * ```js
- * compileToString("Hi <%= it.user %>", eta.defaultConfig)
+ * compileToString("Hi <%= it.user %>", eta.config)
  * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
  * ```
  */
@@ -374,7 +374,7 @@ function compileToString(str, config) {
  * ```js
  * // AST version of 'Hi <%= it.user %>'
  * let templateAST = ['Hi ', { val: 'it.user', t: 'i' }]
- * compileScope(templateAST, eta.defaultConfig)
+ * compileScope(templateAST, eta.config)
  * // "tR+='Hi ';tR+=E.e(it.user);"
  * ```
  */
@@ -465,7 +465,8 @@ function includeHelper(templateNameOrPath, data) {
     }
     return template(data, this);
 }
-var defaultConfig = {
+/** Eta's base (global) configuration */
+var config = {
     varName: 'it',
     autoTrim: [false, 'nl'],
     rmWhitespace: false,
@@ -484,9 +485,9 @@ var defaultConfig = {
     e: XMLEscape,
     include: includeHelper,
 };
-includeHelper.bind(defaultConfig);
+includeHelper.bind(config);
 /**
- * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into defaultConfig, and returns the result
+ * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into eta.config, and returns the result
  *
  * @param override Partial configuration object
  * @param baseConfig Partial configuration object to merge before `override`
@@ -500,7 +501,7 @@ includeHelper.bind(defaultConfig);
 function getConfig(override, baseConfig) {
     // TODO: run more tests on this
     var res = {}; // Linked
-    copyProps(res, defaultConfig); // Creates deep clone of defaultConfig, 1 layer deep
+    copyProps(res, config); // Creates deep clone of eta.config, 1 layer deep
     if (baseConfig) {
         copyProps(res, baseConfig);
     }
@@ -508,6 +509,10 @@ function getConfig(override, baseConfig) {
         copyProps(res, override);
     }
     return res;
+}
+/** Update Eta's base config */
+function configure(options) {
+    return copyProps(config, options);
 }
 
 /* END TYPES */
@@ -896,8 +901,8 @@ function render(template, data, config, cb) {
 }
 
 // @denoify-ignore
-defaultConfig.includeFile = includeFileHelper;
-includeFileHelper.bind(defaultConfig);
+config.includeFile = includeFileHelper;
+includeFileHelper.bind(config);
 
-export { renderFile as __express, compile, compileToString, defaultConfig, getConfig, loadFile, parse, render, renderFile, templates };
+export { renderFile as __express, compile, compileToString, config, configure, config as defaultConfig, getConfig, loadFile, parse, render, renderFile, templates };
 //# sourceMappingURL=eta.es.js.map

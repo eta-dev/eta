@@ -2,10 +2,10 @@
 
 /* Export file stuff */
 import { includeFileHelper } from './file-helpers'
-import { defaultConfig } from './config'
+import { config } from './config'
 
-defaultConfig.includeFile = includeFileHelper
-includeFileHelper.bind(defaultConfig)
+config.includeFile = includeFileHelper
+includeFileHelper.bind(config)
 
 export { loadFile, renderFile, renderFile as __express } from './file-handlers'
 
@@ -16,4 +16,4 @@ export { default as compile } from './compile'
 export { default as parse } from './parse'
 export { default as render } from './render'
 export { templates } from './containers'
-export { defaultConfig, getConfig } from './config'
+export { config, config as defaultConfig, getConfig, configure } from './config'

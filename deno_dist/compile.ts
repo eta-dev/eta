@@ -22,7 +22,7 @@ export type TemplateFunction = (
  * @param config - A custom configuration object (optional)
  *
  * **Example**
- * 
+ *
  * ```js
  * let compiledFn = eta.compile("Hi <%= it.user %>")
  * // function anonymous()

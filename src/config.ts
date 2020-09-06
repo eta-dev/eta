@@ -75,7 +75,8 @@ function includeHelper(this: EtaConfig, templateNameOrPath: string, data: object
   return template(data, this)
 }
 
-var defaultConfig: EtaConfig = {
+/** Eta's base (global) configuration */
+var config: EtaConfig = {
   varName: 'it',
   autoTrim: [false, 'nl'],
   rmWhitespace: false,
@@ -95,10 +96,10 @@ var defaultConfig: EtaConfig = {
   include: includeHelper,
 }
 
-includeHelper.bind(defaultConfig)
+includeHelper.bind(config)
 
 /**
- * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into defaultConfig, and returns the result
+ * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into eta.config, and returns the result
  *
  * @param override Partial configuration object
  * @param baseConfig Partial configuration object to merge before `override`
@@ -114,7 +115,7 @@ function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
   // TODO: run more tests on this
 
   var res: PartialConfig = {} // Linked
-  copyProps(res, defaultConfig) // Creates deep clone of defaultConfig, 1 layer deep
+  copyProps(res, config) // Creates deep clone of eta.config, 1 layer deep
 
   if (baseConfig) {
     copyProps(res, baseConfig)
@@ -127,4 +128,10 @@ function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
   return res as EtaConfig
 }
 
-export { defaultConfig, getConfig }
+/** Update Eta's base config */
+
+function configure(options: PartialConfig) {
+  return copyProps(config, options)
+}
+
+export { config, getConfig, configure }

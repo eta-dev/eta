@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import { parse } from '../src/index'
-import { defaultConfig } from '../src/config'
+import { config } from '../src/config'
 
 var fs = require('fs'),
   path = require('path'),
@@ -11,32 +11,32 @@ const complexTemplate = fs.readFileSync(filePath, 'utf8')
 
 describe('parse test', () => {
   it('parses a simple template', () => {
-    var buff = parse('hi <%= hey %>', defaultConfig)
+    var buff = parse('hi <%= hey %>', config)
     expect(buff).toEqual(['hi ', { val: 'hey', t: 'i' }])
   })
 
   it('parses a raw tag', () => {
-    var buff = parse('hi <%~ hey %>', defaultConfig)
+    var buff = parse('hi <%~ hey %>', config)
     expect(buff).toEqual(['hi ', { val: 'hey', t: 'r' }])
   })
 
   it('works with whitespace trimming', () => {
-    var buff = parse('hi\n<%- = hey-%> <%_ = hi _%>', defaultConfig)
+    var buff = parse('hi\n<%- = hey-%> <%_ = hi _%>', config)
     expect(buff).toEqual(['hi', { val: 'hey', t: 'i' }, { val: 'hi', t: 'i' }])
   })
 
   it('works with multiline comments', () => {
-    var buff = parse('hi <% /* comment contains delimiter %> */ %>', defaultConfig)
+    var buff = parse('hi <% /* comment contains delimiter %> */ %>', config)
     expect(buff).toEqual(['hi ', { val: '/* comment contains delimiter %> */', t: 'e' }])
   })
 
   it('parses with simple template literal', () => {
-    var buff = parse('hi <%= `template %> ${value}` %>', defaultConfig)
+    var buff = parse('hi <%= `template %> ${value}` %>', config)
     expect(buff).toEqual(['hi ', { val: '`template %> ${value}`', t: 'i' }])
   })
 
   it('compiles complex template', () => {
-    var buff = parse(complexTemplate, defaultConfig)
+    var buff = parse(complexTemplate, config)
     expect(buff).toEqual([
       'Hi\\n',
       { t: 'e', val: 'console.log("Hope you like Eta!")' },
@@ -69,13 +69,13 @@ describe('parse test', () => {
 
   test('throws with unclosed tag', () => {
     expect(() => {
-      parse('<%hi("hey")', defaultConfig)
+      parse('<%hi("hey")', config)
     }).toThrowError('hi')
   })
 
   test('throws with unclosed single-quote string', () => {
     expect(() => {
-      parse("<%= ' %>", defaultConfig)
+      parse("<%= ' %>", config)
     }).toThrowError(`unclosed string at line 1 col 5:
 
   <%= ' %>
@@ -84,7 +84,7 @@ describe('parse test', () => {
 
   test('throws with unclosed double-quote string', () => {
     expect(() => {
-      parse('<%= " %>', defaultConfig)
+      parse('<%= " %>', config)
     }).toThrowError(`unclosed string at line 1 col 5:
 
   <%= " %>
@@ -93,7 +93,7 @@ describe('parse test', () => {
 
   test('throws with unclosed template literal', () => {
     expect(() => {
-      parse('<%= ` %>', defaultConfig)
+      parse('<%= ` %>', config)
     }).toThrowError(`unclosed string at line 1 col 5:
 
   <%= \` %>
@@ -102,7 +102,7 @@ describe('parse test', () => {
 
   test('throws with unclosed multi-line comment', () => {
     expect(() => {
-      parse('<%= /* %>', defaultConfig)
+      parse('<%= /* %>', config)
     }).toThrowError(`unclosed comment at line 1 col 5:
 
   <%= /* %>
