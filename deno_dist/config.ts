@@ -100,8 +100,6 @@ var config: EtaConfig = {
   include: includeHelper,
 };
 
-includeHelper.bind(config);
-
 /**
  * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into eta.config, and returns the result
  *

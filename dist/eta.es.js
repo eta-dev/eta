@@ -485,7 +485,6 @@ var config = {
     e: XMLEscape,
     include: includeHelper,
 };
-includeHelper.bind(config);
 /**
  * Takes one or two partial (not necessarily complete) configuration objects, merges them 1 layer deep into eta.config, and returns the result
  *
@@ -947,7 +946,6 @@ function render(template, data, config, cb) {
 
 // @denoify-ignore
 config.includeFile = includeFileHelper;
-includeFileHelper.bind(config);
 
 export { renderFile as __express, compile, compileToString, config, configure, config as defaultConfig, getConfig, loadFile, parse, render, renderFile, templates };
 //# sourceMappingURL=eta.es.js.map
