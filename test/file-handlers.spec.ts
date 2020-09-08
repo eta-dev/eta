@@ -2,10 +2,7 @@
 
 import { renderFile, __express, templates, compile } from '../src/index'
 
-// So we can build a RegEx to test our errors against
-export function buildRegEx(string: string) {
-  return RegExp(string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n'))
-}
+import { buildRegEx } from './err.spec'
 
 var path = require('path'),
   filePath = path.join(__dirname, 'templates/simple.eta'),

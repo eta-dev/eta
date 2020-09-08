@@ -52,6 +52,9 @@ Deno.test('throws if helper "includeFile" cannot find template', () => {
       )
     },
     Error,
-    'Could not find the include file "imaginary-template"'
+    `Could not find the template "imaginary-template". Paths tried: ${path.join(
+      __dirname,
+      '../templates'
+    )}/imaginary-template.eta,${path.join(__dirname, '../othertemplates')}/imaginary-template.eta`
   )
 })

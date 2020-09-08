@@ -46,6 +46,11 @@ describe('include works', () => {
           views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')],
         }
       )
-    }).toThrow(new Error('Could not find the include file "missing-template"'))
+    }).toThrow(
+      `Could not find the template "missing-template". Paths tried: ${path.join(
+        __dirname,
+        '/templates'
+      )}/missing-template.eta,${path.join(__dirname, '/othertemplates')}/missing-template.eta`
+    )
   })
 })
