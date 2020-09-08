@@ -5,7 +5,6 @@ import { includeFileHelper } from './file-helpers'
 import { config } from './config'
 
 config.includeFile = includeFileHelper
-includeFileHelper.bind(config)
 
 export { loadFile, renderFile, renderFile as __express } from './file-handlers'
 

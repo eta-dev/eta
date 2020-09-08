@@ -3,7 +3,6 @@ import { includeFileHelper } from './file-helpers.ts'
 import { config } from './config.ts'
 
 config.includeFile = includeFileHelper
-includeFileHelper.bind(config)
 
 export { loadFile, renderFile, renderFile as __express } from './file-handlers.ts'
 
