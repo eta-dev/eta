@@ -1,6 +1,12 @@
 /* global it, expect, describe */
 
 import { ParseErr } from '../src/err'
+
+// So we can build a RegEx to test our errors against (used in other spec files)
+export function buildRegEx(string: string) {
+  return RegExp(string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&').replace(/\r\n|\n|\r/g, '\\n'))
+}
+
 describe('ParseErr', () => {
   it('error throws correctly', () => {
     try {

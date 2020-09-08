@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import { compile } from '../src/index'
-import { buildRegEx } from './file-handlers.spec'
+import { buildRegEx } from './err.spec'
 
 var fs = require('fs'),
   path = require('path'),
