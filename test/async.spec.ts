@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import * as Eta from '../src/index'
-import { buildRegEx } from './file-handlers.spec'
+import { buildRegEx } from './err.spec'
 
 function resolveAfter2Seconds(val: string): Promise<string> {
   return new Promise((resolve) => {
