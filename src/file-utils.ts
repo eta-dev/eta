@@ -99,7 +99,11 @@ function getPath(path: string, options: EtaConfig) {
  */
 
 function readFile(filePath: string) {
-  return readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
+  try {
+    return readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
+  } catch {
+    throw EtaErr("Failed to read template at '" + filePath + "'")
+  }
 }
 
 export { getPath, readFile }
