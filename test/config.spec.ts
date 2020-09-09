@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import { render, defaultConfig } from '../src/index'
-import { config, configure } from '../src/config'
+import { config, configure, getConfig } from '../src/config'
 
 describe('Config Tests', () => {
   it('Renders a simple template with default env', () => {
@@ -31,5 +31,11 @@ describe('Config Tests', () => {
 
   it('config and defaultConfig are the same object', () => {
     expect(defaultConfig).toEqual(config)
+  })
+
+  it('getConfig creates a clone of config with no arguments', () => {
+    /* eslint-disable @typescript-eslint/ban-ts-comment */
+    // @ts-ignore (in this case, we're calling getConfig w/ 0 arguments even though it takes 1 or 2)
+    expect(getConfig()).toEqual(config)
   })
 })
