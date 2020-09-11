@@ -350,12 +350,15 @@ function parse(str, config) {
  *
  * ```js
  * compileToString("Hi <%= it.user %>", eta.config)
- * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
+ * // "var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E);tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
  * ```
  */
 function compileToString(str, config) {
     var buffer = parse(str, config);
-    var res = "var tR=''\n" +
+    var res = "var tR=''" +
+        (config.include ? ',include=E.include.bind(E)' : '') +
+        (config.includeFile ? ',includeFile=E.includeFile.bind(E)' : '') +
+        '\n' +
         (config.useWith ? 'with(' + config.varName + '||{}){' : '') +
         compileScope(buffer, config) +
         'if(cb){cb(null,tR)} return tR' +
@@ -531,7 +534,7 @@ function configure(options) {
  * let compiledFn = eta.compile("Hi <%= it.user %>")
  * // function anonymous()
  * let compiledFnStr = compiledFn.toString()
- * // "function anonymous(it,E,cb\n) {\nvar tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
+ * // "function anonymous(it,E,cb\n) {\nvar tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E);tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
  * ```
  */
 function compile(str, config) {

@@ -45,6 +45,10 @@ export interface EtaConfig {
     'view cache'?: boolean;
     /** Make data available on the global object instead of varName */
     useWith?: boolean;
+    /** Function to include templates by name */
+    include?: Function;
+    /** Function to include templates by filepath */
+    includeFile?: Function;
     [index: string]: any;
 }
 export interface EtaConfigWithFilename extends EtaConfig {
