@@ -350,12 +350,15 @@ function parse(str, config) {
  *
  * ```js
  * compileToString("Hi <%= it.user %>", eta.config)
- * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
+ * // "var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E);tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
  * ```
  */
 function compileToString(str, config) {
     var buffer = parse(str, config);
-    var res = "var tR=''\n" +
+    var res = "var tR=''" +
+        (config.include ? ',include=E.include.bind(E)' : '') +
+        (config.includeFile ? ',includeFile=E.includeFile.bind(E)' : '') +
+        '\n' +
         (config.useWith ? 'with(' + config.varName + '||{}){' : '') +
         compileScope(buffer, config) +
         'if(cb){cb(null,tR)} return tR' +
@@ -460,7 +463,7 @@ var templates = new Cacher({});
 /**
  * Include a template based on its name (or filepath, if it's already been cached).
  *
- * Called like `E.include(templateNameOrPath, data)`
+ * Called like `include(templateNameOrPath, data)`
  */
 function includeHelper(templateNameOrPath, data) {
     var template = this.templates.get(templateNameOrPath);
@@ -531,7 +534,7 @@ function configure(options) {
  * let compiledFn = eta.compile("Hi <%= it.user %>")
  * // function anonymous()
  * let compiledFnStr = compiledFn.toString()
- * // "function anonymous(it,E,cb\n) {\nvar tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
+ * // "function anonymous(it,E,cb\n) {\nvar tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E);tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
  * ```
  */
 function compile(str, config) {
@@ -865,7 +868,7 @@ function renderFile(filename, data, config, cb) {
 
 /* END TYPES */
 /**
- * Called with `E.includeFile(path, data)`
+ * Called with `includeFile(path, data)`
  */
 function includeFileHelper(path, data) {
     var templateAndConfig = includeFile(path, this);

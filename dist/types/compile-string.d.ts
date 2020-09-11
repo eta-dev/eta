@@ -6,7 +6,7 @@ import { EtaConfig } from './config';
  *
  * ```js
  * compileToString("Hi <%= it.user %>", eta.config)
- * // "var tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
+ * // "var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E);tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
  * ```
  */
 export default function compileToString(str: string, config: EtaConfig): string;

@@ -30,7 +30,7 @@ The Daugherty's have 5 kids:
 
   test('throws if helper "include" cannot find template', () => {
     expect(() => {
-      render('<%~ E.include("missing-template", it) %>', {})
+      render('<%~ include("missing-template", it) %>', {})
     }).toThrow(new Error('Could not fetch template "missing-template"'))
   })
 })

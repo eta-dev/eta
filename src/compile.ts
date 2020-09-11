@@ -23,7 +23,7 @@ export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn
  * let compiledFn = eta.compile("Hi <%= it.user %>")
  * // function anonymous()
  * let compiledFnStr = compiledFn.toString()
- * // "function anonymous(it,E,cb\n) {\nvar tR='';tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
+ * // "function anonymous(it,E,cb\n) {\nvar tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E);tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR\n}"
  * ```
  */
 

@@ -31,7 +31,7 @@ describe('Compile test', () => {
       compile('<% hi (=h) %>')
     }).toThrow(
       buildRegEx(`
-var tR=''
+var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 hi (=h)
 if(cb){cb(null,tR)} return tR
 `)

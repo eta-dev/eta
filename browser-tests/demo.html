@@ -154,7 +154,7 @@
             <input id="strip" type="checkbox" checked="checked" />
             <label for="strip">Strip whitespaces</label>
         </div> -->
-      <div style="clear:both;height:10px"></div>
+      <div style="clear: both; height: 10px"></div>
       <div class="templategroup">
         <h4>Template</h4>
         <textarea autocomplete="off" id="template">
@@ -173,7 +173,7 @@ Value: <%= it.obj[key] %>, Key: <%= key %>
 <% } %>
 <% } %>
 
-Partial: <%~ E.include("mypartial") %>
+Partial: <%~ include("mypartial") %>
 </textarea
         >
       </div>
@@ -181,7 +181,7 @@ Partial: <%~ E.include("mypartial") %>
         <h4>Eta.compile()</h4>
         <div id="function"></div>
       </div>
-      <div style="clear:both"></div>
+      <div style="clear: both"></div>
       <div class="datagroup">
         <h4>Data</h4>
         <textarea autocomplete="off" id="data">
@@ -204,7 +204,7 @@ Partial: <%~ E.include("mypartial") %>
       window.onload = function () {
         Eta.templates.define('mypartial', Eta.compile('This is a partial'))
 
-        function escape (str) {
+        function escape(str) {
           // To handle escaping for the function result
           var escMap = {
             '&': '&amp;',
@@ -212,10 +212,10 @@ Partial: <%~ E.include("mypartial") %>
             '>': '&gt;',
             '"': '&quot;',
             "'": '&#39;',
-            '/': '&#x2F;'
+            '/': '&#x2F;',
           }
 
-          function replaceChar (s) {
+          function replaceChar(s) {
             return escMap[s]
           }
           var newStr = String(str)
@@ -226,7 +226,7 @@ Partial: <%~ E.include("mypartial") %>
           }
         }
 
-        function render () {
+        function render() {
           console.clear()
           var options = JSON.parse('{' + document.getElementById('data').value + '}')
           console.log(JSON.stringify(options))

@@ -107,7 +107,7 @@ describe('renderFile error tests', () => {
       expect(err).toBeTruthy()
       expect(err.message).toMatch(
         buildRegEx(`
-var tR=''
+var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 tR+='Hi '
 tR+=E.e(badSyntax(=!)
 if(cb){cb(null,tR)} return tR
@@ -124,7 +124,7 @@ if(cb){cb(null,tR)} return tR
       await renderFile(errFilePath, {})
     }).rejects.toThrow(
       buildRegEx(`
-var tR=''
+var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 tR+='Hi '
 tR+=E.e(badSyntax(=!)
 if(cb){cb(null,tR)} return tR
@@ -142,7 +142,7 @@ Bad template syntax
 
 Unexpected token '='
 ====================
-var tR=''
+var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 tR+='Hi '
 tR+=E.e(badSyntax(=!)
 if(cb){cb(null,tR)} return tR

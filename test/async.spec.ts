@@ -47,7 +47,7 @@ describe('Async Render checks', () => {
         await Eta.render('<%= @#$%^ %>', {}, { async: true })
       }).rejects.toThrow(
         buildRegEx(`
-var tR=''
+var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 tR+=E.e(@#$%^)
 if(cb){cb(null,tR)} return tR
 `)
@@ -59,7 +59,7 @@ if(cb){cb(null,tR)} return tR
         expect(err).toBeTruthy()
         expect((err as Error).message).toMatch(
           buildRegEx(`
-var tR=''
+var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 tR+=E.e(@#$%^)
 if(cb){cb(null,tR)} return tR
 `)

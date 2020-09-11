@@ -50,6 +50,10 @@ export interface EtaConfig {
   'view cache'?: boolean
   /** Make data available on the global object instead of varName */
   useWith?: boolean
+  /** Function to include templates by name */
+  include?: Function
+  /** Function to include templates by filepath */
+  includeFile?: Function
   [index: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -64,7 +68,7 @@ export type PartialConfig = Partial<EtaConfig>
 /**
  * Include a template based on its name (or filepath, if it's already been cached).
  *
- * Called like `E.include(templateNameOrPath, data)`
+ * Called like `include(templateNameOrPath, data)`
  */
 
 function includeHelper(this: EtaConfig, templateNameOrPath: string, data: object): string {
