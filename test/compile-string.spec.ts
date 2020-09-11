@@ -1,5 +1,5 @@
 /* global it, expect, describe */
-import { compileToString, defaultConfig } from '../src/index'
+import { compileToString, defaultConfig, getConfig } from '../src/index'
 
 var fs = require('fs'),
   path = require('path'),
@@ -11,6 +11,17 @@ describe('Compile to String test', () => {
   it('parses a simple template', () => {
     var str = compileToString('hi <%= hey %>', defaultConfig)
     expect(str).toEqual(`var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+tR+='hi '
+tR+=E.e(hey)
+if(cb){cb(null,tR)} return tR`)
+  })
+
+  it('parses a simple template without partial helpers defined', () => {
+    var str = compileToString(
+      'hi <%= hey %>',
+      getConfig({ include: undefined, includeFile: undefined })
+    )
+    expect(str).toEqual(`var tR=''
 tR+='hi '
 tR+=E.e(hey)
 if(cb){cb(null,tR)} return tR`)
