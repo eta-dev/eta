@@ -5,7 +5,7 @@ var template = `
 
 Partial
 -------
-<%~ E.include('template1', {name: 'Ben'})%>
+<%~ include('template1', {name: 'Ben'})%>
 `
 
 Eta.templates.define('template1', Eta.compile('Hi <%=it.name%>'))

@@ -171,15 +171,15 @@ Display this instead
 ### Partials
 
 ```ejs
-<%~ E.include('mypartial') %>
+<%~ include('mypartial') %>
 ```
 
 ```ejs
-<%~ E.includeFile('./footer') %>
+<%~ includeFile('./footer') %>
 ```
 
 ```ejs
-<%~ E.include('users', {users: it.users}) %>
+<%~ include('users', {users: it.users}) %>
 ```
 
 ## ✔️ Tests

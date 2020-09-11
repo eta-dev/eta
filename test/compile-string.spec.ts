@@ -59,7 +59,7 @@ tR+='      \\n  '
 }
 }
 tR+='\\nThis is a partial: '
-tR+=E.include("mypartial")
+tR+=include("mypartial")
 if(cb){cb(null,tR)} return tR`
     )
   })

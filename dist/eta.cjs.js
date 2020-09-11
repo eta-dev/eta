@@ -463,7 +463,7 @@ var templates = new Cacher({});
 /**
  * Include a template based on its name (or filepath, if it's already been cached).
  *
- * Called like `E.include(templateNameOrPath, data)`
+ * Called like `include(templateNameOrPath, data)`
  */
 function includeHelper(templateNameOrPath, data) {
     var template = this.templates.get(templateNameOrPath);
@@ -868,7 +868,7 @@ function renderFile(filename, data, config, cb) {
 
 /* END TYPES */
 /**
- * Called with `E.includeFile(path, data)`
+ * Called with `includeFile(path, data)`
  */
 function includeFileHelper(path, data) {
     var templateAndConfig = includeFile(path, this);

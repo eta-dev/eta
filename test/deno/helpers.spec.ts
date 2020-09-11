@@ -31,7 +31,7 @@ The Daugherty's have 5 kids:
 Deno.test('throws if helper "include" cannot find template', () => {
   assertThrows(
     () => {
-      render('<%~ E.include("missing-template", it) %>', {})
+      render('<%~ include("missing-template", it) %>', {})
     },
     Error,
     'Could not fetch template "missing-template"'
