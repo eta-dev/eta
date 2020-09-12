@@ -1,6 +1,4 @@
 const { exec, echo } = require('shelljs')
-const { readFileSync } = require('fs')
-const url = require('url')
 const child_process = require('child_process')
 
 const branchToReleaseFrom = 'master'
@@ -26,7 +24,8 @@ try {
   exec('git branch release')
   exec('git checkout release')
 
-  // Now we add the dist/ and deno_dist/ directories
+  // Now we build, and add the dist/ and deno_dist/ directories
+  exec('npm run build')
   exec('git add --force dist deno_dist')
   exec('git commit -m "Build distrubution files"')
 
