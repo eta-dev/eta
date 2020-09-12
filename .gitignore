@@ -9,4 +9,6 @@ compiled
 .awcache
 .rpt2_cache
 docs
-build
+
+dist
+deno_dist
