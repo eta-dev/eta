@@ -34,9 +34,13 @@ try {
   exec(`git push --force --quiet origin release`)
 
   // And then we use `np` to release
-  child_process.execFileSync(path.join(__dirname, '../node_modules/.bin/np'), ['--branch release'], {
-    stdio: 'inherit',
-  })
+  child_process.execFileSync(
+    path.join(__dirname, '../node_modules/.bin/np'),
+    ['--branch', 'release'],
+    {
+      stdio: 'inherit',
+    }
+  )
 
   // Finally, we'll check out the original branch
   exec('git checkout ' + currentBranch)
