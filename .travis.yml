@@ -14,7 +14,7 @@ before_install: # Install Deno
   - export PATH="$HOME/.deno/bin:$PATH"
 script:
   - deno --version # Log the Deno version
-  - yarn test:prod && yarn build
+  - yarn build && yarn test:prod
 after_success:
   - yarn travis-deploy-once "yarn report-coverage"
   - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then yarn travis-deploy-once "yarn deploy-docs"; fi
