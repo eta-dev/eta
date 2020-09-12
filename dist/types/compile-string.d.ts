@@ -10,3 +10,4 @@ import { EtaConfig } from './config';
  * ```
  */
 export default function compileToString(str: string, config: EtaConfig): string;
+//# sourceMappingURL=compile-string.d.ts.map

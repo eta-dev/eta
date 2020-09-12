@@ -6,3 +6,4 @@ export interface TemplateObject {
 }
 export declare type AstObject = string | TemplateObject;
 export default function parse(str: string, config: EtaConfig): Array<AstObject>;
+//# sourceMappingURL=parse.d.ts.map

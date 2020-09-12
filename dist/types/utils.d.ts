@@ -13,3 +13,4 @@ declare function trimWS(str: string, config: EtaConfig, wsLeft: string | false, 
  */
 declare function XMLEscape(str: any): string;
 export { trimWS, XMLEscape };
+//# sourceMappingURL=utils.d.ts.map

@@ -5,3 +5,4 @@ export { default as parse } from './parse';
 export { default as render } from './render';
 export { templates } from './containers';
 export { config, config as defaultConfig, getConfig, configure } from './config';
+//# sourceMappingURL=index.d.ts.map

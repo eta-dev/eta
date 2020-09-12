@@ -14,3 +14,4 @@ declare class Cacher<T> {
     load(cacheObj: Record<string, T>): void;
 }
 export { Cacher };
+//# sourceMappingURL=storage.d.ts.map

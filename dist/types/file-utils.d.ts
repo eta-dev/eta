@@ -22,3 +22,4 @@ declare function getPath(path: string, options: EtaConfig): string;
  */
 declare function readFile(filePath: string): any;
 export { getPath, readFile };
+//# sourceMappingURL=file-utils.d.ts.map

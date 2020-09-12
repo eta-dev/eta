@@ -20,3 +20,4 @@ import { CallbackFn } from './file-handlers';
  * @param cb Callback function
  */
 export default function render(template: string | TemplateFunction, data: object, config?: PartialConfig, cb?: CallbackFn): string | Promise<string> | void;
+//# sourceMappingURL=render.d.ts.map
