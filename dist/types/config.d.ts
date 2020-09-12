@@ -73,3 +73,4 @@ declare function getConfig(override: PartialConfig, baseConfig?: EtaConfig): Eta
 /** Update Eta's base config */
 declare function configure(options: PartialConfig): Partial<EtaConfig>;
 export { config, getConfig, configure };
+//# sourceMappingURL=config.d.ts.map

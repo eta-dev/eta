@@ -7,3 +7,4 @@ import { TemplateFunction } from './compile';
  */
 declare var templates: Cacher<TemplateFunction>;
 export { templates };
+//# sourceMappingURL=containers.d.ts.map

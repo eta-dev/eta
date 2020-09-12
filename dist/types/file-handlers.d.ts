@@ -65,3 +65,4 @@ declare function includeFile(path: string, options: EtaConfig): [TemplateFunctio
 declare function renderFile(filename: string, data: DataObj, config?: PartialConfig, cb?: CallbackFn): any;
 declare function renderFile(filename: string, data: DataObj, cb?: CallbackFn): any;
 export { includeFile, renderFile };
+//# sourceMappingURL=file-handlers.d.ts.map

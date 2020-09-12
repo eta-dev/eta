@@ -17,3 +17,4 @@ export declare type TemplateFunction = (data: object, config: EtaConfig, cb?: Ca
  * ```
  */
 export default function compile(str: string, config?: PartialConfig): TemplateFunction;
+//# sourceMappingURL=compile.d.ts.map

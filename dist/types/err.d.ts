@@ -18,3 +18,4 @@ export default EtaErr;
  * Throws an EtaErr with a nicely formatted error and message showing where in the template the error occurred.
  */
 export declare function ParseErr(message: string, str: string, indx: number): void;
+//# sourceMappingURL=err.d.ts.map
