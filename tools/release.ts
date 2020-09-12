@@ -1,6 +1,7 @@
 const { exec, echo } = require('shelljs')
 const { readFileSync } = require('fs')
 const url = require('url')
+const child_process = require('child_process')
 
 const branchToReleaseFrom = 'master'
 
@@ -33,7 +34,7 @@ try {
   exec(`git push --force --quiet origin release`)
 
   // And then we use `np` to release
-  exec('np --branch release')
+  child_process.execFileSync('node_modules/.bin/np', ['--branch release'], {stdio: 'inherit'});
 
   // Finally, we'll check out the original branch
   exec('git checkout ' + currentBranch)
