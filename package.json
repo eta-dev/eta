@@ -13,6 +13,11 @@
   "main": "dist/eta.cjs.js",
   "browser": "dist/browser/eta.min.js",
   "module": "dist/eta.es.js",
+  "exports": {
+    "import": "./dist/eta.es.js",
+    "require": "./dist/eta.cjs.js",
+    "browser": "./dist/browser/eta.min.js"
+  },
   "typings": "dist/types/index.d.ts",
   "jsdelivr": "dist/browser/eta.min.js",
   "unpkg": "dist/browser/eta.min.js",
