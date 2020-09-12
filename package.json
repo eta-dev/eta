@@ -131,7 +131,7 @@
     "cross-env": "^7.0.2",
     "cz-conventional-changelog": "^3.3.0",
     "denoify": "^0.5.4",
-    "eslint": "^7.8.1",
+    "eslint": "^7.9.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "2",
     "eslint-plugin-node": "11",
