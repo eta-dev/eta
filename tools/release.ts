@@ -28,13 +28,13 @@ try {
   // Now we build, and add the dist/ and deno_dist/ directories
   exec('npm run build')
   exec('git add --force dist deno_dist')
-  exec('git commit -m "Build distrubution files"')
+  exec('git commit --quiet -m "Build distribution files"')
 
   // We push to the remote release branch
   exec(`git push --force --quiet origin release`)
 
   // And then we use `np` to release
-  child_process.execFileSync(path.join(__dirname, 'node_modules/.bin/np'), ['--branch release'], {
+  child_process.execFileSync(path.join(__dirname, '../node_modules/.bin/np'), ['--branch release'], {
     stdio: 'inherit',
   })
 
