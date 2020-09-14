@@ -52,7 +52,7 @@ describe('parse test', () => {
       '  ',
       {
         t: 'e',
-        val: 'for (var i = 0, arr = it.obj[key]; i < arr.length; i++) {',
+        val: 'for (var i = 0, arr = it.obj[key]; i < arr.length; i++) {'
       },
       '      Salutations! Index: ',
       { t: 'i', val: 'i' },
@@ -63,7 +63,7 @@ describe('parse test', () => {
       { t: 'e', val: '}' },
       { t: 'e', val: '}' },
       '\\nThis is a partial: ',
-      { t: 'r', val: 'include("mypartial")' },
+      { t: 'r', val: 'include("mypartial")' }
     ])
   })
 

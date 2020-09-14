@@ -89,7 +89,7 @@ var config: EtaConfig = {
   parse: {
     interpolate: '=',
     raw: '~',
-    exec: '',
+    exec: ''
   },
   async: false,
   templates: templates,
@@ -97,7 +97,7 @@ var config: EtaConfig = {
   plugins: [],
   useWith: false,
   e: XMLEscape,
-  include: includeHelper,
+  include: includeHelper
 }
 
 /**

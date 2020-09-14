@@ -33,7 +33,7 @@ describe('include works', () => {
       { user: 'Ben' },
       {
         filename: path.join(__dirname, 'templates/placeholder.eta'),
-        views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')],
+        views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')]
       }
     )
 
@@ -53,7 +53,7 @@ describe('include works', () => {
         {},
         {
           filename: path.join(__dirname, 'templates/placeholder.eta'),
-          views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')],
+          views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')]
         }
       )
     }).toThrow(

@@ -100,7 +100,7 @@ var escMap: EscapeMap = {
   '<': '&lt;',
   '>': '&gt;',
   '"': '&quot;',
-  "'": '&#39;',
+  "'": '&#39;'
 }
 
 function replaceChar(s: string): string {

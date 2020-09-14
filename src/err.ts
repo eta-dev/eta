@@ -29,7 +29,7 @@ export default function EtaErr(message: string): Error {
 }
 
 EtaErr.prototype = Object.create(Error.prototype, {
-  name: { value: 'Eta Error', enumerable: false },
+  name: { value: 'Eta Error', enumerable: false }
 })
 
 /**

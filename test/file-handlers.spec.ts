@@ -79,8 +79,8 @@ describe('Simple renderFile tests', () => {
         settings: {
           views: [path.join(__dirname, 'templates'), path.join(__dirname, 'othertemplates')],
           'view cache': true,
-          'view options': { autoEscape: false },
-        },
+          'view options': { autoEscape: false }
+        }
       },
       function (_err: Error | null, res?: string) {
         expect(res).toEqual('Hi <p>Ben</p>')

@@ -13,7 +13,7 @@ function myPlugin() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     processFnString: function (str: string, _env?: EtaConfig) {
       return str.replace(/@@num@@/, '2352.3')
-    },
+    }
   }
 }
 
