@@ -5,9 +5,9 @@ import EtaErr from "./err.ts";
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from "./config.ts";
-import { TemplateFunction } from "./compile.ts";
-import { CallbackFn } from "./file-handlers.ts";
+import type { EtaConfig, PartialConfig } from "./config.ts";
+import type { TemplateFunction } from "./compile.ts";
+import type { CallbackFn } from "./file-handlers.ts";
 
 /* END TYPES */
 

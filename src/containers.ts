@@ -2,7 +2,7 @@ import { Cacher } from './storage'
 
 /* TYPES */
 
-import { TemplateFunction } from './compile'
+import type { TemplateFunction } from './compile'
 
 /* END TYPES */
 

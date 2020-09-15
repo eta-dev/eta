@@ -2,8 +2,8 @@ import Parse from './parse'
 
 /* TYPES */
 
-import { EtaConfig } from './config'
-import { AstObject } from './parse'
+import type { EtaConfig } from './config'
+import type { AstObject } from './parse'
 
 /* END TYPES */
 

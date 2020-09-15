@@ -3,7 +3,7 @@ import { trimWS } from './utils'
 
 /* TYPES */
 
-import { EtaConfig } from './config'
+import type { EtaConfig } from './config'
 
 export type TagType = 'r' | 'e' | 'i' | ''
 

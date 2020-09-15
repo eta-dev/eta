@@ -2,7 +2,7 @@ import { includeFile } from './file-handlers'
 
 /* TYPES */
 
-import { EtaConfig } from './config'
+import type { EtaConfig } from './config'
 
 interface GenericData {
   [index: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any

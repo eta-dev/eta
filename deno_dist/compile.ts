@@ -4,8 +4,8 @@ import EtaErr from "./err.ts";
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from "./config.ts";
-import { CallbackFn } from "./file-handlers.ts";
+import type { EtaConfig, PartialConfig } from "./config.ts";
+import type { CallbackFn } from "./file-handlers.ts";
 import { getAsyncFunctionConstructor } from "./polyfills.ts";
 export type TemplateFunction = (
   data: object,

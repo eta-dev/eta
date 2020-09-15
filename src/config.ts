@@ -4,8 +4,8 @@ import EtaErr from './err'
 
 /* TYPES */
 
-import { TemplateFunction } from './compile'
-import { Cacher } from './storage'
+import type { TemplateFunction } from './compile'
+import type { Cacher } from './storage'
 
 type trimConfig = 'nl' | 'slurp' | false
 

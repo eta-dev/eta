@@ -5,7 +5,7 @@ import { trimLeft, trimRight } from './polyfills'
 
 /* TYPES */
 
-import { EtaConfig } from './config'
+import type { EtaConfig } from './config'
 
 interface EscapeMap {
   '&': '&amp;'
