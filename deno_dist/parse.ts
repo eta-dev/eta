@@ -3,7 +3,7 @@ import { trimWS } from "./utils.ts";
 
 /* TYPES */
 
-import { EtaConfig } from "./config.ts";
+import type { EtaConfig } from "./config.ts";
 
 export type TagType = "r" | "e" | "i" | "";
 

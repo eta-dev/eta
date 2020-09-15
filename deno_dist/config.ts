@@ -4,8 +4,8 @@ import EtaErr from "./err.ts";
 
 /* TYPES */
 
-import { TemplateFunction } from "./compile.ts";
-import { Cacher } from "./storage.ts";
+import type { TemplateFunction } from "./compile.ts";
+import type { Cacher } from "./storage.ts";
 
 type trimConfig = "nl" | "slurp" | false;
 

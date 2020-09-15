@@ -9,8 +9,8 @@ import { promiseImpl } from './polyfills'
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig, EtaConfigWithFilename } from './config'
-import { TemplateFunction } from './compile'
+import type { EtaConfig, PartialConfig, EtaConfigWithFilename } from './config'
+import type { TemplateFunction } from './compile'
 
 export type CallbackFn = (err: Error | null, str?: string) => void
 

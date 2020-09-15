@@ -4,8 +4,8 @@ import EtaErr from './err'
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from './config'
-import { CallbackFn } from './file-handlers'
+import type { EtaConfig, PartialConfig } from './config'
+import type { CallbackFn } from './file-handlers'
 import { getAsyncFunctionConstructor } from './polyfills'
 export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn) => string
 

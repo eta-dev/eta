@@ -7,7 +7,7 @@ import EtaErr from './err'
 
 /* TYPES */
 
-import { EtaConfig } from './config'
+import type { EtaConfig } from './config'
 
 /* END TYPES */
 

@@ -2,8 +2,8 @@ import Parse from "./parse.ts";
 
 /* TYPES */
 
-import { EtaConfig } from "./config.ts";
-import { AstObject } from "./parse.ts";
+import type { EtaConfig } from "./config.ts";
+import type { AstObject } from "./parse.ts";
 
 /* END TYPES */
 

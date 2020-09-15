@@ -7,7 +7,7 @@ import EtaErr from "./err.ts";
 
 /* TYPES */
 
-import { EtaConfig } from "./config.ts";
+import type { EtaConfig } from "./config.ts";
 
 /* END TYPES */
 

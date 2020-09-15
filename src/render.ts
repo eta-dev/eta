@@ -5,9 +5,9 @@ import EtaErr from './err'
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig } from './config'
-import { TemplateFunction } from './compile'
-import { CallbackFn } from './file-handlers'
+import type { EtaConfig, PartialConfig } from './config'
+import type { TemplateFunction } from './compile'
+import type { CallbackFn } from './file-handlers'
 
 /* END TYPES */
 

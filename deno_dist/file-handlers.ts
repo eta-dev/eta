@@ -9,8 +9,12 @@ import { promiseImpl } from "./polyfills.ts";
 
 /* TYPES */
 
-import { EtaConfig, PartialConfig, EtaConfigWithFilename } from "./config.ts";
-import { TemplateFunction } from "./compile.ts";
+import type {
+  EtaConfig,
+  PartialConfig,
+  EtaConfigWithFilename,
+} from "./config.ts";
+import type { TemplateFunction } from "./compile.ts";
 
 export type CallbackFn = (err: Error | null, str?: string) => void;
 

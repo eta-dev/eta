@@ -5,7 +5,7 @@ import { trimLeft, trimRight } from "./polyfills.ts";
 
 /* TYPES */
 
-import { EtaConfig } from "./config.ts";
+import type { EtaConfig } from "./config.ts";
 
 interface EscapeMap {
   "&": "&amp;";

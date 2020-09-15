@@ -2,7 +2,7 @@ import { includeFile } from "./file-handlers.ts";
 
 /* TYPES */
 
-import { EtaConfig } from "./config.ts";
+import type { EtaConfig } from "./config.ts";
 
 interface GenericData {
   [index: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
