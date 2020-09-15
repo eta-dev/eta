@@ -70,6 +70,7 @@ function getPath(path: string, options: EtaConfig) {
   })
 
   if (options.cache && options.filepathCache && options.filepathCache[pathOptions]) {
+    // Use the cached filepath
     return options.filepathCache[pathOptions]
   }
 
