@@ -36,11 +36,20 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "asos-craigmorten",
+      "name": "Craig Morten",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/46491566?v=4",
+      "profile": "https://www.linkedin.com/in/craig-morten/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
   "projectName": "eta",
-  "projectOwner": "nebrelbug",
+  "projectOwner": "eta-dev",
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
