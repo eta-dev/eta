@@ -3,6 +3,7 @@ import { includeFileHelper } from './file-helpers.ts'
 import { config } from './config.ts'
 
 config.includeFile = includeFileHelper
+config.filepathCache = {}
 
 export { loadFile, renderFile, renderFile as __express } from './file-handlers.ts'
 
