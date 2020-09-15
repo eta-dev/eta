@@ -58,6 +58,21 @@ function getPath(path: string, options: EtaConfig) {
   var views = options.views
   var searchedPaths: Array<string> = []
 
+  // If these four values are the same,
+  // getPath() will return the same result every time.
+  // We can cache the result to avoid expensive
+  // file operations.
+  var pathOptions = JSON.stringify({
+    filename: options.filename,
+    path: path,
+    root: options.root,
+    views: options.views
+  })
+
+  if (options.cache && options.filepathCache && options.filepathCache[pathOptions]) {
+    return options.filepathCache[pathOptions]
+  }
+
   /** Add a filepath to the list of paths we've checked for a template */
   function addPathToSearched(pathSearched: string) {
     if (!searchedPaths.includes(pathSearched)) {
@@ -146,6 +161,13 @@ function getPath(path: string, options: EtaConfig) {
       throw EtaErr('Could not find the template "' + path + '". Paths tried: ' + searchedPaths)
     }
   }
+
+  // If caching and filepathCache are enabled,
+  // cache the input & output of this function.
+  if (options.cache && options.filepathCache) {
+    options.filepathCache[pathOptions] = includePath
+  }
+
   return includePath
 }
 

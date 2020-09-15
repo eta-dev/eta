@@ -56,7 +56,7 @@ export interface EtaConfig {
   filename?: string
 
   /** Holds cache of resolved filepaths. Set to `false` to disable */
-  filepathCache?: object | false
+  filepathCache?: Record<string, string> | false
 
   /** Function to include templates by name */
   include?: Function
