@@ -45,7 +45,7 @@
     "format": "prettier --write '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
     "lint": "eslint src/*.ts test/*.spec.ts examples/* --ext .js,.ts",
     "prebuild": "rimraf dist && rimraf deno_dist",
-    "release": "ts-node tools/release",
+    "release": "npm run build && np",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "size": "size-limit",
     "start": "rollup -c rollup.config.ts -w",
