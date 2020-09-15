@@ -22,7 +22,6 @@ export function hasOwnProp(obj: object, prop: string) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function copyProps<T>(toObj: T, fromObj: T) {
   for (var key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
