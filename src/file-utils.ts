@@ -63,7 +63,7 @@ function getPath(path: string, options: EtaConfig) {
   // We can cache the result to avoid expensive
   // file operations.
   var pathOptions = JSON.stringify({
-    filename: options.filename,
+    filename: options.filename, // filename of the template which called includeFile()
     path: path,
     root: options.root,
     views: options.views
