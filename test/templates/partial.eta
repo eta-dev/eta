@@ -1,0 +1,2 @@
+This is a partial.
+<%~ includeFile('./simple', {name: 'Test Runner'}) %>

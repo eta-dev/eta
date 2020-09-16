@@ -18,7 +18,10 @@ import type { AstObject } from "./parse.ts";
  * ```
  */
 
-export default function compileToString(str: string, config: EtaConfig) {
+export default function compileToString(
+  str: string,
+  config: EtaConfig,
+): string {
   var buffer: Array<AstObject> = Parse(str, config);
 
   var res = "var tR=''" +

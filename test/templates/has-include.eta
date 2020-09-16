@@ -1,0 +1,4 @@
+This is the outermost template. Now we'll include a partial
+
+===========================================================
+<%~ includeFile('./partial') %>
