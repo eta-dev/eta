@@ -11,7 +11,7 @@ class Cacher<T> {
   define(key: string, val: T) {
     this.cache[key] = val;
   }
-  get(key: string) {
+  get(key: string): T {
     // string | array.
     // TODO: allow array of keys to look down
     // TODO: create plugin to allow referencing helpers, filters with dot notation
