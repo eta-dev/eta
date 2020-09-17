@@ -1,0 +1,2 @@
+<% layout('./layout') %>
+This is the template body.

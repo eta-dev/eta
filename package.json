@@ -18,6 +18,7 @@
     "require": "./dist/eta.cjs.js",
     "browser": "./dist/browser/eta.min.js"
   },
+  "types": "dist/types/index.d.ts",
   "typings": "dist/types/index.d.ts",
   "jsdelivr": "dist/browser/eta.min.js",
   "unpkg": "dist/browser/eta.min.js",

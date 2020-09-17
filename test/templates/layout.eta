@@ -1,0 +1,7 @@
+<% layout('./outer-layout') %>
+<head>
+    <title><%= it.title %></title>
+</head>
+<body>
+<%~ it.body %>
+</body>
