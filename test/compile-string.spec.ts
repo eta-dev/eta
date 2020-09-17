@@ -10,9 +10,12 @@ const complexTemplate = fs.readFileSync(filePath, 'utf8')
 describe('Compile to String test', () => {
   it('parses a simple template', () => {
     var str = compileToString('hi <%= hey %>', defaultConfig)
-    expect(str).toEqual(`var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+    expect(str)
+      .toEqual(`var tR='',l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p){l=p}
 tR+='hi '
 tR+=E.e(hey)
+if(l)tR=includeFile(l,Object.assign(it,{body:tR}))
 if(cb){cb(null,tR)} return tR`)
   })
 
@@ -21,7 +24,8 @@ if(cb){cb(null,tR)} return tR`)
       'hi <%= hey %>',
       getConfig({ include: undefined, includeFile: undefined })
     )
-    expect(str).toEqual(`var tR=''
+    expect(str).toEqual(`var tR='',l
+function layout(p){l=p}
 tR+='hi '
 tR+=E.e(hey)
 if(cb){cb(null,tR)} return tR`)
@@ -29,25 +33,32 @@ if(cb){cb(null,tR)} return tR`)
 
   it('parses a simple template with raw tag', () => {
     var str = compileToString('hi <%~ hey %>', defaultConfig)
-    expect(str).toEqual(`var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+    expect(str)
+      .toEqual(`var tR='',l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p){l=p}
 tR+='hi '
 tR+=hey
+if(l)tR=includeFile(l,Object.assign(it,{body:tR}))
 if(cb){cb(null,tR)} return tR`)
   })
 
   it('works with whitespace trimming', () => {
     var str = compileToString('hi\n<%- = hey-%>\n<%_ = hi_%>', defaultConfig)
-    expect(str).toEqual(`var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+    expect(str)
+      .toEqual(`var tR='',l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p){l=p}
 tR+='hi'
 tR+=E.e(hey)
 tR+=E.e(hi)
+if(l)tR=includeFile(l,Object.assign(it,{body:tR}))
 if(cb){cb(null,tR)} return tR`)
   })
 
   it('compiles complex template', () => {
     var str = compileToString(complexTemplate, defaultConfig)
     expect(str).toEqual(
-      `var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+      `var tR='',l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p){l=p}
 tR+='Hi\\n'
 console.log("Hope you like Eta!")
 tR+=E.e(it.htmlstuff)
@@ -71,6 +82,7 @@ tR+='      \\n  '
 }
 tR+='\\nThis is a partial: '
 tR+=include("mypartial")
+if(l)tR=includeFile(l,Object.assign(it,{body:tR}))
 if(cb){cb(null,tR)} return tR`
     )
   })

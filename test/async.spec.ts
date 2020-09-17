@@ -47,8 +47,10 @@ describe('Async Render checks', () => {
         await Eta.render('<%= @#$%^ %>', {}, { async: true })
       }).rejects.toThrow(
         buildRegEx(`
-var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+var tR='',l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p){l=p}
 tR+=E.e(@#$%^)
+if(l)tR=await includeFile(l,Object.assign(it,{body:tR}))
 if(cb){cb(null,tR)} return tR
 `)
       )
@@ -59,8 +61,10 @@ if(cb){cb(null,tR)} return tR
         expect(err).toBeTruthy()
         expect((err as Error).message).toMatch(
           buildRegEx(`
-var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+var tR='',l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p){l=p}
 tR+=E.e(@#$%^)
+if(l)tR=await includeFile(l,Object.assign(it,{body:tR}))
 if(cb){cb(null,tR)} return tR
 `)
         )
