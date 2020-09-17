@@ -16,7 +16,10 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-Eta.defaultConfig.autoTrim = false
+Eta.configure({
+  autoTrim: false
+})
+
 Sqrl.defaultConfig.autoTrim = false
 
 var templateList = {}
@@ -51,7 +54,7 @@ templateList['template-fast-mode-raw'] = `
 
 templateList['eta'] = `
 <ul>
-    <% for (var i = 0, l = it.list.length; i < l; i ++) { %>
+    <% for (var i = 0, ln = it.list.length; i < ln; i ++) { %>
         <li>User: <%= it.list[i].user %> / Web Site: <%= it.list[i].site %></li>
     <% } %>
 </ul>`
@@ -112,7 +115,7 @@ templateList['handlebars-raw'] = `
 
 templateList['squirrelly'] = `
 <ul>
-{{~each(it.list) => val}}
+{{@each(it.list) => val}}
     <li>User: {{val.user}} / Web Site: {{val.site}}</li>
 {{/each}}
 </ul>`
@@ -146,7 +149,7 @@ var config = {
   escape: true
 }
 
-function getParameterByName (name) {
+function getParameterByName(name) {
   var url = window.location.href
   var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
   var results = regex.exec(url)
@@ -261,22 +264,6 @@ var testList = [
   },
 
   {
-    name: 'Jade / pug',
-    tester: function () {
-      var id = config.escape ? 'pug' : 'pug-raw'
-      var source = templateList[id]
-      var pug = require('pug')
-      var html = ''
-      for (var i = 0; i < config.calls; i++) {
-        var fn = pug.compile(source)
-
-        html = fn(data)
-      }
-      return html
-    }
-  },
-
-  {
     name: 'Handlebars',
     tester: function () {
       var id = config.escape ? 'handlebars' : 'handlebars-raw'
@@ -290,38 +277,6 @@ var testList = [
       return html
     }
   },
-  // {
-  //   name: 'Squirrelly',
-  //   tester: function() {
-  //     if (!config.escape) {
-  //       Sqrl.defaultConfig.autoEscape = false
-  //     }
-  //     var source = templateList['squirrelly']
-  //     //   console.log(fn.toString())
-  //     var html = ''
-  //     data.$name = 'temp'
-  //     for (var i = 0; i < config.calls; i++) {
-  //       html = Sqrl.render(source, data)
-  //     }
-  //     return html
-  //   }
-  // },
-  // {
-  //   name: 'Squirrelly - Fast',
-  //   tester: function() {
-  //     if (!config.escape) {
-  //       Sqrl.defaultConfig.autoEscape = false
-  //     }
-  //     var source = templateList['squirrelly-fast']
-  //     //   console.log(fn.toString())
-  //     var html = ''
-  //     data.$name = 'temp'
-  //     for (var i = 0; i < config.calls; i++) {
-  //       html = Sqrl.render(source, data)
-  //     }
-  //     return html
-  //   }
-  // },
   {
     name: 'Eta',
     tester: function () {
@@ -334,6 +289,53 @@ var testList = [
       data.$name = 'temp'
       for (var i = 0; i < config.calls; i++) {
         html = Eta.render(source, data)
+      }
+      return html
+    }
+  },
+  {
+    name: 'Squirrelly',
+    tester: function () {
+      if (!config.escape) {
+        Sqrl.defaultConfig.autoEscape = false
+      }
+      var source = templateList['squirrelly']
+      //   console.log(fn.toString())
+      var html = ''
+      data.$name = 'temp'
+      for (var i = 0; i < config.calls; i++) {
+        html = Sqrl.render(source, data)
+      }
+      return html
+    }
+  },
+  {
+    name: 'Squirrelly - Fast',
+    tester: function () {
+      if (!config.escape) {
+        Sqrl.defaultConfig.autoEscape = false
+      }
+      var source = templateList['squirrelly-fast']
+      //   console.log(fn.toString())
+      var html = ''
+      data.$name = 'temp'
+      for (var i = 0; i < config.calls; i++) {
+        html = Sqrl.render(source, data)
+      }
+      return html
+    }
+  },
+  {
+    name: 'Jade / pug',
+    tester: function () {
+      var id = config.escape ? 'pug' : 'pug-raw'
+      var source = templateList[id]
+      var pug = require('pug')
+      var html = ''
+      for (var i = 0; i < config.calls; i++) {
+        var fn = pug.compile(source)
+
+        html = fn(data)
       }
       return html
     }
@@ -461,7 +463,7 @@ var runTest = function (callback) {
     ]
   })
 
-  function tester (target) {
+  function tester(target) {
     var time = new Timer()
     var html = target.tester()
     var endTime = time.stop()
@@ -495,7 +497,7 @@ window['restart'] = function (key, value) {
   config[key] = value
 }
 
-function getLink () {
+function getLink() {
   window.location.search =
     'length=' + config.length + '&calls=' + config.calls + '&escape=' + config.escape
 }
@@ -509,6 +511,8 @@ window['app'] = function (selector) {
 <br><br>
 <em>Note: doT and Eta usually trade off the lead on unescaped templates. Keep in mind that Eta supports template tags inside strings & comments, plugins, whitespace trimming, etc.</em>
 <br><br>
+<em>Note: these benchmarks are ONLY VALID if page is served by a server (localhost, RawGit are ok). Otherwise results are highly variable and inaccurate (I don't know why!)</em>
+<br><br>
 <strong>Longer (more ops/sec) is better</strong>
 
 <div class="header">
@@ -520,7 +524,7 @@ window['app'] = function (selector) {
         <label><input type="number" value="{{it.length}}" onchange="restart('length', this.value)"> list</label>
         <strong>×</strong>
         <label><input type="number" value="{{it.calls}}" onchange="restart('calls', this.value)"> calls</label>
-        <label><input type="checkbox" {{~if(it.escape)}}checked{{/if}} onchange="restart('escape', this.checked)"> escape</label>
+        <label><input type="checkbox" {{@if(it.escape)}}checked{{/if}} onchange="restart('escape', this.checked)"> escape</label>
         <button id="get-link" class="button">&#x1f517; Get link</button>
 
     </p>
