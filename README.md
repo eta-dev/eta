@@ -1,5 +1,5 @@
 <p align="center">
-  <img style="max-width: 50%" src="https://user-images.githubusercontent.com/25597854/93541153-d8c8fe80-f912-11ea-9e65-a0089ca6d2b6.png">
+  <img align="center" width="50%" src="https://user-images.githubusercontent.com/25597854/93541153-d8c8fe80-f912-11ea-9e65-a0089ca6d2b6.png">
 </p>
 
 <h1 align="center" style="text-align: center; width: fit-content; margin-left: auto; margin-right: auto;">eta (η)</h1>
