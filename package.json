@@ -13,12 +13,13 @@
     "typescript types"
   ],
   "homepage": "https://eta.js.org",
-  "main": "dist/eta.cjs.js",
+  "main": "dist/eta.cjs",
   "browser": "dist/browser/eta.min.js",
   "module": "dist/eta.es.js",
+  "type": "module",
   "exports": {
     "import": "./dist/eta.es.js",
-    "require": "./dist/eta.cjs.js",
+    "require": "./dist/eta.cjs",
     "browser": "./dist/browser/eta.min.js"
   },
   "types": "dist/types/index.d.ts",
