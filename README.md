@@ -1,3 +1,7 @@
+<p align="center">
+  <img style="max-width: 40vw" src="https://user-images.githubusercontent.com/25597854/93536448-3d319100-f906-11ea-9eaa-987dd5c11cb0.png">
+</p>
+
 <h1 align="center" style="text-align: center; width: fit-content; margin-left: auto; margin-right: auto;">eta (η)</h1>
 
 <p align="center">
