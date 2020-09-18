@@ -53,3 +53,57 @@ describe('Renders with different scopes', () => {
     )
   })
 })
+
+describe('processTemplate plugin', () => {
+  it('Simple plugin works correctly', () => {
+    let template = ':thumbsup:'
+
+    let emojiTransform = {
+      processTemplate: function (str: string) {
+        return str.replace(':thumbsup:', '👍')
+      }
+    }
+
+    let res = render(
+      template,
+      {},
+      {
+        plugins: [emojiTransform]
+      }
+    )
+
+    expect(res).toEqual('👍')
+  })
+
+  it('Multiple chained plugins work correctly', () => {
+    let template = ':thumbsup: This is a cool template'
+
+    let emojiTransform = {
+      processTemplate: function (str: string) {
+        return str.replace(':thumbsup:', '👍')
+      }
+    }
+
+    let capitalizeCool = {
+      processTemplate: function (str: string) {
+        return str.replace('cool', 'COOL')
+      }
+    }
+
+    let replaceThumbsUp = {
+      processTemplate: function (str: string) {
+        return str.replace('👍', '✨')
+      }
+    }
+
+    let res = render(
+      template,
+      {},
+      {
+        plugins: [emojiTransform, capitalizeCool, replaceThumbsUp]
+      }
+    )
+
+    expect(res).toEqual('✨ This is a COOL template')
+  })
+})
