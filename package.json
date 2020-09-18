@@ -7,6 +7,9 @@
     "ejs",
     "eta",
     "template engine",
+    "embedded template engine",
+    "layouts",
+    "partials",
     "typescript types"
   ],
   "homepage": "https://eta.js.org",
