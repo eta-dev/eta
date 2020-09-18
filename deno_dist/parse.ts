@@ -39,6 +39,15 @@ export default function parse(
   var lastIndex = 0;
   var parseOptions = config.parse;
 
+  if (config.plugins) {
+    for (var i = 0; i < config.plugins.length; i++) {
+      var plugin = config.plugins[i];
+      if (plugin.processTemplate) {
+        str = plugin.processTemplate(str, config);
+      }
+    }
+  }
+
   /* Adding for EJS compatibility */
   if (config.rmWhitespace) {
     // Code taken directly from EJS

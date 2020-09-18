@@ -38,7 +38,7 @@ export interface EtaConfig {
   }
 
   /** Array of plugins */
-  plugins: Array<{ processFnString?: Function; processAST?: Function }>
+  plugins: Array<{ processFnString?: Function; processAST?: Function; processTemplate?: Function }>
 
   /** Remove all safe-to-remove whitespace */
   rmWhitespace: boolean
