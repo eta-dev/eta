@@ -14,3 +14,6 @@ console.log('===========================')
 console.log(Eta.compile(template, Eta.defaultConfig).toString())
 console.log('===========================')
 console.log(Eta.render(template, { value: '<img>Something</img>' }))
+
+var customTagTemplate = `<label>First Name: {{=it.firstName}}</label>`
+console.log(Eta.render(x, { firstName: "ABC" }, { tags: ["{{", "}}"]})) 
