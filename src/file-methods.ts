@@ -1,4 +1,7 @@
-export var fs = require('fs')
-export var path = require('path')
+export * as fs from 'fs'
 
-export var readFileSync = fs.readFileSync
+export { readFileSync } from 'fs'
+
+import * as path from 'path'
+
+export { path }
