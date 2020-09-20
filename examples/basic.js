@@ -1,4 +1,4 @@
-var Eta = require('../dist/eta.cjs')
+import * as Eta from 'eta'
 
 var template = `
 <%=it.value%>
@@ -16,4 +16,4 @@ console.log('===========================')
 console.log(Eta.render(template, { value: '<img>Something</img>' }))
 
 var customTagTemplate = `<label>First Name: {{=it.firstName}}</label>`
-console.log(Eta.render(x, { firstName: "ABC" }, { tags: ["{{", "}}"]})) 
+console.log(Eta.render(customTagTemplate, { firstName: 'ABC' }, { tags: ['{{', '}}'] }))
