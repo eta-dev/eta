@@ -13,12 +13,13 @@
     "typescript types"
   ],
   "homepage": "https://eta.js.org",
-  "main": "dist/eta.cjs.js",
+  "main": "dist/eta.cjs",
   "browser": "dist/browser/eta.min.js",
   "module": "dist/eta.es.js",
+  "type": "module",
   "exports": {
     "import": "./dist/eta.es.js",
-    "require": "./dist/eta.cjs.js",
+    "require": "./dist/eta.cjs",
     "browser": "./dist/browser/eta.min.js"
   },
   "types": "dist/types/index.d.ts",
@@ -123,7 +124,7 @@
     "@commitlint/config-conventional": "^9.1.2",
     "@size-limit/preset-small-lib": "^4.6.0",
     "@types/jest": "^26.0.13",
-    "@types/node": "^14.10.1",
+    "@types/node": "^14.11.1",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
     "commitizen": "^4.2.1",
