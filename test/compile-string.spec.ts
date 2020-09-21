@@ -15,7 +15,7 @@ describe('Compile to String test', () => {
 function layout(p,d){__l=p;__lP=d}
 tR+='hi '
 tR+=E.e(hey)
-if(__l)tR=includeFile(__l,Object.assign(__lP||it,{body:tR}))
+if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
 if(cb){cb(null,tR)} return tR`)
   })
 
@@ -38,7 +38,7 @@ if(cb){cb(null,tR)} return tR`)
 function layout(p,d){__l=p;__lP=d}
 tR+='hi '
 tR+=hey
-if(__l)tR=includeFile(__l,Object.assign(__lP||it,{body:tR}))
+if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
 if(cb){cb(null,tR)} return tR`)
   })
 
@@ -50,7 +50,7 @@ function layout(p,d){__l=p;__lP=d}
 tR+='hi'
 tR+=E.e(hey)
 tR+=E.e(hi)
-if(__l)tR=includeFile(__l,Object.assign(__lP||it,{body:tR}))
+if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
 if(cb){cb(null,tR)} return tR`)
   })
 
@@ -82,7 +82,7 @@ tR+='      \\n  '
 }
 tR+='\\nThis is a partial: '
 tR+=include("mypartial")
-if(__l)tR=includeFile(__l,Object.assign(__lP||it,{body:tR}))
+if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
 if(cb){cb(null,tR)} return tR`
     )
   })

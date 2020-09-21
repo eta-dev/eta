@@ -34,7 +34,7 @@ describe('Compile test', () => {
 var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
 hi (=h)
-if(__l)tR=includeFile(__l,Object.assign(__lP||it,{body:tR}))
+if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
 if(cb){cb(null,tR)} return tR
 `)
     )

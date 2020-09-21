@@ -33,11 +33,11 @@ export default function compileToString(
     (config.includeFile
       ? "if(__l)tR=" +
         (config.async ? "await " : "") +
-        `includeFile(__l,Object.assign(__lP||${config.varName},{body:tR}))\n`
+        `includeFile(__l,Object.assign(${config.varName},{body:tR},__lP))\n`
       : config.include
       ? "if(__l)tR=" +
         (config.async ? "await " : "") +
-        `include(__l,Object.assign(__lP||${config.varName},{body:tR}))\n`
+        `include(__l,Object.assign(${config.varName},{body:tR},__lP))\n`
       : "") +
     "if(cb){cb(null,tR)} return tR" +
     (config.useWith ? "}" : "");
