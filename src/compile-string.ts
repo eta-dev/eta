@@ -22,20 +22,20 @@ export default function compileToString(str: string, config: EtaConfig): string 
   var buffer: Array<AstObject> = Parse(str, config)
 
   var res =
-    "var tR='',__l" +
+    "var tR='',__l,__lP" +
     (config.include ? ',include=E.include.bind(E)' : '') +
     (config.includeFile ? ',includeFile=E.includeFile.bind(E)' : '') +
-    '\nfunction layout(p){__l=p}\n' +
+    '\nfunction layout(p,d){__l=p;__lP=d}\n' +
     (config.useWith ? 'with(' + config.varName + '||{}){' : '') +
     compileScope(buffer, config) +
     (config.includeFile
       ? 'if(__l)tR=' +
         (config.async ? 'await ' : '') +
-        `includeFile(__l,Object.assign(${config.varName},{body:tR}))\n`
+        `includeFile(__l,Object.assign(__lP||${config.varName},{body:tR}))\n`
       : config.include
       ? 'if(__l)tR=' +
         (config.async ? 'await ' : '') +
-        `include(__l,Object.assign(${config.varName},{body:tR}))\n`
+        `include(__l,Object.assign(__lP||${config.varName},{body:tR}))\n`
       : '') +
     'if(cb){cb(null,tR)} return tR' +
     (config.useWith ? '}' : '')

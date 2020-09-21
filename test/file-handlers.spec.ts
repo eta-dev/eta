@@ -107,11 +107,11 @@ describe('renderFile error tests', () => {
       expect(err).toBeTruthy()
       expect(err.message).toMatch(
         buildRegEx(`
-var tR='',__l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
-function layout(p){__l=p}
+var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p,d){__l=p;__lP=d}
 tR+='Hi '
 tR+=E.e(badSyntax(=!)
-if(__l)tR=await includeFile(__l,Object.assign(it,{body:tR}))
+if(__l)tR=await includeFile(__l,Object.assign(__lP||it,{body:tR}))
 if(cb){cb(null,tR)} return tR
 `)
       )
@@ -126,11 +126,11 @@ if(cb){cb(null,tR)} return tR
       await renderFile(errFilePath, {})
     }).rejects.toThrow(
       buildRegEx(`
-var tR='',__l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
-function layout(p){__l=p}
+var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p,d){__l=p;__lP=d}
 tR+='Hi '
 tR+=E.e(badSyntax(=!)
-if(__l)tR=includeFile(__l,Object.assign(it,{body:tR}))
+if(__l)tR=includeFile(__l,Object.assign(__lP||it,{body:tR}))
 if(cb){cb(null,tR)} return tR
 `)
     )
@@ -146,11 +146,11 @@ Bad template syntax
 
 Unexpected token '='
 ====================
-var tR='',__l,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
-function layout(p){__l=p}
+var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+function layout(p,d){__l=p;__lP=d}
 tR+='Hi '
 tR+=E.e(badSyntax(=!)
-if(__l)tR=includeFile(__l,Object.assign(it,{body:tR}))
+if(__l)tR=includeFile(__l,Object.assign(__lP||it,{body:tR}))
 if(cb){cb(null,tR)} return tR
 */
 
