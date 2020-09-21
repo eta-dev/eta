@@ -10,7 +10,8 @@ const complexTemplate = fs.readFileSync(filePath, 'utf8')
 describe('Compile to String test', () => {
   it('parses a simple template', () => {
     var str = compileToString('hi <%= hey %>', defaultConfig)
-    expect(str).toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+    expect(str)
+      .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
 tR+='hi '
 tR+=E.e(hey)
@@ -32,7 +33,8 @@ if(cb){cb(null,tR)} return tR`)
 
   it('parses a simple template with raw tag', () => {
     var str = compileToString('hi <%~ hey %>', defaultConfig)
-    expect(str).toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+    expect(str)
+      .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
 tR+='hi '
 tR+=hey
@@ -42,7 +44,8 @@ if(cb){cb(null,tR)} return tR`)
 
   it('works with whitespace trimming', () => {
     var str = compileToString('hi\n<%- = hey-%>\n<%_ = hi_%>', defaultConfig)
-    expect(str).toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
+    expect(str)
+      .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
 tR+='hi'
 tR+=E.e(hey)
