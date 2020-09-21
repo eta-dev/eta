@@ -64,6 +64,9 @@ export interface EtaConfig {
   /** Holds cache of resolved filepaths. Set to `false` to disable */
   filepathCache?: Record<string, string> | false;
 
+  /** A filter function applied to every interpolation or raw interpolation */
+  filter?: Function;
+
   /** Function to include templates by name */
   include?: Function;
 

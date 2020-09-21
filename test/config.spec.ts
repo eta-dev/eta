@@ -19,6 +19,43 @@ describe('Config Tests', () => {
     expect(res).toEqual('<p>Hi</p>') // not escaped
   })
 
+  it('config.filter works', () => {
+    let template = 'My favorite food is <%= it.fav %>'
+
+    expect(render(template, {})).toEqual('My favorite food is undefined')
+
+    expect(
+      render(
+        template,
+        {},
+        {
+          filter: function () {
+            return 'apples'
+          }
+        }
+      )
+    ).toEqual('My favorite food is apples')
+
+    let timesFilterCalled = 0
+
+    expect(
+      render(
+        '<%= it.val1 %>, <%~ it.val2 %>, <%~ it.val3 %>',
+        {},
+        {
+          filter: function () {
+            timesFilterCalled++
+            if (timesFilterCalled <= 1) {
+              return 'The first'
+            } else {
+              return 'another'
+            }
+          }
+        }
+      )
+    ).toEqual('The first, another, another')
+  })
+
   it('Configure command works', () => {
     var updatedConfig = configure({ tags: ['{{', '}}'] })
 

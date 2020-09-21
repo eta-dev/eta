@@ -85,9 +85,19 @@ function compileScope(buff: Array<AstObject>, config: EtaConfig) {
 
       if (type === "r") {
         // raw
+
+        if (config.filter) {
+          content = "E.filter(" + content + ")";
+        }
+
         returnStr += "tR+=" + content + "\n";
       } else if (type === "i") {
         // interpolate
+
+        if (config.filter) {
+          content = "E.filter(" + content + ")";
+        }
+
         if (config.autoEscape) {
           content = "E.e(" + content + ")";
         }
