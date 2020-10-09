@@ -8,7 +8,7 @@ import { copyProps } from './utils'
  */
 class Cacher<T> {
   constructor(private cache: Record<string, T>) {}
-  define(key: string, val: T) {
+  define(key: string, val: T): void {
     this.cache[key] = val
   }
   get(key: string): T {
@@ -17,13 +17,13 @@ class Cacher<T> {
     // TODO: create plugin to allow referencing helpers, filters with dot notation
     return this.cache[key]
   }
-  remove(key: string) {
+  remove(key: string): void {
     delete this.cache[key]
   }
-  reset() {
+  reset(): void {
     this.cache = {}
   }
-  load(cacheObj: Record<string, T>) {
+  load(cacheObj: Record<string, T>): void {
     copyProps(this.cache, cacheObj)
   }
 }
