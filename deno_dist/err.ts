@@ -36,7 +36,7 @@ EtaErr.prototype = Object.create(Error.prototype, {
  * Throws an EtaErr with a nicely formatted error and message showing where in the template the error occurred.
  */
 
-export function ParseErr(message: string, str: string, indx: number) {
+export function ParseErr(message: string, str: string, indx: number): void {
   var whitespace = str.slice(0, indx).split(/\n/);
 
   var lineNo = whitespace.length;

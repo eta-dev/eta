@@ -21,6 +21,6 @@ export { templates } from "./containers.ts";
 export {
   config,
   config as defaultConfig,
-  getConfig,
   configure,
+  getConfig,
 } from "./config.ts";

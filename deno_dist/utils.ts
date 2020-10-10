@@ -18,11 +18,11 @@ interface EscapeMap {
 
 /* END TYPES */
 
-export function hasOwnProp(obj: object, prop: string) {
+export function hasOwnProp(obj: object, prop: string): boolean {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-export function copyProps<T>(toObj: T, fromObj: T) {
+export function copyProps<T>(toObj: T, fromObj: T): T {
   for (var key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
       toObj[key] = fromObj[key];
@@ -113,7 +113,7 @@ function replaceChar(s: string): string {
  * @returns XML-escaped string
  */
 
-function XMLEscape(str: any) {
+function XMLEscape(str: any): string {
   // eslint-disable-line @typescript-eslint/no-explicit-any
   // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
   var newStr = String(str);
