@@ -145,6 +145,7 @@ We know nobody reads through the long and boring documentation in the ReadMe any
 ### Simple Template
 
 ```javascript
+import * as Eta from 'eta';
 var myTemplate = '<p>My favorite kind of cake is: <%= it.favoriteCake %></p>'
 
 Eta.render(myTemplate, { favoriteCake: 'Chocolate!' })
