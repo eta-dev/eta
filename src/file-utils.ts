@@ -53,7 +53,7 @@ function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolea
  * @return absolute path to template
  */
 
-function getPath(path: string, options: EtaConfig) {
+function getPath(path: string, options: EtaConfig): string {
   var includePath: string | false = false
   var views = options.views
   var searchedPaths: Array<string> = []
@@ -176,7 +176,7 @@ function getPath(path: string, options: EtaConfig) {
  * Reads a file synchronously
  */
 
-function readFile(filePath: string) {
+function readFile(filePath: string): string {
   try {
     return readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
   } catch {

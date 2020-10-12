@@ -11,8 +11,8 @@ import { promiseImpl } from "./polyfills.ts";
 
 import type {
   EtaConfig,
-  PartialConfig,
   EtaConfigWithFilename,
+  PartialConfig,
 } from "./config.ts";
 import type { TemplateFunction } from "./compile.ts";
 
@@ -193,16 +193,20 @@ function renderFile(
   data: DataObj,
   config?: PartialConfig,
   cb?: CallbackFn,
-): any;
+): (Promise<string> | void);
 
-function renderFile(filename: string, data: DataObj, cb?: CallbackFn): any;
+function renderFile(
+  filename: string,
+  data: DataObj,
+  cb?: CallbackFn,
+): (Promise<string> | void);
 
 function renderFile(
   filename: string,
   data: DataObj,
   config?: PartialConfig,
   cb?: CallbackFn,
-) {
+): (Promise<string> | void) {
   /*
   Here we have some function overloading.
   Essentially, the first 2 arguments to renderFile should always be the filename and data

@@ -170,8 +170,8 @@ function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
 
 /** Update Eta's base config */
 
-function configure(options: PartialConfig) {
+function configure(options: PartialConfig): Partial<EtaConfig> {
   return copyProps(config, options);
 }
 
-export { config, getConfig, configure };
+export { config, configure, getConfig };
