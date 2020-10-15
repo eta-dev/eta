@@ -193,20 +193,20 @@ function renderFile(
   data: DataObj,
   config?: PartialConfig,
   cb?: CallbackFn,
-): (Promise<string> | void);
+): Promise<string> | void;
 
 function renderFile(
   filename: string,
   data: DataObj,
   cb?: CallbackFn,
-): (Promise<string> | void);
+): Promise<string> | void;
 
 function renderFile(
   filename: string,
   data: DataObj,
   config?: PartialConfig,
   cb?: CallbackFn,
-): (Promise<string> | void) {
+): Promise<string> | void {
   /*
   Here we have some function overloading.
   Essentially, the first 2 arguments to renderFile should always be the filename and data
