@@ -134,6 +134,45 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 
 Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of cool things in various mathematical fields, including efficiency) and is three letters long (perfect for a file extension).
 
+## Integrations
+
+<details>
+  <summary>
+    <b>ESLint</b>
+  </summary>
+
+  [eslint-plugin-eta](https://github.com/eta-dev/eslint-plugin-eta) was created to provide an ESLint processor so you can lint your Eta templates.
+
+</details>
+
+<details>
+  <summary>
+    <b>CLI</b>
+  </summary>
+
+  An official Eta CLI exists called [etajs-cli](https://github.com/eta-dev/etajs-cli).
+
+</details>
+
+<details>
+  <summary>
+    <b>Webpack</b>
+  </summary>
+
+  Currently there is no official Webpack integration but [@clshortfuse](https://github.com/clshortfuse) shared the loader he uses:
+  ```javascript
+  {
+    loader: 'html-loader',
+    options: {
+      preprocessor(content, loaderContext) {
+        return eta.render(content, {}, { filename: loaderContext.resourcePath });
+      },
+    },
+  }
+  ```
+
+</details>
+
 ## 📜 Docs
 
 We know nobody reads through the long and boring documentation in the ReadMe anyway, so head over to the documentation website:
