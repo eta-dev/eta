@@ -91,3 +91,7 @@ export default function render(
     return handleCache(template, options)(data, options)
   }
 }
+
+export function renderAsync(template: string | TemplateFunction, data: object, config?: PartialConfig, cb?: CallbackFn): string | Promise<string> | void {
+  return render(template, data, { ...config, async: true }, cb)
+}

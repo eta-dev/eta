@@ -1,6 +1,6 @@
 /* global it, expect, describe */
 
-import render from '../src/render'
+import render, { renderAsync } from '../src/render'
 import compile from '../src/compile'
 import { templates } from '../src/containers'
 
@@ -29,6 +29,17 @@ describe('Simple Render checks', () => {
         })
       }
       expect(await render(template, { getName: getName }, { async: true })).toEqual('Hello Ada!')
+    })
+    it('Rendering async function works', async () => {
+      let template = 'Hello <%= await it.getName() %>!'
+      let getName = () => {
+        return new Promise((res) => {
+          setTimeout(() => {
+            res('Ada')
+          }, 20)
+        })
+      }
+      expect(await renderAsync(template, { getName })).toEqual('Hello Ada!')
     })
   })
 })
