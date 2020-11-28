@@ -1,6 +1,6 @@
 /* global it, expect, describe */
 
-import { renderFile, __express, templates, compile } from '../src/index'
+import { renderFile, renderFileAsync, __express, templates, compile } from '../src/index'
 
 import { buildRegEx } from './err.spec'
 
@@ -134,6 +134,12 @@ if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
 if(cb){cb(null,tR)} return tR
 `)
     )
+  })
+})
+
+describe('renderFileAsync function', () => {
+  it('should render properly', async () => {
+    expect(await renderFileAsync(filePath, { name: 'foo' })).toBe('Hi foo')
   })
 })
 
