@@ -1,13 +1,13 @@
-import { fs, path, readFileSync } from './file-methods.ts'
-var _BOM = /^\uFEFF/
+import { fs, path, readFileSync } from "./file-methods.ts";
+var _BOM = /^\uFEFF/;
 
 // express is set like: app.engine('html', require('eta').renderFile)
 
-import EtaErr from './err.ts'
+import EtaErr from "./err.ts";
 
 /* TYPES */
 
-import type { EtaConfig } from './config.ts'
+import type { EtaConfig } from "./config.ts";
 
 /* END TYPES */
 
@@ -23,16 +23,20 @@ import type { EtaConfig } from './config.ts'
  * @return absolute path to template
  */
 
-function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolean): string {
+function getWholeFilePath(
+  name: string,
+  parentfile: string,
+  isDirectory?: boolean,
+): string {
   var includePath = path.resolve(
     isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
-    name // file
-  )
-  var ext = path.extname(name)
+    name, // file
+  );
+  var ext = path.extname(name);
   if (!ext) {
-    includePath += '.eta'
+    includePath += ".eta";
   }
-  return includePath
+  return includePath;
 }
 
 /**
@@ -54,9 +58,9 @@ function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolea
  */
 
 function getPath(path: string, options: EtaConfig): string {
-  var includePath: string | false = false
-  var views = options.views
-  var searchedPaths: Array<string> = []
+  var includePath: string | false = false;
+  var views = options.views;
+  var searchedPaths: Array<string> = [];
 
   // If these four values are the same,
   // getPath() will return the same result every time.
@@ -66,18 +70,20 @@ function getPath(path: string, options: EtaConfig): string {
     filename: options.filename, // filename of the template which called includeFile()
     path: path,
     root: options.root,
-    views: options.views
-  })
+    views: options.views,
+  });
 
-  if (options.cache && options.filepathCache && options.filepathCache[pathOptions]) {
+  if (
+    options.cache && options.filepathCache && options.filepathCache[pathOptions]
+  ) {
     // Use the cached filepath
-    return options.filepathCache[pathOptions]
+    return options.filepathCache[pathOptions];
   }
 
   /** Add a filepath to the list of paths we've checked for a template */
   function addPathToSearched(pathSearched: string) {
     if (!searchedPaths.includes(pathSearched)) {
-      searchedPaths.push(pathSearched)
+      searchedPaths.push(pathSearched);
     }
   }
 
@@ -89,87 +95,97 @@ function getPath(path: string, options: EtaConfig): string {
    * @param path the path to the template
    */
 
-  function searchViews(views: Array<string> | string | undefined, path: string): string | false {
-    var filePath
+  function searchViews(
+    views: Array<string> | string | undefined,
+    path: string,
+  ): string | false {
+    var filePath;
 
     // If views is an array, then loop through each directory
     // And attempt to find the template
     if (
       Array.isArray(views) &&
       views.some(function (v) {
-        filePath = getWholeFilePath(path, v, true)
+        filePath = getWholeFilePath(path, v, true);
 
-        addPathToSearched(filePath)
+        addPathToSearched(filePath);
 
-        return fs.existsSync(filePath)
+        return fs.existsSync(filePath);
       })
     ) {
       // If the above returned true, we know that the filePath was just set to a path
       // That exists (Array.some() returns as soon as it finds a valid element)
-      return (filePath as unknown) as string
-    } else if (typeof views === 'string') {
+      return (filePath as unknown) as string;
+    } else if (typeof views === "string") {
       // Search for the file if views is a single directory
-      filePath = getWholeFilePath(path, views, true)
+      filePath = getWholeFilePath(path, views, true);
 
-      addPathToSearched(filePath)
+      addPathToSearched(filePath);
 
       if (fs.existsSync(filePath)) {
-        return filePath
+        return filePath;
       }
     }
 
     // Unable to find a file
-    return false
+    return false;
   }
 
   // Path starts with '/', 'C:\', etc.
-  var match = /^[A-Za-z]+:\\|^\//.exec(path)
+  var match = /^[A-Za-z]+:\\|^\//.exec(path);
 
   // Absolute path, like /partials/partial.eta
   if (match && match.length) {
     // We have to trim the beginning '/' off the path, or else
     // path.resolve(dir, path) will always resolve to just path
-    var formattedPath = path.replace(/^\/*/, '')
+    var formattedPath = path.replace(/^\/*/, "");
 
     // First, try to resolve the path within options.views
-    includePath = searchViews(views, formattedPath)
+    includePath = searchViews(views, formattedPath);
     if (!includePath) {
       // If that fails, searchViews will return false. Try to find the path
       // inside options.root (by default '/', the base of the filesystem)
-      var pathFromRoot = getWholeFilePath(formattedPath, options.root || '/', true)
+      var pathFromRoot = getWholeFilePath(
+        formattedPath,
+        options.root || "/",
+        true,
+      );
 
-      addPathToSearched(pathFromRoot)
+      addPathToSearched(pathFromRoot);
 
-      includePath = pathFromRoot
+      includePath = pathFromRoot;
     }
   } else {
     // Relative paths
     // Look relative to a passed filename first
     if (options.filename) {
-      var filePath = getWholeFilePath(path, options.filename)
+      var filePath = getWholeFilePath(path, options.filename);
 
-      addPathToSearched(filePath)
+      addPathToSearched(filePath);
 
       if (fs.existsSync(filePath)) {
-        includePath = filePath
+        includePath = filePath;
       }
     }
     // Then look for the template in options.views
     if (!includePath) {
-      includePath = searchViews(views, path)
+      includePath = searchViews(views, path);
     }
     if (!includePath) {
-      throw EtaErr('Could not find the template "' + path + '". Paths tried: ' + searchedPaths)
+      throw EtaErr(
+        'Could not find the template "' + path + '". Paths tried: ' +
+          searchedPaths,
+      );
     }
   }
 
   // If caching and filepathCache are enabled,
   // cache the input & output of this function.
   if (options.cache && options.filepathCache) {
-    options.filepathCache[pathOptions] = includePath
+    options.filepathCache[pathOptions] = includePath;
   }
 
-  return includePath
+  return includePath;
 }
 
 /**
@@ -178,10 +194,10 @@ function getPath(path: string, options: EtaConfig): string {
 
 function readFile(filePath: string): string {
   try {
-    return readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
+    return readFileSync(filePath).toString().replace(_BOM, ""); // TODO: is replacing BOM's necessary?
   } catch {
-    throw EtaErr("Failed to read template at '" + filePath + "'")
+    throw EtaErr("Failed to read template at '" + filePath + "'");
   }
 }
 
-export { getPath, readFile }
+export { getPath, readFile };

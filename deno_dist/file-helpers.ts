@@ -1,11 +1,11 @@
-import { includeFile } from './file-handlers.ts'
+import { includeFile } from "./file-handlers.ts";
 
 /* TYPES */
 
-import type { EtaConfig } from './config.ts'
+import type { EtaConfig } from "./config.ts";
 
 interface GenericData {
-  [index: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
+  [index: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /* END TYPES */
@@ -14,7 +14,11 @@ interface GenericData {
  * Called with `includeFile(path, data)`
  */
 
-export function includeFileHelper(this: EtaConfig, path: string, data: GenericData): string {
-  var templateAndConfig = includeFile(path, this)
-  return templateAndConfig[0](data, templateAndConfig[1])
+export function includeFileHelper(
+  this: EtaConfig,
+  path: string,
+  data: GenericData,
+): string {
+  var templateAndConfig = includeFile(path, this);
+  return templateAndConfig[0](data, templateAndConfig[1]);
 }
