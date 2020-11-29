@@ -12,7 +12,7 @@
 </p>
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[logo]: https://img.shields.io/badge/all_contributors-7-orange.svg 'Number of contributors on All-Contributors'
+[logo]: https://img.shields.io/badge/all_contributors-8-orange.svg 'Number of contributors on All-Contributors'
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <span align="center">
@@ -134,6 +134,45 @@ Simply put, Eta is super: super lightweight, super fast, super powerful, and sup
 
 Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of cool things in various mathematical fields, including efficiency) and is three letters long (perfect for a file extension).
 
+## Integrations
+
+<details>
+  <summary>
+    <b>ESLint</b>
+  </summary>
+
+  [eslint-plugin-eta](https://github.com/eta-dev/eslint-plugin-eta) was created to provide an ESLint processor so you can lint your Eta templates.
+
+</details>
+
+<details>
+  <summary>
+    <b>CLI</b>
+  </summary>
+
+  An official Eta CLI exists called [etajs-cli](https://github.com/eta-dev/etajs-cli).
+
+</details>
+
+<details>
+  <summary>
+    <b>Webpack</b>
+  </summary>
+
+  Currently there is no official Webpack integration but [@clshortfuse](https://github.com/clshortfuse) shared the loader he uses:
+  ```javascript
+  {
+    loader: 'html-loader',
+    options: {
+      preprocessor(content, loaderContext) {
+        return eta.render(content, {}, { filename: loaderContext.resourcePath });
+      },
+    },
+  }
+  ```
+
+</details>
+
 ## 📜 Docs
 
 We know nobody reads through the long and boring documentation in the ReadMe anyway, so head over to the documentation website:
@@ -215,6 +254,9 @@ Made with ❤ by [@nebrelbug](https://github.com/eta-dev) and all these wonderfu
     <td align="center"><a href="https://github.com/trojanh"><img src="https://avatars0.githubusercontent.com/u/22974490?v=4" width="100px;" alt=""/><br /><sub><b>Rajan Tiwari</b></sub></a><br /><a href="#example-trojanh" title="Examples">💡</a></td>
     <td align="center"><a href="https://shadowtime2000.github.io"><img src="https://avatars1.githubusercontent.com/u/66655515?v=4" width="100px;" alt=""/><br /><sub><b>shadowtime2000</b></sub></a><br /><a href="https://github.com/eta-dev/eta/commits?author=shadowtime2000" title="Code">💻</a> <a href="#ideas-shadowtime2000" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://hamidihamza.com"><img src="https://avatars0.githubusercontent.com/u/22576950?v=4" width="100px;" alt=""/><br /><sub><b>Hamza Hamidi</b></sub></a><br /><a href="https://github.com/eta-dev/eta/commits?author=hamzahamidi" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://calumk.com"><img src="https://avatars1.githubusercontent.com/u/1183991?v=4" width="100px;" alt=""/><br /><sub><b>Calum Knott</b></sub></a><br /><a href="#ideas-calumk" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 

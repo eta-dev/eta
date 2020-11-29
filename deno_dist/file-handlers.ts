@@ -265,4 +265,26 @@ function renderFile(
   return tryHandleCache(data, renderConfig, callback);
 }
 
-export { includeFile, renderFile };
+function renderFileAsync(
+  filename: string,
+  data: DataObj,
+  config?: PartialConfig,
+  cb?: CallbackFn,
+): Promise<string> | void;
+
+function renderFileAsync(
+  filename: string,
+  data: DataObj,
+  cb?: CallbackFn,
+): Promise<string> | void;
+
+function renderFileAsync(
+  filename: string,
+  data: DataObj,
+  config?: PartialConfig,
+  cb?: CallbackFn,
+): Promise<string> | void {
+  return renderFile(filename, data, { ...config, async: true }, cb);
+}
+
+export { includeFile, renderFile, renderFileAsync };
