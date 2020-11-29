@@ -133,7 +133,7 @@
     "coveralls": "^3.1.0",
     "cross-env": "^7.0.2",
     "cz-conventional-changelog": "^3.3.0",
-    "denoify": "^0.5.4",
+    "denoify": "^0.6.3",
     "eslint": "^7.9.0",
     "eslint-config-eta-dev": "^1.0.0",
     "eslint-config-prettier": "^6.11.0",

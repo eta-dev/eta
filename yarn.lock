@@ -3870,16 +3870,16 @@ delayed-stream@~1.0.0:
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
 
-denoify@^0.5.4:
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/denoify/-/denoify-0.5.4.tgz#03dcad0aee82ea54b2dbed0aec83209dc3f6f570"
-  integrity sha512-lAzeGyTBCw3jZ4pq9tX0jwtia7I4vRuRrgfo2hYbiZA5+PyqZX/FhSagM9wJXF/MU/XQl22cAb8G6CKeg7jrEQ==
+denoify@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/denoify/-/denoify-0.6.3.tgz#4ad707464a4b83023e2ef21df973d5194e489b60"
+  integrity sha512-T9M8pm/ZQ590oqP734SJuNJ+RKNyrNBirId2Rkh/eoS0mFbtjgX0L7kvTlBjBP4EyPyveXX1gFeiL+tj1zSEBQ==
   dependencies:
     "@octokit/rest" "^18.0.0"
     "@types/comment-json" "^1.1.1"
     commander "^4.1.1"
     comment-json "^3.0.2"
-    evt "^1.7.13"
+    evt "^1.9.2"
     get-github-default-branch-name "^0.0.4"
     gitignore-parser "0.0.2"
     glob "^7.1.6"
@@ -4466,10 +4466,10 @@ evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
     md5.js "^1.3.4"
     safe-buffer "^5.1.1"
 
-evt@^1.7.13:
-  version "1.8.9"
-  resolved "https://registry.yarnpkg.com/evt/-/evt-1.8.9.tgz#4dfc4111d888ea83f875bfcf41268f4f99e865ad"
-  integrity sha512-y945QddJG/jXnGMbqMo3QYQpD/jtdf3hJyHvYxKF2M4pZXY3h+z3LAZiIuej7RtC7pMHnp/ffH4q9yi8Lu/Ltw==
+evt@^1.9.2:
+  version "1.9.10"
+  resolved "https://registry.yarnpkg.com/evt/-/evt-1.9.10.tgz#64d85acfe98e08186534401f407caf6df171deaf"
+  integrity sha512-gnxa+2ixWLz25sxJAEh6n2AmEkpQeue9U1QCa9d2D5SsFs4+D6d3r7ivtnPfn782XUVEJKbDr6I1CarrFdQV5Q==
   dependencies:
     minimal-polyfills "^2.1.5"
     run-exclusive "^2.2.14"
