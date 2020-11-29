@@ -1,9 +1,9 @@
-import Parse from "./parse.ts";
+import Parse from './parse.ts'
 
 /* TYPES */
 
-import type { EtaConfig } from "./config.ts";
-import type { AstObject } from "./parse.ts";
+import type { EtaConfig } from './config.ts'
+import type { AstObject } from './parse.ts'
 
 /* END TYPES */
 
@@ -18,40 +18,38 @@ import type { AstObject } from "./parse.ts";
  * ```
  */
 
-export default function compileToString(
-  str: string,
-  config: EtaConfig,
-): string {
-  var buffer: Array<AstObject> = Parse(str, config);
+export default function compileToString(str: string, config: EtaConfig): string {
+  var buffer: Array<AstObject> = Parse(str, config)
 
-  var res = "var tR='',__l,__lP" +
-    (config.include ? ",include=E.include.bind(E)" : "") +
-    (config.includeFile ? ",includeFile=E.includeFile.bind(E)" : "") +
-    "\nfunction layout(p,d){__l=p;__lP=d}\n" +
-    (config.useWith ? "with(" + config.varName + "||{}){" : "") +
+  var res =
+    "var tR='',__l,__lP" +
+    (config.include ? ',include=E.include.bind(E)' : '') +
+    (config.includeFile ? ',includeFile=E.includeFile.bind(E)' : '') +
+    '\nfunction layout(p,d){__l=p;__lP=d}\n' +
+    (config.useWith ? 'with(' + config.varName + '||{}){' : '') +
     compileScope(buffer, config) +
     (config.includeFile
-      ? "if(__l)tR=" +
-        (config.async ? "await " : "") +
+      ? 'if(__l)tR=' +
+        (config.async ? 'await ' : '') +
         `includeFile(__l,Object.assign(${config.varName},{body:tR},__lP))\n`
       : config.include
-      ? "if(__l)tR=" +
-        (config.async ? "await " : "") +
+      ? 'if(__l)tR=' +
+        (config.async ? 'await ' : '') +
         `include(__l,Object.assign(${config.varName},{body:tR},__lP))\n`
-      : "") +
-    "if(cb){cb(null,tR)} return tR" +
-    (config.useWith ? "}" : "");
+      : '') +
+    'if(cb){cb(null,tR)} return tR' +
+    (config.useWith ? '}' : '')
 
   if (config.plugins) {
     for (var i = 0; i < config.plugins.length; i++) {
-      var plugin = config.plugins[i];
+      var plugin = config.plugins[i]
       if (plugin.processFnString) {
-        res = plugin.processFnString(res, config);
+        res = plugin.processFnString(res, config)
       }
     }
   }
 
-  return res;
+  return res
 }
 
 /**
@@ -68,47 +66,47 @@ export default function compileToString(
  */
 
 function compileScope(buff: Array<AstObject>, config: EtaConfig) {
-  var i = 0;
-  var buffLength = buff.length;
-  var returnStr = "";
+  var i = 0
+  var buffLength = buff.length
+  var returnStr = ''
 
   for (i; i < buffLength; i++) {
-    var currentBlock = buff[i];
-    if (typeof currentBlock === "string") {
-      var str = currentBlock;
+    var currentBlock = buff[i]
+    if (typeof currentBlock === 'string') {
+      var str = currentBlock
 
       // we know string exists
-      returnStr += "tR+='" + str + "'\n";
+      returnStr += "tR+='" + str + "'\n"
     } else {
-      var type = currentBlock.t; // ~, s, !, ?, r
-      var content = currentBlock.val || "";
+      var type = currentBlock.t // ~, s, !, ?, r
+      var content = currentBlock.val || ''
 
-      if (type === "r") {
+      if (type === 'r') {
         // raw
 
         if (config.filter) {
-          content = "E.filter(" + content + ")";
+          content = 'E.filter(' + content + ')'
         }
 
-        returnStr += "tR+=" + content + "\n";
-      } else if (type === "i") {
+        returnStr += 'tR+=' + content + '\n'
+      } else if (type === 'i') {
         // interpolate
 
         if (config.filter) {
-          content = "E.filter(" + content + ")";
+          content = 'E.filter(' + content + ')'
         }
 
         if (config.autoEscape) {
-          content = "E.e(" + content + ")";
+          content = 'E.e(' + content + ')'
         }
-        returnStr += "tR+=" + content + "\n";
+        returnStr += 'tR+=' + content + '\n'
         // reference
-      } else if (type === "e") {
+      } else if (type === 'e') {
         // execute
-        returnStr += content + "\n"; // you need a \n in case you have <% } %>
+        returnStr += content + '\n' // you need a \n in case you have <% } %>
       }
     }
   }
 
-  return returnStr;
+  return returnStr
 }

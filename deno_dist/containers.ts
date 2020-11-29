@@ -1,8 +1,8 @@
-import { Cacher } from "./storage.ts";
+import { Cacher } from './storage.ts'
 
 /* TYPES */
 
-import type { TemplateFunction } from "./compile.ts";
+import type { TemplateFunction } from './compile.ts'
 
 /* END TYPES */
 
@@ -12,6 +12,6 @@ import type { TemplateFunction } from "./compile.ts";
  * Stores partials and cached templates
  */
 
-var templates = new Cacher<TemplateFunction>({});
+var templates = new Cacher<TemplateFunction>({})
 
-export { templates };
+export { templates }
