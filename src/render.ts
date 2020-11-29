@@ -93,5 +93,5 @@ export default function render(
 }
 
 export function renderAsync(template: string | TemplateFunction, data: object, config?: PartialConfig, cb?: CallbackFn): string | Promise<string> | void {
-  return render(template, data, { ...config, async: true }, cb)
+  return render(template, data, Object.assign({}, config, { async: true }), cb)
 }
