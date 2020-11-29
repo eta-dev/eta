@@ -93,5 +93,6 @@ export default function render(
 }
 
 export function renderAsync(template: string | TemplateFunction, data: object, config?: PartialConfig, cb?: CallbackFn): string | Promise<string> | void {
-  return render(template, data, { ...config, async: true }, cb)
+  // Using Object.assign to lower bundle size, using spread operator makes it larger
+  return render(template, data, Object.assign({}, config, { async: true }), cb)
 }
