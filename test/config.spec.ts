@@ -20,7 +20,7 @@ describe('Config Tests', () => {
   })
 
   it('config.filter works', () => {
-    let template = 'My favorite food is <%= it.fav %>'
+    const template = 'My favorite food is <%= it.fav %>'
 
     expect(render(template, {})).toEqual('My favorite food is undefined')
 

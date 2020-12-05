@@ -91,7 +91,7 @@ describe('Simple renderFile tests', () => {
 
 describe('File location tests', () => {
   it('locates a file with the views option', async () => {
-    let res = await renderFile(
+    const res = await renderFile(
       'simple.eta',
       { name: 'Ada' },
       { views: path.join(__dirname, 'templates') }

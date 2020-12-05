@@ -21,7 +21,7 @@ describe('Simple Render checks', () => {
     })
     it('Rendering function works', async () => {
       const template = 'Hello <%= await it.getName() %>!'
-      let getName = () => {
+      const getName = () => {
         return new Promise((res) => {
           setTimeout(() => {
             res('Ada')
@@ -32,7 +32,7 @@ describe('Simple Render checks', () => {
     })
     it('Rendering async function works', async () => {
       const template = 'Hello <%= await it.getName() %>!'
-      let getName = () => {
+      const getName = () => {
         return new Promise((res) => {
           setTimeout(() => {
             res('Ada')
@@ -67,15 +67,15 @@ describe('Renders with different scopes', () => {
 
 describe('processTemplate plugin', () => {
   it('Simple plugin works correctly', () => {
-    let template = ':thumbsup:'
+    const template = ':thumbsup:'
 
-    let emojiTransform = {
+    const emojiTransform = {
       processTemplate: function (str: string) {
         return str.replace(':thumbsup:', '👍')
       }
     }
 
-    let res = render(
+    const res = render(
       template,
       {},
       {
@@ -87,27 +87,27 @@ describe('processTemplate plugin', () => {
   })
 
   it('Multiple chained plugins work correctly', () => {
-    let template = ':thumbsup: This is a cool template'
+    const template = ':thumbsup: This is a cool template'
 
-    let emojiTransform = {
+    const emojiTransform = {
       processTemplate: function (str: string) {
         return str.replace(':thumbsup:', '👍')
       }
     }
 
-    let capitalizeCool = {
+    const capitalizeCool = {
       processTemplate: function (str: string) {
         return str.replace('cool', 'COOL')
       }
     }
 
-    let replaceThumbsUp = {
+    const replaceThumbsUp = {
       processTemplate: function (str: string) {
         return str.replace('👍', '✨')
       }
     }
 
-    let res = render(
+    const res = render(
       template,
       {},
       {
