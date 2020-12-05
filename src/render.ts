@@ -58,7 +58,7 @@ export default function render(
   config?: PartialConfig,
   cb?: CallbackFn
 ): string | Promise<string> | void {
-  var options = getConfig(config || {})
+  const options = getConfig(config || {})
 
   if (options.async) {
     var result
@@ -67,7 +67,7 @@ export default function render(
       try {
         // Note: if there is an error while rendering the template,
         // It will bubble up and be caught here
-        var templateFn = handleCache(template, options)
+        const templateFn = handleCache(template, options)
         templateFn(data, options, cb)
       } catch (err) {
         return cb(err)

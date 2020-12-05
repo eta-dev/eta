@@ -1,4 +1,4 @@
-export var promiseImpl = Promise
+export const promiseImpl = Promise
 
 export function getAsyncFunctionConstructor (): Function {
   return async function () {}.constructor

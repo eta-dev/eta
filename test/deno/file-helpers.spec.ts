@@ -7,13 +7,13 @@ import { render, templates, compile } from '../../deno_dist/mod.ts'
 templates.define('test-template', compile('Saluton <%=it.name%>'))
 
 Deno.test('include works', async () => {
-  var renderedTemplate = render('<%~ include("test-template", it) %>', { name: 'Ada' })
+  const renderedTemplate = render('<%~ include("test-template", it) %>', { name: 'Ada' })
 
   assertEquals(renderedTemplate, 'Saluton Ada')
 })
 
 Deno.test('includeFile works w/ filename prop', async () => {
-  var renderedTemplate = render(
+  const renderedTemplate = render(
     '<%~ includeFile("simple", it) %>',
     { name: 'Ada' },
     { filename: path.join(__dirname, '../templates/placeholder.eta') }
@@ -23,7 +23,7 @@ Deno.test('includeFile works w/ filename prop', async () => {
 })
 
 Deno.test('"E.includeFile" works with "views" array', async () => {
-  var renderedTemplate = render(
+  const renderedTemplate = render(
     '<%~ E.includeFile("randomtemplate", it) %>',
     { user: 'Ben' },
     { views: [path.join(__dirname, '../templates'), path.join(__dirname, '../othertemplates')] }
@@ -33,7 +33,7 @@ Deno.test('"E.includeFile" works with "views" array', async () => {
 })
 
 Deno.test('"includeFile" works with "views" array', async () => {
-  var renderedTemplate = render(
+  const renderedTemplate = render(
     '<%~ includeFile("randomtemplate", it) %>',
     { user: 'Ben' },
     { views: [path.join(__dirname, '../templates'), path.join(__dirname, '../othertemplates')] }
@@ -43,7 +43,7 @@ Deno.test('"includeFile" works with "views" array', async () => {
 })
 
 Deno.test('"includeFile" works with "views" string', async () => {
-  var renderedTemplate = render(
+  const renderedTemplate = render(
     '<%~ includeFile("randomtemplate", it) %>',
     { user: 'Ben' },
     { views: path.join(__dirname, '../othertemplates') }

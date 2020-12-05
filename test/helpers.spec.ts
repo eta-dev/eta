@@ -4,7 +4,7 @@ import { render } from '../src/index'
 
 // SHOULD TEST COMMON ETA USAGE PATTERNS HERE
 
-var eachTemplate = `
+const eachTemplate = `
 The Daugherty's have 5 kids:
 <ul>
 <% it.kids.forEach(function(kid){ %>
@@ -14,7 +14,7 @@ The Daugherty's have 5 kids:
 
 describe('Helper tests', () => {
   it('parses a simple array foreach', () => {
-    var res = render(eachTemplate, { kids: ['Ben', 'Polly', 'Joel', 'Phronsie', 'Davie'] })
+    const res = render(eachTemplate, { kids: ['Ben', 'Polly', 'Joel', 'Phronsie', 'Davie'] })
     expect(res).toEqual(
       `
 The Daugherty's have 5 kids:

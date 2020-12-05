@@ -16,11 +16,11 @@ export type AstObject = string | TemplateObject
 
 /* END TYPES */
 
-var templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g
+const templateLitReg = /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g
 
-var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g
+const singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g
 
-var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g
+const doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g
 
 /** Escape special regular expression characters inside a string */
 
@@ -33,11 +33,11 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   var buffer: Array<AstObject> = []
   var trimLeftOfNextStr: string | false = false
   var lastIndex = 0
-  var parseOptions = config.parse
+  const parseOptions = config.parse
 
   if (config.plugins) {
     for (var i = 0; i < config.plugins.length; i++) {
-      var plugin = config.plugins[i]
+      const plugin = config.plugins[i]
       if (plugin.processTemplate) {
         str = plugin.processTemplate(str, config)
       }
@@ -81,7 +81,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
     }
   }
 
-  var prefixes = [parseOptions.exec, parseOptions.interpolate, parseOptions.raw].reduce(function (
+  const prefixes = [parseOptions.exec, parseOptions.interpolate, parseOptions.raw].reduce(function (
     accumulator,
     prefix
   ) {
@@ -97,12 +97,12 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   },
   '')
 
-  var parseOpenReg = new RegExp(
+  const parseOpenReg = new RegExp(
     '([^]*?)' + escapeRegExp(config.tags[0]) + '(-|_)?\\s*(' + prefixes + ')?\\s*',
     'g'
   )
 
-  var parseCloseReg = new RegExp(
+  const parseCloseReg = new RegExp(
     '\'|"|`|\\/\\*|(\\s*(-|_)?' + escapeRegExp(config.tags[1]) + ')',
     'g'
   )
@@ -113,9 +113,9 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   while ((m = parseOpenReg.exec(str))) {
     lastIndex = m[0].length + m.index
 
-    var precedingString = m[1]
-    var wsLeft = m[2]
-    var prefix = m[3] || '' // by default either ~, =, or empty
+    const precedingString = m[1]
+    const wsLeft = m[2]
+    const prefix = m[3] || '' // by default either ~, =, or empty
 
     pushString(precedingString, wsLeft)
 
@@ -143,9 +143,9 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
         currentObj = { t: currentType, val: content }
         break
       } else {
-        var char = closeTag[0]
+        const char = closeTag[0]
         if (char === '/*') {
-          var commentCloseInd = str.indexOf('*/', parseCloseReg.lastIndex)
+          const commentCloseInd = str.indexOf('*/', parseCloseReg.lastIndex)
 
           if (commentCloseInd === -1) {
             ParseErr('unclosed comment', str, closeTag.index)
@@ -154,7 +154,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
         } else if (char === "'") {
           singleQuoteReg.lastIndex = closeTag.index
 
-          var singleQuoteMatch = singleQuoteReg.exec(str)
+          const singleQuoteMatch = singleQuoteReg.exec(str)
           if (singleQuoteMatch) {
             parseCloseReg.lastIndex = singleQuoteReg.lastIndex
           } else {
@@ -162,7 +162,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
           }
         } else if (char === '"') {
           doubleQuoteReg.lastIndex = closeTag.index
-          var doubleQuoteMatch = doubleQuoteReg.exec(str)
+          const doubleQuoteMatch = doubleQuoteReg.exec(str)
 
           if (doubleQuoteMatch) {
             parseCloseReg.lastIndex = doubleQuoteReg.lastIndex
@@ -171,7 +171,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
           }
         } else if (char === '`') {
           templateLitReg.lastIndex = closeTag.index
-          var templateLitMatch = templateLitReg.exec(str)
+          const templateLitMatch = templateLitReg.exec(str)
           if (templateLitMatch) {
             parseCloseReg.lastIndex = templateLitReg.lastIndex
           } else {
@@ -191,7 +191,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
 
   if (config.plugins) {
     for (var i = 0; i < config.plugins.length; i++) {
-      var plugin = config.plugins[i]
+      const plugin = config.plugins[i]
       if (plugin.processAST) {
         buffer = plugin.processAST(buffer, config)
       }

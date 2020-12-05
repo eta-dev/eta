@@ -2,7 +2,7 @@
 
 import { Cacher } from '../src/storage'
 
-var Container = new Cacher<number>({ one: 1, two: 2 })
+const Container = new Cacher<number>({ one: 1, two: 2 })
 
 describe('Config Tests', () => {
   it('Cache.get works', () => {

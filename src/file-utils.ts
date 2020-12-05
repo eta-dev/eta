@@ -1,5 +1,5 @@
 import { fs, path, readFileSync } from './file-methods'
-var _BOM = /^\uFEFF/
+const _BOM = /^\uFEFF/
 
 // express is set like: app.engine('html', require('eta').renderFile)
 
@@ -28,7 +28,7 @@ function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolea
     isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
     name // file
   )
-  var ext = path.extname(name)
+  const ext = path.extname(name)
   if (!ext) {
     includePath += '.eta'
   }
@@ -55,14 +55,14 @@ function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolea
 
 function getPath(path: string, options: EtaConfig): string {
   var includePath: string | false = false
-  var views = options.views
+  const views = options.views
   var searchedPaths: Array<string> = []
 
   // If these four values are the same,
   // getPath() will return the same result every time.
   // We can cache the result to avoid expensive
   // file operations.
-  var pathOptions = JSON.stringify({
+  const pathOptions = JSON.stringify({
     filename: options.filename, // filename of the template which called includeFile()
     path: path,
     root: options.root,
@@ -123,20 +123,20 @@ function getPath(path: string, options: EtaConfig): string {
   }
 
   // Path starts with '/', 'C:\', etc.
-  var match = /^[A-Za-z]+:\\|^\//.exec(path)
+  const match = /^[A-Za-z]+:\\|^\//.exec(path)
 
   // Absolute path, like /partials/partial.eta
   if (match && match.length) {
     // We have to trim the beginning '/' off the path, or else
     // path.resolve(dir, path) will always resolve to just path
-    var formattedPath = path.replace(/^\/*/, '')
+    const formattedPath = path.replace(/^\/*/, '')
 
     // First, try to resolve the path within options.views
     includePath = searchViews(views, formattedPath)
     if (!includePath) {
       // If that fails, searchViews will return false. Try to find the path
       // inside options.root (by default '/', the base of the filesystem)
-      var pathFromRoot = getWholeFilePath(formattedPath, options.root || '/', true)
+      const pathFromRoot = getWholeFilePath(formattedPath, options.root || '/', true)
 
       addPathToSearched(pathFromRoot)
 
@@ -146,7 +146,7 @@ function getPath(path: string, options: EtaConfig): string {
     // Relative paths
     // Look relative to a passed filename first
     if (options.filename) {
-      var filePath = getWholeFilePath(path, options.filename)
+      const filePath = getWholeFilePath(path, options.filename)
 
       addPathToSearched(filePath)
 

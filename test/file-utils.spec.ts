@@ -3,7 +3,7 @@
 import { renderFile, loadFile, templates } from '../src/index'
 import { config } from '../src/config'
 
-var path = require('path'),
+const path = require('path'),
   filePath = path.join(__dirname, 'templates/simple.eta')
 
 describe('File tests', () => {
