@@ -23,7 +23,7 @@ export function hasOwnProp(obj: object, prop: string): boolean {
 }
 
 export function copyProps<T>(toObj: T, fromObj: T): T {
-  for (var key in fromObj) {
+  for (const key in fromObj) {
     if (hasOwnProp((fromObj as unknown) as object, key)) {
       toObj[key] = fromObj[key]
     }
@@ -41,8 +41,8 @@ function trimWS(
   wsLeft: string | false,
   wsRight?: string | false
 ): string {
-  var leftTrim
-  var rightTrim
+  let leftTrim
+  let rightTrim
 
   if (Array.isArray(config.autoTrim)) {
     // kinda confusing
@@ -94,7 +94,7 @@ function trimWS(
  * A map of special HTML characters to their XML-escaped equivalents
  */
 
-var escMap: EscapeMap = {
+const escMap: EscapeMap = {
   '&': '&amp;',
   '<': '&lt;',
   '>': '&gt;',
@@ -116,7 +116,7 @@ function replaceChar(s: string): string {
 function XMLEscape(str: any): string {
   // eslint-disable-line @typescript-eslint/no-explicit-any
   // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
-  var newStr = String(str)
+  const newStr = String(str)
   if (/[&<>"']/.test(newStr)) {
     return newStr.replace(/[&<>"']/g, replaceChar)
   } else {

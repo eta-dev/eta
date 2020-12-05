@@ -4,20 +4,20 @@ import { renderFile, renderFileAsync, __express, templates, compile } from '../s
 
 import { buildRegEx } from './err.spec'
 
-var path = require('path'),
+const path = require('path'),
   filePath = path.join(__dirname, 'templates/simple.eta'),
   errFilePath = path.join(__dirname, 'templates/badsyntax.eta'),
   fakeFilePath = path.join(__dirname, 'templates/fake.eta')
 
 describe('Simple renderFile tests', () => {
   it('renders a simple template file', async () => {
-    var renderedFile = await renderFile(filePath, { name: 'Ben' })
+    const renderedFile = await renderFile(filePath, { name: 'Ben' })
 
     expect(renderedFile).toEqual('Hi Ben')
   })
 
   it('renderFile is aliased as __express', async () => {
-    var renderedFile = await __express(filePath, { name: 'Ben' })
+    const renderedFile = await __express(filePath, { name: 'Ben' })
 
     expect(renderedFile).toEqual('Hi Ben')
   })
@@ -52,12 +52,12 @@ describe('Simple renderFile tests', () => {
   })
 
   it('renders an async template using Promises', async () => {
-    var res = await renderFile(filePath, { name: 'Ada', async: true })
+    const res = await renderFile(filePath, { name: 'Ada', async: true })
     expect(res).toEqual('Hi Ada')
   })
 
   it('renders an async template with an explicit config using Promises', async () => {
-    var res = await renderFile(filePath, { name: 'Ada' }, { async: true })
+    const res = await renderFile(filePath, { name: 'Ada' }, { async: true })
     expect(res).toEqual('Hi Ada')
   })
 
@@ -91,7 +91,7 @@ describe('Simple renderFile tests', () => {
 
 describe('File location tests', () => {
   it('locates a file with the views option', async () => {
-    let res = await renderFile(
+    const res = await renderFile(
       'simple.eta',
       { name: 'Ada' },
       { views: path.join(__dirname, 'templates') }

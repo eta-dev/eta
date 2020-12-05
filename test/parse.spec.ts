@@ -3,7 +3,7 @@
 import { parse } from '../src/index'
 import { config } from '../src/config'
 
-var fs = require('fs'),
+const fs = require('fs'),
   path = require('path'),
   filePath = path.join(__dirname, 'templates/complex.eta')
 
@@ -11,32 +11,32 @@ const complexTemplate = fs.readFileSync(filePath, 'utf8')
 
 describe('parse test', () => {
   it('parses a simple template', () => {
-    var buff = parse('hi <%= hey %>', config)
+    const buff = parse('hi <%= hey %>', config)
     expect(buff).toEqual(['hi ', { val: 'hey', t: 'i' }])
   })
 
   it('parses a raw tag', () => {
-    var buff = parse('hi <%~ hey %>', config)
+    const buff = parse('hi <%~ hey %>', config)
     expect(buff).toEqual(['hi ', { val: 'hey', t: 'r' }])
   })
 
   it('works with whitespace trimming', () => {
-    var buff = parse('hi\n<%- = hey-%> <%_ = hi _%>', config)
+    const buff = parse('hi\n<%- = hey-%> <%_ = hi _%>', config)
     expect(buff).toEqual(['hi', { val: 'hey', t: 'i' }, { val: 'hi', t: 'i' }])
   })
 
   it('works with multiline comments', () => {
-    var buff = parse('hi <% /* comment contains delimiter %> */ %>', config)
+    const buff = parse('hi <% /* comment contains delimiter %> */ %>', config)
     expect(buff).toEqual(['hi ', { val: '/* comment contains delimiter %> */', t: 'e' }])
   })
 
   it('parses with simple template literal', () => {
-    var buff = parse('hi <%= `template %> ${value}` %>', config)
+    const buff = parse('hi <%= `template %> ${value}` %>', config)
     expect(buff).toEqual(['hi ', { val: '`template %> ${value}`', t: 'i' }])
   })
 
   it('compiles complex template', () => {
-    var buff = parse(complexTemplate, config)
+    const buff = parse(complexTemplate, config)
     expect(buff).toEqual([
       'Hi\\n',
       { t: 'e', val: 'console.log("Hope you like Eta!")' },

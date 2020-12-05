@@ -5,7 +5,7 @@ import { compile, render, renderFile, templates } from '../src/index'
 
 describe('Layout Tests', () => {
   it('Nested layouts work as expected', async () => {
-    var res = await renderFile(
+    const res = await renderFile(
       'index.eta',
       { title: 'Cool Title' },
       // Async can be true or false
@@ -29,7 +29,7 @@ This is the template body.
       compile(`###<%= it.title %>###,<%~ it.body %>`, { includeFile: undefined })
     )
 
-    var res = await render(
+    const res = await render(
       `<% layout("my-layout") %>
 This is a layout`,
       { title: 'Cool Title' },
@@ -47,7 +47,7 @@ This is a layout`,
       })
     )
 
-    var res = await render(
+    const res = await render(
       `<% layout("my-layout", { title: 'Nifty title', content: 'Nice content'}) %>
 This is a layout`,
       { title: 'Cool Title', randomNum: 3 },

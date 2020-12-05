@@ -3,7 +3,7 @@ import { render } from '../../deno_dist/mod.ts'
 
 // SHOULD TEST COMMON ETA USAGE PATTERNS HERE
 
-var eachTemplate = `
+const eachTemplate = `
 The Daugherty's have 5 kids:
 <ul>
 <% it.kids.forEach(function(kid){ %>
@@ -12,7 +12,7 @@ The Daugherty's have 5 kids:
 </ul>`
 
 Deno.test('Loop over an array', () => {
-  var res = render(eachTemplate, { kids: ['Ben', 'Polly', 'Joel', 'Phronsie', 'Davie'] })
+  const res = render(eachTemplate, { kids: ['Ben', 'Polly', 'Joel', 'Phronsie', 'Davie'] })
 
   assertEquals(
     res,

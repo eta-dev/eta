@@ -17,7 +17,7 @@ function myPlugin() {
   }
 }
 
-var template = `<%= it.val %> <%= @@num@@ %>.`
+const template = `<%= it.val %> <%= @@num@@ %>.`
 
 describe('Plugins', () => {
   it('Plugins function properly', () => {

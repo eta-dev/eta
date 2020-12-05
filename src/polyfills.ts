@@ -4,7 +4,7 @@ import EtaErr from './err'
  * @returns The global Promise function
  */
 
-export var promiseImpl: PromiseConstructor = new Function('return this')().Promise
+export const promiseImpl: PromiseConstructor = new Function('return this')().Promise
 
 /**
  * @returns A new AsyncFunction constuctor

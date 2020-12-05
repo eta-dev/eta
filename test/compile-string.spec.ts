@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 import { compileToString, defaultConfig, getConfig } from '../src/index'
 
-var fs = require('fs'),
+const fs = require('fs'),
   path = require('path'),
   filePath = path.join(__dirname, 'templates/complex.eta')
 
@@ -9,7 +9,7 @@ const complexTemplate = fs.readFileSync(filePath, 'utf8')
 
 describe('Compile to String test', () => {
   it('parses a simple template', () => {
-    var str = compileToString('hi <%= hey %>', defaultConfig)
+    const str = compileToString('hi <%= hey %>', defaultConfig)
     expect(str)
       .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
@@ -20,7 +20,7 @@ if(cb){cb(null,tR)} return tR`)
   })
 
   it('parses a simple template without partial helpers defined', () => {
-    var str = compileToString(
+    const str = compileToString(
       'hi <%= hey %>',
       getConfig({ include: undefined, includeFile: undefined })
     )
@@ -32,7 +32,7 @@ if(cb){cb(null,tR)} return tR`)
   })
 
   it('parses a simple template with raw tag', () => {
-    var str = compileToString('hi <%~ hey %>', defaultConfig)
+    const str = compileToString('hi <%~ hey %>', defaultConfig)
     expect(str)
       .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
@@ -43,7 +43,7 @@ if(cb){cb(null,tR)} return tR`)
   })
 
   it('works with whitespace trimming', () => {
-    var str = compileToString('hi\n<%- = hey-%>\n<%_ = hi_%>', defaultConfig)
+    const str = compileToString('hi\n<%- = hey-%>\n<%_ = hi_%>', defaultConfig)
     expect(str)
       .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
@@ -55,7 +55,7 @@ if(cb){cb(null,tR)} return tR`)
   })
 
   it('compiles complex template', () => {
-    var str = compileToString(complexTemplate, defaultConfig)
+    const str = compileToString(complexTemplate, defaultConfig)
     expect(str).toEqual(
       `var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}

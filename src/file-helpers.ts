@@ -15,6 +15,6 @@ interface GenericData {
  */
 
 export function includeFileHelper(this: EtaConfig, path: string, data: GenericData): string {
-  var templateAndConfig = includeFile(path, this)
+  const templateAndConfig = includeFile(path, this)
   return templateAndConfig[0](data, templateAndConfig[1])
 }

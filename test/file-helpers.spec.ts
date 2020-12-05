@@ -2,13 +2,13 @@
 
 import { render, templates, compile } from '../src/index'
 
-var path = require('path')
+const path = require('path')
 
 templates.define('test-template', compile('HEY <%=it.name%>'))
 
 describe('include works', () => {
   it('simple parser works with "E.includeFile"', async () => {
-    var renderedTemplate = render(
+    const renderedTemplate = render(
       '<%~ E.includeFile("simple", it) %>',
       { name: 'Ben' },
       { filename: path.join(__dirname, 'templates/placeholder.eta') }
@@ -18,7 +18,7 @@ describe('include works', () => {
   })
 
   it('simple parser works with "includeFile"', async () => {
-    var renderedTemplate = render(
+    const renderedTemplate = render(
       '<%~ includeFile("simple", it) %>',
       { name: 'Ben' },
       { filename: path.join(__dirname, 'templates/placeholder.eta') }
@@ -28,7 +28,7 @@ describe('include works', () => {
   })
 
   it('"includeFile" works with "views" array', async () => {
-    var renderedTemplate = render(
+    const renderedTemplate = render(
       '<%~ includeFile("randomtemplate", it) %>',
       { user: 'Ben' },
       {
@@ -41,7 +41,7 @@ describe('include works', () => {
   })
 
   it('simple parser works with "include"', async () => {
-    var renderedTemplate = render('<%~ include("test-template", it) %>', { name: 'Ben' })
+    const renderedTemplate = render('<%~ include("test-template", it) %>', { name: 'Ben' })
 
     expect(renderedTemplate).toEqual('HEY Ben')
   })

@@ -3,7 +3,7 @@
 import { renderFile, loadFile, templates } from '../src/index'
 import { config } from '../src/config'
 
-var path = require('path'),
+const path = require('path'),
   filePath = path.join(__dirname, 'templates/simple.eta')
 
 describe('File tests', () => {
@@ -19,9 +19,9 @@ describe('Filepath caching', () => {
     // This test renders templates/has-include.eta with caching enabled, then checks to make sure
     // `config.filepathCache` contains the expected result afterward
 
-    let viewsDir = path.join(__dirname, 'templates')
+    const viewsDir = path.join(__dirname, 'templates')
 
-    let templateResult = await renderFile('has-include', {}, { views: viewsDir, cache: true })
+    const templateResult = await renderFile('has-include', {}, { views: viewsDir, cache: true })
 
     expect(templateResult).toEqual(
       `This is the outermost template. Now we'll include a partial
@@ -36,11 +36,11 @@ Hi Test Runner`
     // Filepath caching is based on the premise that given the same path, includer filename, root directory, and views directory (or directories)
     // the getPath function will always return the same result (assuming that caching is enabled and we're not expecting the templates to change)
 
-    let pathToHasInclude = `{"filename":"${viewsDir}/has-include.eta","path":"./partial","views":"${viewsDir}"}`
+    const pathToHasInclude = `{"filename":"${viewsDir}/has-include.eta","path":"./partial","views":"${viewsDir}"}`
 
-    let pathToPartial = `{"filename":"${viewsDir}/partial.eta","path":"./simple","views":"${viewsDir}"}`
+    const pathToPartial = `{"filename":"${viewsDir}/partial.eta","path":"./simple","views":"${viewsDir}"}`
 
-    let pathToSimple = `{"path":"has-include","views":"${viewsDir}"}`
+    const pathToSimple = `{"path":"has-include","views":"${viewsDir}"}`
 
     expect(config.filepathCache).toEqual({
       [pathToHasInclude]: `${viewsDir}/partial.eta`,

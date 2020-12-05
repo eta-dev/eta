@@ -12,17 +12,11 @@ import type { CallbackFn } from './file-handlers'
 /* END TYPES */
 
 function handleCache(template: string | TemplateFunction, options: EtaConfig): TemplateFunction {
-  var templateFunc
-
   if (options.cache && options.name && options.templates.get(options.name)) {
     return options.templates.get(options.name)
   }
 
-  if (typeof template === 'function') {
-    templateFunc = template
-  } else {
-    templateFunc = compile(template, options)
-  }
+  const templateFunc = typeof template === 'function' ? template : compile(template, options)
 
   // Note that we don't have to check if it already exists in the cache;
   // it would have returned earlier if it had
@@ -58,16 +52,15 @@ export default function render(
   config?: PartialConfig,
   cb?: CallbackFn
 ): string | Promise<string> | void {
-  var options = getConfig(config || {})
+  const options = getConfig(config || {})
 
   if (options.async) {
-    var result
     if (cb) {
       // If user passes callback
       try {
         // Note: if there is an error while rendering the template,
         // It will bubble up and be caught here
-        var templateFn = handleCache(template, options)
+        const templateFn = handleCache(template, options)
         templateFn(data, options, cb)
       } catch (err) {
         return cb(err)
@@ -77,8 +70,7 @@ export default function render(
       if (typeof promiseImpl === 'function') {
         return new promiseImpl(function (resolve: Function, reject: Function) {
           try {
-            result = handleCache(template, options)(data, options)
-            resolve(result)
+            resolve(handleCache(template, options)(data, options))
           } catch (err) {
             reject(err)
           }
@@ -92,7 +84,12 @@ export default function render(
   }
 }
 
-export function renderAsync(template: string | TemplateFunction, data: object, config?: PartialConfig, cb?: CallbackFn): string | Promise<string> | void {
+export function renderAsync(
+  template: string | TemplateFunction,
+  data: object,
+  config?: PartialConfig,
+  cb?: CallbackFn
+): string | Promise<string> | void {
   // Using Object.assign to lower bundle size, using spread operator makes it larger
   return render(template, data, Object.assign({}, config, { async: true }), cb)
 }
