@@ -12,17 +12,11 @@ import type { CallbackFn } from './file-handlers'
 /* END TYPES */
 
 function handleCache(template: string | TemplateFunction, options: EtaConfig): TemplateFunction {
-  let templateFunc
-
   if (options.cache && options.name && options.templates.get(options.name)) {
     return options.templates.get(options.name)
   }
 
-  if (typeof template === 'function') {
-    templateFunc = template
-  } else {
-    templateFunc = compile(template, options)
-  }
+  const templateFunc = typeof template === 'function' ? template : compile(template, options)
 
   // Note that we don't have to check if it already exists in the cache;
   // it would have returned earlier if it had
