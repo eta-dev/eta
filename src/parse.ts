@@ -131,14 +131,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
 
         trimLeftOfNextStr = closeTag[2]
 
-        let currentType: TagType = ''
-        if (prefix === parseOptions.exec) {
-          currentType = 'e'
-        } else if (prefix === parseOptions.raw) {
-          currentType = 'r'
-        } else if (prefix === parseOptions.interpolate) {
-          currentType = 'i'
-        }
+        const currentType: TagType = prefix === parseOptions.exec ? 'e' : (prefix === parseOptions.raw ? 'r' : (prefix === parseOptions.interpolate ? 'i' : ''))
 
         currentObj = { t: currentType, val: content }
         break
