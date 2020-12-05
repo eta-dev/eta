@@ -32,7 +32,7 @@ export default function compile(str: string, config?: PartialConfig): TemplateFu
 
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.
-  const ctor = options.async ? getAsyncFunctionConstructor() as FunctionConstructor : Function
+  const ctor = options.async ? (getAsyncFunctionConstructor() as FunctionConstructor) : Function
   /* END ASYNC HANDLING */
 
   try {
