@@ -41,8 +41,8 @@ function trimWS(
   wsLeft: string | false,
   wsRight?: string | false
 ): string {
-  var leftTrim
-  var rightTrim
+  let leftTrim
+  let rightTrim
 
   if (Array.isArray(config.autoTrim)) {
     // kinda confusing

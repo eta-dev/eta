@@ -193,8 +193,8 @@ function renderFile(
   And we want to also make (filename, data, options, cb) available
   */
 
-  var renderConfig: EtaConfigWithFilename
-  var callback: CallbackFn | undefined
+  let renderConfig: EtaConfigWithFilename
+  let callback: CallbackFn | undefined
   data = data || {} // If data is undefined, we don't want accessing data.settings to error
 
   // First, assign our callback function to `callback`

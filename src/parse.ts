@@ -30,13 +30,13 @@ function escapeRegExp(string: string) {
 }
 
 export default function parse(str: string, config: EtaConfig): Array<AstObject> {
-  var buffer: Array<AstObject> = []
-  var trimLeftOfNextStr: string | false = false
-  var lastIndex = 0
+  let buffer: Array<AstObject> = []
+  let trimLeftOfNextStr: string | false = false
+  let lastIndex = 0
   const parseOptions = config.parse
 
   if (config.plugins) {
-    for (var i = 0; i < config.plugins.length; i++) {
+    for (let i = 0; i < config.plugins.length; i++) {
       const plugin = config.plugins[i]
       if (plugin.processTemplate) {
         str = plugin.processTemplate(str, config)
@@ -108,7 +108,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   )
   // TODO: benchmark having the \s* on either side vs using str.trim()
 
-  var m
+  let m
 
   while ((m = parseOpenReg.exec(str))) {
     lastIndex = m[0].length + m.index
@@ -120,18 +120,18 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
     pushString(precedingString, wsLeft)
 
     parseCloseReg.lastIndex = lastIndex
-    var closeTag
-    var currentObj: AstObject | false = false
+    let closeTag
+    let currentObj: AstObject | false = false
 
     while ((closeTag = parseCloseReg.exec(str))) {
       if (closeTag[1]) {
-        var content = str.slice(lastIndex, closeTag.index)
+        let content = str.slice(lastIndex, closeTag.index)
 
         parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex
 
         trimLeftOfNextStr = closeTag[2]
 
-        var currentType: TagType = ''
+        let currentType: TagType = ''
         if (prefix === parseOptions.exec) {
           currentType = 'e'
         } else if (prefix === parseOptions.raw) {
@@ -190,7 +190,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   pushString(str.slice(lastIndex, str.length), false)
 
   if (config.plugins) {
-    for (var i = 0; i < config.plugins.length; i++) {
+    for (let i = 0; i < config.plugins.length; i++) {
       const plugin = config.plugins[i]
       if (plugin.processAST) {
         buffer = plugin.processAST(buffer, config)

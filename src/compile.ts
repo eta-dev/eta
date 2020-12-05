@@ -29,7 +29,7 @@ export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn
 
 export default function compile(str: string, config?: PartialConfig): TemplateFunction {
   const options: EtaConfig = getConfig(config || {})
-  var ctor // constructor
+  let ctor // constructor
 
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.

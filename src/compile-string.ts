@@ -21,7 +21,7 @@ import type { AstObject } from './parse'
 export default function compileToString(str: string, config: EtaConfig): string {
   const buffer: Array<AstObject> = Parse(str, config)
 
-  var res =
+  let res =
     "var tR='',__l,__lP" +
     (config.include ? ',include=E.include.bind(E)' : '') +
     (config.includeFile ? ',includeFile=E.includeFile.bind(E)' : '') +
@@ -41,7 +41,7 @@ export default function compileToString(str: string, config: EtaConfig): string 
     (config.useWith ? '}' : '')
 
   if (config.plugins) {
-    for (var i = 0; i < config.plugins.length; i++) {
+    for (let i = 0; i < config.plugins.length; i++) {
       const plugin = config.plugins[i]
       if (plugin.processFnString) {
         res = plugin.processFnString(res, config)
@@ -66,9 +66,9 @@ export default function compileToString(str: string, config: EtaConfig): string 
  */
 
 function compileScope(buff: Array<AstObject>, config: EtaConfig) {
-  var i = 0
+  let i = 0
   const buffLength = buff.length
-  var returnStr = ''
+  let returnStr = ''
 
   for (i; i < buffLength; i++) {
     const currentBlock = buff[i]
@@ -79,7 +79,7 @@ function compileScope(buff: Array<AstObject>, config: EtaConfig) {
       returnStr += "tR+='" + str + "'\n"
     } else {
       const type = currentBlock.t // ~, s, !, ?, r
-      var content = currentBlock.val || ''
+      let content = currentBlock.val || ''
 
       if (type === 'r') {
         // raw

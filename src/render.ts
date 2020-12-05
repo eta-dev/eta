@@ -12,7 +12,7 @@ import type { CallbackFn } from './file-handlers'
 /* END TYPES */
 
 function handleCache(template: string | TemplateFunction, options: EtaConfig): TemplateFunction {
-  var templateFunc
+  let templateFunc
 
   if (options.cache && options.name && options.templates.get(options.name)) {
     return options.templates.get(options.name)
@@ -61,7 +61,7 @@ export default function render(
   const options = getConfig(config || {})
 
   if (options.async) {
-    var result
+    let result
     if (cb) {
       // If user passes callback
       try {

@@ -24,7 +24,7 @@ import type { EtaConfig } from './config'
  */
 
 function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolean): string {
-  var includePath = path.resolve(
+  let includePath = path.resolve(
     isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
     name // file
   )
@@ -54,9 +54,9 @@ function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolea
  */
 
 function getPath(path: string, options: EtaConfig): string {
-  var includePath: string | false = false
+  let includePath: string | false = false
   const views = options.views
-  var searchedPaths: Array<string> = []
+  let searchedPaths: Array<string> = []
 
   // If these four values are the same,
   // getPath() will return the same result every time.
@@ -90,7 +90,7 @@ function getPath(path: string, options: EtaConfig): string {
    */
 
   function searchViews(views: Array<string> | string | undefined, path: string): string | false {
-    var filePath
+    let filePath
 
     // If views is an array, then loop through each directory
     // And attempt to find the template
