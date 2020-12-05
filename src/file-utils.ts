@@ -24,14 +24,9 @@ import type { EtaConfig } from './config'
  */
 
 function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolean): string {
-  let includePath = path.resolve(
-    isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
-    name // file
-  )
-  const ext = path.extname(name)
-  if (!ext) {
-    includePath += '.eta'
-  }
+  const includePath = path.resolve(
+    isDirectory ?parentfile : path.dirname(parentfile)
+  ) + (path.extname(name) || '.eta')
   return includePath
 }
 
