@@ -256,7 +256,12 @@ function renderFileAsync(
   config?: PartialConfig,
   cb?: CallbackFn
 ): Promise<string> | void {
-  return renderFile(filename, typeof config === 'function' ? { ...data, async: true } : data, typeof config === 'object' ? { ...config, async: true } : config, cb)
+  return renderFile(
+    filename,
+    typeof config === 'function' ? { ...data, async: true } : data,
+    typeof config === 'object' ? { ...config, async: true } : config,
+    cb
+  )
 }
 
 export { includeFile, renderFile, renderFileAsync }
