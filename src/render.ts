@@ -55,7 +55,6 @@ export default function render(
   const options = getConfig(config || {})
 
   if (options.async) {
-    let result
     if (cb) {
       // If user passes callback
       try {
@@ -71,8 +70,7 @@ export default function render(
       if (typeof promiseImpl === 'function') {
         return new promiseImpl(function (resolve: Function, reject: Function) {
           try {
-            result = handleCache(template, options)(data, options)
-            resolve(result)
+            resolve(handleCache(template, options)(data, options))
           } catch (err) {
             reject(err)
           }
