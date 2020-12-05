@@ -138,6 +138,15 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
 
 <details>
   <summary>
+    <b>Visual Studio Code</b>
+  </summary>
+
+  [@shadowtime2000](https://github.com/shadowtime2000) created [eta-vscode](https://marketplace.visualstudio.com/items?itemName=shadowtime2000.eta-vscode).
+
+</details>
+
+<details>
+  <summary>
     <b>ESLint</b>
   </summary>
 
