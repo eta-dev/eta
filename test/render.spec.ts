@@ -28,7 +28,7 @@ describe('Simple Render checks', () => {
           }, 20)
         })
       }
-      expect(await render(template, { getName: getName }, { async: true })).toEqual('Hello Ada!')
+      expect(await render(template, { getName }, { async: true })).toEqual('Hello Ada!')
     })
     it('Rendering async function works', async () => {
       const template = 'Hello <%= await it.getName() %>!'
