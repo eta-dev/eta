@@ -16,12 +16,12 @@ export type AstObject = string | TemplateObject;
 
 /* END TYPES */
 
-var templateLitReg =
+const templateLitReg =
   /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})*}|(?!\${)[^\\`])*`/g;
 
-var singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g;
+const singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g;
 
-var doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
+const doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
 
 /** Escape special regular expression characters inside a string */
 
@@ -34,14 +34,14 @@ export default function parse(
   str: string,
   config: EtaConfig,
 ): Array<AstObject> {
-  var buffer: Array<AstObject> = [];
-  var trimLeftOfNextStr: string | false = false;
-  var lastIndex = 0;
-  var parseOptions = config.parse;
+  let buffer: Array<AstObject> = [];
+  let trimLeftOfNextStr: string | false = false;
+  let lastIndex = 0;
+  const parseOptions = config.parse;
 
   if (config.plugins) {
-    for (var i = 0; i < config.plugins.length; i++) {
-      var plugin = config.plugins[i];
+    for (let i = 0; i < config.plugins.length; i++) {
+      const plugin = config.plugins[i];
       if (plugin.processTemplate) {
         str = plugin.processTemplate(str, config);
       }
@@ -85,72 +85,74 @@ export default function parse(
     }
   }
 
-  var prefixes = [parseOptions.exec, parseOptions.interpolate, parseOptions.raw]
-    .reduce(function (
-      accumulator,
-      prefix,
-    ) {
-      if (accumulator && prefix) {
-        return accumulator + "|" + escapeRegExp(prefix);
-      } else if (prefix) {
-        // accumulator is falsy
-        return escapeRegExp(prefix);
-      } else {
-        // prefix and accumulator are both falsy
-        return accumulator;
-      }
-    }, "");
+  const prefixes = [
+    parseOptions.exec,
+    parseOptions.interpolate,
+    parseOptions.raw,
+  ].reduce(function (
+    accumulator,
+    prefix,
+  ) {
+    if (accumulator && prefix) {
+      return accumulator + "|" + escapeRegExp(prefix);
+    } else if (prefix) {
+      // accumulator is falsy
+      return escapeRegExp(prefix);
+    } else {
+      // prefix and accumulator are both falsy
+      return accumulator;
+    }
+  }, "");
 
-  var parseOpenReg = new RegExp(
+  const parseOpenReg = new RegExp(
     "([^]*?)" + escapeRegExp(config.tags[0]) + "(-|_)?\\s*(" + prefixes +
       ")?\\s*",
     "g",
   );
 
-  var parseCloseReg = new RegExp(
+  const parseCloseReg = new RegExp(
     "'|\"|`|\\/\\*|(\\s*(-|_)?" + escapeRegExp(config.tags[1]) + ")",
     "g",
   );
   // TODO: benchmark having the \s* on either side vs using str.trim()
 
-  var m;
+  let m;
 
   while ((m = parseOpenReg.exec(str))) {
     lastIndex = m[0].length + m.index;
 
-    var precedingString = m[1];
-    var wsLeft = m[2];
-    var prefix = m[3] || ""; // by default either ~, =, or empty
+    const precedingString = m[1];
+    const wsLeft = m[2];
+    const prefix = m[3] || ""; // by default either ~, =, or empty
 
     pushString(precedingString, wsLeft);
 
     parseCloseReg.lastIndex = lastIndex;
-    var closeTag;
-    var currentObj: AstObject | false = false;
+    let closeTag;
+    let currentObj: AstObject | false = false;
 
     while ((closeTag = parseCloseReg.exec(str))) {
       if (closeTag[1]) {
-        var content = str.slice(lastIndex, closeTag.index);
+        let content = str.slice(lastIndex, closeTag.index);
 
         parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex;
 
         trimLeftOfNextStr = closeTag[2];
 
-        var currentType: TagType = "";
-        if (prefix === parseOptions.exec) {
-          currentType = "e";
-        } else if (prefix === parseOptions.raw) {
-          currentType = "r";
-        } else if (prefix === parseOptions.interpolate) {
-          currentType = "i";
-        }
+        const currentType: TagType = prefix === parseOptions.exec
+          ? "e"
+          : prefix === parseOptions.raw
+          ? "r"
+          : prefix === parseOptions.interpolate
+          ? "i"
+          : "";
 
         currentObj = { t: currentType, val: content };
         break;
       } else {
-        var char = closeTag[0];
+        const char = closeTag[0];
         if (char === "/*") {
-          var commentCloseInd = str.indexOf("*/", parseCloseReg.lastIndex);
+          const commentCloseInd = str.indexOf("*/", parseCloseReg.lastIndex);
 
           if (commentCloseInd === -1) {
             ParseErr("unclosed comment", str, closeTag.index);
@@ -159,7 +161,7 @@ export default function parse(
         } else if (char === "'") {
           singleQuoteReg.lastIndex = closeTag.index;
 
-          var singleQuoteMatch = singleQuoteReg.exec(str);
+          const singleQuoteMatch = singleQuoteReg.exec(str);
           if (singleQuoteMatch) {
             parseCloseReg.lastIndex = singleQuoteReg.lastIndex;
           } else {
@@ -167,7 +169,7 @@ export default function parse(
           }
         } else if (char === '"') {
           doubleQuoteReg.lastIndex = closeTag.index;
-          var doubleQuoteMatch = doubleQuoteReg.exec(str);
+          const doubleQuoteMatch = doubleQuoteReg.exec(str);
 
           if (doubleQuoteMatch) {
             parseCloseReg.lastIndex = doubleQuoteReg.lastIndex;
@@ -176,7 +178,7 @@ export default function parse(
           }
         } else if (char === "`") {
           templateLitReg.lastIndex = closeTag.index;
-          var templateLitMatch = templateLitReg.exec(str);
+          const templateLitMatch = templateLitReg.exec(str);
           if (templateLitMatch) {
             parseCloseReg.lastIndex = templateLitReg.lastIndex;
           } else {
@@ -195,8 +197,8 @@ export default function parse(
   pushString(str.slice(lastIndex, str.length), false);
 
   if (config.plugins) {
-    for (var i = 0; i < config.plugins.length; i++) {
-      var plugin = config.plugins[i];
+    for (let i = 0; i < config.plugins.length; i++) {
+      const plugin = config.plugins[i];
       if (plugin.processAST) {
         buffer = plugin.processAST(buffer, config);
       }

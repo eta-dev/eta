@@ -110,7 +110,7 @@ function includeHelper(
   templateNameOrPath: string,
   data: object,
 ): string {
-  var template = this.templates.get(templateNameOrPath);
+  const template = this.templates.get(templateNameOrPath);
   if (!template) {
     throw EtaErr('Could not fetch template "' + templateNameOrPath + '"');
   }
@@ -118,7 +118,7 @@ function includeHelper(
 }
 
 /** Eta's base (global) configuration */
-var config: EtaConfig = {
+const config: EtaConfig = {
   async: false,
   autoEscape: true,
   autoTrim: [false, "nl"],
@@ -154,7 +154,7 @@ var config: EtaConfig = {
 function getConfig(override: PartialConfig, baseConfig?: EtaConfig): EtaConfig {
   // TODO: run more tests on this
 
-  var res: PartialConfig = {}; // Linked
+  const res: PartialConfig = {}; // Linked
   copyProps(res, config); // Creates deep clone of eta.config, 1 layer deep
 
   if (baseConfig) {

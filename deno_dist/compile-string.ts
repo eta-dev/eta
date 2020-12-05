@@ -22,9 +22,9 @@ export default function compileToString(
   str: string,
   config: EtaConfig,
 ): string {
-  var buffer: Array<AstObject> = Parse(str, config);
+  const buffer: Array<AstObject> = Parse(str, config);
 
-  var res = "var tR='',__l,__lP" +
+  let res = "var tR='',__l,__lP" +
     (config.include ? ",include=E.include.bind(E)" : "") +
     (config.includeFile ? ",includeFile=E.includeFile.bind(E)" : "") +
     "\nfunction layout(p,d){__l=p;__lP=d}\n" +
@@ -43,8 +43,8 @@ export default function compileToString(
     (config.useWith ? "}" : "");
 
   if (config.plugins) {
-    for (var i = 0; i < config.plugins.length; i++) {
-      var plugin = config.plugins[i];
+    for (let i = 0; i < config.plugins.length; i++) {
+      const plugin = config.plugins[i];
       if (plugin.processFnString) {
         res = plugin.processFnString(res, config);
       }
@@ -68,20 +68,20 @@ export default function compileToString(
  */
 
 function compileScope(buff: Array<AstObject>, config: EtaConfig) {
-  var i = 0;
-  var buffLength = buff.length;
-  var returnStr = "";
+  let i = 0;
+  const buffLength = buff.length;
+  let returnStr = "";
 
   for (i; i < buffLength; i++) {
-    var currentBlock = buff[i];
+    const currentBlock = buff[i];
     if (typeof currentBlock === "string") {
-      var str = currentBlock;
+      const str = currentBlock;
 
       // we know string exists
       returnStr += "tR+='" + str + "'\n";
     } else {
-      var type = currentBlock.t; // ~, s, !, ?, r
-      var content = currentBlock.val || "";
+      const type = currentBlock.t; // ~, s, !, ?, r
+      let content = currentBlock.val || "";
 
       if (type === "r") {
         // raw

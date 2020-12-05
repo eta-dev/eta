@@ -90,6 +90,6 @@ export function renderAsync(
   config?: PartialConfig,
   cb?: CallbackFn
 ): string | Promise<string> | void {
-  // Using Object.assign to lower bundle size, using spread operator makes it larger
+  // Using Object.assign to lower bundle size, using spread operator makes it larger because of typescript injected polyfills
   return render(template, data, Object.assign({}, config, { async: true }), cb)
 }

@@ -45,10 +45,10 @@ export function loadFile(
   options: PartialConfigWithFilename,
   noCache?: boolean,
 ): TemplateFunction {
-  var config = getConfig(options);
-  var template = readFile(filePath);
+  const config = getConfig(options);
+  const template = readFile(filePath);
   try {
-    var compiledTemplate = compile(template, config);
+    const compiledTemplate = compile(template, config);
     if (!noCache) {
       config.templates.define(
         (config as EtaConfigWithFilename).filename,
@@ -73,10 +73,10 @@ export function loadFile(
  */
 
 function handleCache(options: EtaConfigWithFilename): TemplateFunction {
-  var filename = options.filename;
+  const filename = options.filename;
 
   if (options.cache) {
-    var func = options.templates.get(filename);
+    const func = options.templates.get(filename);
     if (func) {
       return func;
     }
@@ -107,7 +107,7 @@ function tryHandleCache(
     try {
       // Note: if there is an error while rendering the template,
       // It will bubble up and be caught here
-      var templateFn = handleCache(options);
+      const templateFn = handleCache(options);
       templateFn(data, options, cb);
     } catch (err) {
       return cb(err);
@@ -118,8 +118,8 @@ function tryHandleCache(
       return new promiseImpl<string>(
         function (resolve: Function, reject: Function) {
           try {
-            var templateFn = handleCache(options);
-            var result = templateFn(data, options);
+            const templateFn = handleCache(options);
+            const result = templateFn(data, options);
             resolve(result);
           } catch (err) {
             reject(err);
@@ -156,7 +156,10 @@ function includeFile(
   options: EtaConfig,
 ): [TemplateFunction, EtaConfig] {
   // the below creates a new options object, using the parent filepath of the old options object and the path
-  var newFileOptions = getConfig({ filename: getPath(path, options) }, options);
+  const newFileOptions = getConfig(
+    { filename: getPath(path, options) },
+    options,
+  );
   // TODO: make sure properties are currectly copied over
   return [handleCache(newFileOptions as EtaConfigWithFilename), newFileOptions];
 }
@@ -215,8 +218,8 @@ function renderFile(
   And we want to also make (filename, data, options, cb) available
   */
 
-  var renderConfig: EtaConfigWithFilename;
-  var callback: CallbackFn | undefined;
+  let renderConfig: EtaConfigWithFilename;
+  let callback: CallbackFn | undefined;
   data = data || {}; // If data is undefined, we don't want accessing data.settings to error
 
   // First, assign our callback function to `callback`
@@ -250,7 +253,7 @@ function renderFile(
       }
       // Undocumented after Express 2, but still usable, esp. for
       // items that are unsafe to be passed along with data, like `root`
-      var viewOpts = data.settings["view options"];
+      const viewOpts = data.settings["view options"];
 
       if (viewOpts) {
         copyProps(renderConfig, viewOpts);
@@ -284,7 +287,12 @@ function renderFileAsync(
   config?: PartialConfig,
   cb?: CallbackFn,
 ): Promise<string> | void {
-  return renderFile(filename, data, { ...config, async: true }, cb);
+  return renderFile(
+    filename,
+    typeof config === "function" ? { ...data, async: true } : data,
+    typeof config === "object" ? { ...config, async: true } : config,
+    cb,
+  );
 }
 
 export { includeFile, renderFile, renderFileAsync };
