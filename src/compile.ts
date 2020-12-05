@@ -29,16 +29,12 @@ export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn
 
 export default function compile(str: string, config?: PartialConfig): TemplateFunction {
   const options: EtaConfig = getConfig(config || {})
-  let ctor // constructor
 
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.
-  if (options.async) {
-    ctor = getAsyncFunctionConstructor() as FunctionConstructor
-  } else {
-    ctor = Function
-  }
+  const ctor = options.async ? getAsyncFunctionConstructor() as FunctionConstructor : Function
   /* END ASYNC HANDLING */
+
   try {
     return new ctor(
       options.varName,
