@@ -55,3 +55,20 @@ export function trimRight(str: string): string {
     return str.replace(/\s+$/, '') // TODO: do we really need to replace BOM's?
   }
 }
+
+/**
+ * Object.assign polyfill
+ *
+ * @param target - The target to assign the sources to
+ * @param sources - The sources to use to assign values to target
+ */
+
+export function assign<T>(target: T, ...sources: T[]): T {
+  for (let i = 0; i < sources.length; i++) {
+    const source = sources[i];
+    for (const key in source) {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}

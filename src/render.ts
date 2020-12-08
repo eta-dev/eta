@@ -1,6 +1,6 @@
 import compile from './compile'
 import { getConfig } from './config'
-import { promiseImpl } from './polyfills'
+import { promiseImpl, assign } from './polyfills'
 import EtaErr from './err'
 
 /* TYPES */
@@ -90,6 +90,5 @@ export function renderAsync(
   config?: PartialConfig,
   cb?: CallbackFn
 ): string | Promise<string> | void {
-  // Using Object.assign to lower bundle size, using spread operator makes it larger because of typescript injected polyfills
-  return render(template, data, Object.assign({}, config, { async: true }), cb)
+  return render(template, data, assign({}, config, { async: true }), cb)
 }

@@ -11,3 +11,7 @@ export function trimLeft (str: string): string {
 export function trimRight (str: string): string {
   return str.trimRight()
 }
+
+export function assign<T>(target: T, ...sources: T[]) {
+  return Object.assign((target as unknown) as object, ...sources)
+}
