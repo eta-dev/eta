@@ -84,6 +84,15 @@ export default function render(
   }
 }
 
+/**
+ * Render a template asynchronously
+ *
+ * @param template - The template string or template function
+ * @param data - Data to render the template with
+ * @param config - Optional config options
+ * @param cb - Callback functions
+ */
+
 export function renderAsync(
   template: string | TemplateFunction,
   data: object,
