@@ -64,10 +64,13 @@ export function trimRight(str: string): string {
  */
 
 export function assign<T>(target: T, ...sources: T[]): T {
+  if (Object.assign) {
+    return Object.assign((target as unknown) as object, ...sources)
+  }
   for (let i = 0; i < sources.length; i++) {
-    const source = sources[i];
+    const source = sources[i]
     for (const key in source) {
-      target[key] = source[key];
+      target[key] = source[key]
     }
   }
   return target;
