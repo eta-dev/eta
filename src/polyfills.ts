@@ -64,7 +64,7 @@ export function trimRight(str: string): string {
  */
 
 function assignPolyfill<T = object>(target: T): T {
-  var sources: T[] = [];
+  const sources: T[] = [];
   for (let i = 1; i < arguments.length; i++) {
     if (arguments[i]) {
       sources.push(arguments[i])
