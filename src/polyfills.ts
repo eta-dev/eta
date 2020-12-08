@@ -63,9 +63,12 @@ export function trimRight(str: string): string {
  * @param sources - The sources to use to assign values to target
  */
 
-export function assign<T>(target: T, ...sources: T[]): T {
-  if (Object.assign) {
-    return Object.assign((target as unknown) as object, ...sources)
+function assignPolyfill<T = object>(target: T): T {
+  var sources: T[] = [];
+  for (let i = 1; i < arguments.length; i++) {
+    if (arguments[i]) {
+      sources.push(arguments[i])
+    }
   }
   for (let i = 0; i < sources.length; i++) {
     const source = sources[i]
@@ -75,3 +78,5 @@ export function assign<T>(target: T, ...sources: T[]): T {
   }
   return target
 }
+
+export const assign = Object.assign || assignPolyfill
