@@ -73,5 +73,5 @@ export function assign<T>(target: T, ...sources: T[]): T {
       target[key] = source[key]
     }
   }
-  return target;
+  return target
 }
