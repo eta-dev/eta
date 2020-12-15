@@ -24,6 +24,17 @@ export default [
         name: 'Eta',
         sourcemap: true,
         plugins: [terser()]
+      },
+      {
+        file: 'dist/browser/eta.es.js',
+        format: 'es',
+        sourcemap: true
+      },
+      {
+        file: pkg.module,
+        format: 'es',
+        sourcemap: true,
+        plugins: [terser()]
       }
     ],
     plugins: [typescript({ useTsconfigDeclarationDir: true }), commonjs(), resolve()],
@@ -42,7 +53,7 @@ export default [
         sourcemap: true
       },
       {
-        file: pkg.module,
+        file: pkg.exports.import,
         format: 'es',
         sourcemap: true
       }
