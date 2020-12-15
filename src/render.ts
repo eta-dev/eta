@@ -36,7 +36,7 @@ function handleCache(template: string | TemplateFunction, options: EtaConfig): T
  * If `config.async` is `false`, Eta will return the rendered template.
  *
  * If `config.async` is `true` and there's a callback function, Eta will call the callback with `(err, renderedTemplate)`.
- * If `config.async` is `true` and there's not a callback function, Eta will return a Promise that resolves to the rendered template
+ * If `config.async` is `true` and there's not a callback function, Eta will return a Promise that resolves to the rendered template.
  *
  * If `config.cache` is `true` and `config` has a `name` or `filename` property, Eta will cache the template on the first render and use the cached template for all subsequent renders.
  *
@@ -83,6 +83,21 @@ export default function render(
     return handleCache(template, options)(data, options)
   }
 }
+
+/**
+ * Render a template asynchronously
+ *
+ * If `template` is a string, Eta will compile it to a function and call it with the provided data.
+ * If `template` is a function, Eta will call it with the provided data.
+ *
+ * If there is a callback function, Eta will call it with `(err, renderedTemplate)`.
+ * If there is not a callback function, Eta will return a Promise that resolves to the rendered template
+ *
+ * @param template Template string or template function
+ * @param data Data to render the template with
+ * @param config Optional config options
+ * @param cb Callback function
+ */
 
 export function renderAsync(
   template: string | TemplateFunction,
