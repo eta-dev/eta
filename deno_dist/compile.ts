@@ -1,13 +1,17 @@
-import compileToString from './compile-string.ts'
-import { getConfig } from './config.ts'
-import EtaErr from './err.ts'
+import compileToString from "./compile-string.ts";
+import { getConfig } from "./config.ts";
+import EtaErr from "./err.ts";
 
 /* TYPES */
 
-import type { EtaConfig, PartialConfig } from './config.ts'
-import type { CallbackFn } from './file-handlers.ts'
-import { getAsyncFunctionConstructor } from './polyfills.ts'
-export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn) => string
+import type { EtaConfig, PartialConfig } from "./config.ts";
+import type { CallbackFn } from "./file-handlers.ts";
+import { getAsyncFunctionConstructor } from "./polyfills.ts";
+export type TemplateFunction = (
+  data: object,
+  config: EtaConfig,
+  cb?: CallbackFn,
+) => string;
 
 /* END TYPES */
 
@@ -27,34 +31,39 @@ export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn
  * ```
  */
 
-export default function compile(str: string, config?: PartialConfig): TemplateFunction {
-  const options: EtaConfig = getConfig(config || {})
+export default function compile(
+  str: string,
+  config?: PartialConfig,
+): TemplateFunction {
+  const options: EtaConfig = getConfig(config || {});
 
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.
-  const ctor = options.async ? (getAsyncFunctionConstructor() as FunctionConstructor) : Function
+  const ctor = options.async
+    ? (getAsyncFunctionConstructor() as FunctionConstructor)
+    : Function;
   /* END ASYNC HANDLING */
 
   try {
     return new ctor(
       options.varName,
-      'E', // EtaConfig
-      'cb', // optional callback
-      compileToString(str, options)
-    ) as TemplateFunction // eslint-disable-line no-new-func
+      "E", // EtaConfig
+      "cb", // optional callback
+      compileToString(str, options),
+    ) as TemplateFunction; // eslint-disable-line no-new-func
   } catch (e) {
     if (e instanceof SyntaxError) {
       throw EtaErr(
-        'Bad template syntax\n\n' +
+        "Bad template syntax\n\n" +
           e.message +
-          '\n' +
-          Array(e.message.length + 1).join('=') +
-          '\n' +
+          "\n" +
+          Array(e.message.length + 1).join("=") +
+          "\n" +
           compileToString(str, options) +
-          '\n' // This will put an extra newline before the callstack for extra readability
-      )
+          "\n", // This will put an extra newline before the callstack for extra readability
+      );
     } else {
-      throw e
+      throw e;
     }
   }
 }
