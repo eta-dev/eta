@@ -241,6 +241,33 @@ function renderFile(
   return tryHandleCache(data, renderConfig, callback)
 }
 
+/**
+ * Render a template from a filepath asynchronously.
+ *
+ * @param filepath Path to template file. If relative, specify `views` on the config object
+ *
+ * This can take two different function signatures:
+ *
+ * - `renderFile(filename, dataAndConfig, [cb])`
+ *   - Eta will merge `dataAndConfig` into `eta.config`
+ * - `renderFile(filename, data, [config], [cb])`
+ *
+ * Note that renderFile does not immediately return the rendered result. If you pass in a callback function, it will be called with `(err, res)`. Otherwise, `renderFile` will return a `Promise` that resolves to the render result.
+ *
+ * **Examples**
+ *
+ * ```js
+ * eta.renderFile("./template.eta", data, {cache: true}, function (err, rendered) {
+ *   if (err) console.log(err)
+ *   console.log(rendered)
+ * })
+ *
+ * let rendered = await eta.renderFile("./template.eta", data, {cache: true})
+ *
+ * let rendered = await eta.renderFile("./template", {...data, cache: true})
+ * ```
+ */
+
 function renderFileAsync(
   filename: string,
   data: DataObj,
