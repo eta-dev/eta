@@ -55,7 +55,7 @@
     "size": "size-limit",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage && npm run test:deno && npm run size",
-    "test:deno": "deno test test/deno/*.spec.ts --unstable --allow-read",
+    "test:deno": "deno test test/deno/*.spec.ts --allow-read",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "test:watch": "jest --coverage --watch",
     "travis-deploy-once": "travis-deploy-once --pro"
