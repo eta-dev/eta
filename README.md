@@ -245,6 +245,7 @@ To be added
 ## Projects using `eta`
 
 - [Docusaurus v2](https://v2.docusaurus.io): open-source documentation framework that uses Eta to generate a SSR build
+- [SuperDS](https://super-ds.com): All in one dropshipping platform
 - [Add yours!](https://github.com/eta-dev/eta/edit/master/README.md)
 
 ## Contributors
