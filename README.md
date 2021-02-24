@@ -245,7 +245,7 @@ To be added
 ## Projects using `eta`
 
 - [Docusaurus v2](https://v2.docusaurus.io): open-source documentation framework that uses Eta to generate a SSR build
-- [swagger-typescript-api](https://github.com/acacode/swagger-typescript-api): open-source typescript api codegenerator from Swagger. Use `ETA` as codegenerator by templates  
+- [Swagger-typescript-api](https://github.com/acacode/swagger-typescript-api): open-source typescript api codegenerator from Swagger. Uses Eta as codegenerator by templates  
 - [Add yours!](https://github.com/eta-dev/eta/edit/master/README.md)
 
 ## Contributors
