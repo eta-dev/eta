@@ -26,6 +26,7 @@ export default function compileToString(str: string, config: EtaConfig): string 
     (config.include ? ',include=E.include.bind(E)' : '') +
     (config.includeFile ? ',includeFile=E.includeFile.bind(E)' : '') +
     '\nfunction layout(p,d){__l=p;__lP=d}\n' +
+    (config.globalAwait ? 'let _prs = [];\n' : '') +
     (config.useWith ? 'with(' + config.varName + '||{}){' : '') +
     compileScope(buffer, config) +
     (config.includeFile
@@ -66,11 +67,28 @@ export default function compileToString(str: string, config: EtaConfig): string 
  */
 
 function compileScope(buff: Array<AstObject>, config: EtaConfig) {
-  let i = 0
+  let i
   const buffLength = buff.length
   let returnStr = ''
 
-  for (i; i < buffLength; i++) {
+  if (config.globalAwait) {
+    for (i = 0; i < buffLength; i++) {
+      const currentBlock = buff[i]
+
+      if (typeof currentBlock !== 'string') {
+        const type = currentBlock.t
+
+        if (type === 'r' || type === 'i') {
+          const content = currentBlock.val || ''
+          returnStr += `_prs.push(${content});\n`
+        }
+      }
+    }
+    returnStr += 'let _rst = await Promise.all(_prs);\n'
+  }
+
+  let j = 0
+  for (i = 0; i < buffLength; i++) {
     const currentBlock = buff[i]
     if (typeof currentBlock === 'string') {
       const str = currentBlock
@@ -84,13 +102,22 @@ function compileScope(buff: Array<AstObject>, config: EtaConfig) {
       if (type === 'r') {
         // raw
 
+        if (config.globalAwait) {
+          content = `_rst[${j}]`
+        }
+
         if (config.filter) {
           content = 'E.filter(' + content + ')'
         }
 
         returnStr += 'tR+=' + content + '\n'
+        j++
       } else if (type === 'i') {
         // interpolate
+
+        if (config.globalAwait) {
+          content = `_rst[${j}]`
+        }
 
         if (config.filter) {
           content = 'E.filter(' + content + ')'
@@ -100,6 +127,7 @@ function compileScope(buff: Array<AstObject>, config: EtaConfig) {
           content = 'E.e(' + content + ')'
         }
         returnStr += 'tR+=' + content + '\n'
+        j++
         // reference
       } else if (type === 'e') {
         // execute
