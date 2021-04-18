@@ -15,7 +15,7 @@
   "homepage": "https://eta.js.org",
   "main": "dist/eta.cjs",
   "browser": "dist/browser/eta.min.js",
-  "module": "dist/browser/eta.es.min.js",
+  "module": "dist/eta.es.js",
   "type": "module",
   "exports": {
     "import": "./dist/eta.es.js",
