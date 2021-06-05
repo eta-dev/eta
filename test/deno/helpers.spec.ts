@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from 'https://deno.land/std@0.67.0/testing/asserts.ts'
+import { assertEquals, assertThrows } from 'https://deno.land/std@0.97.0/testing/asserts.ts'
 import { render } from '../../deno_dist/mod.ts'
 
 // SHOULD TEST COMMON ETA USAGE PATTERNS HERE

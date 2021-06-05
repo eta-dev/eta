@@ -1,18 +1,18 @@
-import { assertEquals, assertThrows } from 'https://deno.land/std@0.67.0/testing/asserts.ts'
-import * as path from 'https://deno.land/std@0.66.0/path/mod.ts'
+import { assertEquals, assertThrows } from 'https://deno.land/std@0.97.0/testing/asserts.ts'
+import * as path from 'https://deno.land/std@0.97.0/path/mod.ts'
 const __dirname = new URL('.', import.meta.url).pathname
 
 import { render, templates, compile } from '../../deno_dist/mod.ts'
 
 templates.define('test-template', compile('Saluton <%=it.name%>'))
 
-Deno.test('include works', async () => {
+Deno.test('include works', () => {
   const renderedTemplate = render('<%~ include("test-template", it) %>', { name: 'Ada' })
 
   assertEquals(renderedTemplate, 'Saluton Ada')
 })
 
-Deno.test('includeFile works w/ filename prop', async () => {
+Deno.test('includeFile works w/ filename prop', () => {
   const renderedTemplate = render(
     '<%~ includeFile("simple", it) %>',
     { name: 'Ada' },
@@ -22,7 +22,7 @@ Deno.test('includeFile works w/ filename prop', async () => {
   assertEquals(renderedTemplate, 'Hi Ada')
 })
 
-Deno.test('"E.includeFile" works with "views" array', async () => {
+Deno.test('"E.includeFile" works with "views" array', () => {
   const renderedTemplate = render(
     '<%~ E.includeFile("randomtemplate", it) %>',
     { user: 'Ben' },
@@ -32,7 +32,7 @@ Deno.test('"E.includeFile" works with "views" array', async () => {
   assertEquals(renderedTemplate, 'This is a random template. Hey Ben')
 })
 
-Deno.test('"includeFile" works with "views" array', async () => {
+Deno.test('"includeFile" works with "views" array', () => {
   const renderedTemplate = render(
     '<%~ includeFile("randomtemplate", it) %>',
     { user: 'Ben' },
@@ -42,7 +42,7 @@ Deno.test('"includeFile" works with "views" array', async () => {
   assertEquals(renderedTemplate, 'This is a random template. Hey Ben')
 })
 
-Deno.test('"includeFile" works with "views" string', async () => {
+Deno.test('"includeFile" works with "views" string', () => {
   const renderedTemplate = render(
     '<%~ includeFile("randomtemplate", it) %>',
     { user: 'Ben' },
