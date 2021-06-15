@@ -1,4 +1,4 @@
-import { fs, path, readFileSync } from "./file-methods.ts";
+import { existsSync, path, readFileSync } from "./file-methods.ts";
 const _BOM = /^\uFEFF/;
 
 // express is set like: app.engine('html', require('eta').renderFile)
@@ -106,7 +106,7 @@ function getPath(path: string, options: EtaConfig): string {
 
         addPathToSearched(filePath);
 
-        return fs.existsSync(filePath);
+        return existsSync(filePath);
       })
     ) {
       // If the above returned true, we know that the filePath was just set to a path
@@ -118,7 +118,7 @@ function getPath(path: string, options: EtaConfig): string {
 
       addPathToSearched(filePath);
 
-      if (fs.existsSync(filePath)) {
+      if (existsSync(filePath)) {
         return filePath;
       }
     }
@@ -159,7 +159,7 @@ function getPath(path: string, options: EtaConfig): string {
 
       addPathToSearched(filePath);
 
-      if (fs.existsSync(filePath)) {
+      if (existsSync(filePath)) {
         includePath = filePath;
       }
     }

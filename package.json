@@ -55,7 +55,7 @@
     "size": "size-limit",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage && npm run test:deno && npm run size",
-    "test:deno": "deno test test/deno/*.spec.ts --allow-read",
+    "test:deno": "deno test test/deno/*.spec.ts --allow-read --unstable",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "test:watch": "jest --coverage --watch",
     "travis-deploy-once": "travis-deploy-once --pro"
@@ -156,6 +156,7 @@
     "travis-deploy-once": "^5.0.11",
     "ts-jest": "^26.3.0",
     "ts-node": "^9.0.0",
+    "tslib": "^2.2.0",
     "typedoc": "^0.19.1",
     "typescript": "^4.0.2"
   },
@@ -163,6 +164,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "dependencies": {}
+  }
 }

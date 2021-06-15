@@ -1,4 +1,4 @@
-import { assertEquals } from 'https://deno.land/std@0.67.0/testing/asserts.ts'
+import { assertEquals } from 'https://deno.land/std@0.97.0/testing/asserts.ts'
 import * as eta from '../../deno_dist/mod.ts'
 
 Deno.test('Renders a simple template with default env', () => {
