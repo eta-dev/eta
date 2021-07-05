@@ -84,7 +84,8 @@ function trimWS(
     str = trimRight(str);
   } else if (rightTrim === "-" || rightTrim === "nl") {
     // nl trim
-    str = str.replace(/(?:\r\n|\n|\r)$/, ""); // TODO: make sure this gets \r\n
+    str = str.replace(/(?:\r\n|\n|\r)$/, "") // TODO: make sure this gets \r\n
+    ;
   }
 
   return str;
