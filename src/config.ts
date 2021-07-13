@@ -61,6 +61,9 @@ export interface EtaConfig {
   /** A filter function applied to every interpolation or raw interpolation */
   filter?: Function
 
+  /** Adds all variables in big Promise.all and awaits for it */
+  globalAwait?: boolean
+
   /** Function to include templates by name */
   include?: Function
 
