@@ -99,6 +99,14 @@ describe('File location tests', () => {
 
     expect(res).toEqual('Hi Ada')
   })
+
+  it('uses file content using a custom function', async () => {
+    const rest = await renderFile(
+      'simple.eta',
+      { name: 'Ada' },
+      { readFile: () => 'Hi <%= it.name %>' }
+    )
+  })
 })
 
 describe('renderFile error tests', () => {
