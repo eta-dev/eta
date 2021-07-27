@@ -104,7 +104,7 @@ describe('File location tests', () => {
     const res = await renderFile(
       'simple.eta',
       { name: 'Ada' },
-      { readFile: () => 'Hi <%= it.name %>' }
+      { readFile: (filename: string) => filename == 'simple.eta' ? 'Hi <%= it.name %>' : '' }
     )
 
     expect(res).toEqual('Hi Ada')
