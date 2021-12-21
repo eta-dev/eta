@@ -194,9 +194,8 @@ var testList = [
       var source = templateList[id]
       //   console.log(fn.toString())
       var html = ''
+      var fn = template.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        var fn = template.compile(source)
-
         html = fn(data)
       }
       return html
@@ -209,9 +208,8 @@ var testList = [
       var id = config.escape ? 'template-fast-mode' : 'template-fast-mode-raw'
       var source = templateList[id]
       var html = ''
+      var fn = template.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        var fn = template.compile(source)
-
         html = fn(data)
       }
       return html
@@ -224,9 +222,8 @@ var testList = [
       var id = config.escape ? 'template' : 'template-raw'
       var source = templateList[id]
       var html = ''
+      var fn = _.template(source)
       for (var i = 0; i < config.calls; i++) {
-        var fn = _.template(source)
-
         html = fn(data)
       }
       return html
@@ -239,9 +236,8 @@ var testList = [
       var id = config.escape ? 'dot' : 'dot-raw'
       var source = templateList[id]
       var html = ''
+      var fn = doT.template(source)
       for (var i = 0; i < config.calls; i++) {
-        var fn = doT.template(source)
-
         html = fn(data)
       }
       return html
@@ -254,9 +250,8 @@ var testList = [
       var id = config.escape ? 'template' : 'template-raw'
       var source = templateList[id]
       var html = ''
+      var fn = ejs.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        var fn = ejs.compile(source)
-
         html = fn(data)
       }
       return html
@@ -269,9 +264,8 @@ var testList = [
       var id = config.escape ? 'handlebars' : 'handlebars-raw'
       var source = templateList[id]
       var html = ''
+      var fn = Handlebars.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        var fn = Handlebars.compile(source)
-
         html = fn(data)
       }
       return html
@@ -287,8 +281,9 @@ var testList = [
       //   console.log(fn.toString())
       var html = ''
       data.$name = 'temp'
+      var fn = Eta.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        html = Eta.render(source, data)
+        html = fn(data, Eta.config)
       }
       return html
     }
@@ -303,8 +298,9 @@ var testList = [
       //   console.log(fn.toString())
       var html = ''
       data.$name = 'temp'
+      var fn = Sqrl.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        html = Sqrl.render(source, data)
+        html = fn(data, Sqrl.defaultConfig)
       }
       return html
     }
@@ -319,8 +315,9 @@ var testList = [
       //   console.log(fn.toString())
       var html = ''
       data.$name = 'temp'
+      var fn = Sqrl.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        html = Sqrl.render(source, data)
+        html = fn(data, Sqrl.defaultConfig)
       }
       return html
     }
@@ -332,9 +329,8 @@ var testList = [
       var source = templateList[id]
       var pug = require('pug')
       var html = ''
+      var fn = pug.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        var fn = pug.compile(source)
-
         html = fn(data)
       }
       return html
@@ -349,6 +345,7 @@ var testList = [
       Mustache.templateCache = undefined
 
       for (var i = 0; i < config.calls; i++) {
+        // mustache caches the template after the first parse
         html = Mustache.render(source, data)
       }
       return html
@@ -361,9 +358,8 @@ var testList = [
       var id = config.escape ? 'swig' : 'swig-raw'
       var source = templateList[id]
       var html = ''
+      var fn = swig.compile(source)
       for (var i = 0; i < config.calls; i++) {
-        var fn = swig.compile(source)
-
         html = fn(data)
       }
       return html
