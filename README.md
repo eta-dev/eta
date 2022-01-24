@@ -37,7 +37,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
 - ⚡️ Written in TypeScript
 - ✨ Deno support (+ Node and browser)
 - 🚀 Super Fast
-  - Check out [these benchmarks](https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html)
+  - Check out [these benchmarks](https://ghcdn.rawgit.org/eta-dev/eta/694976ffcfbe5fc2e5ae3f891549849a3bba9fdd/browser-tests/benchmark.html)
 - 🔧 Configurable
   - Plugins, custom delimiters, caching
 - 🔨 Powerful
