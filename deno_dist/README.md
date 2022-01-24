@@ -44,7 +44,7 @@ emphasizes phenomenal performance, configurability, and low bundle size.
 - ✨ Deno support (+ Node and browser)
 - 🚀 Super Fast
   - Check out
-    [these benchmarks](https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html)
+    [these benchmarks](https://ghcdn.rawgit.org/eta-dev/eta/694976ffcfbe5fc2e5ae3f891549849a3bba9fdd/browser-tests/benchmark.html)
 - 🔧 Configurable
   - Plugins, custom delimiters, caching
 - 🔨 Powerful
