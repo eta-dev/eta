@@ -181,6 +181,18 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
   ```
 
 </details>
+  
+<details>
+  <summary>
+    <b>Node-RED</b>
+  </summary>
+
+  To operate with Eta templates in Node-RED: [@ralphwetzel/node-red-contrib-eta](https://flows.nodered.org/node/@ralphwetzel/node-red-contrib-eta)
+  
+  <img width="150" alt="image" src="https://user-images.githubusercontent.com/16342003/160198427-2a69ff10-e8bf-4873-9d99-2929a584ccc8.png">
+
+</details>
+
 
 ## 📜 Docs
 
