@@ -37,7 +37,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
 - ⚡️ Written in TypeScript
 - ✨ Deno support (+ Node and browser)
 - 🚀 Super Fast
-  - Check out [these benchmarks](https://ghcdn.rawgit.org/eta-dev/eta/694976ffcfbe5fc2e5ae3f891549849a3bba9fdd/browser-tests/benchmark.html)
+  - Check out [these benchmarks](https://rawgit.com/eta-dev/eta/master/browser-tests/benchmark.html)
 - 🔧 Configurable
   - Plugins, custom delimiters, caching
 - 🔨 Powerful
@@ -61,7 +61,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
 Eta's syntax is very similar to EJS' (most templates should work with either engine), Eta has a similar API, and Eta and EJS share the same file-handling logic. Here are the differences between Eta and EJS:
 
 - Eta is more lightweight. Eta weighs less than **2.5KB gzipped**, while EJS is **4.4KB gzipped**
-- Eta compiles and renders templates **_much_ faster than EJS**. Check out these benchmarks: https://ghcdn.rawgit.org/eta-dev/eta/master/browser-tests/benchmark.html
+- Eta compiles and renders templates **_much_ faster than EJS**. Check out these benchmarks: https://rawgit.com/eta-dev/eta/master/browser-tests/benchmark.html
 - Eta allows left whitespace control (with `-`), something that doesn't work in EJS because EJS uses `-` on the left side to indicate that the value shouldn't be escaped. Instead, Eta uses `~` to output a raw value
 - Eta gives you more flexibility with delimeters -- you could set them to `{{` and `}}`, for example, while with EJS this isn't possible
 - Eta adds plugin support
