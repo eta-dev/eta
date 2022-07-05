@@ -1,5 +1,6 @@
 import { templates } from './containers'
 import { copyProps, XMLEscape } from './utils'
+import { readFile } from './file-utils'
 import EtaErr from './err'
 
 /* TYPES */
@@ -83,7 +84,7 @@ export interface EtaConfig {
   views?: string | Array<string>
 
   /** Function to customize reading files by path */
-  readFile?: (path: string) => string
+  readFile: (path: string) => string
 
   [index: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -128,7 +129,8 @@ const config: EtaConfig = {
   tags: ['<%', '%>'],
   templates: templates,
   useWith: false,
-  varName: 'it'
+  varName: 'it',
+  readFile
 }
 
 /**
