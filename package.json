@@ -18,6 +18,7 @@
   "module": "dist/eta.es.js",
   "type": "module",
   "exports": {
+    "types": "./dist/types/index.d.ts",
     "import": "./dist/eta.es.js",
     "require": "./dist/eta.cjs",
     "browser": "./dist/browser/eta.min.js"
