@@ -1,13 +1,13 @@
-import { path, existsSync, readFileSync } from './file-methods'
+import { path, existsSync, readFileSync } from './file-methods.js'
 const _BOM = /^\uFEFF/
 
 // express is set like: app.engine('html', require('eta').renderFile)
 
-import EtaErr from './err'
+import EtaErr from './err.js'
 
 /* TYPES */
 
-import type { EtaConfig } from './config'
+import type { EtaConfig } from './config.js'
 
 /* END TYPES */
 

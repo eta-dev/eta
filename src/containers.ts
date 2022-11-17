@@ -1,8 +1,8 @@
-import { Cacher } from './storage'
+import { Cacher } from './storage.js'
 
 /* TYPES */
 
-import type { TemplateFunction } from './compile'
+import type { TemplateFunction } from './compile.js'
 
 /* END TYPES */
 

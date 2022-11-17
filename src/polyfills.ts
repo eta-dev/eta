@@ -1,4 +1,4 @@
-import EtaErr from './err'
+import EtaErr from './err.js'
 
 /**
  * @returns The global Promise function

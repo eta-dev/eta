@@ -1,12 +1,12 @@
-import compileToString from './compile-string'
-import { getConfig } from './config'
-import EtaErr from './err'
+import compileToString from './compile-string.js'
+import { getConfig } from './config.js'
+import EtaErr from './err.js'
 
 /* TYPES */
 
-import type { EtaConfig, PartialConfig } from './config'
-import type { CallbackFn } from './file-handlers'
-import { getAsyncFunctionConstructor } from './polyfills'
+import type { EtaConfig, PartialConfig } from './config.js'
+import type { CallbackFn } from './file-handlers.js'
+import { getAsyncFunctionConstructor } from './polyfills.js'
 export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn) => string
 
 /* END TYPES */

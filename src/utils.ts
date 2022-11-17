@@ -1,11 +1,11 @@
 // TODO: allow '-' to trim up until newline. Use [^\S\n\r] instead of \s
 // TODO: only include trimLeft polyfill if not in ES6
 
-import { trimLeft, trimRight } from './polyfills'
+import { trimLeft, trimRight } from './polyfills.js'
 
 /* TYPES */
 
-import type { EtaConfig } from './config'
+import type { EtaConfig } from './config.js'
 
 interface EscapeMap {
   '&': '&amp;'
