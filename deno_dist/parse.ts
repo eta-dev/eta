@@ -27,8 +27,7 @@ const doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
 
 function escapeRegExp(string: string) {
   // From MDN
-  return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
-  ;
+  return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
 export default function parse(
@@ -41,8 +40,7 @@ export default function parse(
   const parseOptions = config.parse;
 
   if (config.plugins) {
-    for (let i = 0; i < config.plugins.length; i++) {
-      const plugin = config.plugins[i];
+    for (const plugin of config.plugins) {
       if (plugin.processTemplate) {
         str = plugin.processTemplate(str, config);
       }
@@ -198,8 +196,7 @@ export default function parse(
   pushString(str.slice(lastIndex, str.length), false);
 
   if (config.plugins) {
-    for (let i = 0; i < config.plugins.length; i++) {
-      const plugin = config.plugins[i];
+    for (const plugin of config.plugins) {
       if (plugin.processAST) {
         buffer = plugin.processAST(buffer, config);
       }

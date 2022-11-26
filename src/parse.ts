@@ -36,8 +36,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   const parseOptions = config.parse
 
   if (config.plugins) {
-    for (let i = 0; i < config.plugins.length; i++) {
-      const plugin = config.plugins[i]
+    for (const plugin of config.plugins) {
       if (plugin.processTemplate) {
         str = plugin.processTemplate(str, config)
       }
@@ -190,8 +189,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   pushString(str.slice(lastIndex, str.length), false)
 
   if (config.plugins) {
-    for (let i = 0; i < config.plugins.length; i++) {
-      const plugin = config.plugins[i]
+    for (const plugin of config.plugins) {
       if (plugin.processAST) {
         buffer = plugin.processAST(buffer, config)
       }

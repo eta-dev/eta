@@ -43,8 +43,7 @@ export default function compileToString(
     (config.useWith ? "}" : "");
 
   if (config.plugins) {
-    for (let i = 0; i < config.plugins.length; i++) {
-      const plugin = config.plugins[i];
+    for (const plugin of config.plugins) {
       if (plugin.processFnString) {
         res = plugin.processFnString(res, config);
       }
