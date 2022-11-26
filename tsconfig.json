@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "moduleResolution": "node",
     "target": "es5",
-    "module": "es2015",
+    "module": "ESNext",
     "lib": ["es2015", "es2016", "es2017", "es2019.string", "dom"],
     "strict": true,
     "sourceMap": true,
@@ -16,6 +17,11 @@
     "declarationDir": "dist/types",
     "outDir": "dist"
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "typings", "dist", "deno_dist", "src/*.deno.ts"]
+  "include": ["src", "rollup.config.ts"],
+  "exclude": ["node_modules", "typings", "dist", "deno_dist", "src/*.deno.ts"],
+  "typedocOptions": {
+    "entryPoints": ["./src"],
+    "exclude": ["./src/*.deno.ts"],
+    "out": "docs"
+  }
 }

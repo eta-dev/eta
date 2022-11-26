@@ -1,6 +1,0 @@
-{
-  "inputFiles": ["./src"],
-  "exclude": ["./src/*.deno.ts"],
-  "mode": "modules",
-  "out": "docs"
-}

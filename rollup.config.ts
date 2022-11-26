@@ -6,7 +6,7 @@ import { terser } from 'rollup-plugin-terser'
 // import { sizeSnapshot } from 'rollup-plugin-size-snapshot' // possibly add this
 
 // TODO: Someday don't transpile ES6 module dist files to ES5, ex. removing classes
-const pkg = require('./package.json')
+import pkg from "./package.json" assert { type: "json" };
 
 export default [
   {
