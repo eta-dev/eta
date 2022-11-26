@@ -5,9 +5,9 @@ export function getAsyncFunctionConstructor (): Function {
 }
 
 export function trimLeft (str: string): string {
-  return str.trimLeft()
+  return str.trimStart()
 }
 
 export function trimRight (str: string): string {
-  return str.trimRight()
+  return str.trimEnd()
 }

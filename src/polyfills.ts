@@ -32,8 +32,8 @@ export function getAsyncFunctionConstructor(): Function {
 
 export function trimLeft(str: string): string {
   // eslint-disable-next-line no-extra-boolean-cast
-  if (!!String.prototype.trimLeft) {
-    return str.trimLeft()
+  if (!!String.prototype.trimStart) {
+    return str.trimStart()
   } else {
     return str.replace(/^\s+/, '')
   }
@@ -49,8 +49,8 @@ export function trimLeft(str: string): string {
 
 export function trimRight(str: string): string {
   // eslint-disable-next-line no-extra-boolean-cast
-  if (!!String.prototype.trimRight) {
-    return str.trimRight()
+  if (!!String.prototype.trimEnd) {
+    return str.trimEnd()
   } else {
     return str.replace(/\s+$/, '') // TODO: do we really need to replace BOM's?
   }
