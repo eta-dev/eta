@@ -62,7 +62,7 @@ export default function render(
         // It will bubble up and be caught here
         const templateFn = handleCache(template, options)
         templateFn(data, options, cb)
-      } catch (err) {
+      } catch (err: any) {
         return cb(err)
       }
     } else {
@@ -71,7 +71,7 @@ export default function render(
         return new promiseImpl(function (resolve: Function, reject: Function) {
           try {
             resolve(handleCache(template, options)(data, options))
-          } catch (err) {
+          } catch (err: any) {
             reject(err)
           }
         })

@@ -56,7 +56,7 @@ export function loadFile(
       );
     }
     return compiledTemplate;
-  } catch (e) {
+  } catch (e: any) {
     throw EtaErr("Loading file: " + filePath + " failed:\n\n" + e.message);
   }
 }
@@ -109,7 +109,7 @@ function tryHandleCache(
       // It will bubble up and be caught here
       const templateFn = handleCache(options);
       templateFn(data, options, cb);
-    } catch (err) {
+    } catch (err: any) {
       return cb(err);
     }
   } else {
@@ -235,9 +235,7 @@ function renderFile(
 
   // If there is a config object passed in explicitly, use it
   if (typeof config === "object") {
-    renderConfig = getConfig(
-      (config as PartialConfig) || {},
-    ) as EtaConfigWithFilename;
+    renderConfig = getConfig((config) || {}) as EtaConfigWithFilename;
   } else {
     // Otherwise, get the config from the data object
     // And then grab some config options from data.settings

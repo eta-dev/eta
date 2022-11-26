@@ -11,7 +11,7 @@ describe('ParseErr', () => {
   it('error throws correctly', () => {
     try {
       ParseErr('Something Unexpected Happened!', 'template {{', 9)
-    } catch (ex) {
+    } catch (ex: any) {
       expect(ex.name).toBe('Eta Error')
       expect(ex.message).toBe(`Something Unexpected Happened! at line 1 col 10:
 
@@ -24,7 +24,7 @@ describe('ParseErr', () => {
     Object.defineProperty(Object, 'setPrototypeOf', { value: undefined })
     try {
       ParseErr('Something Unexpected Happened!', 'template {{', 9)
-    } catch (ex) {
+    } catch (ex: any) {
       expect(ex.name).toBe('Eta Error')
       expect(ex.message).toBe(`Something Unexpected Happened! at line 1 col 10:
 
