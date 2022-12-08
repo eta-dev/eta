@@ -173,8 +173,54 @@ export default function render(
  * @param template Template string or template function
  * @param data Data to render the template with
  * @param config Optional config options
+ */
+export function renderAsync(
+    template: string | TemplateFunction,
+    data: object,
+    config?: PartialConfig
+): Promise<string>;
+
+/**
+ * Render a template asynchronously
+ *
+ * If `template` is a string, Eta will compile it to a function and call it with the provided data.
+ * If `template` is a function, Eta will call it with the provided data.
+ *
+ * If there is a callback function, Eta will call it with `(err, renderedTemplate)`.
+ * If there is not a callback function, Eta will return a Promise that resolves to the rendered template
+ *
+ * @param template Template string or template function
+ * @param data Data to render the template with
+ * @param config Optional config options
  * @param cb Callback function
  */
+export function renderAsync(
+    template: string | TemplateFunction,
+    data: object,
+    config: PartialConfig,
+    cb: CallbackFn
+): void;
+
+/**
+ * Render a template asynchronously
+ *
+ * If `template` is a string, Eta will compile it to a function and call it with the provided data.
+ * If `template` is a function, Eta will call it with the provided data.
+ *
+ * If there is a callback function, Eta will call it with `(err, renderedTemplate)`.
+ * If there is not a callback function, Eta will return a Promise that resolves to the rendered template
+ *
+ * @param template Template string or template function
+ * @param data Data to render the template with
+ * @param config Optional config options
+ * @param cb Callback function
+ */
+export function renderAsync(
+    template: string | TemplateFunction,
+    data: object,
+    config?: PartialConfig,
+    cb?: CallbackFn
+): string | Promise<string> | void;
 
 export function renderAsync(
   template: string | TemplateFunction,
