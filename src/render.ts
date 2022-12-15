@@ -50,7 +50,7 @@ export default function render(
     data: object,
     config: PartialAsyncConfig,
     cb: CallbackFn
-): void;
+): void
 
 /**
  * Render a template
@@ -73,7 +73,7 @@ export default function render(
     template: string | TemplateFunction,
     data: object,
     config: PartialAsyncConfig
-): Promise<string>;
+): Promise<string>
 
 /**
  * Render a template
@@ -96,7 +96,7 @@ export default function render(
     template: string | TemplateFunction,
     data: object,
     config?: PartialConfig
-): string;
+): string
 
 /**
  * Render a template
@@ -121,7 +121,7 @@ export default function render(
     data: object,
     config?: PartialConfig,
     cb?: CallbackFn
-): string | Promise<string> | void;
+): string | Promise<string> | void
 
 export default function render(
   template: string | TemplateFunction,
@@ -178,7 +178,7 @@ export function renderAsync(
     template: string | TemplateFunction,
     data: object,
     config?: PartialConfig
-): Promise<string>;
+): Promise<string>
 
 /**
  * Render a template asynchronously
@@ -199,7 +199,7 @@ export function renderAsync(
     data: object,
     config: PartialConfig,
     cb: CallbackFn
-): void;
+): void
 
 /**
  * Render a template asynchronously
@@ -220,7 +220,7 @@ export function renderAsync(
     data: object,
     config?: PartialConfig,
     cb?: CallbackFn
-): string | Promise<string> | void;
+): string | Promise<string> | void
 
 export function renderAsync(
   template: string | TemplateFunction,
