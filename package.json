@@ -44,7 +44,7 @@
     "node": ">=6.0.0"
   },
   "scripts": {
-    "build": "denoify && rollup -c rollup.config.ts && rimraf docs && typedoc --tsconfig --disableOutputCheck tsconfig.json src && deno fmt deno_dist/*.ts",
+    "build": "denoify && rollup -c rollup.config.ts && rimraf docs && typedoc --tsconfig tsconfig.json src && deno fmt deno_dist/*.ts",
     "commit": "git-cz",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "format": "prettier --write '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
