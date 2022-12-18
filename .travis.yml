@@ -1,6 +1,5 @@
 language: node_js
 cache:
-  yarn: true
   directories:
     - ~/.npm
     - '$HOME/.deno'
@@ -17,7 +16,7 @@ script:
   - npm run build && npm run test:prod
 after_success:
   - npm run travis-deploy-once "npm run report-coverage"
-  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then yarn run travis-deploy-once "yarn run deploy-docs"; fi
+  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run travis-deploy-once "npm run deploy-docs"; fi
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
