@@ -1,23 +1,22 @@
 language: node_js
 cache:
-  yarn: true
   directories:
     - ~/.npm
     - '$HOME/.deno'
 notifications:
   email: false
 node_js:
-  - '10'
-  - '12'
+  - '14'
+  - '16'
 before_install: # Install Deno
   - curl -fsSL https://deno.land/x/install/install.sh | sh
   - export PATH="$HOME/.deno/bin:$PATH"
 script:
   - deno --version # Log the Deno version
-  - yarn build && yarn test:prod
+  - npm run build && npm run test:prod
 after_success:
-  - yarn travis-deploy-once "yarn report-coverage"
-  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then yarn travis-deploy-once "yarn deploy-docs"; fi
+  - npm run travis-deploy-once "npm run report-coverage"
+  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run travis-deploy-once "npm run deploy-docs"; fi
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/

@@ -13,6 +13,6 @@ jobs:
       - uses: denolib/setup-deno@v2
         with:
           deno-version: v1.x
-      - uses: andresz1/size-limit-action@v1.4.0
+      - uses: andresz1/size-limit-action@v1.7.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

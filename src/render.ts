@@ -63,7 +63,7 @@ export default function render(
         const templateFn = handleCache(template, options)
         templateFn(data, options, cb)
       } catch (err) {
-        return cb(err)
+        return cb(err as Error)
       }
     } else {
       // No callback, try returning a promise
