@@ -25,7 +25,7 @@ function setPrototypeOf(obj: any, proto: any) {
 export default function EtaErr(message: string): Error {
   const err = new Error(message);
   setPrototypeOf(err, EtaErr.prototype);
-  return err;
+  return err as Error;
 }
 
 EtaErr.prototype = Object.create(Error.prototype, {

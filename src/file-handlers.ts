@@ -50,7 +50,7 @@ export function loadFile(
     }
     return compiledTemplate
   } catch (e) {
-    throw EtaErr('Loading file: ' + filePath + ' failed:\n\n' + e.message)
+    throw EtaErr('Loading file: ' + filePath + ' failed:\n\n' + (e as Error).message)
   }
 }
 
@@ -99,7 +99,7 @@ function tryHandleCache(data: object, options: EtaConfigWithFilename, cb: Callba
       const templateFn = handleCache(options)
       templateFn(data, options, cb)
     } catch (err) {
-      return cb(err)
+      return cb(err as Error)
     }
   } else {
     // No callback, try returning a promise
