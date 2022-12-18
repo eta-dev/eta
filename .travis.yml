@@ -7,8 +7,8 @@ cache:
 notifications:
   email: false
 node_js:
-  - '10'
-  - '12'
+  - '14'
+  - '16'
 before_install: # Install Deno
   - curl -fsSL https://deno.land/x/install/install.sh | sh
   - export PATH="$HOME/.deno/bin:$PATH"
