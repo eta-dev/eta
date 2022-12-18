@@ -1,30 +1,35 @@
-import compile from './compile.ts'
-import { getConfig } from './config.ts'
-import { promiseImpl } from './polyfills.ts'
-import EtaErr from './err.ts'
+import compile from "./compile.ts";
+import { getConfig } from "./config.ts";
+import { promiseImpl } from "./polyfills.ts";
+import EtaErr from "./err.ts";
 
 /* TYPES */
 
-import type { EtaConfig, PartialConfig } from './config.ts'
-import type { TemplateFunction } from './compile.ts'
-import type { CallbackFn } from './file-handlers.ts'
+import type { EtaConfig, PartialConfig } from "./config.ts";
+import type { TemplateFunction } from "./compile.ts";
+import type { CallbackFn } from "./file-handlers.ts";
 
 /* END TYPES */
 
-function handleCache(template: string | TemplateFunction, options: EtaConfig): TemplateFunction {
+function handleCache(
+  template: string | TemplateFunction,
+  options: EtaConfig,
+): TemplateFunction {
   if (options.cache && options.name && options.templates.get(options.name)) {
-    return options.templates.get(options.name)
+    return options.templates.get(options.name);
   }
 
-  const templateFunc = typeof template === 'function' ? template : compile(template, options)
+  const templateFunc = typeof template === "function"
+    ? template
+    : compile(template, options);
 
   // Note that we don't have to check if it already exists in the cache;
   // it would have returned earlier if it had
   if (options.cache && options.name) {
-    options.templates.define(options.name, templateFunc)
+    options.templates.define(options.name, templateFunc);
   }
 
-  return templateFunc
+  return templateFunc;
 }
 
 /**
@@ -50,9 +55,9 @@ export default function render(
   template: string | TemplateFunction,
   data: object,
   config?: PartialConfig,
-  cb?: CallbackFn
+  cb?: CallbackFn,
 ): string | Promise<string> | void {
-  const options = getConfig(config || {})
+  const options = getConfig(config || {});
 
   if (options.async) {
     if (cb) {
@@ -60,27 +65,29 @@ export default function render(
       try {
         // Note: if there is an error while rendering the template,
         // It will bubble up and be caught here
-        const templateFn = handleCache(template, options)
-        templateFn(data, options, cb)
+        const templateFn = handleCache(template, options);
+        templateFn(data, options, cb);
       } catch (err) {
-        return cb(err as Error)
+        return cb(err as Error);
       }
     } else {
       // No callback, try returning a promise
-      if (typeof promiseImpl === 'function') {
+      if (typeof promiseImpl === "function") {
         return new promiseImpl(function (resolve: Function, reject: Function) {
           try {
-            resolve(handleCache(template, options)(data, options))
+            resolve(handleCache(template, options)(data, options));
           } catch (err) {
-            reject(err)
+            reject(err);
           }
-        })
+        });
       } else {
-        throw EtaErr("Please provide a callback function, this env doesn't support Promises")
+        throw EtaErr(
+          "Please provide a callback function, this env doesn't support Promises",
+        );
       }
     }
   } else {
-    return handleCache(template, options)(data, options)
+    return handleCache(template, options)(data, options);
   }
 }
 
@@ -103,8 +110,8 @@ export function renderAsync(
   template: string | TemplateFunction,
   data: object,
   config?: PartialConfig,
-  cb?: CallbackFn
+  cb?: CallbackFn,
 ): string | Promise<string> | void {
   // Using Object.assign to lower bundle size, using spread operator makes it larger because of typescript injected polyfills
-  return render(template, data, Object.assign({}, config, { async: true }), cb)
+  return render(template, data, Object.assign({}, config, { async: true }), cb);
 }
