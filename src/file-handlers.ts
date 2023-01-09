@@ -192,8 +192,6 @@ function renderFile(
 
 function renderFile(filename: string, data: DataObj, cb: CallbackFn): void
 
-function renderFile(filename: string, data: DataObj, cb?: CallbackFn): Promise<string> | void
-
 function renderFile(
   filename: string,
   data: DataObj,
@@ -304,8 +302,6 @@ function renderFileAsync(
 ): Promise<string> | void
 
 function renderFileAsync(filename: string, data: DataObj, cb: CallbackFn): void
-
-function renderFileAsync(filename: string, data: DataObj, cb?: CallbackFn): Promise<string> | void
 
 function renderFileAsync(
   filename: string,
