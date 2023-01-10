@@ -46,10 +46,10 @@ function handleCache(template: string | TemplateFunction, options: EtaConfig): T
  * @param cb Callback function
  */
 export default function render(
-    template: string | TemplateFunction,
-    data: object,
-    config: PartialAsyncConfig,
-    cb: CallbackFn
+  template: string | TemplateFunction,
+  data: object,
+  config: PartialAsyncConfig,
+  cb: CallbackFn
 ): void
 
 /**
@@ -70,9 +70,9 @@ export default function render(
  * @param config Optional config options
  */
 export default function render(
-    template: string | TemplateFunction,
-    data: object,
-    config: PartialAsyncConfig
+  template: string | TemplateFunction,
+  data: object,
+  config: PartialAsyncConfig
 ): Promise<string>
 
 /**
@@ -93,9 +93,9 @@ export default function render(
  * @param config Optional config options
  */
 export default function render(
-    template: string | TemplateFunction,
-    data: object,
-    config?: PartialConfig
+  template: string | TemplateFunction,
+  data: object,
+  config?: PartialConfig
 ): string
 
 /**
@@ -117,10 +117,10 @@ export default function render(
  * @param cb Callback function
  */
 export default function render(
-    template: string | TemplateFunction,
-    data: object,
-    config?: PartialConfig,
-    cb?: CallbackFn
+  template: string | TemplateFunction,
+  data: object,
+  config?: PartialConfig,
+  cb?: CallbackFn
 ): string | Promise<string> | void
 
 export default function render(
@@ -175,9 +175,9 @@ export default function render(
  * @param config Optional config options
  */
 export function renderAsync(
-    template: string | TemplateFunction,
-    data: object,
-    config?: PartialConfig
+  template: string | TemplateFunction,
+  data: object,
+  config?: PartialConfig
 ): Promise<string>
 
 /**
@@ -195,10 +195,10 @@ export function renderAsync(
  * @param cb Callback function
  */
 export function renderAsync(
-    template: string | TemplateFunction,
-    data: object,
-    config: PartialConfig,
-    cb: CallbackFn
+  template: string | TemplateFunction,
+  data: object,
+  config: PartialConfig,
+  cb: CallbackFn
 ): void
 
 /**
@@ -216,10 +216,10 @@ export function renderAsync(
  * @param cb Callback function
  */
 export function renderAsync(
-    template: string | TemplateFunction,
-    data: object,
-    config?: PartialConfig,
-    cb?: CallbackFn
+  template: string | TemplateFunction,
+  data: object,
+  config?: PartialConfig,
+  cb?: CallbackFn
 ): string | Promise<string> | void
 
 export function renderAsync(

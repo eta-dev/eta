@@ -170,18 +170,9 @@ function includeFile(path: string, options: EtaConfig): [TemplateFunction, EtaCo
  * ```
  */
 
-function renderFile(
-  filename: string,
-  data: DataObj,
-  config?: PartialConfig,
-): Promise<string>
+function renderFile(filename: string, data: DataObj, config?: PartialConfig): Promise<string>
 
-function renderFile(
-  filename: string,
-  data: DataObj,
-  config: PartialConfig,
-  cb: CallbackFn
-): void
+function renderFile(filename: string, data: DataObj, config: PartialConfig, cb: CallbackFn): void
 
 function renderFile(
   filename: string,
@@ -281,11 +272,7 @@ function renderFile(
  * ```
  */
 
-function renderFileAsync(
-  filename: string,
-  data: DataObj,
-  config?: PartialConfig
-): Promise<string>
+function renderFileAsync(filename: string, data: DataObj, config?: PartialConfig): Promise<string>
 
 function renderFileAsync(
   filename: string,

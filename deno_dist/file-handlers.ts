@@ -197,14 +197,23 @@ function renderFile(
   filename: string,
   data: DataObj,
   config?: PartialConfig,
-  cb?: CallbackFn,
-): Promise<string> | void;
+): Promise<string>;
 
 function renderFile(
   filename: string,
   data: DataObj,
+  config: PartialConfig,
+  cb: CallbackFn,
+): void;
+
+function renderFile(
+  filename: string,
+  data: DataObj,
+  config?: PartialConfig,
   cb?: CallbackFn,
 ): Promise<string> | void;
+
+function renderFile(filename: string, data: DataObj, cb: CallbackFn): void;
 
 function renderFile(
   filename: string,
@@ -301,14 +310,23 @@ function renderFileAsync(
   filename: string,
   data: DataObj,
   config?: PartialConfig,
-  cb?: CallbackFn,
-): Promise<string> | void;
+): Promise<string>;
 
 function renderFileAsync(
   filename: string,
   data: DataObj,
+  config: PartialConfig,
+  cb: CallbackFn,
+): void;
+
+function renderFileAsync(
+  filename: string,
+  data: DataObj,
+  config?: PartialConfig,
   cb?: CallbackFn,
 ): Promise<string> | void;
+
+function renderFileAsync(filename: string, data: DataObj, cb: CallbackFn): void;
 
 function renderFileAsync(
   filename: string,
