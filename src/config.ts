@@ -90,6 +90,7 @@ export interface EtaConfigWithFilename extends EtaConfig {
 }
 
 export type PartialConfig = Partial<EtaConfig>
+export type PartialAsyncConfig = PartialConfig & { async: true }
 
 /* END TYPES */
 
