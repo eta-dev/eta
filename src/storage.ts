@@ -1,4 +1,4 @@
-import { copyProps } from "./utils";
+import { copyProps } from "./utils.js";
 
 /**
  * Handles storage and accessing of values

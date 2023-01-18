@@ -1,11 +1,11 @@
-import { templates } from "./containers";
-import { copyProps, XMLEscape } from "./utils";
-import EtaErr from "./err";
+import { templates } from "./containers.js";
+import { copyProps, XMLEscape } from "./utils.js";
+import EtaErr from "./err.js";
 
 /* TYPES */
 
-import type { TemplateFunction } from "./compile";
-import type { Cacher } from "./storage";
+import type { TemplateFunction } from "./compile.js";
+import type { Cacher } from "./storage.js";
 
 type trimConfig = "nl" | "slurp" | false;
 

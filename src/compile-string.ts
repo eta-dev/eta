@@ -1,9 +1,9 @@
-import Parse from "./parse";
+import Parse from "./parse.js";
 
 /* TYPES */
 
-import type { EtaConfig } from "./config";
-import type { AstObject } from "./parse";
+import type { EtaConfig } from "./config.js";
+import type { AstObject } from "./parse.js";
 
 /* END TYPES */
 

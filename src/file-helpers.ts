@@ -1,8 +1,8 @@
-import { includeFile } from "./file-handlers";
+import { includeFile } from "./file-handlers.js";
 
 /* TYPES */
 
-import type { EtaConfig } from "./config";
+import type { EtaConfig } from "./config.js";
 
 interface GenericData {
   [index: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any

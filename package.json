@@ -13,20 +13,22 @@
     "typescript types"
   ],
   "homepage": "https://eta.js.org",
-  "main": "dist/eta.cjs",
-  "browser": "dist/browser/eta.min.js",
-  "module": "dist/eta.es.js",
   "type": "module",
+  "main": "./dist/eta.umd.js",
+  "module": "./dist/eta.module.js",
+  "umd:main": "./dist/eta.umd.js",
+  "unpkg": "./dist/browser.min.umd.js",
+  "types": "./dist/types/eta.d.ts",
+  "source": "lib/node.ts",
   "exports": {
-    "types": "./dist/types/index.d.ts",
-    "import": "./dist/eta.es.js",
-    "require": "./dist/eta.cjs",
-    "browser": "./dist/browser/eta.min.js"
+    ".": {
+      "types": "./dist/types/eta.d.ts",
+      "browser": "./dist/browser.min.umd.js",
+      "require": "./dist/eta.umd.js",
+      "import": "./dist/eta.module.js",
+      "default": "./dist/eta.umd.js"
+    }
   },
-  "types": "dist/types/index.d.ts",
-  "typings": "dist/types/index.d.ts",
-  "jsdelivr": "dist/browser/eta.min.js",
-  "unpkg": "dist/browser/eta.min.js",
   "sideEffects": false,
   "files": [
     "dist"
@@ -45,7 +47,9 @@
     "node": ">=6.0.0"
   },
   "scripts": {
-    "build": "denoify && rollup -c rollup.config.ts && rimraf docs && typedoc --tsconfig tsconfig.json src && deno fmt deno_dist/*.ts",
+    "build:node": "microbundle src/index.ts --target node --format esm,umd",
+    "build:browser": "microbundle src/browser.ts --target web --format umd --output dist/browser.min.js",
+    "build": "denoify && npm run build:node && npm run build:browser && rimraf docs && typedoc --tsconfig tsconfig.json src && deno fmt deno_dist/*.ts",
     "commit": "git-cz",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "format": "prettier --write '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
@@ -54,7 +58,7 @@
     "release": "npm run build && np",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "size": "size-limit",
-    "start": "rollup -c rollup.config.ts -w",
+    "start": "microbundle watch",
     "test": "jest --coverage && npm run test:deno && npm run size",
     "test:deno": "deno test test/deno/*.spec.ts --allow-read --unstable",
     "test:prod": "npm run lint && npm run test -- --no-cache",
@@ -80,6 +84,9 @@
   "jest": {
     "transform": {
       ".(ts)": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
     },
     "testEnvironment": "node",
     "testRegex": "\\/test\\/(?!deno\\/).*(\\.spec\\.ts)$",
@@ -132,7 +139,7 @@
     "coveralls": "^3.1.0",
     "cross-env": "^7.0.2",
     "cz-conventional-changelog": "^3.3.0",
-    "denoify": "^0.6.3",
+    "denoify": "^1.4.5",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.27.5",
@@ -141,6 +148,7 @@
     "husky": "^4.3.0",
     "jest": "^29.3.1",
     "lint-staged": "^10.3.0",
+    "microbundle": "^0.15.1",
     "np": "^6.5.0",
     "prettier": "^2.8.3",
     "rimraf": "^3.0.2",

@@ -1,13 +1,13 @@
-import compile from "./compile";
-import { getConfig } from "./config";
-import { promiseImpl } from "./polyfills";
-import EtaErr from "./err";
+import compile from "./compile.js";
+import { getConfig } from "./config.js";
+import { promiseImpl } from "./polyfills.js";
+import EtaErr from "./err.js";
 
 /* TYPES */
 
-import type { EtaConfig, PartialConfig, PartialAsyncConfig } from "./config";
-import type { TemplateFunction } from "./compile";
-import type { CallbackFn } from "./file-handlers";
+import type { EtaConfig, PartialConfig, PartialAsyncConfig } from "./config.js";
+import type { TemplateFunction } from "./compile.js";
+import type { CallbackFn } from "./file-handlers.js";
 
 /* END TYPES */
 

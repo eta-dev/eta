@@ -1,9 +1,9 @@
-import { ParseErr } from "./err";
-import { trimWS } from "./utils";
+import { ParseErr } from "./err.js";
+import { trimWS } from "./utils.js";
 
 /* TYPES */
 
-import type { EtaConfig } from "./config";
+import type { EtaConfig } from "./config.js";
 
 export type TagType = "r" | "e" | "i" | "";
 

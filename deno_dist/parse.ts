@@ -133,7 +133,7 @@ export default function parse(
 
     while ((closeTag = parseCloseReg.exec(str))) {
       if (closeTag[1]) {
-        let content = str.slice(lastIndex, closeTag.index);
+        const content = str.slice(lastIndex, closeTag.index);
 
         parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex;
 

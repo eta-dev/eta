@@ -9,10 +9,12 @@
     "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "declarationDir": "./dist/types",
+    "declarationDir": "dist/types",
+    "outDir": "dist",
     "noImplicitAny": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "esModuleInterop": true
   },
   "files": ["src/index.ts", "src/browser.ts"]
 }

@@ -24,7 +24,7 @@ export function hasOwnProp(obj: object, prop: string): boolean {
 
 export function copyProps<T>(toObj: T, fromObj: T): T {
   for (const key in fromObj) {
-    if (hasOwnProp((fromObj as unknown) as object, key)) {
+    if (hasOwnProp(fromObj as unknown as object, key)) {
       toObj[key] = fromObj[key];
     }
   }

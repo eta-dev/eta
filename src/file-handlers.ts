@@ -1,16 +1,16 @@
 // express is set like: app.engine('html', require('eta').renderFile)
 
-import EtaErr from "./err";
-import compile from "./compile";
-import { getConfig } from "./config";
-import { getPath, readFile } from "./file-utils";
-import { copyProps } from "./utils";
-import { promiseImpl } from "./polyfills";
+import EtaErr from "./err.js";
+import compile from "./compile.js";
+import { getConfig } from "./config.js";
+import { getPath, readFile } from "./file-utils.js";
+import { copyProps } from "./utils.js";
+import { promiseImpl } from "./polyfills.js";
 
 /* TYPES */
 
-import type { EtaConfig, PartialConfig, EtaConfigWithFilename } from "./config";
-import type { TemplateFunction } from "./compile";
+import type { EtaConfig, PartialConfig, EtaConfigWithFilename } from "./config.js";
+import type { TemplateFunction } from "./compile.js";
 
 export type CallbackFn = (err: Error | null, str?: string) => void;
 
