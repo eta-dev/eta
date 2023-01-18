@@ -19,7 +19,7 @@
   "umd:main": "./dist/eta.umd.js",
   "unpkg": "./dist/browser.min.umd.js",
   "types": "./dist/types/eta.d.ts",
-  "source": "lib/node.ts",
+  "source": "src/index.ts",
   "exports": {
     ".": {
       "types": "./dist/types/eta.d.ts",
@@ -67,7 +67,7 @@
   },
   "size-limit": [
     {
-      "path": "dist/browser/eta.min.js",
+      "path": "dist/browser.min.umd.js",
       "limit": "3 KB"
     }
   ],
