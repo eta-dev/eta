@@ -1,21 +1,18 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
-    "target": "es5",
-    "module": "es2015",
-    "lib": ["es2015", "es2016", "es2017", "es2019.string", "dom"],
     "strict": true,
-    "sourceMap": true,
+    "lib": ["ES2022", "DOM"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+    "declarationDir": "./dist/types",
+    "noImplicitAny": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "declarationDir": "dist/types",
-    "outDir": "dist"
+    "noUnusedParameters": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "typings", "dist", "deno_dist", "src/*.deno.ts"]
+  "files": ["src/index.ts", "src/browser.ts"]
 }

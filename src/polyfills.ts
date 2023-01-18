@@ -1,10 +1,10 @@
-import EtaErr from './err'
+import EtaErr from "./err";
 
 /**
  * @returns The global Promise function
  */
 
-export const promiseImpl: PromiseConstructor = new Function('return this')().Promise
+export const promiseImpl: PromiseConstructor = new Function("return this")().Promise;
 
 /**
  * @returns A new AsyncFunction constuctor
@@ -12,12 +12,12 @@ export const promiseImpl: PromiseConstructor = new Function('return this')().Pro
 
 export function getAsyncFunctionConstructor(): Function {
   try {
-    return new Function('return (async function(){}).constructor')()
+    return new Function("return (async function(){}).constructor")();
   } catch (e) {
     if (e instanceof SyntaxError) {
-      throw EtaErr("This environment doesn't support async/await")
+      throw EtaErr("This environment doesn't support async/await");
     } else {
-      throw e
+      throw e;
     }
   }
 }
@@ -33,9 +33,9 @@ export function getAsyncFunctionConstructor(): Function {
 export function trimLeft(str: string): string {
   // eslint-disable-next-line no-extra-boolean-cast
   if (!!String.prototype.trimLeft) {
-    return str.trimLeft()
+    return str.trimLeft();
   } else {
-    return str.replace(/^\s+/, '')
+    return str.replace(/^\s+/, "");
   }
 }
 
@@ -50,8 +50,8 @@ export function trimLeft(str: string): string {
 export function trimRight(str: string): string {
   // eslint-disable-next-line no-extra-boolean-cast
   if (!!String.prototype.trimRight) {
-    return str.trimRight()
+    return str.trimRight();
   } else {
-    return str.replace(/\s+$/, '') // TODO: do we really need to replace BOM's?
+    return str.replace(/\s+$/, ""); // TODO: do we really need to replace BOM's?
   }
 }

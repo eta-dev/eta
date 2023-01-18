@@ -1,49 +1,49 @@
 /* global it, expect, describe */
-import { compileToString, defaultConfig, getConfig } from '../src/index'
+import { compileToString, defaultConfig, getConfig } from "../src/index";
 
-const fs = require('fs'),
-  path = require('path'),
-  filePath = path.join(__dirname, 'templates/complex.eta')
+const fs = require("fs"),
+  path = require("path"),
+  filePath = path.join(__dirname, "templates/complex.eta");
 
-const complexTemplate = fs.readFileSync(filePath, 'utf8')
+const complexTemplate = fs.readFileSync(filePath, "utf8");
 
-describe('Compile to String test', () => {
-  it('parses a simple template', () => {
-    const str = compileToString('hi <%= hey %>', defaultConfig)
+describe("Compile to String test", () => {
+  it("parses a simple template", () => {
+    const str = compileToString("hi <%= hey %>", defaultConfig);
     expect(str)
       .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
 tR+='hi '
 tR+=E.e(hey)
 if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
-if(cb){cb(null,tR)} return tR`)
-  })
+if(cb){cb(null,tR)} return tR`);
+  });
 
-  it('parses a simple template without partial helpers defined', () => {
+  it("parses a simple template without partial helpers defined", () => {
     const str = compileToString(
-      'hi <%= hey %>',
+      "hi <%= hey %>",
       getConfig({ include: undefined, includeFile: undefined })
-    )
+    );
     expect(str).toEqual(`var tR='',__l,__lP
 function layout(p,d){__l=p;__lP=d}
 tR+='hi '
 tR+=E.e(hey)
-if(cb){cb(null,tR)} return tR`)
-  })
+if(cb){cb(null,tR)} return tR`);
+  });
 
-  it('parses a simple template with raw tag', () => {
-    const str = compileToString('hi <%~ hey %>', defaultConfig)
+  it("parses a simple template with raw tag", () => {
+    const str = compileToString("hi <%~ hey %>", defaultConfig);
     expect(str)
       .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
 tR+='hi '
 tR+=hey
 if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
-if(cb){cb(null,tR)} return tR`)
-  })
+if(cb){cb(null,tR)} return tR`);
+  });
 
-  it('works with whitespace trimming', () => {
-    const str = compileToString('hi\n<%- = hey-%>\n<%_ = hi_%>', defaultConfig)
+  it("works with whitespace trimming", () => {
+    const str = compileToString("hi\n<%- = hey-%>\n<%_ = hi_%>", defaultConfig);
     expect(str)
       .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
@@ -51,11 +51,11 @@ tR+='hi'
 tR+=E.e(hey)
 tR+=E.e(hi)
 if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
-if(cb){cb(null,tR)} return tR`)
-  })
+if(cb){cb(null,tR)} return tR`);
+  });
 
-  it('compiles complex template', () => {
-    const str = compileToString(complexTemplate, defaultConfig)
+  it("compiles complex template", () => {
+    const str = compileToString(complexTemplate, defaultConfig);
     expect(str).toEqual(
       `var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
@@ -84,6 +84,6 @@ tR+='\\nThis is a partial: '
 tR+=include("mypartial")
 if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
 if(cb){cb(null,tR)} return tR`
-    )
-  })
-})
+    );
+  });
+});
