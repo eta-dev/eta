@@ -12,7 +12,7 @@
 </p>
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[logo]: https://img.shields.io/badge/all_contributors-9-orange.svg 'Number of contributors on All-Contributors'
+[logo]: https://img.shields.io/badge/all_contributors-10-orange.svg 'Number of contributors on All-Contributors'
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <span align="center">
@@ -281,6 +281,7 @@ Made with ❤ by [@nebrelbug](https://github.com/eta-dev) and all these wonderfu
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://calumk.com"><img src="https://avatars1.githubusercontent.com/u/1183991?v=4?s=100" width="100px;" alt="Calum Knott"/><br /><sub><b>Calum Knott</b></sub></a><br /><a href="#ideas-calumk" title="Ideas, Planning, & Feedback">🤔</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nhaef"><img src="https://avatars.githubusercontent.com/u/16443053?v=4?s=100" width="100px;" alt="nhaef"/><br /><sub><b>nhaef</b></sub></a><br /><a href="https://github.com/eta-dev/eta/commits?author=nhaef" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://heyhey.to/Gün"><img src="https://avatars.githubusercontent.com/u/74139498?v=4?s=100" width="100px;" alt="Gün"/><br /><sub><b>Gün</b></sub></a><br /><a href="https://github.com/eta-dev/eta/commits?author=gurgunday" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
