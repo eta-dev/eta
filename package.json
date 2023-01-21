@@ -22,10 +22,10 @@
   "source": "src/index.ts",
   "exports": {
     "types": "./dist/types/eta.d.ts",
-    "import": "./dist/eta.module.mjs",
+    "browser": "./dist/browser.min.umd.js",
     "require": "./dist/eta.umd.js",
-    "default": "./dist/eta.umd.js",
-    "browser": "./dist/browser.min.umd.js"
+    "import": "./dist/eta.module.mjs",
+    "default": "./dist/eta.umd.js"
   },
   "sideEffects": false,
   "files": [
