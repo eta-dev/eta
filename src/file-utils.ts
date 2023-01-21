@@ -1,13 +1,13 @@
-import { path, existsSync, readFileSync } from './file-methods'
-const _BOM = /^\uFEFF/
+import { path, existsSync, readFileSync } from "./file-methods.js";
+const _BOM = /^\uFEFF/;
 
 // express is set like: app.engine('html', require('eta').renderFile)
 
-import EtaErr from './err'
+import EtaErr from "./err.js";
 
 /* TYPES */
 
-import type { EtaConfig } from './config'
+import type { EtaConfig } from "./config.js";
 
 /* END TYPES */
 
@@ -28,8 +28,8 @@ function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolea
     path.resolve(
       isDirectory ? parentfile : path.dirname(parentfile), // returns directory the parent file is in
       name // file
-    ) + (path.extname(name) ? '' : '.eta')
-  return includePath
+    ) + (path.extname(name) ? "" : ".eta");
+  return includePath;
 }
 
 /**
@@ -51,9 +51,9 @@ function getWholeFilePath(name: string, parentfile: string, isDirectory?: boolea
  */
 
 function getPath(path: string, options: EtaConfig): string {
-  let includePath: string | false = false
-  const views = options.views
-  let searchedPaths: Array<string> = []
+  let includePath: string | false = false;
+  const views = options.views;
+  const searchedPaths: Array<string> = [];
 
   // If these four values are the same,
   // getPath() will return the same result every time.
@@ -63,18 +63,18 @@ function getPath(path: string, options: EtaConfig): string {
     filename: options.filename, // filename of the template which called includeFile()
     path: path,
     root: options.root,
-    views: options.views
-  })
+    views: options.views,
+  });
 
   if (options.cache && options.filepathCache && options.filepathCache[pathOptions]) {
     // Use the cached filepath
-    return options.filepathCache[pathOptions]
+    return options.filepathCache[pathOptions];
   }
 
   /** Add a filepath to the list of paths we've checked for a template */
   function addPathToSearched(pathSearched: string) {
     if (!searchedPaths.includes(pathSearched)) {
-      searchedPaths.push(pathSearched)
+      searchedPaths.push(pathSearched);
     }
   }
 
@@ -87,86 +87,86 @@ function getPath(path: string, options: EtaConfig): string {
    */
 
   function searchViews(views: Array<string> | string | undefined, path: string): string | false {
-    let filePath
+    let filePath;
 
     // If views is an array, then loop through each directory
     // And attempt to find the template
     if (
       Array.isArray(views) &&
       views.some(function (v) {
-        filePath = getWholeFilePath(path, v, true)
+        filePath = getWholeFilePath(path, v, true);
 
-        addPathToSearched(filePath)
+        addPathToSearched(filePath);
 
-        return existsSync(filePath)
+        return existsSync(filePath);
       })
     ) {
       // If the above returned true, we know that the filePath was just set to a path
       // That exists (Array.some() returns as soon as it finds a valid element)
-      return (filePath as unknown) as string
-    } else if (typeof views === 'string') {
+      return filePath as unknown as string;
+    } else if (typeof views === "string") {
       // Search for the file if views is a single directory
-      filePath = getWholeFilePath(path, views, true)
+      filePath = getWholeFilePath(path, views, true);
 
-      addPathToSearched(filePath)
+      addPathToSearched(filePath);
 
       if (existsSync(filePath)) {
-        return filePath
+        return filePath;
       }
     }
 
     // Unable to find a file
-    return false
+    return false;
   }
 
   // Path starts with '/', 'C:\', etc.
-  const match = /^[A-Za-z]+:\\|^\//.exec(path)
+  const match = /^[A-Za-z]+:\\|^\//.exec(path);
 
   // Absolute path, like /partials/partial.eta
   if (match && match.length) {
     // We have to trim the beginning '/' off the path, or else
     // path.resolve(dir, path) will always resolve to just path
-    const formattedPath = path.replace(/^\/*/, '')
+    const formattedPath = path.replace(/^\/*/, "");
 
     // First, try to resolve the path within options.views
-    includePath = searchViews(views, formattedPath)
+    includePath = searchViews(views, formattedPath);
     if (!includePath) {
       // If that fails, searchViews will return false. Try to find the path
       // inside options.root (by default '/', the base of the filesystem)
-      const pathFromRoot = getWholeFilePath(formattedPath, options.root || '/', true)
+      const pathFromRoot = getWholeFilePath(formattedPath, options.root || "/", true);
 
-      addPathToSearched(pathFromRoot)
+      addPathToSearched(pathFromRoot);
 
-      includePath = pathFromRoot
+      includePath = pathFromRoot;
     }
   } else {
     // Relative paths
     // Look relative to a passed filename first
     if (options.filename) {
-      const filePath = getWholeFilePath(path, options.filename)
+      const filePath = getWholeFilePath(path, options.filename);
 
-      addPathToSearched(filePath)
+      addPathToSearched(filePath);
 
       if (existsSync(filePath)) {
-        includePath = filePath
+        includePath = filePath;
       }
     }
     // Then look for the template in options.views
     if (!includePath) {
-      includePath = searchViews(views, path)
+      includePath = searchViews(views, path);
     }
     if (!includePath) {
-      throw EtaErr('Could not find the template "' + path + '". Paths tried: ' + searchedPaths)
+      throw EtaErr('Could not find the template "' + path + '". Paths tried: ' + searchedPaths);
     }
   }
 
   // If caching and filepathCache are enabled,
   // cache the input & output of this function.
   if (options.cache && options.filepathCache) {
-    options.filepathCache[pathOptions] = includePath
+    options.filepathCache[pathOptions] = includePath;
   }
 
-  return includePath
+  return includePath;
 }
 
 /**
@@ -175,10 +175,10 @@ function getPath(path: string, options: EtaConfig): string {
 
 function readFile(filePath: string): string {
   try {
-    return readFileSync(filePath).toString().replace(_BOM, '') // TODO: is replacing BOM's necessary?
+    return readFileSync(filePath).toString().replace(_BOM, ""); // TODO: is replacing BOM's necessary?
   } catch {
-    throw EtaErr("Failed to read template at '" + filePath + "'")
+    throw EtaErr("Failed to read template at '" + filePath + "'");
   }
 }
 
-export { getPath, readFile }
+export { getPath, readFile };

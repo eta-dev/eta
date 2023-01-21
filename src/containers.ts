@@ -1,8 +1,8 @@
-import { Cacher } from './storage'
+import { Cacher } from "./storage.js";
 
 /* TYPES */
 
-import type { TemplateFunction } from './compile'
+import type { TemplateFunction } from "./compile.js";
 
 /* END TYPES */
 
@@ -12,6 +12,6 @@ import type { TemplateFunction } from './compile'
  * Stores partials and cached templates
  */
 
-const templates = new Cacher<TemplateFunction>({})
+const templates = new Cacher<TemplateFunction>({});
 
-export { templates }
+export { templates };

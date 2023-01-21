@@ -56,7 +56,7 @@ function getWholeFilePath(
 function getPath(path: string, options: EtaConfig): string {
   let includePath: string | false = false;
   const views = options.views;
-  let searchedPaths: Array<string> = [];
+  const searchedPaths: Array<string> = [];
 
   // If these four values are the same,
   // getPath() will return the same result every time.
@@ -111,7 +111,7 @@ function getPath(path: string, options: EtaConfig): string {
     ) {
       // If the above returned true, we know that the filePath was just set to a path
       // That exists (Array.some() returns as soon as it finds a valid element)
-      return (filePath as unknown) as string;
+      return filePath as unknown as string;
     } else if (typeof views === "string") {
       // Search for the file if views is a single directory
       filePath = getWholeFilePath(path, views, true);

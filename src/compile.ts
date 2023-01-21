@@ -1,13 +1,13 @@
-import compileToString from './compile-string'
-import { getConfig } from './config'
-import EtaErr from './err'
+import compileToString from "./compile-string.js";
+import { getConfig } from "./config.js";
+import EtaErr from "./err.js";
 
 /* TYPES */
 
-import type { EtaConfig, PartialConfig } from './config'
-import type { CallbackFn } from './file-handlers'
-import { getAsyncFunctionConstructor } from './polyfills'
-export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn) => string
+import type { EtaConfig, PartialConfig } from "./config.js";
+import type { CallbackFn } from "./file-handlers.js";
+import { getAsyncFunctionConstructor } from "./polyfills.js";
+export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn) => string;
 
 /* END TYPES */
 
@@ -28,33 +28,33 @@ export type TemplateFunction = (data: object, config: EtaConfig, cb?: CallbackFn
  */
 
 export default function compile(str: string, config?: PartialConfig): TemplateFunction {
-  const options: EtaConfig = getConfig(config || {})
+  const options: EtaConfig = getConfig(config || {});
 
   /* ASYNC HANDLING */
   // The below code is modified from mde/ejs. All credit should go to them.
-  const ctor = options.async ? (getAsyncFunctionConstructor() as FunctionConstructor) : Function
+  const ctor = options.async ? (getAsyncFunctionConstructor() as FunctionConstructor) : Function;
   /* END ASYNC HANDLING */
 
   try {
     return new ctor(
       options.varName,
-      'E', // EtaConfig
-      'cb', // optional callback
+      "E", // EtaConfig
+      "cb", // optional callback
       compileToString(str, options)
-    ) as TemplateFunction // eslint-disable-line no-new-func
+    ) as TemplateFunction; // eslint-disable-line no-new-func
   } catch (e) {
     if (e instanceof SyntaxError) {
       throw EtaErr(
-        'Bad template syntax\n\n' +
+        "Bad template syntax\n\n" +
           e.message +
-          '\n' +
-          Array(e.message.length + 1).join('=') +
-          '\n' +
+          "\n" +
+          Array(e.message.length + 1).join("=") +
+          "\n" +
           compileToString(str, options) +
-          '\n' // This will put an extra newline before the callstack for extra readability
-      )
+          "\n" // This will put an extra newline before the callstack for extra readability
+      );
     } else {
-      throw e
+      throw e;
     }
   }
 }

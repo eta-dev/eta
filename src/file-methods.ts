@@ -1,5 +1,5 @@
-export { readFileSync, existsSync } from 'fs'
+export { readFileSync, existsSync } from "fs";
 
-import * as path from 'path'
+import * as path from "path";
 
-export { path }
+export { path };
