@@ -13,21 +13,19 @@
     "typescript types"
   ],
   "homepage": "https://eta.js.org",
-  "type": "module",
+  "type": "commonjs",
   "main": "./dist/eta.umd.js",
-  "module": "./dist/eta.module.js",
   "umd:main": "./dist/eta.umd.js",
   "unpkg": "./dist/browser.min.umd.js",
+  "module": "./dist/eta.module.mjs",
   "types": "./dist/types/eta.d.ts",
   "source": "src/index.ts",
   "exports": {
-    ".": {
-      "types": "./dist/types/eta.d.ts",
-      "browser": "./dist/browser.min.umd.js",
-      "require": "./dist/eta.umd.js",
-      "import": "./dist/eta.module.js",
-      "default": "./dist/eta.umd.js"
-    }
+    "types": "./dist/types/eta.d.ts",
+    "import": "./dist/eta.module.mjs",
+    "require": "./dist/eta.umd.js",
+    "default": "./dist/eta.umd.js",
+    "browser": "./dist/browser.min.umd.js"
   },
   "sideEffects": false,
   "files": [
