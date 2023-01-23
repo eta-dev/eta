@@ -18,10 +18,10 @@
   "umd:main": "./dist/eta.umd.js",
   "unpkg": "./dist/browser.min.umd.js",
   "module": "./dist/eta.module.mjs",
-  "types": "./dist/types/eta.d.ts",
+  "types": "./dist/types/index.d.ts",
   "source": "src/index.ts",
   "exports": {
-    "types": "./dist/types/eta.d.ts",
+    "types": "./dist/types/index.d.ts",
     "browser": "./dist/browser.min.umd.js",
     "require": "./dist/eta.umd.js",
     "import": "./dist/eta.module.mjs",
