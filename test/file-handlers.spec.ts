@@ -67,7 +67,7 @@ describe("Simple renderFile tests", () => {
     templates.define(fakeFilePath, compile("This template does not exist"));
 
     // renderFile should just look straight in the cache for the template
-    renderFile(fakeFilePath, { cache: true }, function (_err: Error | null, res?: string) {
+    renderFile(fakeFilePath, {}, { cache: true }, function (_err: Error | null, res?: string) {
       expect(res).toEqual("This template does not exist");
     });
   });
@@ -77,7 +77,6 @@ describe("Simple renderFile tests", () => {
       filePath,
       {
         name: "<p>Ben</p>",
-        cache: true,
         settings: {
           views: [path.join(__dirname, "templates"), path.join(__dirname, "othertemplates")],
           "view cache": true,
@@ -105,9 +104,9 @@ describe("File location tests", () => {
 
 describe("renderFile error tests", () => {
   it("render file with callback works on error", (done) => {
-    function cb(err: Error, _res?: string) {
+    function cb(err: Error | null, _res?: string) {
       expect(err).toBeTruthy();
-      expect(err.message).toMatch(
+      expect(err?.message).toMatch(
         buildRegEx(`
 var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
 function layout(p,d){__l=p;__lP=d}
@@ -120,7 +119,7 @@ if(cb){cb(null,tR)} return tR
       done();
     }
 
-    renderFile(errFilePath, { name: "Ada Lovelace", async: true }, cb);
+    renderFile(errFilePath, { name: "Ada Lovelace" }, { async: true }, cb);
   });
 
   test("throws with bad inner JS syntax using Promises", async () => {
