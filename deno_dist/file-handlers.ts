@@ -4,7 +4,6 @@ import EtaErr from "./err.ts";
 import compile from "./compile.ts";
 import { getConfig } from "./config.ts";
 import { getPath, readFile } from "./file-utils.ts";
-import { copyProps } from "./utils.ts";
 import { promiseImpl } from "./polyfills.ts";
 
 /* TYPES */
@@ -259,13 +258,6 @@ function renderFile(
       }
       if (data.settings["view cache"]) {
         renderConfig.cache = true;
-      }
-      // Undocumented after Express 2, but still usable, esp. for
-      // items that are unsafe to be passed along with data, like `root`
-      const viewOpts = data.settings["view options"];
-
-      if (viewOpts) {
-        copyProps(renderConfig, viewOpts);
       }
     }
   }
