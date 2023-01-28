@@ -4,7 +4,6 @@ import EtaErr from "./err.ts";
 import compile from "./compile.ts";
 import { getConfig } from "./config.ts";
 import { getPath, readFile } from "./file-utils.ts";
-import { copyProps } from "./utils.ts";
 import { promiseImpl } from "./polyfills.ts";
 
 /* TYPES */
@@ -19,10 +18,6 @@ import type { TemplateFunction } from "./compile.ts";
 export type CallbackFn = (err: Error | null, str?: string) => void;
 
 interface DataObj {
-  /** Express.js settings may be stored here */
-  settings?: {
-    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-  };
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -173,8 +168,7 @@ function includeFile(
  *
  * This can take two different function signatures:
  *
- * - `renderFile(filename, dataAndConfig, [cb])`
- *   - Eta will merge `dataAndConfig` into `eta.config`
+ * - `renderFile(filename, data, [cb])`
  * - `renderFile(filename, data, [config], [cb])`
  *
  * Note that renderFile does not immediately return the rendered result. If you pass in a callback function, it will be called with `(err, res)`. Otherwise, `renderFile` will return a `Promise` that resolves to the render result.
@@ -189,7 +183,6 @@ function includeFile(
  *
  * let rendered = await eta.renderFile("./template.eta", data, {cache: true})
  *
- * let rendered = await eta.renderFile("./template", {...data, cache: true})
  * ```
  */
 
@@ -224,14 +217,13 @@ function renderFile(
   /*
   Here we have some function overloading.
   Essentially, the first 2 arguments to renderFile should always be the filename and data
-  However, with Express, configuration options will be passed along with the data.
-  Thus, Express will call renderFile with (filename, dataAndOptions, cb)
-  And we want to also make (filename, data, options, cb) available
+  Express will call renderFile with (filename, data, cb)
+  We also want to make (filename, data, options, cb) available
   */
 
   let renderConfig: EtaConfigWithFilename;
   let callback: CallbackFn | undefined;
-  data = data || {}; // If data is undefined, we don't want accessing data.settings to error
+  data = data || {};
 
   // First, assign our callback function to `callback`
   // We can leave it undefined if neither parameter is a function;
@@ -250,26 +242,8 @@ function renderFile(
       (config as PartialConfig) || {},
     ) as EtaConfigWithFilename;
   } else {
-    // Otherwise, get the config from the data object
-    // And then grab some config options from data.settings
-    // Which is where Express sometimes stores them
-    renderConfig = getConfig(data as PartialConfig) as EtaConfigWithFilename;
-    if (data.settings) {
-      // Pull a few things from known locations
-      if (data.settings.views) {
-        renderConfig.views = data.settings.views;
-      }
-      if (data.settings["view cache"]) {
-        renderConfig.cache = true;
-      }
-      // Undocumented after Express 2, but still usable, esp. for
-      // items that are unsafe to be passed along with data, like `root`
-      const viewOpts = data.settings["view options"];
-
-      if (viewOpts) {
-        copyProps(renderConfig, viewOpts);
-      }
-    }
+    // Otherwise, get the default config
+    renderConfig = getConfig({}) as EtaConfigWithFilename;
   }
 
   // Set the filename option on the template
@@ -286,8 +260,7 @@ function renderFile(
  *
  * This can take two different function signatures:
  *
- * - `renderFile(filename, dataAndConfig, [cb])`
- *   - Eta will merge `dataAndConfig` into `eta.config`
+ * - `renderFile(filename, data, [cb])`
  * - `renderFile(filename, data, [config], [cb])`
  *
  * Note that renderFile does not immediately return the rendered result. If you pass in a callback function, it will be called with `(err, res)`. Otherwise, `renderFile` will return a `Promise` that resolves to the render result.
@@ -302,7 +275,6 @@ function renderFile(
  *
  * let rendered = await eta.renderFile("./template.eta", data, {cache: true})
  *
- * let rendered = await eta.renderFile("./template", {...data, cache: true})
  * ```
  */
 
