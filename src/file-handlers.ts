@@ -14,10 +14,6 @@ import type { TemplateFunction } from "./compile.js";
 export type CallbackFn = (err: Error | null, str?: string) => void;
 
 interface DataObj {
-  /** Express.js settings may be stored here */
-  settings?: {
-    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-  };
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -189,14 +185,13 @@ function renderFile(
   /*
   Here we have some function overloading.
   Essentially, the first 2 arguments to renderFile should always be the filename and data
-  However, with Express, configuration options will be passed in data.settings
-  Thus, Express will call renderFile with (filename, dataAndOptions, cb)
-  And we want to also make (filename, data, options, cb) available
+  Express will call renderFile with (filename, dataAndOptions, cb)
+  We also want to make (filename, data, options, cb) available
   */
 
   let renderConfig: EtaConfigWithFilename;
   let callback: CallbackFn | undefined;
-  data = data || {}; // If data is undefined, we don't want accessing data.settings to error
+  data = data || {};
 
   // First, assign our callback function to `callback`
   // We can leave it undefined if neither parameter is a function;
@@ -213,19 +208,8 @@ function renderFile(
   if (typeof config === "object") {
     renderConfig = getConfig((config as PartialConfig) || {}) as EtaConfigWithFilename;
   } else {
-    // Otherwise, get the config
-    // And then grab some config options from data.settings
-    // Which is where Express sometimes stores them
+    // Otherwise, get the default config
     renderConfig = getConfig({}) as EtaConfigWithFilename;
-    if (data.settings) {
-      // Pull a few things from known locations
-      if (data.settings.views) {
-        renderConfig.views = data.settings.views;
-      }
-      if (data.settings["view cache"]) {
-        renderConfig.cache = true;
-      }
-    }
   }
 
   // Set the filename option on the template
