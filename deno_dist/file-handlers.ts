@@ -217,7 +217,7 @@ function renderFile(
   /*
   Here we have some function overloading.
   Essentially, the first 2 arguments to renderFile should always be the filename and data
-  Express will call renderFile with (filename, dataAndOptions, cb)
+  Express will call renderFile with (filename, data, cb)
   We also want to make (filename, data, options, cb) available
   */
 
