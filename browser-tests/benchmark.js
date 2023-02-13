@@ -16,399 +16,399 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-Eta.configure({
-  autoTrim: false
-})
+eta.configure({
+  autoTrim: false,
+});
 
-Sqrl.defaultConfig.autoTrim = false
+Sqrl.defaultConfig.autoTrim = false;
 
-var templateList = {}
+var templateList = {};
 
-templateList['template'] = `
+templateList["template"] = `
 <ul>
     <% for (var i = 0, l = list.length; i < l; i ++) { %>
         <li>User: <%= list[i].user %> / Web Site: <%= list[i].site %></li>
     <% } %>
-</ul>`
+</ul>`;
 
-templateList['template-raw'] = `
+templateList["template-raw"] = `
 <ul>
     <% for (var i = 0, l = list.length; i < l; i ++) { %>
         <li>User: <%- list[i].user %> / Web Site: <%- list[i].site %></li>
     <% } %>
-</ul>`
+</ul>`;
 
-templateList['template-fast-mode'] = `
+templateList["template-fast-mode"] = `
 <ul>
     <% for (var i = 0, l = $data.list.length; i < l; i ++) { %>
         <li>User: <%= $data.list[i].user %> / Web Site: <%= $data.list[i].site %></li>
     <% } %>
-</ul>`
+</ul>`;
 
-templateList['template-fast-mode-raw'] = `
+templateList["template-fast-mode-raw"] = `
 <ul>
     <% for (var i = 0, l = $data.list.length; i < l; i ++) { %>
         <li>User: <%- $data.list[i].user %> / Web Site: <%- $data.list[i].site %></li>
     <% } %>
-</ul>`
+</ul>`;
 
-templateList['eta'] = `
+templateList["eta"] = `
 <ul>
     <% for (var i = 0, ln = it.list.length; i < ln; i ++) { %>
         <li>User: <%= it.list[i].user %> / Web Site: <%= it.list[i].site %></li>
     <% } %>
-</ul>`
+</ul>`;
 
-templateList['pug'] = `
+templateList["pug"] = `
 ul
     -for (var i = 0, l = list.length; i < l; i ++) {
         li User: #{list[i].user} / Web Site: #{list[i].site}
-    -}`
+    -}`;
 
-templateList['pug-raw'] = `
+templateList["pug-raw"] = `
 ul
     -for (var i = 0, l = list.length; i < l; i ++) {
         li User: !{list[i].user} / Web Site: !{list[i].site}
-    -}`
+    -}`;
 
-templateList['dot'] = `
+templateList["dot"] = `
 <ul>
     {{ for (var i = 0, l = it.list.length; i < l; i ++) { }}
         <li>User: {{!it.list[i].user}} / Web Site: {{!it.list[i].site}}</li>
     {{ } }}
-</ul>`
+</ul>`;
 
-templateList['dot-raw'] = `
+templateList["dot-raw"] = `
 <ul>
     {{ for (var i = 0, l = it.list.length; i < l; i ++) { }}
         <li>User: {{=it.list[i].user}} / Web Site: {{=it.list[i].site}}</li>
     {{ } }}
-</ul>`
+</ul>`;
 
-templateList['mustache'] = `
+templateList["mustache"] = `
 <ul>
     {{#list}}
         <li>User: {{user}} / Web Site: {{site}}</li>
     {{/list}}
-</ul>`
+</ul>`;
 
-templateList['mustache-raw'] = `
+templateList["mustache-raw"] = `
 <ul>
     {{#list}}
         <li>User: {{{user}}} / Web Site: {{{site}}}</li>
     {{/list}}
-</ul>`
+</ul>`;
 
-templateList['handlebars'] = `
+templateList["handlebars"] = `
 <ul>
     {{#list}}
         <li>User: {{user}} / Web Site: {{site}}</li>
     {{/list}}
-</ul>`
+</ul>`;
 
-templateList['handlebars-raw'] = `
+templateList["handlebars-raw"] = `
 <ul>
     {{#list}}
         <li>User: {{{user}}} / Web Site: {{{site}}}</li>
     {{/list}}
-</ul>`
+</ul>`;
 
-templateList['squirrelly'] = `
+templateList["squirrelly"] = `
 <ul>
 {{@each(it.list) => val}}
     <li>User: {{val.user}} / Web Site: {{val.site}}</li>
 {{/each}}
-</ul>`
+</ul>`;
 
-templateList['squirrelly-fast'] = `
+templateList["squirrelly-fast"] = `
 <ul>
 {{! for (var i = 0, l = it.list.length; i < l; i ++) { }}
     <li>User: {{it.list[i].user}} / Web Site: {{it.list[i].site}}</li>
 {{! } }}
-</ul>`
+</ul>`;
 
-templateList['swig'] = `
+templateList["swig"] = `
 <ul>
     {% for key, value in list %}
         <li>User: {{value.user}} / Web Site: {{value.site}}</li>
     {% endfor %}
-</ul>`
+</ul>`;
 
-templateList['swig-raw'] = `
+templateList["swig-raw"] = `
 <ul>
     {% for key, value in list %}
         {% autoescape false %}<li>User: {{value.user}} / Web Site: {{value.site}}</li>{% endautoescape %}
     {% endfor %}
-</ul>`
+</ul>`;
 
 /* ----------------- */
 
 var config = {
   length: 20,
   calls: 6000,
-  escape: true
-}
+  escape: true,
+};
 
 function getParameterByName(name) {
-  var url = window.location.href
-  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')
-  var results = regex.exec(url)
-  if (!results) return null
-  if (!results[2]) return ''
-  return decodeURIComponent(results[2].replace(/\+/g, ' '))
+  var url = window.location.href;
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+  var results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return "";
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 if (window.location.search) {
-  if (getParameterByName('length')) {
-    config.length = Number(getParameterByName('length'))
+  if (getParameterByName("length")) {
+    config.length = Number(getParameterByName("length"));
   }
-  if (getParameterByName('calls')) {
-    config.calls = Number(getParameterByName('calls'))
+  if (getParameterByName("calls")) {
+    config.calls = Number(getParameterByName("calls"));
   }
-  if (getParameterByName('escape')) {
-    config.escape = getParameterByName('escape') === 'true'
+  if (getParameterByName("escape")) {
+    config.escape = getParameterByName("escape") === "true";
   }
 }
 
 // 制造测试数据
 var data = {
-  list: []
-}
+  list: [],
+};
 
 for (var i = 0; i < config.length; i++) {
   data.list.push({
     index: i,
     user: '<strong style="color:red">糖饼</strong>',
-    site: 'https://github.com/aui',
-    weibo: 'http://weibo.com/planeart',
-    QQweibo: 'http://t.qq.com/tangbin'
-  })
+    site: "https://github.com/aui",
+    weibo: "http://weibo.com/planeart",
+    QQweibo: "http://t.qq.com/tangbin",
+  });
 }
 
 // 待测试的引擎列表
 var testList = [
   {
-    name: 'art-template',
+    name: "art-template",
     tester: function () {
-      var id = config.escape ? 'template' : 'template-raw'
-      var source = templateList[id]
+      var id = config.escape ? "template" : "template-raw";
+      var source = templateList[id];
       //   console.log(fn.toString())
-      var html = ''
-      var fn = template.compile(source)
+      var html = "";
+      var fn = template.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data)
+        html = fn(data);
       }
-      return html
-    }
+      return html;
+    },
   },
 
   {
-    name: 'art-template / fast mode',
+    name: "art-template / fast mode",
     tester: function () {
-      var id = config.escape ? 'template-fast-mode' : 'template-fast-mode-raw'
-      var source = templateList[id]
-      var html = ''
-      var fn = template.compile(source)
+      var id = config.escape ? "template-fast-mode" : "template-fast-mode-raw";
+      var source = templateList[id];
+      var html = "";
+      var fn = template.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data)
+        html = fn(data);
       }
-      return html
-    }
+      return html;
+    },
   },
 
   {
-    name: 'lodash.template',
+    name: "lodash.template",
     tester: function () {
-      var id = config.escape ? 'template' : 'template-raw'
-      var source = templateList[id]
-      var html = ''
-      var fn = _.template(source)
+      var id = config.escape ? "template" : "template-raw";
+      var source = templateList[id];
+      var html = "";
+      var fn = _.template(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data)
+        html = fn(data);
       }
-      return html
-    }
+      return html;
+    },
   },
 
   {
-    name: 'doT',
+    name: "doT",
     tester: function () {
-      var id = config.escape ? 'dot' : 'dot-raw'
-      var source = templateList[id]
-      var html = ''
-      var fn = doT.template(source)
+      var id = config.escape ? "dot" : "dot-raw";
+      var source = templateList[id];
+      var html = "";
+      var fn = doT.template(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data)
+        html = fn(data);
       }
-      return html
-    }
+      return html;
+    },
   },
 
   {
-    name: 'ejs',
+    name: "ejs",
     tester: function () {
-      var id = config.escape ? 'template' : 'template-raw'
-      var source = templateList[id]
-      var html = ''
-      var fn = ejs.compile(source)
+      var id = config.escape ? "template" : "template-raw";
+      var source = templateList[id];
+      var html = "";
+      var fn = ejs.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data)
+        html = fn(data);
       }
-      return html
-    }
+      return html;
+    },
   },
 
   {
-    name: 'Handlebars',
+    name: "Handlebars",
     tester: function () {
-      var id = config.escape ? 'handlebars' : 'handlebars-raw'
-      var source = templateList[id]
-      var html = ''
-      var fn = Handlebars.compile(source)
+      var id = config.escape ? "handlebars" : "handlebars-raw";
+      var source = templateList[id];
+      var html = "";
+      var fn = Handlebars.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data)
+        html = fn(data);
       }
-      return html
-    }
+      return html;
+    },
   },
   {
-    name: 'Eta',
+    name: "Eta",
     tester: function () {
       if (!config.escape) {
-        Eta.defaultConfig.autoEscape = false
+        eta.defaultConfig.autoEscape = false;
       }
-      var source = templateList['eta']
+      var source = templateList["eta"];
       //   console.log(fn.toString())
-      var html = ''
-      data.$name = 'temp'
-      var fn = Eta.compile(source)
+      var html = "";
+      data.$name = "temp";
+      var fn = eta.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data, Eta.config)
+        html = fn(data, eta.config);
       }
-      return html
-    }
+      return html;
+    },
   },
   {
-    name: 'Squirrelly',
+    name: "Squirrelly",
     tester: function () {
       if (!config.escape) {
-        Sqrl.defaultConfig.autoEscape = false
+        Sqrl.defaultConfig.autoEscape = false;
       }
-      var source = templateList['squirrelly']
+      var source = templateList["squirrelly"];
       //   console.log(fn.toString())
-      var html = ''
-      data.$name = 'temp'
-      var fn = Sqrl.compile(source)
+      var html = "";
+      data.$name = "temp";
+      var fn = Sqrl.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data, Sqrl.defaultConfig)
+        html = fn(data, Sqrl.defaultConfig);
       }
-      return html
-    }
+      return html;
+    },
   },
   {
-    name: 'Squirrelly - Fast',
+    name: "Squirrelly - Fast",
     tester: function () {
       if (!config.escape) {
-        Sqrl.defaultConfig.autoEscape = false
+        Sqrl.defaultConfig.autoEscape = false;
       }
-      var source = templateList['squirrelly-fast']
+      var source = templateList["squirrelly-fast"];
       //   console.log(fn.toString())
-      var html = ''
-      data.$name = 'temp'
-      var fn = Sqrl.compile(source)
+      var html = "";
+      data.$name = "temp";
+      var fn = Sqrl.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data, Sqrl.defaultConfig)
+        html = fn(data, Sqrl.defaultConfig);
       }
-      return html
-    }
+      return html;
+    },
   },
   {
-    name: 'Jade / pug',
+    name: "Jade / pug",
     tester: function () {
-      var id = config.escape ? 'pug' : 'pug-raw'
-      var source = templateList[id]
-      var pug = require('pug')
-      var html = ''
-      var fn = pug.compile(source)
+      var id = config.escape ? "pug" : "pug-raw";
+      var source = templateList[id];
+      var pug = require("pug");
+      var html = "";
+      var fn = pug.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data)
+        html = fn(data);
       }
-      return html
-    }
+      return html;
+    },
   },
   {
-    name: 'Mustache',
+    name: "Mustache",
     tester: function () {
-      var id = config.escape ? 'mustache' : 'mustache-raw'
-      var source = templateList[id]
-      var html = ''
-      Mustache.templateCache = undefined
+      var id = config.escape ? "mustache" : "mustache-raw";
+      var source = templateList[id];
+      var html = "";
+      Mustache.templateCache = undefined;
 
       for (var i = 0; i < config.calls; i++) {
         // mustache caches the template after the first parse
-        html = Mustache.render(source, data)
+        html = Mustache.render(source, data);
       }
-      return html
-    }
+      return html;
+    },
   },
 
   {
-    name: 'swig',
+    name: "swig",
     tester: function () {
-      var id = config.escape ? 'swig' : 'swig-raw'
-      var source = templateList[id]
-      var html = ''
-      var fn = swig.compile(source)
+      var id = config.escape ? "swig" : "swig-raw";
+      var source = templateList[id];
+      var html = "";
+      var fn = swig.compile(source);
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data)
+        html = fn(data);
       }
-      return html
-    }
-  }
-]
+      return html;
+    },
+  },
+];
 
 Highcharts.setOptions({
   colors: [
-    '#EF6F65',
-    '#F3AB63',
-    '#F8D56F',
-    '#99DD7A',
-    '#74BBF3',
-    '#CB93E0',
-    '#A2A2A4',
-    '#E1AC65',
-    '#6AF9C4'
-  ]
-})
+    "#EF6F65",
+    "#F3AB63",
+    "#F8D56F",
+    "#99DD7A",
+    "#74BBF3",
+    "#CB93E0",
+    "#A2A2A4",
+    "#E1AC65",
+    "#6AF9C4",
+  ],
+});
 
 var runTest = function (callback) {
   var list = testList.filter(function (test) {
-    return !config.escape || test.supportEscape !== false
-  })
+    return !config.escape || test.supportEscape !== false;
+  });
 
   var Timer = function () {
-    this.startTime = window.performance.now()
-  }
+    this.startTime = window.performance.now();
+  };
 
   Timer.prototype.stop = function () {
-    return window.performance.now() - this.startTime
-  }
+    return window.performance.now() - this.startTime;
+  };
 
-  var colors = Highcharts.getOptions().colors
-  var categories = []
+  var colors = Highcharts.getOptions().colors;
+  var categories = [];
 
   for (var i = 0; i < list.length; i++) {
-    categories.push(list[i].name)
+    categories.push(list[i].name);
   }
 
   var chart = new Highcharts.Chart({
     chart: {
       animation: {
-        duration: 150
+        duration: 150,
       },
-      renderTo: 'test-container',
+      renderTo: "test-container",
       height: categories.length * 32,
-      type: 'bar'
+      type: "bar",
     },
 
     title: false,
@@ -419,87 +419,87 @@ var runTest = function (callback) {
 
     xAxis: {
       categories: categories,
-      labels: {}
+      labels: {},
     },
 
     yAxis: {
       min: 0,
       title: {
-        text: 'Time'
-      }
+        text: "Time",
+      },
     },
 
     legend: {
-      enabled: false
+      enabled: false,
     },
 
     tooltip: {
       formatter: function () {
-        return '<b>' + this.x + '</b><br/>' + this.y + ' ops/sec'
-      }
+        return "<b>" + this.x + "</b><br/>" + this.y + " ops/sec";
+      },
     },
 
     credits: {
-      enabled: false
+      enabled: false,
     },
     plotOptions: {
       bar: {
         dataLabels: {
           enabled: true,
           formatter: function () {
-            return this.y + ' ops/sec'
-          }
-        }
-      }
+            return this.y + " ops/sec";
+          },
+        },
+      },
     },
     series: [
       {
-        data: []
-      }
-    ]
-  })
+        data: [],
+      },
+    ],
+  });
 
   function tester(target) {
-    var time = new Timer()
-    var html = target.tester()
-    var endTime = time.stop()
-    console.log(target.name + '------------------\n', html)
+    var time = new Timer();
+    var html = target.tester();
+    var endTime = time.stop();
+    console.log(target.name + "------------------\n", html);
 
-    var timeInSecs = endTime / 1000
-    var opsPerSec = Math.round(config.calls / timeInSecs)
+    var timeInSecs = endTime / 1000;
+    var opsPerSec = Math.round(config.calls / timeInSecs);
 
     chart.series[0].addPoint({
       color: colors.shift(),
-      y: opsPerSec
-    })
+      y: opsPerSec,
+    });
 
     if (!list.length) {
-      callback()
-      return
+      callback();
+      return;
     }
 
-    target = list.shift()
+    target = list.shift();
 
     setTimeout(function () {
-      tester(target)
-    }, 500)
+      tester(target);
+    }, 500);
   }
 
-  var target = list.shift()
-  tester(target)
-}
+  var target = list.shift();
+  tester(target);
+};
 
-window['restart'] = function (key, value) {
-  config[key] = value
-}
+window["restart"] = function (key, value) {
+  config[key] = value;
+};
 
 function getLink() {
   window.location.search =
-    'length=' + config.length + '&calls=' + config.calls + '&escape=' + config.escape
+    "length=" + config.length + "&calls=" + config.calls + "&escape=" + config.escape;
 }
 
-window['app'] = function (selector) {
-  var app = document.querySelector(selector)
+window["app"] = function (selector) {
+  var app = document.querySelector(selector);
   var body = `
 <h1>Eta Browser Benchmarks</h1>
 <br>
@@ -527,24 +527,24 @@ window['app'] = function (selector) {
     <p class="item">
     </p>
 </div>
-<div id="test-container" style="min-width: 400px; margin: 0 auto"></div>`
+<div id="test-container" style="min-width: 400px; margin: 0 auto"></div>`;
 
-  var data = config
-  data.testList = testList
-  app.innerHTML = Sqrl.render(body, data, { name: 'body' })
+  var data = config;
+  data.testList = testList;
+  app.innerHTML = Sqrl.render(body, data, { name: "body" });
 
-  document.getElementById('get-link').addEventListener('click', getLink)
+  document.getElementById("get-link").addEventListener("click", getLink);
 
-  document.getElementById('button-start').onclick = function () {
-    var elem = this
-    this.disabled = true
+  document.getElementById("button-start").onclick = function () {
+    var elem = this;
+    this.disabled = true;
     runTest(function () {
-      elem.style.display = 'none'
-      document.getElementById('button-restart').style.display = ''
-    })
-  }
+      elem.style.display = "none";
+      document.getElementById("button-restart").style.display = "";
+    });
+  };
 
-  document.getElementById('button-restart').onclick = function () {
-    window.location.reload()
-  }
-}
+  document.getElementById("button-restart").onclick = function () {
+    window.location.reload();
+  };
+};

@@ -10,7 +10,7 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
     <meta name="description" content="Test out Eta templates in the browser here" />
-    <script src="../dist/browser/eta.dev.js"></script>
+    <script src="../dist/browser.min.umd.js"></script>
     <style>
       body {
         background-color: #f4f4f4;
@@ -178,7 +178,7 @@ Partial: <%~ include("mypartial") %>
         >
       </div>
       <div class="functiongroup">
-        <h4>Eta.compile()</h4>
+        <h4>eta.compile()</h4>
         <div id="function"></div>
       </div>
       <div style="clear: both"></div>
@@ -200,56 +200,56 @@ Partial: <%~ include("mypartial") %>
       </div>
     </div>
     <script>
-      /* global Eta */
+      /* global eta */
       window.onload = function () {
-        Eta.templates.define('mypartial', Eta.compile('This is a partial'))
+        eta.templates.define("mypartial", eta.compile("This is a partial"));
 
         function escape(str) {
           // To handle escaping for the function result
           var escMap = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;',
-            '/': '&#x2F;',
-          }
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+            "/": "&#x2F;",
+          };
 
           function replaceChar(s) {
-            return escMap[s]
+            return escMap[s];
           }
-          var newStr = String(str)
+          var newStr = String(str);
           if (/[&<>"'/]/.test(newStr)) {
-            return newStr.replace(/[&<>"'/]/g, replaceChar)
+            return newStr.replace(/[&<>"'/]/g, replaceChar);
           } else {
-            return newStr
+            return newStr;
           }
         }
 
         function render() {
-          console.clear()
-          var options = JSON.parse('{' + document.getElementById('data').value + '}')
-          console.log(JSON.stringify(options))
-          var template = document.getElementById('template').value
+          console.clear();
+          var options = JSON.parse("{" + document.getElementById("data").value + "}");
+          console.log(JSON.stringify(options));
+          var template = document.getElementById("template").value;
           try {
-            var functionResult = Eta.compile(template).toString()
-            document.getElementById('function').innerHTML = escape(functionResult)
-            if (!Eta.defaultConfig.async) {
-              document.getElementById('result').innerHTML = Eta.render(template, options)
+            var functionResult = eta.compile(template).toString();
+            document.getElementById("function").innerHTML = escape(functionResult);
+            if (!eta.defaultConfig.async) {
+              document.getElementById("result").innerHTML = eta.render(template, options);
             } else {
-              Eta.render(template, options).then(function (res) {
-                document.getElementById('result').innerHTML = res
-              })
+              eta.render(template, options).then(function (res) {
+                document.getElementById("result").innerHTML = res;
+              });
             }
-            console.log(Eta.render(template, options))
+            console.log(eta.render(template, options));
           } catch (ex) {
-            console.error(ex.message)
+            console.error(ex.message);
           }
         }
-        render()
-        document.getElementById('template').addEventListener('input', render)
-        document.getElementById('data').addEventListener('input', render)
-      }
+        render();
+        document.getElementById("template").addEventListener("input", render);
+        document.getElementById("data").addEventListener("input", render);
+      };
     </script>
   </body>
 </html>

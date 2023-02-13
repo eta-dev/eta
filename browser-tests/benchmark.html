@@ -55,7 +55,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       body {
         background: #fff;
         font-size: 16px;
-        font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+        font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
         color: #444;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
@@ -70,7 +70,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         padding: 0 60px;
         max-width: 800px;
       }
-      #page-rendering-test #content-wrap input[type='number'] {
+      #page-rendering-test #content-wrap input[type="number"] {
         width: 6em;
         border-bottom: 1px solid #003cb1;
       }
@@ -102,7 +102,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       <script src="https://unpkg.com/handlebars@4.7.7/dist/handlebars.min.js"></script>
       <!-- This is a fallback, since ../dist/browser/eta.min.js is not uploaded to GitHub -->
       <script src="https://unpkg.com/eta"></script>
-      <script src="../dist/browser/eta.min.js"></script>
+      <script src="../dist/browser.min.umd.js"></script>
       <script src="https://unpkg.com/squirrelly@8.0.8"></script>
       <script src="https://unpkg.com/mustache@4.2.0/mustache.min.js"></script>
       <script src="https://pugjs.org/js/pug.js"></script>
@@ -111,7 +111,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
       <script src="./benchmark.js"></script>
       <script>
-        app('#app')
+        app("#app");
       </script>
     </div>
   </body>
