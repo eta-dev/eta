@@ -170,6 +170,7 @@ An official Eta CLI exists called [etajs-cli](https://github.com/eta-dev/etajs-c
     <b>Webpack</b>
   </summary>
 
+#### Using an HTML loader
 Currently there is no official Webpack integration but [@clshortfuse](https://github.com/clshortfuse) shared the loader he uses:
 
 ```javascript
@@ -182,6 +183,75 @@ Currently there is no official Webpack integration but [@clshortfuse](https://gi
   },
 }
 ```
+
+#### Using the HTML bundler Webpack plugin
+The [html-bundler-webpack-plugin](https://github.com/webdiscus/html-bundler-webpack-plugin) supports EJS-like templates. 
+This plugin use the `Eta` in the preprocessor by default.
+
+For example, there is a template _./src/views/about/index.html_:
+```html
+<html>
+  <head>
+    <title><%= title %></title>
+    <link href="./style.scss" rel="stylesheet">
+    <script src="./main.js" defer="defer"></script>
+  </head>
+<body>
+  <h1><%= headline %></h1>
+  <ul class="people">
+    <% for (let i = 0; i < people.length; i++) {%>
+    <li><%= people[i] %>></li>
+    <% } %>
+  </ul>
+</body>
+</html>
+```
+
+In Webpack config, add the template file in the `entry` option of the plugin:
+```js
+const path = require('path');
+const HtmlBundlerPlugin = require('html-bundler-webpack-plugin');
+
+module.exports = {
+  plugins: [
+    new HtmlBundlerPlugin({
+      entry: {
+        // define templates here
+        'pages/about': { // => dist/pages/about.html (the key is output filename w/o .html)
+          import: 'src/views/about/index.html',
+          data: {
+            // pass variables into template
+            title: 'About',
+            headline: 'Breaking Bad',
+            people: ['Walter White', 'Jesse Pinkman'],
+          }
+        },
+      },
+      js: {
+        filename: 'js/[name].[contenthash:8].js', // output filename of extracted JS
+      },
+      css: {
+        filename: 'css/[name].[contenthash:8].css', // output filename of extracted CSS
+      },
+    }),
+  ],
+
+  module: {
+    rules: [
+      {
+        test: /\.(css|sass|scss)$/,
+        use: ['css-loader', 'sass-loader'],
+      },
+    ],
+  },
+};
+```
+
+> **Note**
+>
+> No additional template loader required. The plugin handels templates with Eta templating engine automatically.
+
+
 
 </details>
   
@@ -260,6 +330,7 @@ To be added
 
 - [Docusaurus v2](https://v2.docusaurus.io): open-source documentation framework that uses Eta to generate a SSR build
 - [swagger-typescript-api](https://github.com/acacode/swagger-typescript-api): Open source typescript api codegenerator from Swagger. Uses Eta as codegenerator by templates
+- [html-bundler-webpack-plugin](https://github.com/webdiscus/html-bundler-webpack-plugin): Webpack plugin make easily to bundle HTML pages from templates, source styles and scripts
 - [Add yours!](https://github.com/eta-dev/eta/edit/master/README.md)
 
 ## Contributors
