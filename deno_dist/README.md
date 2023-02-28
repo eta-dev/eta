@@ -12,7 +12,9 @@
 </p>
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[logo]: https://img.shields.io/badge/all_contributors-10-orange.svg 'Number of contributors on All-Contributors'
+
+[logo]: https://img.shields.io/badge/all_contributors-10-orange.svg "Number of contributors on All-Contributors"
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <span align="center">
@@ -37,7 +39,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
 - ⚡️ Written in TypeScript
 - ✨ Deno support (+ Node and browser)
 - 🚀 Super Fast
-  - Check out [these benchmarks](https://rawgit.com/eta-dev/eta/master/browser-tests/benchmark.html)
+  - Check out [these benchmarks](https://raw.githack.com/eta-dev/eta/master/browser-tests/benchmark.html)
 - 🔧 Configurable
   - Plugins, custom delimiters, caching
 - 🔨 Powerful
@@ -141,7 +143,7 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
     <b>Visual Studio Code</b>
   </summary>
 
-  [@shadowtime2000](https://github.com/shadowtime2000) created [eta-vscode](https://marketplace.visualstudio.com/items?itemName=shadowtime2000.eta-vscode).
+[@shadowtime2000](https://github.com/shadowtime2000) created [eta-vscode](https://marketplace.visualstudio.com/items?itemName=shadowtime2000.eta-vscode).
 
 </details>
 
@@ -150,7 +152,7 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
     <b>ESLint</b>
   </summary>
 
-  [eslint-plugin-eta](https://github.com/eta-dev/eslint-plugin-eta) was created to provide an ESLint processor so you can lint your Eta templates.
+[eslint-plugin-eta](https://github.com/eta-dev/eslint-plugin-eta) was created to provide an ESLint processor so you can lint your Eta templates.
 
 </details>
 
@@ -159,7 +161,7 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
     <b>CLI</b>
   </summary>
 
-  An official Eta CLI exists called [etajs-cli](https://github.com/eta-dev/etajs-cli).
+An official Eta CLI exists called [etajs-cli](https://github.com/eta-dev/etajs-cli).
 
 </details>
 
@@ -168,17 +170,18 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
     <b>Webpack</b>
   </summary>
 
-  Currently there is no official Webpack integration but [@clshortfuse](https://github.com/clshortfuse) shared the loader he uses:
-  ```javascript
-  {
-    loader: 'html-loader',
-    options: {
-      preprocessor(content, loaderContext) {
-        return eta.render(content, {}, { filename: loaderContext.resourcePath });
-      },
+Currently there is no official Webpack integration but [@clshortfuse](https://github.com/clshortfuse) shared the loader he uses:
+
+```javascript
+{
+  loader: 'html-loader',
+  options: {
+    preprocessor(content, loaderContext) {
+      return eta.render(content, {}, { filename: loaderContext.resourcePath });
     },
-  }
-  ```
+  },
+}
+```
 
 </details>
   
@@ -187,12 +190,11 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
     <b>Node-RED</b>
   </summary>
 
-  To operate with Eta templates in Node-RED: [@ralphwetzel/node-red-contrib-eta](https://flows.nodered.org/node/@ralphwetzel/node-red-contrib-eta)
-  
+To operate with Eta templates in Node-RED: [@ralphwetzel/node-red-contrib-eta](https://flows.nodered.org/node/@ralphwetzel/node-red-contrib-eta)
+
   <img width="150" alt="image" src="https://user-images.githubusercontent.com/16342003/160198427-2a69ff10-e8bf-4873-9d99-2929a584ccc8.png">
 
 </details>
-
 
 ## 📜 Docs
 
@@ -205,10 +207,10 @@ We know nobody reads through the long and boring documentation in the ReadMe any
 ### Simple Template
 
 ```javascript
-import * as Eta from 'eta';
-var myTemplate = '<p>My favorite kind of cake is: <%= it.favoriteCake %></p>'
+import * as Eta from "eta";
+var myTemplate = "<p>My favorite kind of cake is: <%= it.favoriteCake %></p>";
 
-Eta.render(myTemplate, { favoriteCake: 'Chocolate!' })
+Eta.render(myTemplate, { favoriteCake: "Chocolate!" });
 // Returns: '<p>My favorite kind of cake is: Chocolate!</p>'
 ```
 
@@ -257,7 +259,7 @@ To be added
 ## Projects using `eta`
 
 - [Docusaurus v2](https://v2.docusaurus.io): open-source documentation framework that uses Eta to generate a SSR build
-- [swagger-typescript-api](https://github.com/acacode/swagger-typescript-api): Open source typescript api codegenerator from Swagger. Uses Eta as codegenerator by templates  
+- [swagger-typescript-api](https://github.com/acacode/swagger-typescript-api): Open source typescript api codegenerator from Swagger. Uses Eta as codegenerator by templates
 - [Add yours!](https://github.com/eta-dev/eta/edit/master/README.md)
 
 ## Contributors
