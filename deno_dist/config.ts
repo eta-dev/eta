@@ -25,7 +25,7 @@ export interface EtaConfig {
   /** XML-escaping function */
   e: (str: string) => string;
 
-  /** Parsing options */
+  /** Parsing options. NOTE: "-" and "_" may not be used, since they are reserved for whitespace trimming. */
   parse: {
     /** Which prefix to use for evaluation. Default `""` */
     exec: string;
