@@ -1,5 +1,5 @@
-import { assertEquals, assertThrows } from "https://deno.land/std@0.97.0/testing/asserts.ts";
-import * as path from "https://deno.land/std@0.97.0/path/mod.ts";
+import { assertEquals, assertThrows } from "https://deno.land/std@0.186.0/testing/asserts.ts";
+import * as path from "https://deno.land/std@0.186.0/path/mod.ts";
 const __dirname = new URL(".", import.meta.url).pathname;
 
 import { render, templates, compile } from "../../deno_dist/mod.ts";
