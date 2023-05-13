@@ -98,7 +98,7 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   "");
 
   const parseOpenReg = new RegExp(
-    "([^]*?)" + escapeRegExp(config.tags[0]) + "(-|_)?\\s*(" + prefixes + ")?\\s*",
+    escapeRegExp(config.tags[0]) + "(-|_)?\\s*(" + prefixes + ")?\\s*",
     "g"
   );
 
@@ -111,11 +111,12 @@ export default function parse(str: string, config: EtaConfig): Array<AstObject> 
   let m;
 
   while ((m = parseOpenReg.exec(str))) {
+    const precedingString = str.slice(lastIndex, m.index);
+
     lastIndex = m[0].length + m.index;
 
-    const precedingString = m[1];
-    const wsLeft = m[2];
-    const prefix = m[3] || ""; // by default either ~, =, or empty
+    const wsLeft = m[1];
+    const prefix = m[2] || ""; // by default either ~, =, or empty
 
     pushString(precedingString, wsLeft);
 
