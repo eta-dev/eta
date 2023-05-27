@@ -49,7 +49,6 @@
     "build:browser": "microbundle src/browser.ts --target web --format umd --output dist/browser.min.js",
     "build": "denoify && npm run build:node && npm run build:browser && rimraf docs && typedoc --tsconfig tsconfig.json src && deno fmt deno_dist/*.ts",
     "commit": "git-cz",
-    "deploy-docs": "ts-node tools/gh-pages-publish",
     "format": "prettier --write '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
     "lint": "eslint src/*.ts test/*.spec.ts examples/* --ext .js,.ts",
     "prebuild": "rimraf dist && rimraf deno_dist",

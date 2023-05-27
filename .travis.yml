@@ -2,12 +2,12 @@ language: node_js
 cache:
   directories:
     - ~/.npm
-    - '$HOME/.deno'
+    - "$HOME/.deno"
 notifications:
   email: false
 node_js:
-  - '14'
-  - '16'
+  - "14"
+  - "16"
 before_install: # Install Deno
   - curl -fsSL https://deno.land/x/install/install.sh | sh
   - export PATH="$HOME/.deno/bin:$PATH"
@@ -16,7 +16,6 @@ script:
   - npm run build && npm run test:prod
 after_success:
   - npm run travis-deploy-once "npm run report-coverage"
-  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then npm run travis-deploy-once "npm run deploy-docs"; fi
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
