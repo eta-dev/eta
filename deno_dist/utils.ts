@@ -80,8 +80,7 @@ function replaceChar(s: string): string {
  * @returns XML-escaped string
  */
 
-export function XMLEscape(str: any): string {
-  // eslint-disable-line @typescript-eslint/no-explicit-any
+export function XMLEscape(str: unknown): string {
   // To deal with XSS. Based on Escape implementations of Mustache.JS and Marko, then customized.
   const newStr = String(str);
   if (/[&<>"']/.test(newStr)) {

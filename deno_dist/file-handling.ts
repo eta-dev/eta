@@ -14,6 +14,7 @@ export function readFile(this: EtaCore, path: string): string {
 
   try {
     res = fs.readFileSync(path, "utf8");
+    // eslint-disable-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err?.code === "ENOENT") {
       throw new EtaError(`Could not find template: ${path}`);
@@ -34,13 +35,13 @@ export function resolvePath(
 
   template += path.extname(template) ? "" : ".eta";
 
-  let views = this.config.views;
+  const views = this.config.views;
 
   if (!views) {
     throw new EtaError("Views directory is not defined");
   }
 
-  let baseFilePath = options && options.filepath;
+  const baseFilePath = options && options.filepath;
 
   // if the file was included from another template
   if (baseFilePath) {
@@ -49,7 +50,7 @@ export function resolvePath(
       return this.config.filepathCache[baseFilePath];
     }
 
-    let absolutePathTest = absolutePathRegExp.exec(template);
+    const absolutePathTest = absolutePathRegExp.exec(template);
 
     if (absolutePathTest && absolutePathTest.length) {
       const formattedPath = template.replace(/^\/*/, "");
@@ -78,4 +79,4 @@ function dirIsChild(parent: string, dir: string) {
   return relative && !relative.startsWith("..") && !path.isAbsolute(relative);
 }
 
-let absolutePathRegExp = /^\\|^\//;
+const absolutePathRegExp = /^\\|^\//;

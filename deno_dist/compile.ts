@@ -25,8 +25,6 @@ export function compile(
   str: string,
   options?: Partial<Options>,
 ): TemplateFunction {
-  const Eta = this;
-
   const config: EtaConfig = this.config;
 
   /* ASYNC HANDLING (modified from mde/ejs) */
@@ -39,7 +37,7 @@ export function compile(
     return new ctor(
       config.varName,
       "options",
-      this.compileToString.call(Eta, str, options),
+      this.compileToString.call(this, str, options),
     ) as TemplateFunction; // eslint-disable-line no-new-func
   } catch (e) {
     if (e instanceof SyntaxError) {
@@ -49,7 +47,7 @@ export function compile(
           "\n" +
           Array(e.message.length + 1).join("=") +
           "\n" +
-          this.compileToString.call(Eta, str, options) +
+          this.compileToString.call(this, str, options) +
           "\n", // This will put an extra newline before the callstack for extra readability
       );
     } else {
