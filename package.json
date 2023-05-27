@@ -47,7 +47,7 @@
   "scripts": {
     "build:node": "microbundle src/index.ts --target node --format esm,umd",
     "build:browser": "microbundle src/browser.ts --target web --format umd --output dist/browser.min.js",
-    "build": "denoify && npm run build:node && npm run build:browser && rimraf docs && typedoc --tsconfig tsconfig.json src && deno fmt deno_dist/*.ts",
+    "build": "denoify && npm run build:node && npm run build:browser && deno fmt deno_dist/*.ts",
     "commit": "git-cz",
     "format": "prettier --write '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
     "lint": "eslint src/*.ts test/*.spec.ts examples/* --ext .js,.ts",
@@ -155,7 +155,6 @@
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
-    "typedoc": "^0.23.26",
     "typescript": "^4.9.5"
   },
   "husky": {
