@@ -3,7 +3,7 @@ import { trimWS } from "./utils.ts";
 
 /* TYPES */
 
-import type { EtaConfig } from "./config.ts";
+import type { Eta } from "./core.ts";
 
 export type TagType = "r" | "e" | "i" | "";
 
@@ -30,10 +30,9 @@ function escapeRegExp(string: string) {
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
-export default function parse(
-  str: string,
-  config: EtaConfig,
-): Array<AstObject> {
+export function parse(this: Eta, str: string): Array<AstObject> {
+  const config = this.config;
+
   let buffer: Array<AstObject> = [];
   let trimLeftOfNextStr: string | false = false;
   let lastIndex = 0;
@@ -113,7 +112,6 @@ export default function parse(
     "'|\"|`|\\/\\*|(\\s*(-|_)?" + escapeRegExp(config.tags[1]) + ")",
     "g",
   );
-  // TODO: benchmark having the \s* on either side vs using str.trim()
 
   let m;
 

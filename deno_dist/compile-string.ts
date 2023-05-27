@@ -1,46 +1,51 @@
-import Parse from "./parse.ts";
-
 /* TYPES */
 
-import type { EtaConfig } from "./config.ts";
+import type { Options } from "./config.ts";
 import type { AstObject } from "./parse.ts";
+import type { Eta } from "./core.ts";
 
 /* END TYPES */
 
 /**
  * Compiles a template string to a function string. Most often users just use `compile()`, which calls `compileToString` and creates a new function using the result
- *
- * **Example**
- *
- * ```js
- * compileToString("Hi <%= it.user %>", eta.config)
- * // "var tR='',include=E.include.bind(E),includeFile=E.includeFile.bind(E);tR+='Hi ';tR+=E.e(it.user);if(cb){cb(null,tR)} return tR"
- * ```
  */
 
-export default function compileToString(
+export function compileToString(
+  this: Eta,
   str: string,
-  config: EtaConfig,
+  options?: Partial<Options>,
 ): string {
-  const buffer: Array<AstObject> = Parse(str, config);
+  const config = this.config;
+  const isAsync = options && options.async;
 
-  let res = "var tR='',__l,__lP" +
-    (config.include ? ",include=E.include.bind(E)" : "") +
-    (config.includeFile ? ",includeFile=E.includeFile.bind(E)" : "") +
-    "\nfunction layout(p,d){__l=p;__lP=d}\n" +
-    (config.useWith ? "with(" + config.varName + "||{}){" : "") +
-    compileScope(buffer, config) +
-    (config.includeFile
-      ? "if(__l)tR=" +
-        (config.async ? "await " : "") +
-        `includeFile(__l,Object.assign(${config.varName},{body:tR},__lP))\n`
-      : config.include
-      ? "if(__l)tR=" +
-        (config.async ? "await " : "") +
-        `include(__l,Object.assign(${config.varName},{body:tR},__lP))\n`
-      : "") +
-    "if(cb){cb(null,tR)} return tR" +
-    (config.useWith ? "}" : "");
+  const buffer: Array<AstObject> = this.parse.call(this, str);
+
+  // note: when the include function passes through options, the only parameter that matters is the filepath parameter
+  let res = `
+let include = (template, data) => this.render(template, data, options);
+let includeAsync = (template, data) => this.renderAsync(template, data, options);
+
+let __eta = {res: "", e: this.escapeFunction, f: this.filterFunction};
+
+function layout(path, data) {
+  __eta.layout = path;
+  __eta.layoutData = data;
+}
+
+${config.useWith ? "with(" + config.varName + "||{}){" : ""}
+
+${compileBody.call(this, buffer)}
+
+if (__eta.layout) {
+  __eta.res = ${
+    isAsync ? "await includeAsync" : "include"
+  } (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+}
+
+${config.useWith ? "}" : ""}
+
+return __eta.res;
+`;
 
   if (config.plugins) {
     for (let i = 0; i < config.plugins.length; i++) {
@@ -60,14 +65,15 @@ export default function compileToString(
  * **Example**
  *
  * ```js
- * // AST version of 'Hi <%= it.user %>'
- * let templateAST = ['Hi ', { val: 'it.user', t: 'i' }]
- * compileScope(templateAST, eta.config)
- * // "tR+='Hi ';tR+=E.e(it.user);"
+ * let templateAST = ['Hi ', { val: 'it.name', t: 'i' }]
+ * compileBody.call(Eta, templateAST)
+ * // => "__eta.res+='Hi '\n__eta.res+=__eta.e(it.name)\n"
  * ```
  */
 
-function compileScope(buff: Array<AstObject>, config: EtaConfig) {
+function compileBody(this: Eta, buff: Array<AstObject>) {
+  const config = this.config;
+
   let i = 0;
   const buffLength = buff.length;
   let returnStr = "";
@@ -78,34 +84,34 @@ function compileScope(buff: Array<AstObject>, config: EtaConfig) {
       const str = currentBlock;
 
       // we know string exists
-      returnStr += "tR+='" + str + "'\n";
+      returnStr += "__eta.res+='" + str + "'\n";
     } else {
-      const type = currentBlock.t; // ~, s, !, ?, r
+      const type = currentBlock.t; // "r", "e", or "i"
       let content = currentBlock.val || "";
 
       if (type === "r") {
         // raw
 
         if (config.filter) {
-          content = "E.filter(" + content + ")";
+          content = "__eta.f(" + content + ")";
         }
 
-        returnStr += "tR+=" + content + "\n";
+        returnStr += "__eta.res+=" + content + "\n";
       } else if (type === "i") {
         // interpolate
 
         if (config.filter) {
-          content = "E.filter(" + content + ")";
+          content = "__eta.f(" + content + ")";
         }
 
         if (config.autoEscape) {
-          content = "E.e(" + content + ")";
+          content = "__eta.e(" + content + ")";
         }
-        returnStr += "tR+=" + content + "\n";
-        // reference
+
+        returnStr += "__eta.res+=" + content + "\n";
       } else if (type === "e") {
         // execute
-        returnStr += content + "\n"; // you need a \n in case you have <% } %>
+        returnStr += content + "\n";
       }
     }
   }
