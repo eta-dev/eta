@@ -2,17 +2,12 @@ language: node_js
 cache:
   directories:
     - ~/.npm
-    - "$HOME/.deno"
 notifications:
   email: false
 node_js:
   - "14"
   - "16"
-before_install: # Install Deno
-  - curl -fsSL https://deno.land/x/install/install.sh | sh
-  - export PATH="$HOME/.deno/bin:$PATH"
 script:
-  - deno --version # Log the Deno version
   - npm run build && npm run test:prod
 after_success:
   - npm run travis-deploy-once "npm run report-coverage"

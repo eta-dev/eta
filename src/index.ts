@@ -1,5 +1,3 @@
-// @denoify-ignore
-
 import { Eta as EtaCore } from "./core.js";
 import { readFile, resolvePath } from "./file-handling.js";
 
