@@ -1,7 +1,6 @@
 /* global it, expect, describe */
 
 import { Eta } from "../src/index";
-import { compileToString } from "../src/compile-string";
 
 const eta = new Eta();
 
@@ -13,7 +12,7 @@ const complexTemplate = fs.readFileSync(filePath, "utf8");
 
 describe("Compile to String test", () => {
   it("compiles a simple template", () => {
-    const str = compileToString.call(eta, "hi <%= it.name %>");
+    const str = eta.compileToString("hi <%= it.name %>");
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 let includeAsync = (template, data) => this.renderAsync(template, data, options);
@@ -42,7 +41,7 @@ return __eta.res;
   });
 
   it("compiles a simple template with a raw tag", () => {
-    const str = compileToString.call(eta, "hi <%~ it.name %>");
+    const str = eta.compileToString("hi <%~ it.name %>");
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 let includeAsync = (template, data) => this.renderAsync(template, data, options);
@@ -71,7 +70,7 @@ return __eta.res;
   });
 
   it("works with whitespace trimming", () => {
-    const str = compileToString.call(eta, "hi\n<%- = it.firstname-%>\n<%_ = it.lastname_%>");
+    const str = eta.compileToString("hi\n<%- = it.firstname-%>\n<%_ = it.lastname_%>");
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 let includeAsync = (template, data) => this.renderAsync(template, data, options);
@@ -101,7 +100,7 @@ return __eta.res;
   });
 
   it("compiles complex template", () => {
-    const str = compileToString.call(eta, complexTemplate);
+    const str = eta.compileToString(complexTemplate);
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 let includeAsync = (template, data) => this.renderAsync(template, data, options);

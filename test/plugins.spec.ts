@@ -1,5 +1,6 @@
 /* global it, expect, describe */
-import * as Eta from "../src/index";
+import { Eta } from "../src/index";
+
 import { EtaConfig } from "../src/config";
 import { AstObject } from "../src/parse";
 
@@ -17,12 +18,55 @@ function myPlugin() {
   };
 }
 
-const template = `<%= it.val %> <%= @@num@@ %>.`;
+const emojiTransform = () => {
+  return {
+    processTemplate: function (str: string) {
+      return str.replace(":thumbsup:", "👍");
+    },
+  };
+};
+
+const capitalizeCool = () => {
+  return {
+    processTemplate: function (str: string) {
+      return str.replace("cool", "COOL");
+    },
+  };
+};
+
+const replaceThumbsUp = () => {
+  return {
+    processTemplate: function (str: string) {
+      return str.replace("👍", "✨");
+    },
+  };
+};
 
 describe("Plugins", () => {
   it("Plugins function properly", () => {
-    expect(Eta.render(template, { val: "value" }, { plugins: [myPlugin()] })).toEqual(
-      "value 2352.3.String to append"
-    );
+    const eta = new Eta({ plugins: [myPlugin()] });
+    const template = `<%= it.val %> <%= @@num@@ %>.`;
+
+    expect(eta.renderString(template, { val: "value" })).toEqual("value 2352.3.String to append");
+  });
+});
+
+describe("processTemplate plugin", () => {
+  it("Simple plugin works correctly", () => {
+    const eta = new Eta({ plugins: [emojiTransform()] });
+    const template = ":thumbsup:";
+
+    const res = eta.renderString(template, {});
+
+    expect(res).toEqual("👍");
+  });
+
+  it("Multiple chained plugins work correctly", () => {
+    const eta = new Eta({ plugins: [emojiTransform(), capitalizeCool(), replaceThumbsUp()] });
+    const template = ":thumbsup: This is a cool template";
+
+    const res = eta.renderString(template, {});
+
+    expect(res).toEqual("✨ This is a COOL template");
   });
 });
