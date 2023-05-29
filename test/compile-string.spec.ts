@@ -1,5 +1,9 @@
 /* global it, expect, describe */
-import { compileToString, defaultConfig, getConfig } from "../src/index";
+
+import { Eta } from "../src/index";
+import { compileToString } from "../src/compile-string";
+
+const eta = new Eta();
 
 const fs = require("fs"),
   path = require("path"),
@@ -8,82 +12,141 @@ const fs = require("fs"),
 const complexTemplate = fs.readFileSync(filePath, "utf8");
 
 describe("Compile to String test", () => {
-  it("parses a simple template", () => {
-    const str = compileToString("hi <%= hey %>", defaultConfig);
-    expect(str)
-      .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
-function layout(p,d){__l=p;__lP=d}
-tR+='hi '
-tR+=E.e(hey)
-if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
-if(cb){cb(null,tR)} return tR`);
+  it("compiles a simple template", () => {
+    const str = compileToString.call(eta, "hi <%= it.name %>");
+    expect(str).toEqual(`
+let include = (template, data) => this.render(template, data, options);
+let includeAsync = (template, data) => this.renderAsync(template, data, options);
+
+let __eta = {res: "", e: this.escapeFunction, f: this.filterFunction};
+
+function layout(path, data) {
+  __eta.layout = path;
+  __eta.layoutData = data;
+}
+
+
+
+__eta.res+='hi '
+__eta.res+=__eta.e(it.name)
+
+
+if (__eta.layout) {
+  __eta.res = include (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+}
+
+
+
+return __eta.res;
+`);
   });
 
-  it("parses a simple template without partial helpers defined", () => {
-    const str = compileToString(
-      "hi <%= hey %>",
-      getConfig({ include: undefined, includeFile: undefined })
-    );
-    expect(str).toEqual(`var tR='',__l,__lP
-function layout(p,d){__l=p;__lP=d}
-tR+='hi '
-tR+=E.e(hey)
-if(cb){cb(null,tR)} return tR`);
-  });
+  it("compiles a simple template with a raw tag", () => {
+    const str = compileToString.call(eta, "hi <%~ it.name %>");
+    expect(str).toEqual(`
+let include = (template, data) => this.render(template, data, options);
+let includeAsync = (template, data) => this.renderAsync(template, data, options);
 
-  it("parses a simple template with raw tag", () => {
-    const str = compileToString("hi <%~ hey %>", defaultConfig);
-    expect(str)
-      .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
-function layout(p,d){__l=p;__lP=d}
-tR+='hi '
-tR+=hey
-if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
-if(cb){cb(null,tR)} return tR`);
+let __eta = {res: "", e: this.escapeFunction, f: this.filterFunction};
+
+function layout(path, data) {
+  __eta.layout = path;
+  __eta.layoutData = data;
+}
+
+
+
+__eta.res+='hi '
+__eta.res+=it.name
+
+
+if (__eta.layout) {
+  __eta.res = include (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+}
+
+
+
+return __eta.res;
+`);
   });
 
   it("works with whitespace trimming", () => {
-    const str = compileToString("hi\n<%- = hey-%>\n<%_ = hi_%>", defaultConfig);
-    expect(str)
-      .toEqual(`var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
-function layout(p,d){__l=p;__lP=d}
-tR+='hi'
-tR+=E.e(hey)
-tR+=E.e(hi)
-if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
-if(cb){cb(null,tR)} return tR`);
+    const str = compileToString.call(eta, "hi\n<%- = it.firstname-%>\n<%_ = it.lastname_%>");
+    expect(str).toEqual(`
+let include = (template, data) => this.render(template, data, options);
+let includeAsync = (template, data) => this.renderAsync(template, data, options);
+
+let __eta = {res: "", e: this.escapeFunction, f: this.filterFunction};
+
+function layout(path, data) {
+  __eta.layout = path;
+  __eta.layoutData = data;
+}
+
+
+
+__eta.res+='hi'
+__eta.res+=__eta.e(it.firstname)
+__eta.res+=__eta.e(it.lastname)
+
+
+if (__eta.layout) {
+  __eta.res = include (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+}
+
+
+
+return __eta.res;
+`);
   });
 
   it("compiles complex template", () => {
-    const str = compileToString(complexTemplate, defaultConfig);
-    expect(str).toEqual(
-      `var tR='',__l,__lP,include=E.include.bind(E),includeFile=E.includeFile.bind(E)
-function layout(p,d){__l=p;__lP=d}
-tR+='Hi\\n'
+    const str = compileToString.call(eta, complexTemplate);
+    expect(str).toEqual(`
+let include = (template, data) => this.render(template, data, options);
+let includeAsync = (template, data) => this.renderAsync(template, data, options);
+
+let __eta = {res: "", e: this.escapeFunction, f: this.filterFunction};
+
+function layout(path, data) {
+  __eta.layout = path;
+  __eta.layoutData = data;
+}
+
+
+
+__eta.res+='Hi\\n'
 console.log("Hope you like Eta!")
-tR+=E.e(it.htmlstuff)
-tR+='\\n'
+__eta.res+=__eta.e(it.htmlstuff)
+__eta.res+='\\n'
 for (var key in it.obj) {
-tR+='Value: '
-tR+=E.e(it.obj[key])
-tR+=', Key: '
-tR+=E.e(key)
-tR+='\\n'
+__eta.res+='Value: '
+__eta.res+=__eta.e(it.obj[key])
+__eta.res+=', Key: '
+__eta.res+=__eta.e(key)
+__eta.res+='\\n'
 if (key === 'thirdchild') {
-tR+='  '
+__eta.res+='  '
 for (var i = 0, arr = it.obj[key]; i < arr.length; i++) {
-tR+='      Salutations! Index: '
-tR+=E.e(i)
-tR+=', parent key: '
-tR+=E.e(key)
-tR+='      \\n  '
+__eta.res+='      Salutations! Index: '
+__eta.res+=__eta.e(i)
+__eta.res+=', parent key: '
+__eta.res+=__eta.e(key)
+__eta.res+='      \\n  '
 }
 }
 }
-tR+='\\nThis is a partial: '
-tR+=include("mypartial")
-if(__l)tR=includeFile(__l,Object.assign(it,{body:tR},__lP))
-if(cb){cb(null,tR)} return tR`
-    );
+__eta.res+='\\nThis is a partial: '
+__eta.res+=include("mypartial")
+
+
+if (__eta.layout) {
+  __eta.res = include (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+}
+
+
+
+return __eta.res;
+`);
   });
 });
