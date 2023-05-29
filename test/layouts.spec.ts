@@ -1,16 +1,14 @@
-import { path } from "../src/file-methods";
 /* global it, expect, describe */
 
-import { compile, render, renderFile, templates } from "../src/index";
+import path from "node:path";
+
+import { Eta } from "../src/index";
+
+const eta = new Eta({ views: path.join(__dirname, "templates") });
 
 describe("Layout Tests", () => {
-  it("Nested layouts work as expected", async () => {
-    const res = await renderFile(
-      "index.eta",
-      { title: "Cool Title" },
-      // Async can be true or false
-      { views: path.join(__dirname, "templates"), async: true }
-    );
+  it("Nested layouts work as expected", () => {
+    const res = eta.render("index.eta", { title: "Cool Title" });
 
     expect(res).toEqual(`<!DOCTYPE html>
 <html lang="en">
@@ -23,39 +21,20 @@ This is the template body.
 </html>`);
   });
 
-  it("Layouts fall back to include if includeFile is undefined", async () => {
-    templates.define(
-      "my-layout",
-      compile(`###<%= it.title %>###,<%~ it.body %>`, { includeFile: undefined })
-    );
-
-    const res = await render(
-      `<% layout("my-layout") %>
-This is a layout`,
-      { title: "Cool Title" },
-      { includeFile: undefined }
-    );
-
-    expect(res).toEqual("###Cool Title###,This is a layout");
-  });
-
   it("Layouts are called with arguments if they're provided", async () => {
-    templates.define(
-      "my-layout",
-      compile(`<%= it.title %> - <%~ it.body %> - <%~ it.content %> - <%~ it.randomNum %>`, {
-        includeFile: undefined,
-      })
+    eta.loadTemplate(
+      "@my-layout",
+      `<%= it.title %> - <%~ it.body %> - <%~ it.content %> - <%~ it.randomNum %>`
     );
 
-    const res = await render(
-      `<% layout("my-layout", { title: 'Nifty title', content: 'Nice content'}) %>
+    const res = await eta.renderString(
+      `<% layout("@my-layout", { title: 'Nifty title', content: 'Nice content'}) %>
 This is a layout`,
-      { title: "Cool Title", randomNum: 3 },
-      { includeFile: undefined }
+      { title: "Cool Title", randomNum: 3 }
     );
 
     // Note that layouts automatically accept the data of the template which called them,
-    // after it is merged with {body:tR} and custom data
+    // after it is merged with { body:__eta.res } and `it`
 
     expect(res).toEqual("Nifty title - This is a layout - Nice content - 3");
   });
