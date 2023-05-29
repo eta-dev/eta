@@ -5,7 +5,6 @@ import { compile } from "./compile.js";
 import { compileToString } from "./compile-string.js";
 import { render, renderAsync, renderString, renderStringAsync } from "./render.js";
 import { TemplateFunction } from "./compile.js";
-import { XMLEscape } from "./utils.js";
 
 /* TYPES */
 import type { EtaConfig, Options } from "./config.js";
@@ -30,11 +29,9 @@ export class Eta {
   renderString = renderString;
   renderStringAsync = renderStringAsync;
 
+  filepathCache: Record<string, string> = {};
   templatesSync = new Cacher<TemplateFunction>({});
   templatesAsync = new Cacher<TemplateFunction>({});
-
-  escapeFunction = XMLEscape;
-  filterFunction = null;
 
   // resolvePath takes a relative path from the "views" directory
   resolvePath: null | ((this: Eta, template: string, options?: Partial<Options>) => string) = null;

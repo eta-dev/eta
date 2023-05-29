@@ -21,7 +21,7 @@ export function compileToString(this: Eta, str: string, options?: Partial<Option
 let include = (template, data) => this.render(template, data, options);
 let includeAsync = (template, data) => this.renderAsync(template, data, options);
 
-let __eta = {res: "", e: this.escapeFunction, f: this.filterFunction};
+let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 
 function layout(path, data) {
   __eta.layout = path;
@@ -88,7 +88,7 @@ function compileBody(this: Eta, buff: Array<AstObject>) {
       if (type === "r") {
         // raw
 
-        if (config.filter) {
+        if (config.autoFilter) {
           content = "__eta.f(" + content + ")";
         }
 
@@ -96,7 +96,7 @@ function compileBody(this: Eta, buff: Array<AstObject>) {
       } else if (type === "i") {
         // interpolate
 
-        if (config.filter) {
+        if (config.autoFilter) {
           content = "__eta.f(" + content + ")";
         }
 

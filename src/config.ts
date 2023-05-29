@@ -1,3 +1,5 @@
+import { XMLEscape } from "./utils";
+
 /* TYPES */
 
 type trimConfig = "nl" | "slurp" | false;
@@ -14,34 +16,36 @@ export interface EtaConfig {
   /** Whether or not to automatically XML-escape interpolations. Default true */
   autoEscape: boolean;
 
+  /** Apply a filter function defined on the class to every interpolation or raw interpolation */
+  autoFilter: boolean;
+
   /** Configure automatic whitespace trimming. Default `[false, 'nl']` */
   autoTrim: trimConfig | [trimConfig, trimConfig];
 
   /** Whether or not to cache templates if `name` or `filename` is passed */
   cache: boolean;
 
-  // TODO: Mention that Eta can't use "-" or "_" for config.parse since they're used for whitespace slurping.
+  escapeFunction: (str: unknown) => string;
+
+  filterFunction: (val: unknown) => string;
+
+  /** Holds cache of resolved filepaths. Set to `false` to disable. */
+  cacheFilepaths: boolean;
 
   /** Parsing options */
   parse: {
-    /** Which prefix to use for evaluation. Default `""` */
+    /** Which prefix to use for evaluation. Default `""`, does not support `"-"` or `"_"` */
     exec: string;
 
-    /** Which prefix to use for interpolation. Default `"="` */
+    /** Which prefix to use for interpolation. Default `"="`, does not support `"-"` or `"_"` */
     interpolate: string;
 
-    /** Which prefix to use for raw interpolation. Default `"~"` */
+    /** Which prefix to use for raw interpolation. Default `"~"`, does not support `"-"` or `"_"` */
     raw: string;
   };
 
   /** Array of plugins */
   plugins: Array<{ processFnString?: Function; processAST?: Function; processTemplate?: Function }>;
-
-  /** Holds cache of resolved filepaths. Set to `false` to disable. */
-  filepathCache?: Record<string, string> | false;
-
-  /** Apply a filter function defined on the class to every interpolation or raw interpolation */
-  filter?: boolean;
 
   /** Remove all safe-to-remove whitespace */
   rmWhitespace: boolean;
@@ -50,7 +54,7 @@ export interface EtaConfig {
   tags: [string, string];
 
   /** Make data available on the global object instead of varName */
-  useWith?: boolean;
+  useWith: boolean;
 
   /** Name of the data object. Default `it` */
   varName: string;
@@ -64,9 +68,13 @@ export interface EtaConfig {
 /** Eta's base (global) configuration */
 const defaultConfig: EtaConfig = {
   autoEscape: true,
+  autoFilter: false,
   autoTrim: [false, "nl"],
   cache: false,
-  filepathCache: {},
+  cacheFilepaths: true,
+  escapeFunction: XMLEscape,
+  // default filter function (not used unless enables) just stringifies the input
+  filterFunction: (val) => String(val),
   parse: {
     exec: "",
     interpolate: "=",

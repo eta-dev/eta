@@ -42,8 +42,8 @@ export function resolvePath(this: EtaCore, template: string, options?: Partial<O
   // if the file was included from another template
   if (baseFilePath) {
     // check the cache
-    if (this.config.filepathCache && this.config.filepathCache[baseFilePath]) {
-      return this.config.filepathCache[baseFilePath];
+    if (this.config.cacheFilepaths && this.filepathCache[baseFilePath]) {
+      return this.filepathCache[baseFilePath];
     }
 
     const absolutePathTest = absolutePathRegExp.exec(template);
@@ -60,8 +60,8 @@ export function resolvePath(this: EtaCore, template: string, options?: Partial<O
 
   if (dirIsChild(views, resolvedFilePath)) {
     // add resolved path to the cache
-    if (baseFilePath && this.config.filepathCache) {
-      this.config.filepathCache[baseFilePath] = resolvedFilePath;
+    if (baseFilePath && this.config.cacheFilepaths) {
+      this.filepathCache[baseFilePath] = resolvedFilePath;
     }
 
     return resolvedFilePath;
