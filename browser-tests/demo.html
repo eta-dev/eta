@@ -10,7 +10,6 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
     <meta name="description" content="Test out Eta templates in the browser here" />
-    <script src="../dist/browser.min.umd.js"></script>
     <style>
       body {
         background-color: #f4f4f4;
@@ -77,6 +76,7 @@
         overflow-y: auto;
       }
 
+      #function,
       #result {
         white-space: pre;
       }
@@ -199,10 +199,15 @@ Partial: <%~ include("mypartial") %>
         <div id="result"></div>
       </div>
     </div>
-    <script>
-      /* global eta */
+    <script type="module">
+      import { Eta } from "../dist/browser.module.mjs";
+
+      // TODO: add fallback using unpkg
+
+      var eta = new Eta();
+
       window.onload = function () {
-        eta.templates.define("mypartial", eta.compile("This is a partial"));
+        eta.loadTemplate("mypartial", eta.compile("This is a partial"));
 
         function escape(str) {
           // To handle escaping for the function result
@@ -234,14 +239,14 @@ Partial: <%~ include("mypartial") %>
           try {
             var functionResult = eta.compile(template).toString();
             document.getElementById("function").innerHTML = escape(functionResult);
-            if (!eta.defaultConfig.async) {
-              document.getElementById("result").innerHTML = eta.render(template, options);
+            if (!eta.config.async) {
+              document.getElementById("result").innerHTML = eta.renderString(template, options);
             } else {
-              eta.render(template, options).then(function (res) {
+              eta.renderStringAsync(template, options).then(function (res) {
                 document.getElementById("result").innerHTML = res;
               });
             }
-            console.log(eta.render(template, options));
+            console.log(eta.renderString(template, options));
           } catch (ex) {
             console.error(ex.message);
           }

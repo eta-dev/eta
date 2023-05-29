@@ -16,13 +16,13 @@
   "type": "commonjs",
   "main": "./dist/eta.umd.js",
   "umd:main": "./dist/eta.umd.js",
-  "unpkg": "./dist/browser.min.umd.js",
+  "unpkg": "./dist/browser.umd.js",
   "module": "./dist/eta.module.mjs",
   "types": "./dist/types/index.d.ts",
   "source": "src/index.ts",
   "exports": {
     "types": "./dist/types/index.d.ts",
-    "browser": "./dist/browser.min.umd.js",
+    "browser": "./dist/browser.umd.js",
     "require": "./dist/eta.umd.js",
     "import": "./dist/eta.module.mjs",
     "default": "./dist/eta.umd.js"
@@ -46,7 +46,7 @@
   },
   "scripts": {
     "build:node": "microbundle src/index.ts --target node --format esm,umd",
-    "build:browser": "microbundle src/browser.ts --target web --format umd --output dist/browser.min.js",
+    "build:browser": "microbundle src/browser.ts --target web --format umd,modern --output dist/browser.js",
     "build": "npm run build:node && npm run build:browser",
     "commit": "git-cz",
     "format": "prettier --write '{src,test}/**/**.ts'",
@@ -63,7 +63,7 @@
   },
   "size-limit": [
     {
-      "path": "dist/browser.min.umd.js",
+      "path": "dist/browser.umd.js",
       "limit": "3 KB"
     }
   ],
