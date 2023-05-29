@@ -16,130 +16,62 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-eta.configure({
+const etaInstance = new eta.Eta({
   autoTrim: false,
 });
 
 Sqrl.defaultConfig.autoTrim = false;
 
-var templateList = {};
-
-templateList["template"] = `
+var templateList = {
+  template: `
 <ul>
     <% for (var i = 0, l = list.length; i < l; i ++) { %>
         <li>User: <%= list[i].user %> / Web Site: <%= list[i].site %></li>
     <% } %>
-</ul>`;
-
-templateList["template-raw"] = `
+</ul>`,
+  "template-raw": `
 <ul>
     <% for (var i = 0, l = list.length; i < l; i ++) { %>
         <li>User: <%- list[i].user %> / Web Site: <%- list[i].site %></li>
     <% } %>
-</ul>`;
-
-templateList["template-fast-mode"] = `
+</ul>`,
+  "template-fast-mode": `
 <ul>
     <% for (var i = 0, l = $data.list.length; i < l; i ++) { %>
         <li>User: <%= $data.list[i].user %> / Web Site: <%= $data.list[i].site %></li>
     <% } %>
-</ul>`;
-
-templateList["template-fast-mode-raw"] = `
+</ul>`,
+  "template-fast-mode-raw": `
 <ul>
     <% for (var i = 0, l = $data.list.length; i < l; i ++) { %>
         <li>User: <%- $data.list[i].user %> / Web Site: <%- $data.list[i].site %></li>
     <% } %>
-</ul>`;
-
-templateList["eta"] = `
+</ul>`,
+  eta: `
 <ul>
     <% for (var i = 0, ln = it.list.length; i < ln; i ++) { %>
         <li>User: <%= it.list[i].user %> / Web Site: <%= it.list[i].site %></li>
     <% } %>
-</ul>`;
-
-templateList["pug"] = `
-ul
-    -for (var i = 0, l = list.length; i < l; i ++) {
-        li User: #{list[i].user} / Web Site: #{list[i].site}
-    -}`;
-
-templateList["pug-raw"] = `
-ul
-    -for (var i = 0, l = list.length; i < l; i ++) {
-        li User: !{list[i].user} / Web Site: !{list[i].site}
-    -}`;
-
-templateList["dot"] = `
+</ul>`,
+  "eta-raw": `
+<ul>
+    <% for (var i = 0, ln = it.list.length; i < ln; i ++) { %>
+        <li>User: <%~ it.list[i].user %> / Web Site: <%~ it.list[i].site %></li>
+    <% } %>
+</ul>`,
+  dot: `
 <ul>
     {{ for (var i = 0, l = it.list.length; i < l; i ++) { }}
         <li>User: {{!it.list[i].user}} / Web Site: {{!it.list[i].site}}</li>
     {{ } }}
-</ul>`;
-
-templateList["dot-raw"] = `
+</ul>`,
+  "dot-raw": `
 <ul>
     {{ for (var i = 0, l = it.list.length; i < l; i ++) { }}
         <li>User: {{=it.list[i].user}} / Web Site: {{=it.list[i].site}}</li>
     {{ } }}
-</ul>`;
-
-templateList["mustache"] = `
-<ul>
-    {{#list}}
-        <li>User: {{user}} / Web Site: {{site}}</li>
-    {{/list}}
-</ul>`;
-
-templateList["mustache-raw"] = `
-<ul>
-    {{#list}}
-        <li>User: {{{user}}} / Web Site: {{{site}}}</li>
-    {{/list}}
-</ul>`;
-
-templateList["handlebars"] = `
-<ul>
-    {{#list}}
-        <li>User: {{user}} / Web Site: {{site}}</li>
-    {{/list}}
-</ul>`;
-
-templateList["handlebars-raw"] = `
-<ul>
-    {{#list}}
-        <li>User: {{{user}}} / Web Site: {{{site}}}</li>
-    {{/list}}
-</ul>`;
-
-templateList["squirrelly"] = `
-<ul>
-{{@each(it.list) => val}}
-    <li>User: {{val.user}} / Web Site: {{val.site}}</li>
-{{/each}}
-</ul>`;
-
-templateList["squirrelly-fast"] = `
-<ul>
-{{! for (var i = 0, l = it.list.length; i < l; i ++) { }}
-    <li>User: {{it.list[i].user}} / Web Site: {{it.list[i].site}}</li>
-{{! } }}
-</ul>`;
-
-templateList["swig"] = `
-<ul>
-    {% for key, value in list %}
-        <li>User: {{value.user}} / Web Site: {{value.site}}</li>
-    {% endfor %}
-</ul>`;
-
-templateList["swig-raw"] = `
-<ul>
-    {% for key, value in list %}
-        {% autoescape false %}<li>User: {{value.user}} / Web Site: {{value.site}}</li>{% endautoescape %}
-    {% endfor %}
-</ul>`;
+</ul>`,
+};
 
 /* ----------------- */
 
@@ -194,8 +126,8 @@ var testList = [
       var source = templateList[id];
       //   console.log(fn.toString())
       var html = "";
-      var fn = template.compile(source);
       for (var i = 0; i < config.calls; i++) {
+        var fn = template.compile(source);
         html = fn(data);
       }
       return html;
@@ -208,8 +140,8 @@ var testList = [
       var id = config.escape ? "template-fast-mode" : "template-fast-mode-raw";
       var source = templateList[id];
       var html = "";
-      var fn = template.compile(source);
       for (var i = 0; i < config.calls; i++) {
+        var fn = template.compile(source);
         html = fn(data);
       }
       return html;
@@ -222,8 +154,8 @@ var testList = [
       var id = config.escape ? "template" : "template-raw";
       var source = templateList[id];
       var html = "";
-      var fn = _.template(source);
       for (var i = 0; i < config.calls; i++) {
+        var fn = _.template(source);
         html = fn(data);
       }
       return html;
@@ -236,8 +168,8 @@ var testList = [
       var id = config.escape ? "dot" : "dot-raw";
       var source = templateList[id];
       var html = "";
-      var fn = doT.template(source);
       for (var i = 0; i < config.calls; i++) {
+        var fn = doT.template(source);
         html = fn(data);
       }
       return html;
@@ -250,117 +182,25 @@ var testList = [
       var id = config.escape ? "template" : "template-raw";
       var source = templateList[id];
       var html = "";
-      var fn = ejs.compile(source);
       for (var i = 0; i < config.calls; i++) {
+        var fn = ejs.compile(source);
         html = fn(data);
       }
       return html;
     },
   },
 
-  {
-    name: "Handlebars",
-    tester: function () {
-      var id = config.escape ? "handlebars" : "handlebars-raw";
-      var source = templateList[id];
-      var html = "";
-      var fn = Handlebars.compile(source);
-      for (var i = 0; i < config.calls; i++) {
-        html = fn(data);
-      }
-      return html;
-    },
-  },
   {
     name: "Eta",
     tester: function () {
-      if (!config.escape) {
-        eta.defaultConfig.autoEscape = false;
-      }
-      var source = templateList["eta"];
-      //   console.log(fn.toString())
-      var html = "";
-      data.$name = "temp";
-      var fn = eta.compile(source);
-      for (var i = 0; i < config.calls; i++) {
-        html = fn(data, eta.config);
-      }
-      return html;
-    },
-  },
-  {
-    name: "Squirrelly",
-    tester: function () {
-      if (!config.escape) {
-        Sqrl.defaultConfig.autoEscape = false;
-      }
-      var source = templateList["squirrelly"];
-      //   console.log(fn.toString())
-      var html = "";
-      data.$name = "temp";
-      var fn = Sqrl.compile(source);
-      for (var i = 0; i < config.calls; i++) {
-        html = fn(data, Sqrl.defaultConfig);
-      }
-      return html;
-    },
-  },
-  {
-    name: "Squirrelly - Fast",
-    tester: function () {
-      if (!config.escape) {
-        Sqrl.defaultConfig.autoEscape = false;
-      }
-      var source = templateList["squirrelly-fast"];
-      //   console.log(fn.toString())
-      var html = "";
-      data.$name = "temp";
-      var fn = Sqrl.compile(source);
-      for (var i = 0; i < config.calls; i++) {
-        html = fn(data, Sqrl.defaultConfig);
-      }
-      return html;
-    },
-  },
-  {
-    name: "Jade / pug",
-    tester: function () {
-      var id = config.escape ? "pug" : "pug-raw";
-      var source = templateList[id];
-      var pug = require("pug");
-      var html = "";
-      var fn = pug.compile(source);
-      for (var i = 0; i < config.calls; i++) {
-        html = fn(data);
-      }
-      return html;
-    },
-  },
-  {
-    name: "Mustache",
-    tester: function () {
-      var id = config.escape ? "mustache" : "mustache-raw";
-      var source = templateList[id];
-      var html = "";
-      Mustache.templateCache = undefined;
+      var id = config.escape ? "eta" : "eta-raw";
 
-      for (var i = 0; i < config.calls; i++) {
-        // mustache caches the template after the first parse
-        html = Mustache.render(source, data);
-      }
-      return html;
-    },
-  },
-
-  {
-    name: "swig",
-    tester: function () {
-      var id = config.escape ? "swig" : "swig-raw";
       var source = templateList[id];
       var html = "";
-      var fn = swig.compile(source);
+      data.$name = "temp";
       for (var i = 0; i < config.calls; i++) {
-        html = fn(data);
+        var fn = etaInstance.compile(source);
+        html = etaInstance.render(fn, data);
       }
       return html;
     },
@@ -498,12 +338,12 @@ function getLink() {
     "length=" + config.length + "&calls=" + config.calls + "&escape=" + config.escape;
 }
 
-window["app"] = function (selector) {
+window["load"] = function (selector) {
   var app = document.querySelector(selector);
   var body = `
 <h1>Eta Browser Benchmarks</h1>
 <br>
-<em>Note: originally, Art-template's benchmarking page only benchmarked the template function after it was compiled. This benchmark includes compilation and rendering.</em>
+<em>This benchmark of popular embedded template engines measures both compilation and rendering. Since the results can be somewhat inconsistent (and don't reflect the full picture, like feature support) this feature is best used by developers working on Eta.</em>
 <br><br>
 <em>Note: doT and Eta usually trade off the lead on unescaped templates. Keep in mind that Eta supports template tags inside strings & comments, plugins, whitespace trimming, etc.</em>
 <br><br>
