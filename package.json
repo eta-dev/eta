@@ -47,17 +47,16 @@
   "scripts": {
     "build:node": "microbundle src/index.ts --target node --format esm,umd",
     "build:browser": "microbundle src/browser.ts --target web --format umd --output dist/browser.min.js",
-    "build": "denoify && npm run build:node && npm run build:browser && deno fmt deno_dist/*.ts",
+    "build": "npm run build:node && npm run build:browser",
     "commit": "git-cz",
-    "format": "prettier --write '{src,test}/**/!(*.deno).ts' && deno fmt deno_dist/*.ts",
+    "format": "prettier --write '{src,test}/**/**.ts'",
     "lint": "eslint src/*.ts test/*.spec.ts examples/* --ext .js,.ts",
-    "prebuild": "rimraf dist && rimraf deno_dist",
+    "prebuild": "rimraf dist",
     "release": "npm run build && np",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "size": "size-limit",
     "start": "microbundle watch",
-    "test": "jest --coverage && npm run test:deno && npm run size",
-    "test:deno": "deno test test/deno/*.spec.ts --allow-read --unstable",
+    "test": "jest --coverage && npm run size",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "test:watch": "jest --coverage --watch",
     "travis-deploy-once": "travis-deploy-once --pro"
@@ -69,7 +68,7 @@
     }
   ],
   "lint-staged": {
-    "{src,test}/**/!(*.deno).ts": [
+    "{src,test}/**/**.ts": [
       "eslint"
     ]
   },
@@ -86,19 +85,14 @@
       "^(\\.{1,2}/.*)\\.js$": "$1"
     },
     "testEnvironment": "node",
-    "testRegex": "\\/test\\/(?!deno\\/).*(\\.spec\\.ts)$",
+    "testRegex": "\\/test\\/.*(\\.spec\\.ts)$",
     "moduleFileExtensions": [
       "ts",
       "js"
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "/test/",
-      "/test/deno/",
-      "/src/*.deno.ts"
-    ],
-    "testPathIgnorePatterns": [
-      "/src/*.deno.ts"
+      "/test/"
     ],
     "coverageThreshold": {
       "global": {
@@ -109,14 +103,7 @@
       }
     },
     "collectCoverageFrom": [
-      "src/!(*.deno|browser).ts"
-    ]
-  },
-  "standard": {
-    "ignore": [
-      "dist",
-      "deno_dist",
-      "src/*.deno.ts"
+      "src/!(browser).ts"
     ]
   },
   "commitlint": {
@@ -136,12 +123,8 @@
     "coveralls": "^3.1.1",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
-    "denoify": "^1.4.10",
     "eslint": "^8.35.0",
     "eslint-config-prettier": "^8.6.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^15.6.1",
-    "eslint-plugin-promise": "^6.1.1",
     "husky": "^4.3.8",
     "jest": "^29.4.3",
     "lint-staged": "^13.1.2",
