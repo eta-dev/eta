@@ -1,7 +1,9 @@
 /* global it, expect, describe */
 
-import { parse } from "../src/index";
-import { config } from "../src/config";
+import { Eta } from "../src/index";
+import { parse } from "../src/parse";
+
+const eta = new Eta();
 
 const fs = require("fs");
 const path = require("path");
@@ -12,32 +14,32 @@ const complexTemplate = fs.readFileSync(filePath, "utf8");
 
 describe("parse test", () => {
   it("parses a simple template", () => {
-    const buff = parse("hi <%= hey %>", config);
+    const buff = parse.call(eta, "hi <%= hey %>");
     expect(buff).toEqual(["hi ", { val: "hey", t: "i" }]);
   });
 
   it("parses a raw tag", () => {
-    const buff = parse("hi <%~ hey %>", config);
+    const buff = parse.call(eta, "hi <%~ hey %>");
     expect(buff).toEqual(["hi ", { val: "hey", t: "r" }]);
   });
 
   it("works with whitespace trimming", () => {
-    const buff = parse("hi\n<%- = hey-%> <%_ = hi _%>", config);
+    const buff = parse.call(eta, "hi\n<%- = hey-%> <%_ = hi _%>");
     expect(buff).toEqual(["hi", { val: "hey", t: "i" }, { val: "hi", t: "i" }]);
   });
 
   it("works with multiline comments", () => {
-    const buff = parse("hi <% /* comment contains delimiter %> */ %>", config);
+    const buff = parse.call(eta, "hi <% /* comment contains delimiter %> */ %>");
     expect(buff).toEqual(["hi ", { val: "/* comment contains delimiter %> */", t: "e" }]);
   });
 
   it("parses with simple template literal", () => {
-    const buff = parse("hi <%= `template %> ${value}` %>", config);
+    const buff = parse.call(eta, "hi <%= `template %> ${value}` %>");
     expect(buff).toEqual(["hi ", { val: "`template %> ${value}`", t: "i" }]);
   });
 
   it("compiles complex template", () => {
-    const buff = parse(complexTemplate, config);
+    const buff = parse.call(eta, complexTemplate);
     expect(buff).toEqual([
       "Hi\\n",
       { t: "e", val: 'console.log("Hope you like Eta!")' },
@@ -70,13 +72,13 @@ describe("parse test", () => {
 
   test("throws with unclosed tag", () => {
     expect(() => {
-      parse('<%hi("hey")', config);
+      parse.call(eta, '<%hi("hey")');
     }).toThrowError("hi");
   });
 
   test("throws with unclosed single-quote string", () => {
     expect(() => {
-      parse("<%= ' %>", config);
+      parse.call(eta, "<%= ' %>");
     }).toThrowError(`unclosed string at line 1 col 5:
 
   <%= ' %>
@@ -85,7 +87,7 @@ describe("parse test", () => {
 
   test("throws with unclosed double-quote string", () => {
     expect(() => {
-      parse('<%= " %>', config);
+      parse.call(eta, '<%= " %>');
     }).toThrowError(`unclosed string at line 1 col 5:
 
   <%= " %>
@@ -94,7 +96,7 @@ describe("parse test", () => {
 
   test("throws with unclosed template literal", () => {
     expect(() => {
-      parse("<%= ` %>", config);
+      parse.call(eta, "<%= ` %>");
     }).toThrowError(`unclosed string at line 1 col 5:
 
   <%= \` %>
@@ -103,7 +105,7 @@ describe("parse test", () => {
 
   test("throws with unclosed multi-line comment", () => {
     expect(() => {
-      parse("<%= /* %>", config);
+      parse.call(eta, "<%= /* %>");
     }).toThrowError(`unclosed comment at line 1 col 5:
 
   <%= /* %>

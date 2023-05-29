@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import { trimWS, XMLEscape } from "../src/utils";
-import { defaultConfig, getConfig } from "../src/index";
+import { defaultConfig } from "../src/config";
 
 describe("Whitespace trim", () => {
   describe("#trimLeft", () => {
@@ -42,13 +42,13 @@ describe("Whitespace trim", () => {
 
   describe("#trim", () => {
     it("WS slurp both sides", () => {
-      expect(trimWS(" somestring  ", getConfig({ autoTrim: ["slurp", "slurp"] }), "", "")).toBe(
-        "somestring"
-      );
+      expect(
+        trimWS(" somestring  ", { ...defaultConfig, autoTrim: ["slurp", "slurp"] }, "", "")
+      ).toBe("somestring");
     });
 
     it("defaultConfig.autoTrim set to false", () => {
-      expect(trimWS(" some string\n  ", getConfig({ autoTrim: false }), "", "")).toBe(
+      expect(trimWS(" some string\n  ", { ...defaultConfig, autoTrim: false }, "", "")).toBe(
         " some string\n  "
       );
     });
@@ -58,5 +58,6 @@ describe("Whitespace trim", () => {
 describe("HTML Escape", () => {
   it("properly escapes HTML characters", () => {
     expect(XMLEscape("<p>HTML</p>")).toBe("&lt;p&gt;HTML&lt;/p&gt;");
+    expect(XMLEscape("no html here")).toBe("no html here");
   });
 });
