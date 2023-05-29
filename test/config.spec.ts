@@ -15,6 +15,12 @@ describe("Config Tests", () => {
     expect(res).toEqual("<p>Hi</p>"); // not escaped
   });
 
+  it("default filter function stringifies data", () => {
+    const eta = new Eta();
+
+    expect(eta.config.filterFunction({ a: 1 })).toEqual("[object Object]");
+  });
+
   it("filter function", () => {
     const template = "My favorite food is <%= it.fav %>";
     const baseEta = new Eta();

@@ -1,0 +1,14 @@
+<% function resolveAfter2Seconds(val) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(val);
+    }, 20);
+  });
+} %>
+
+<% async function asyncTest() {
+  const result = await resolveAfter2Seconds("HI FROM ASYNC");
+  return result;
+} %>
+
+<%= await asyncTest() %>

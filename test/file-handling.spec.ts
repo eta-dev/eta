@@ -38,3 +38,33 @@ Hi Test Runner`
     });
   });
 });
+
+describe("file handling errors", () => {
+  const eta = new Eta({ views: viewsDir });
+
+  it("throws if accessing a file outside the views directory", () => {
+    expect(() => {
+      eta.render("../../sensitive-file.json", {});
+    }).toThrow();
+  });
+
+  it("throws if accessing a partial outside the views directory", () => {
+    expect(() => {
+      eta.render("out-of-views-dir", {});
+    }).toThrow();
+  });
+
+  it("throws if template doesn't exist", () => {
+    expect(() => {
+      eta.render("nonexistent.eta", {});
+    }).toThrow(/Could not find template/);
+  });
+
+  it("throws if views directory isn't defined", () => {
+    const testEta = new Eta();
+
+    expect(() => {
+      testEta.render("simple.eta", {});
+    }).toThrow();
+  });
+});
