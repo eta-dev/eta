@@ -52,12 +52,14 @@ export class Eta {
     template: string | TemplateFunction, // template string or template function
     options?: { async: boolean }
   ): void {
-    let templates = options && options.async ? this.templatesAsync : this.templatesSync;
-
     if (typeof template === "string") {
+      const templates = options && options.async ? this.templatesAsync : this.templatesSync;
+
       templates.define(name, this.compile(template, options));
     } else {
-      if (template.constructor.name === "AsyncFunction") {
+      let templates = this.templatesSync;
+
+      if (template.constructor.name === "AsyncFunction" || (options && options.async)) {
         templates = this.templatesAsync;
       }
 
