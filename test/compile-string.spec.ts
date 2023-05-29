@@ -31,7 +31,7 @@ __eta.res+=__eta.e(it.name)
 
 
 if (__eta.layout) {
-  __eta.res = include (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+  __eta.res = include (__eta.layout, {body: __eta.res, ...it, ...__eta.layoutData});
 }
 
 
@@ -60,7 +60,7 @@ __eta.res+=it.name
 
 
 if (__eta.layout) {
-  __eta.res = include (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+  __eta.res = include (__eta.layout, {body: __eta.res, ...it, ...__eta.layoutData});
 }
 
 
@@ -90,7 +90,7 @@ __eta.res+=__eta.e(it.lastname)
 
 
 if (__eta.layout) {
-  __eta.res = include (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+  __eta.res = include (__eta.layout, {body: __eta.res, ...it, ...__eta.layoutData});
 }
 
 
@@ -140,7 +140,7 @@ __eta.res+=include("mypartial")
 
 
 if (__eta.layout) {
-  __eta.res = include (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+  __eta.res = include (__eta.layout, {body: __eta.res, ...it, ...__eta.layoutData});
 }
 
 

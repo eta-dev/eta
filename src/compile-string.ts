@@ -33,9 +33,9 @@ ${config.useWith ? "with(" + config.varName + "||{}){" : ""}
 ${compileBody.call(this, buffer)}
 
 if (__eta.layout) {
-  __eta.res = ${
-    isAsync ? "await includeAsync" : "include"
-  } (__eta.layout, {body: __eta.res, ...__eta.layoutData});
+  __eta.res = ${isAsync ? "await includeAsync" : "include"} (__eta.layout, {body: __eta.res, ...${
+    config.varName
+  }, ...__eta.layoutData});
 }
 
 ${config.useWith ? "}" : ""}

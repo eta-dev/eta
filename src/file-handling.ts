@@ -26,10 +26,12 @@ export function readFile(this: EtaCore, path: string): string {
   return res;
 }
 
-export function resolvePath(this: EtaCore, template: string, options?: Partial<Options>): string {
+export function resolvePath(
+  this: EtaCore,
+  templatePath: string,
+  options?: Partial<Options>
+): string {
   let resolvedFilePath = "";
-
-  template += path.extname(template) ? "" : ".eta";
 
   const views = this.config.views;
 
@@ -39,34 +41,44 @@ export function resolvePath(this: EtaCore, template: string, options?: Partial<O
 
   const baseFilePath = options && options.filepath;
 
+  // how we index cached template paths
+  const cacheIndex = JSON.stringify({
+    filename: baseFilePath, // filename of the template which called includeFile()
+    path: templatePath,
+    views: this.config.views,
+  });
+
+  templatePath += path.extname(templatePath) ? "" : ".eta";
+
   // if the file was included from another template
   if (baseFilePath) {
     // check the cache
-    if (this.config.cacheFilepaths && this.filepathCache[baseFilePath]) {
-      return this.filepathCache[baseFilePath];
+
+    if (this.config.cacheFilepaths && this.filepathCache[cacheIndex]) {
+      return this.filepathCache[cacheIndex];
     }
 
-    const absolutePathTest = absolutePathRegExp.exec(template);
+    const absolutePathTest = absolutePathRegExp.exec(templatePath);
 
     if (absolutePathTest && absolutePathTest.length) {
-      const formattedPath = template.replace(/^\/*/, "");
+      const formattedPath = templatePath.replace(/^\/*|^\\*/, "");
       resolvedFilePath = path.join(views, formattedPath);
     } else {
-      resolvedFilePath = path.join(path.dirname(baseFilePath), template);
+      resolvedFilePath = path.join(path.dirname(baseFilePath), templatePath);
     }
   } else {
-    resolvedFilePath = path.join(views, template);
+    resolvedFilePath = path.join(views, templatePath);
   }
 
   if (dirIsChild(views, resolvedFilePath)) {
     // add resolved path to the cache
     if (baseFilePath && this.config.cacheFilepaths) {
-      this.filepathCache[baseFilePath] = resolvedFilePath;
+      this.filepathCache[cacheIndex] = resolvedFilePath;
     }
 
     return resolvedFilePath;
   } else {
-    throw new EtaError(`Template '${template}' is not in the views directory`);
+    throw new EtaError(`Template '${templatePath}' is not in the views directory`);
   }
 }
 
