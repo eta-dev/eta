@@ -1,8 +1,6 @@
 /* eslint-disable dot-notation, space-before-function-paren */
 /* global template, doT, ejs, Handlebars, Sqrl, Mustache, swig, Highcharts, _, Eta */
 
-// TODO: Re-enable Squirrelly when it has a stable release
-
 /*
 
 Modified from AUI's docs. See their license below:
