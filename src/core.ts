@@ -1,9 +1,10 @@
-import { defaultConfig } from "./config.js";
 import { Cacher } from "./storage.js";
-import { parse } from "./parse.js";
 import { compile } from "./compile.js";
 import { compileToString } from "./compile-string.js";
+import { defaultConfig } from "./config.js";
+import { parse } from "./parse.js";
 import { render, renderAsync, renderString, renderStringAsync } from "./render.js";
+import { RuntimeErr, EtaError } from "./err.js";
 import { TemplateFunction } from "./compile.js";
 
 /* TYPES */
@@ -21,9 +22,11 @@ export class Eta {
 
   config: EtaConfig;
 
-  parse = parse;
+  RuntimeErr = RuntimeErr;
+
   compile = compile;
   compileToString = compileToString;
+  parse = parse;
   render = render;
   renderAsync = renderAsync;
   renderString = renderString;
@@ -67,3 +70,6 @@ export class Eta {
     }
   }
 }
+
+// for instance checking against thrown errors
+export { EtaError };

@@ -17,29 +17,34 @@ export function compileToString(this: Eta, str: string, options?: Partial<Option
   const buffer: Array<AstObject> = this.parse.call(this, str);
 
   // note: when the include function passes through options, the only parameter that matters is the filepath parameter
-  let res = `
+  let res = `${config.functionHeader}
 let include = (template, data) => this.render(template, data, options);
 let includeAsync = (template, data) => this.renderAsync(template, data, options);
 
-let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
+let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction${
+    config.debug
+      ? ', line: 1, templateStr: "' +
+        str.replace(/\\|'/g, "\\$&").replace(/\r\n|\n|\r/g, "\\n") +
+        '"'
+      : ""
+  }};
 
 function layout(path, data) {
   __eta.layout = path;
   __eta.layoutData = data;
-}
-
-${config.useWith ? "with(" + config.varName + "||{}){" : ""}
+}${config.debug ? "try {" : ""}${config.useWith ? "with(" + config.varName + "||{}){" : ""}
 
 ${compileBody.call(this, buffer)}
-
 if (__eta.layout) {
   __eta.res = ${isAsync ? "await includeAsync" : "include"} (__eta.layout, {...${
     config.varName
   }, body: __eta.res, ...__eta.layoutData});
 }
-
-${config.useWith ? "}" : ""}
-
+${config.useWith ? "}" : ""}${
+    config.debug
+      ? "} catch (e) { this.RuntimeErr(e, __eta.templateStr, __eta.line, options.filepath) }"
+      : ""
+  }
 return __eta.res;
 `;
 
@@ -84,6 +89,8 @@ function compileBody(this: Eta, buff: Array<AstObject>) {
     } else {
       const type = currentBlock.t; // "r", "e", or "i"
       let content = currentBlock.val || "";
+
+      if (config.debug) returnStr += "__eta.line=" + currentBlock.lineNo + "\n";
 
       if (type === "r") {
         // raw

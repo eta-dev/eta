@@ -10,6 +10,7 @@ export type TagType = "r" | "e" | "i" | "";
 export interface TemplateObject {
   t: TagType;
   val: string;
+  lineNo?: number;
 }
 
 export type AstObject = string | TemplateObject;
@@ -27,6 +28,10 @@ const doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
 function escapeRegExp(string: string) {
   // From MDN
   return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
+function getLineNo(str: string, index: number) {
+  return str.slice(0, index).split("\n").length;
 }
 
 export function parse(this: Eta, str: string): Array<AstObject> {
@@ -183,6 +188,9 @@ export function parse(this: Eta, str: string): Array<AstObject> {
       }
     }
     if (currentObj) {
+      if (config.debug) {
+        currentObj.lineNo = getLineNo(str, m.index);
+      }
       buffer.push(currentObj);
     } else {
       ParseErr("unclosed tag", str, m.index + precedingString.length);

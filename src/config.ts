@@ -25,12 +25,20 @@ export interface EtaConfig {
   /** Whether or not to cache templates if `name` or `filename` is passed */
   cache: boolean;
 
-  escapeFunction: (str: unknown) => string;
-
-  filterFunction: (val: unknown) => string;
-
   /** Holds cache of resolved filepaths. Set to `false` to disable. */
   cacheFilepaths: boolean;
+
+  /** Whether to pretty-format error messages (introduces runtime penalties) */
+  debug: boolean;
+
+  /** Function to XML-sanitize interpolations */
+  escapeFunction: (str: unknown) => string;
+
+  /** Function applied to all interpolations when autoFilter is true */
+  filterFunction: (val: unknown) => string;
+
+  /** Raw JS code inserted in the template function. Useful for declaring global variables for user templates */
+  functionHeader: string;
 
   /** Parsing options */
   parse: {
@@ -72,9 +80,11 @@ const defaultConfig: EtaConfig = {
   autoTrim: [false, "nl"],
   cache: false,
   cacheFilepaths: true,
+  debug: false,
   escapeFunction: XMLEscape,
   // default filter function (not used unless enables) just stringifies the input
   filterFunction: (val) => String(val),
+  functionHeader: "",
   parse: {
     exec: "",
     interpolate: "=",

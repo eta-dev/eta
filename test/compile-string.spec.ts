@@ -24,17 +24,12 @@ function layout(path, data) {
   __eta.layoutData = data;
 }
 
-
-
 __eta.res+='hi '
 __eta.res+=__eta.e(it.name)
-
 
 if (__eta.layout) {
   __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
 }
-
-
 
 return __eta.res;
 `);
@@ -53,17 +48,12 @@ function layout(path, data) {
   __eta.layoutData = data;
 }
 
-
-
 __eta.res+='hi '
 __eta.res+=it.name
-
 
 if (__eta.layout) {
   __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
 }
-
-
 
 return __eta.res;
 `);
@@ -82,18 +72,13 @@ function layout(path, data) {
   __eta.layoutData = data;
 }
 
-
-
 __eta.res+='hi'
 __eta.res+=__eta.e(it.firstname)
 __eta.res+=__eta.e(it.lastname)
 
-
 if (__eta.layout) {
   __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
 }
-
-
 
 return __eta.res;
 `);
@@ -111,8 +96,6 @@ function layout(path, data) {
   __eta.layout = path;
   __eta.layoutData = data;
 }
-
-
 
 __eta.res+='Hi\\n'
 console.log("Hope you like Eta!")
@@ -138,12 +121,9 @@ __eta.res+='      \\n  '
 __eta.res+='\\nThis is a partial: '
 __eta.res+=include("mypartial")
 
-
 if (__eta.layout) {
   __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
 }
-
-
 
 return __eta.res;
 `);

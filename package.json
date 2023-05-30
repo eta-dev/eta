@@ -64,7 +64,7 @@
   "size-limit": [
     {
       "path": "dist/browser.umd.js",
-      "limit": "3 KB"
+      "limit": "3.5 KB"
     }
   ],
   "lint-staged": {
