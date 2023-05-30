@@ -19,7 +19,8 @@ const AsyncFunction = async function () {}.constructor; // eslint-disable-line @
 export function compile(this: Eta, str: string, options?: Partial<Options>): TemplateFunction {
   const config: EtaConfig = this.config;
 
-  /* ASYNC HANDLING (modified from mde/ejs) */
+  /* ASYNC HANDLING */
+  // code gratefully taken from https://github.com/mde/ejs and adapted
   const ctor = options && options.async ? (AsyncFunction as FunctionConstructor) : Function;
   /* END ASYNC HANDLING */
 
