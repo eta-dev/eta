@@ -82,13 +82,7 @@ export function renderAsync(
   const res = templateFn.call(this, data, options);
 
   // Return a promise
-  return new Promise(function (resolve: Function, reject: Function) {
-    try {
-      resolve(res);
-    } catch (err) {
-      reject(err);
-    }
-  });
+  return Promise.resolve(res);
 }
 
 export function renderString(this: Eta, template: string, data: object): string {
