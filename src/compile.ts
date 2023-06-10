@@ -7,6 +7,7 @@ import type { EtaConfig, Options } from "./config.js";
 export type TemplateFunction = (this: Eta, data?: object, options?: Partial<Options>) => string;
 /* END TYPES */
 
+/* istanbul ignore next */
 const AsyncFunction = async function () {}.constructor; // eslint-disable-line @typescript-eslint/no-empty-function
 
 /**
