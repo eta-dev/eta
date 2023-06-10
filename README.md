@@ -1,13 +1,13 @@
 <p align="center">
-  <img align="center" width="50%" src="https://user-images.githubusercontent.com/25597854/93541153-d8c8fe80-f912-11ea-9e65-a0089ca6d2b6.png">
+  <img align="center" width="50%" src="https://github.com/eta-dev/eta/assets/25597854/041dbe34-883b-459b-8607-c787815c441a">
 </p>
 
 <h1 align="center" style="text-align: center; width: fit-content; margin-left: auto; margin-right: auto;">eta (η)</h1>
 
 <p align="center">
   <a href="https://eta.js.org">Documentation</a> -
-  <a href="https://gitter.im/eta-dev/community">Chat</a> -
-  <a href="https://runkit.com/nebrelbug/eta-simple-demo">RunKit Demo</a> -
+  <a href="https://discord.gg/27gGncJYE2">Chat</a> -
+  <a href="https://runkit.com/nebrelbug/eta-v3">RunKit Demo</a> -
   <a href="https://eta.js.org/playground">Playground</a>
 </p>
 
@@ -27,14 +27,20 @@
 
 </span>
 
-**Summary**
+<span align="center">
 
-Eta is a lightweight and blazing fast embedded JS templating engine that works inside Node, Deno, and the browser. Created by the developers of [Squirrelly](https://squirrelly.js.org), it's written in TypeScript and emphasizes phenomenal performance, configurability, and low bundle size.
+**You're viewing the source for Eta v3, which we just released! For v2, visit [the old branch](https://github.com/eta-dev/eta/tree/v2).**
+
+</span>
+
+## Summary
+
+Eta is a lightweight and blazing fast embedded JS templating engine that works inside Node, Deno, and the browser. It's written in TypeScript and emphasizes great performance, configurability, and small bundle size.
 
 ### 🌟 Features
 
 - 📦 0 dependencies
-- 💡 2.3KB minzipped; size restricted to <3KB forever with [size-limit](https://github.com/ai/size-limit)
+- 💡 Only ~3.5 KB minzipped
 - ⚡️ Written in TypeScript
 - ✨ Deno support (+ Node and browser)
 - 🚀 Super Fast
@@ -50,11 +56,49 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
 - ⚡️ Exports ES Modules as well as UMD
 - 📝 Easy template syntax
 
-### Where did Eta's name come from?
+## Get Started
+
+_For more thorough documentation, visit [https://eta.js.org](https://eta.js.org)_
+
+Install Eta
+
+```bash
+npm install eta
+```
+
+In the root of your project, create `templates/simple.eta`
+
+```eta
+Hi <%= it.name %>!
+```
+
+Then, in your JS file:
+
+```js
+import { Eta } from "eta";
+
+const eta = new Eta({ views: path.join(__dirname, "templates") });
+
+// Render a template
+
+const res = eta.render("./simple", { name: "Ben" });
+console.log(res); // Hi Ben!
+```
+
+## FAQs
+
+<details>
+  <summary>
+    <b>Where did Eta's name come from?</b>
+  </summary>
 
 "Eta" means tiny in Esperanto. Plus, it can be used as an acronym for all sorts of cool phrases: "ECMAScript Template Awesomeness", "Embedded Templating Alternative", etc....
 
 Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of cool things in various mathematical fields, including efficiency) and is three letters long (perfect for a file extension).
+
+</details>
+
+<br />
 
 ## Integrations
 
@@ -107,65 +151,7 @@ To operate with Eta templates in Node-RED: [@ralphwetzel/node-red-contrib-eta](h
 
 </details>
 
-## 📜 Docs
-
-We know nobody reads through the long and boring documentation in the ReadMe anyway, so head over to the documentation website:
-
-📝 [https://eta.js.org](https://eta.js.org)
-
-## 📓 Examples
-
-### Simple Template
-
-```javascript
-import * as Eta from "eta";
-var myTemplate = "<p>My favorite kind of cake is: <%= it.favoriteCake %></p>";
-
-Eta.render(myTemplate, { favoriteCake: "Chocolate!" });
-// Returns: '<p>My favorite kind of cake is: Chocolate!</p>'
-```
-
-### Conditionals
-
-```ejs
-<% if(it.somevalue === 1) { %>
-Display this
-<% } else { %>
-Display this instead
-<% } %>
-```
-
-### Loops
-
-```ejs
-<ul>
-<% it.users.forEach(function(user){ %>
-<li><%= user.name %></li>
-<% }) %>
-</ul>
-```
-
-### Partials
-
-```ejs
-<%~ include('mypartial') %>
-```
-
-```ejs
-<%~ includeFile('./footer') %>
-```
-
-```ejs
-<%~ include('users', {users: it.users}) %>
-```
-
-## ✔️ Tests
-
-Tests can be run with `npm test`. Multiple tests check that parsing, rendering, and compiling return expected results, formatting follows guidelines, and code coverage is at the expected level.
-
-## Resources
-
-To be added
+<br />
 
 ## Projects using `eta`
 
@@ -210,5 +196,5 @@ This project follows the [all-contributors](https://github.com/kentcdodds/all-co
 
 ## Credits
 
-- Async support and file handling were added based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified and refactored to some extent.
+- Async support, file handling, and error formatting were based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified and refactored to some extent.
 - Syntax and some parts of compilation are heavily based off EJS, Nunjucks, and doT.
