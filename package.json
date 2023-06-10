@@ -50,7 +50,7 @@
     "build": "npm run build:node && npm run build:browser",
     "commit": "git-cz",
     "format": "prettier --write '{src,test}/**/**.ts'",
-    "lint": "eslint src/*.ts test/*.spec.ts examples/* --ext .js,.ts",
+    "lint": "eslint src/*.ts test/*.spec.ts --ext .js,.ts",
     "prebuild": "rimraf dist",
     "release": "npm run build && np",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
