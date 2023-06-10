@@ -193,7 +193,7 @@ export function parse(this: Eta, str: string): Array<AstObject> {
       }
       buffer.push(currentObj);
     } else {
-      ParseErr("unclosed tag", str, m.index + precedingString.length);
+      ParseErr("unclosed tag", str, m.index);
     }
   }
 
