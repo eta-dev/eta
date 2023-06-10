@@ -1,31 +1,41 @@
 /* global it, expect, describe */
 
-import { ParseErr } from "../src/err";
+import path from "path";
+import { Eta } from "../src/index";
 
 describe("ParseErr", () => {
-  it("error throws correctly", () => {
+  const eta = new Eta();
+
+  it("error while parsing", () => {
     try {
-      ParseErr("Something Unexpected Happened!", "template {{", 9);
+      eta.renderString("template <%", {});
     } catch (ex) {
       expect((ex as Error).name).toBe("Eta Error");
-      expect((ex as Error).message).toBe(`Something Unexpected Happened! at line 1 col 10:
+      expect((ex as Error).message).toBe(`unclosed tag at line 1 col 10:
 
-  template {{
+  template <%
            ^`);
       expect(ex instanceof Error).toBe(true);
     }
   });
-  it("error throws without Object.setPrototypeOf", () => {
-    Object.defineProperty(Object, "setPrototypeOf", { value: undefined });
-    try {
-      ParseErr("Something Unexpected Happened!", "template {{", 9);
-    } catch (ex) {
-      expect((ex as Error).name).toBe("Eta Error");
-      expect((ex as Error).message).toBe(`Something Unexpected Happened! at line 1 col 10:
+});
 
-  template {{
-           ^`);
-      expect(ex instanceof Error).toBe(true);
+describe("RuntimeErr", () => {
+  const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+
+  const errorFilepath = path.join(__dirname, "templates/runtime-error.eta");
+
+  it("error throws correctly", () => {
+    try {
+      eta.render("./runtime-error", {});
+    } catch (ex) {
+      expect((ex as Error).name).toBe("ReferenceError");
+      expect((ex as Error).message).toBe(`${errorFilepath}:2
+    1| 
+ >> 2| <%= undefinedVariable %>
+    3| Lorem Ipsum
+
+undefinedVariable is not defined`);
     }
   });
 });

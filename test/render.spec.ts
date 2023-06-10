@@ -34,6 +34,22 @@ describe("render caching", () => {
 
     expect(eta.templatesSync.get("@template1")).toBeTruthy();
   });
+
+  it("throws if template doesn't exist", () => {
+    expect(() => {
+      eta.render("@should-error", {});
+    }).toThrow(/Failed to get template/);
+  });
+});
+
+describe("render caching w/ files", () => {
+  const eta = new Eta({ cache: true, views: path.join(__dirname, "templates") });
+
+  eta.loadTemplate(path.join(__dirname, "templates/nonexistent.eta"), "Hi <%=it.name%>");
+
+  it("Template files cache", () => {
+    expect(eta.render("./nonexistent", { name: "Ada Lovelace" })).toEqual("Hi Ada Lovelace");
+  });
 });
 
 describe("useWith", () => {
