@@ -45,7 +45,7 @@
     "node": ">=6.0.0"
   },
   "scripts": {
-    "build:node": "microbundle src/index.ts --target node --format esm,umd",
+    "build:node": "microbundle src/index.ts --target node --format esm && microbundle src/index.ts --target node --format umd",
     "build:browser": "microbundle src/browser.ts --target web --format umd,modern --output dist/browser.js",
     "build": "npm run build:node && npm run build:browser",
     "commit": "git-cz",
