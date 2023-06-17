@@ -1,5 +1,5 @@
-import { Eta as EtaCore } from "./core.js";
-import { readFile, resolvePath } from "./file-handling.js";
+import { Eta as EtaCore } from "./core.ts";
+import { readFile, resolvePath } from "./file-handling.ts";
 
 export class Eta extends EtaCore {
   readFile = readFile;

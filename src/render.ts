@@ -1,9 +1,9 @@
-import { EtaError } from "./err.js";
+import { EtaError } from "./err.ts";
 
 /* TYPES */
-import type { Options } from "./config.js";
-import type { TemplateFunction } from "./compile.js";
-import type { Eta } from "./core.js";
+import type { Options } from "./config.ts";
+import type { TemplateFunction } from "./compile.ts";
+import type { Eta } from "./core.ts";
 /* END TYPES */
 
 function handleCache(this: Eta, template: string, options: Partial<Options>): TemplateFunction {
