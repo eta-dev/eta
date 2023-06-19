@@ -20,7 +20,7 @@
 <span align="center">
 
 [![GitHub package.json version (main)](https://img.shields.io/github/package-json/v/eta-dev/eta/main?label=current%20version)](https://www.npmjs.com/package/eta)
-[![Travis](https://img.shields.io/travis/com/eta-dev/eta/master.svg)](https://travis-ci.com/eta-dev/eta)
+[![GitHub Actions Status](https://github.com/eta-dev/eta/actions/workflows/test.yml/badge.svg)](https://github.com/eta-dev/eta/actions)
 [![All Contributors][logo]](#contributors-)
 [![Coveralls](https://img.shields.io/coveralls/eta-dev/eta.svg)](https://coveralls.io/github/eta-dev/eta)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)

@@ -53,13 +53,11 @@
     "lint": "eslint src/*.ts test/*.spec.ts --ext .js,.ts",
     "prebuild": "rimraf dist",
     "release": "npm run build && np",
-    "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "size": "size-limit",
     "start": "microbundle watch",
     "test": "jest --coverage && npm run size",
     "test:prod": "npm run lint && npm run test -- --no-cache",
-    "test:watch": "jest --coverage --watch",
-    "travis-deploy-once": "travis-deploy-once --pro"
+    "test:watch": "jest --coverage --watch"
   },
   "size-limit": [
     {
@@ -134,7 +132,6 @@
     "rimraf": "^4.1.2",
     "shelljs": "^0.8.5",
     "size-limit": "^8.2.4",
-    "travis-deploy-once": "^5.0.11",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
