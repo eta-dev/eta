@@ -22,6 +22,9 @@ jobs:
 
       - run: npm test
 
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+
   commitlint:
     runs-on: ubuntu-latest
     steps:
@@ -43,6 +46,3 @@ jobs:
       - name: Validate PR commits with commitlint
         if: github.event_name == 'pull_request'
         run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
-
-      - name: Coveralls
-        uses: coverallsapp/github-action@v2
