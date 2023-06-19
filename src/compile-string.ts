@@ -1,8 +1,8 @@
 /* TYPES */
 
-import type { Options } from "./config.js";
-import type { AstObject } from "./parse.js";
-import type { Eta } from "./core.js";
+import type { Options } from "./config.ts";
+import type { AstObject } from "./parse.ts";
+import type { Eta } from "./core.ts";
 
 /* END TYPES */
 
