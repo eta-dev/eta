@@ -1,6 +1,6 @@
 import { Cacher } from "./storage.ts";
 import { compile } from "./compile.ts";
-import { compileToString } from "./compile-string.ts";
+import { compileToString, compileBody } from "./compile-string.ts";
 import { defaultConfig } from "./config.ts";
 import { parse } from "./parse.ts";
 import { render, renderAsync, renderString, renderStringAsync } from "./render.ts";
@@ -26,6 +26,7 @@ export class Eta {
 
   compile = compile;
   compileToString = compileToString;
+  compileBody = compileBody;
   parse = parse;
   render = render;
   renderAsync = renderAsync;
