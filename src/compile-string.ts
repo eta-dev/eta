@@ -14,6 +14,8 @@ export function compileToString(this: Eta, str: string, options?: Partial<Option
   const config = this.config;
   const isAsync = options && options.async;
 
+  const compileBody = this.compileBody;
+
   const buffer: Array<AstObject> = this.parse.call(this, str);
 
   // note: when the include function passes through options, the only parameter that matters is the filepath parameter
@@ -72,7 +74,7 @@ return __eta.res;
  * ```
  */
 
-function compileBody(this: Eta, buff: Array<AstObject>) {
+export function compileBody(this: Eta, buff: Array<AstObject>) {
   const config = this.config;
 
   let i = 0;
