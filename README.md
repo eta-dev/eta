@@ -76,6 +76,7 @@ Then, in your JS file:
 
 ```js
 import { Eta } from "eta";
+// import { Eta } from "https://deno.land/x/eta@v3.1.0/src/index.ts";
 
 const eta = new Eta({ views: path.join(__dirname, "templates") });
 
