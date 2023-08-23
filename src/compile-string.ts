@@ -26,7 +26,7 @@ let includeAsync = (template, data) => this.renderAsync(template, data, options)
 let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction${
     config.debug
       ? ', line: 1, templateStr: "' +
-        str.replace(/\\|'/g, "\\$&").replace(/\r\n|\n|\r/g, "\\n") +
+        str.replace(/\\|"/g, "\\$&").replace(/\r\n|\n|\r/g, "\\n") +
         '"'
       : ""
   }};
