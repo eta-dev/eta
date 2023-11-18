@@ -69,6 +69,9 @@ export interface EtaConfig {
 
   /** Directory that contains templates */
   views?: string;
+
+  /** Control template file extension defaults. Default `.eta` */
+  defaultExtension?: string;
 }
 
 /* END TYPES */
@@ -95,6 +98,7 @@ const defaultConfig: EtaConfig = {
   tags: ["<%", "%>"],
   useWith: false,
   varName: "it",
+  defaultExtension: ".eta",
 };
 
 export { defaultConfig };
