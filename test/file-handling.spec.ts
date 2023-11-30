@@ -70,7 +70,7 @@ describe("file handling errors", () => {
 });
 
 describe("filepath default extension tests", () => {
-  console.log("Templates are in ", viewsDir) 
+  console.log("Templates are in ", viewsDir);
 
   it("works with defaultExtension", async () => {
     const eta = new Eta({ views: viewsDir, cache: true, defaultExtension: ".tmpl" });
@@ -82,7 +82,7 @@ describe("filepath default extension tests", () => {
   it("works with no extension", async () => {
     const eta = new Eta({ views: viewsDir, cache: true, defaultExtension: "" });
     const templateResult = await eta.render("template-without-extn", { name: "TMPL Run" });
-    
+
     expect(templateResult).toEqual(`Hi TMPL Run`);
   });
-})
+});

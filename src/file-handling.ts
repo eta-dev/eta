@@ -40,7 +40,8 @@ export function resolvePath(
   }
 
   const baseFilePath = options && options.filepath;
-  const defaultExtension = this.config.defaultExtension === undefined ? ".eta" : this.config.defaultExtension;
+  const defaultExtension =
+    this.config.defaultExtension === undefined ? ".eta" : this.config.defaultExtension;
 
   // how we index cached template paths
   const cacheIndex = JSON.stringify({
@@ -49,7 +50,7 @@ export function resolvePath(
     views: this.config.views,
   });
 
-  templatePath += path.extname(templatePath) ? "" : defaultExtension; 
+  templatePath += path.extname(templatePath) ? "" : defaultExtension;
 
   // if the file was included from another template
   if (baseFilePath) {
