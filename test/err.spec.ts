@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import path from "path";
-import { Eta } from "../src/index";
+import { Eta, EtaParseError } from "../src/index";
 
 describe("ParseErr", () => {
   const eta = new Eta();
@@ -10,8 +10,9 @@ describe("ParseErr", () => {
     try {
       eta.renderString("template <%", {});
     } catch (ex) {
-      expect((ex as Error).name).toBe("Eta Error");
-      expect((ex as Error).message).toBe(`unclosed tag at line 1 col 10:
+      expect(ex).toBeInstanceOf(EtaParseError);
+      expect((ex as EtaParseError).name).toBe("EtaParser Error");
+      expect((ex as EtaParseError).message).toBe(`unclosed tag at line 1 col 10:
 
   template <%
            ^`);

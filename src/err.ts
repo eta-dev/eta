@@ -5,11 +5,18 @@ export class EtaError extends Error {
   }
 }
 
+export class EtaParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "EtaParser Error";
+  }
+}
+
 /**
  * Throws an EtaError with a nicely formatted error and message showing where in the template the error occurred.
  */
 
-export function ParseErr(message: string, str: string, indx: number): void {
+export function ParseErr(message: string, str: string, indx: number): never {
   const whitespace = str.slice(0, indx).split(/\n/);
 
   const lineNo = whitespace.length;
@@ -26,7 +33,7 @@ export function ParseErr(message: string, str: string, indx: number): void {
     "  " +
     Array(colNo).join(" ") +
     "^";
-  throw new EtaError(message);
+  throw new EtaParseError(message);
 }
 
 export function RuntimeErr(originalError: Error, str: string, lineNo: number, path: string): void {
