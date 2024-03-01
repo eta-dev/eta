@@ -12,6 +12,13 @@ export class EtaParseError extends Error {
   }
 }
 
+export class EtaRuntimeErr extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "EtaRuntime Error";
+  }
+}
+
 /**
  * Throws an EtaError with a nicely formatted error and message showing where in the template the error occurred.
  */
@@ -36,7 +43,7 @@ export function ParseErr(message: string, str: string, indx: number): never {
   throw new EtaParseError(message);
 }
 
-export function RuntimeErr(originalError: Error, str: string, lineNo: number, path: string): void {
+export function RuntimeErr(originalError: Error, str: string, lineNo: number, path: string): never {
   // code gratefully taken from https://github.com/mde/ejs and adapted
 
   const lines = str.split("\n");
@@ -54,7 +61,7 @@ export function RuntimeErr(originalError: Error, str: string, lineNo: number, pa
 
   const header = filename ? filename + ":" + lineNo + "\n" : "line " + lineNo + "\n";
 
-  const err = new EtaError(header + context + "\n\n" + originalError.message);
+  const err = new EtaRuntimeErr(header + context + "\n\n" + originalError.message);
 
   err.name = originalError.name; // the original name (e.g. ReferenceError) may be useful
 

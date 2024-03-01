@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import path from "path";
-import { Eta, EtaParseError } from "../src/index";
+import { Eta, EtaParseError, EtaRuntimeErr } from "../src/index";
 
 describe("ParseErr", () => {
   const eta = new Eta();
@@ -30,8 +30,9 @@ describe("RuntimeErr", () => {
     try {
       eta.render("./runtime-error", {});
     } catch (ex) {
-      expect((ex as Error).name).toBe("ReferenceError");
-      expect((ex as Error).message).toBe(`${errorFilepath}:2
+      expect(ex).toBeInstanceOf(EtaRuntimeErr);
+      expect((ex as EtaRuntimeErr).name).toBe("ReferenceError");
+      expect((ex as EtaRuntimeErr).message).toBe(`${errorFilepath}:2
     1| 
  >> 2| <%= undefinedVariable %>
     3| Lorem Ipsum
