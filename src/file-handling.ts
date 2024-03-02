@@ -1,4 +1,4 @@
-import { EtaError, EtaFileResolutionError } from "./err.ts";
+import { EtaFileResolutionError } from "./err.ts";
 
 import * as path from "node:path";
 
@@ -36,7 +36,7 @@ export function resolvePath(
   const views = this.config.views;
 
   if (!views) {
-    throw new EtaError("Views directory is not defined");
+    throw new EtaFileResolutionError("Views directory is not defined");
   }
 
   const baseFilePath = options && options.filepath;
@@ -80,7 +80,7 @@ export function resolvePath(
 
     return resolvedFilePath;
   } else {
-    throw new EtaError(`Template '${templatePath}' is not in the views directory`);
+    throw new EtaFileResolutionError(`Template '${templatePath}' is not in the views directory`);
   }
 }
 

@@ -57,11 +57,10 @@ undefinedVariable is not defined`);
 });
 
 describe("EtaFileResolutionError", () => {
-  const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+  it("error throws correctly when template does not exist", () => {
+    const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+    const errorFilepath = path.join(__dirname, "templates/not-existing-template.eta");
 
-  const errorFilepath = path.join(__dirname, "templates/not-existing-template.eta");
-
-  it("error throws correctly", () => {
     try {
       eta.render("./not-existing-template", {});
     } catch (ex) {
@@ -69,6 +68,40 @@ describe("EtaFileResolutionError", () => {
       expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
       expect((ex as EtaFileResolutionError).message).toBe(
         `Could not find template: ${errorFilepath}`
+      );
+    }
+  });
+
+  it("error throws correctly when views options is missing", async () => {
+    const eta = new Eta({ debug: true });
+    try {
+      eta.render("Hi", {});
+    } catch (ex) {
+      expect(ex).toBeInstanceOf(EtaFileResolutionError);
+      expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
+      expect((ex as EtaFileResolutionError).message).toBe("Views directory is not defined");
+    }
+
+    try {
+      await eta.renderAsync("Hi", {});
+    } catch (ex) {
+      expect(ex).toBeInstanceOf(EtaFileResolutionError);
+      expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
+      expect((ex as EtaFileResolutionError).message).toBe("Views directory is not defined");
+    }
+  });
+
+  it("error throws correctly when template in not in th view directory", () => {
+    const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+
+    const filePath = "../../../simple.eta";
+    try {
+      eta.render(filePath, {});
+    } catch (ex) {
+      expect(ex).toBeInstanceOf(EtaFileResolutionError);
+      expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
+      expect((ex as EtaFileResolutionError).message).toBe(
+        `Template '${filePath}' is not in the views directory`
       );
     }
   });
