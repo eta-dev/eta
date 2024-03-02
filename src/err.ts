@@ -19,6 +19,13 @@ export class EtaRuntimeErr extends Error {
   }
 }
 
+export class EtaFileResolutionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "EtaFileResolution Error";
+  }
+}
+
 /**
  * Throws an EtaError with a nicely formatted error and message showing where in the template the error occurred.
  */

@@ -1,7 +1,7 @@
 /* global it, expect, describe */
 
 import path from "path";
-import { Eta, EtaParseError, EtaRuntimeErr } from "../src/index";
+import { Eta, EtaParseError, EtaRuntimeErr, EtaFileResolutionError } from "../src/index";
 
 describe("ParseErr", () => {
   const eta = new Eta();
@@ -52,6 +52,24 @@ describe("RuntimeErr", () => {
     3| Lorem Ipsum
 
 undefinedVariable is not defined`);
+    }
+  });
+});
+
+describe("EtaFileResolutionError", () => {
+  const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+
+  const errorFilepath = path.join(__dirname, "templates/not-existing-template.eta");
+
+  it("error throws correctly", () => {
+    try {
+      eta.render("./not-existing-template", {});
+    } catch (ex) {
+      expect(ex).toBeInstanceOf(EtaFileResolutionError);
+      expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
+      expect((ex as EtaFileResolutionError).message).toBe(
+        `Could not find template: ${errorFilepath}`
+      );
     }
   });
 });
