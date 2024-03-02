@@ -1,7 +1,13 @@
 /* global it, expect, describe */
 
 import path from "path";
-import { Eta, EtaParseError, EtaRuntimeErr, EtaFileResolutionError } from "../src/index";
+import {
+  Eta,
+  EtaParseError,
+  EtaRuntimeErr,
+  EtaFileResolutionError,
+  EtaNameResolutionError,
+} from "../src/index";
 
 describe("ParseErr", () => {
   const eta = new Eta();
@@ -103,6 +109,22 @@ describe("EtaFileResolutionError", () => {
       expect((ex as EtaFileResolutionError).message).toBe(
         `Template '${filePath}' is not in the views directory`
       );
+    }
+  });
+});
+
+describe("EtaNameResolutionError", () => {
+  const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+
+  it("error throws correctly", () => {
+    const template = "@not-existing-tp";
+
+    try {
+      eta.render(template, {});
+    } catch (ex) {
+      expect(ex).toBeInstanceOf(EtaNameResolutionError);
+      expect((ex as EtaNameResolutionError).name).toBe("EtaNameResolution Error");
+      expect((ex as EtaNameResolutionError).message).toBe(`Failed to get template '${template}'`);
     }
   });
 });

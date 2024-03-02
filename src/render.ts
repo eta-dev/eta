@@ -1,4 +1,4 @@
-import { EtaError } from "./err.ts";
+import { EtaNameResolutionError } from "./err.ts";
 
 /* TYPES */
 import type { Options } from "./config.ts";
@@ -31,7 +31,7 @@ function handleCache(this: Eta, template: string, options: Partial<Options>): Te
     if (cachedTemplate) {
       return cachedTemplate;
     } else {
-      throw new EtaError("Failed to get template '" + template + "'");
+      throw new EtaNameResolutionError("Failed to get template '" + template + "'");
     }
   }
 }
