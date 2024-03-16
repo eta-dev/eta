@@ -36,10 +36,10 @@ function handleCache(this: Eta, template: string, options: Partial<Options>): Te
   }
 }
 
-export function render(
+export function render<T extends object>(
   this: Eta,
   template: string | TemplateFunction, // template name or template function
-  data: object,
+  data: T,
   meta?: { filepath: string }
 ): string {
   let templateFn: TemplateFunction;
@@ -60,10 +60,10 @@ export function render(
   return res;
 }
 
-export function renderAsync(
+export function renderAsync<T extends object>(
   this: Eta,
   template: string | TemplateFunction, // template name or template function
-  data: object,
+  data: T,
   meta?: { filepath: string }
 ): Promise<string> {
   let templateFn: TemplateFunction;
@@ -85,13 +85,13 @@ export function renderAsync(
   return Promise.resolve(res);
 }
 
-export function renderString(this: Eta, template: string, data: object): string {
+export function renderString<T extends object>(this: Eta, template: string, data: T): string {
   const templateFn = this.compile(template, { async: false });
 
   return render.call(this, templateFn, data);
 }
 
-export function renderStringAsync(this: Eta, template: string, data: object): Promise<string> {
+export function renderStringAsync<T extends object>(this: Eta, template: string, data: T): Promise<string> {
   const templateFn = this.compile(template, { async: true });
 
   return renderAsync.call(this, templateFn, data);

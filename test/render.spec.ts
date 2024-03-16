@@ -4,6 +4,10 @@ import path from "node:path";
 
 import { Eta } from "../src/index";
 
+interface SimpleEtaTemplate {
+  name: string;
+}
+
 describe("basic functionality", () => {
   const eta = new Eta();
 
@@ -139,7 +143,7 @@ describe("file rendering", () => {
   const eta = new Eta({ views: path.join(__dirname, "templates") });
 
   it("renders template file properly", () => {
-    const res = eta.render("simple.eta", { name: "friend" });
+    const res = eta.render<SimpleEtaTemplate>("simple.eta", { name: "friend" });
 
     expect(res).toEqual("Hi friend");
   });
