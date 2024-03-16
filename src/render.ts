@@ -91,7 +91,11 @@ export function renderString<T extends object>(this: Eta, template: string, data
   return render.call(this, templateFn, data);
 }
 
-export function renderStringAsync<T extends object>(this: Eta, template: string, data: T): Promise<string> {
+export function renderStringAsync<T extends object>(
+  this: Eta,
+  template: string,
+  data: T
+): Promise<string> {
   const templateFn = this.compile(template, { async: true });
 
   return renderAsync.call(this, templateFn, data);
