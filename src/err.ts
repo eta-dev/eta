@@ -5,28 +5,28 @@ export class EtaError extends Error {
   }
 }
 
-export class EtaParseError extends Error {
+export class EtaParseError extends EtaError {
   constructor(message: string) {
     super(message);
     this.name = "EtaParser Error";
   }
 }
 
-export class EtaRuntimeErr extends Error {
+export class EtaRuntimeError extends EtaError {
   constructor(message: string) {
     super(message);
     this.name = "EtaRuntime Error";
   }
 }
 
-export class EtaFileResolutionError extends Error {
+export class EtaFileResolutionError extends EtaError {
   constructor(message: string) {
     super(message);
     this.name = "EtaFileResolution Error";
   }
 }
 
-export class EtaNameResolutionError extends Error {
+export class EtaNameResolutionError extends EtaError {
   constructor(message: string) {
     super(message);
     this.name = "EtaNameResolution Error";
@@ -75,7 +75,7 @@ export function RuntimeErr(originalError: Error, str: string, lineNo: number, pa
 
   const header = filename ? filename + ":" + lineNo + "\n" : "line " + lineNo + "\n";
 
-  const err = new EtaRuntimeErr(header + context + "\n\n" + originalError.message);
+  const err = new EtaRuntimeError(header + context + "\n\n" + originalError.message);
 
   err.name = originalError.name; // the original name (e.g. ReferenceError) may be useful
 

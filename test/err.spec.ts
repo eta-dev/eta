@@ -3,8 +3,9 @@
 import path from "path";
 import {
   Eta,
+  EtaError,
   EtaParseError,
-  EtaRuntimeErr,
+  EtaRuntimeError,
   EtaFileResolutionError,
   EtaNameResolutionError,
 } from "../src/index";
@@ -16,6 +17,7 @@ describe("ParseErr", () => {
     try {
       eta.renderString("template <%", {});
     } catch (ex) {
+      expect(ex).toBeInstanceOf(EtaError);
       expect(ex).toBeInstanceOf(EtaParseError);
       expect((ex as EtaParseError).name).toBe("EtaParser Error");
       expect((ex as EtaParseError).message).toBe(`unclosed tag at line 1 col 10:
@@ -30,6 +32,7 @@ describe("ParseErr", () => {
     try {
       eta.compile("template <%");
     } catch (ex) {
+      expect(ex).toBeInstanceOf(EtaError);
       expect(ex).toBeInstanceOf(EtaParseError);
       expect((ex as EtaParseError).name).toBe("EtaParser Error");
       expect((ex as EtaParseError).message).toBe(`unclosed tag at line 1 col 10:
@@ -50,9 +53,10 @@ describe("RuntimeErr", () => {
     try {
       eta.render("./runtime-error", {});
     } catch (ex) {
-      expect(ex).toBeInstanceOf(EtaRuntimeErr);
-      expect((ex as EtaRuntimeErr).name).toBe("ReferenceError");
-      expect((ex as EtaRuntimeErr).message).toBe(`${errorFilepath}:2
+      expect(ex).toBeInstanceOf(EtaError);
+      expect(ex).toBeInstanceOf(EtaRuntimeError);
+      expect((ex as EtaRuntimeError).name).toBe("ReferenceError");
+      expect((ex as EtaRuntimeError).message).toBe(`${errorFilepath}:2
     1| 
  >> 2| <%= undefinedVariable %>
     3| Lorem Ipsum
@@ -70,6 +74,7 @@ describe("EtaFileResolutionError", () => {
     try {
       eta.render("./not-existing-template", {});
     } catch (ex) {
+      expect(ex).toBeInstanceOf(EtaError);
       expect(ex).toBeInstanceOf(EtaFileResolutionError);
       expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
       expect((ex as EtaFileResolutionError).message).toBe(
