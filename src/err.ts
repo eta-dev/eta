@@ -5,11 +5,39 @@ export class EtaError extends Error {
   }
 }
 
+export class EtaParseError extends EtaError {
+  constructor(message: string) {
+    super(message);
+    this.name = "EtaParser Error";
+  }
+}
+
+export class EtaRuntimeError extends EtaError {
+  constructor(message: string) {
+    super(message);
+    this.name = "EtaRuntime Error";
+  }
+}
+
+export class EtaFileResolutionError extends EtaError {
+  constructor(message: string) {
+    super(message);
+    this.name = "EtaFileResolution Error";
+  }
+}
+
+export class EtaNameResolutionError extends EtaError {
+  constructor(message: string) {
+    super(message);
+    this.name = "EtaNameResolution Error";
+  }
+}
+
 /**
  * Throws an EtaError with a nicely formatted error and message showing where in the template the error occurred.
  */
 
-export function ParseErr(message: string, str: string, indx: number): void {
+export function ParseErr(message: string, str: string, indx: number): never {
   const whitespace = str.slice(0, indx).split(/\n/);
 
   const lineNo = whitespace.length;
@@ -26,10 +54,10 @@ export function ParseErr(message: string, str: string, indx: number): void {
     "  " +
     Array(colNo).join(" ") +
     "^";
-  throw new EtaError(message);
+  throw new EtaParseError(message);
 }
 
-export function RuntimeErr(originalError: Error, str: string, lineNo: number, path: string): void {
+export function RuntimeErr(originalError: Error, str: string, lineNo: number, path: string): never {
   // code gratefully taken from https://github.com/mde/ejs and adapted
 
   const lines = str.split("\n");
@@ -47,7 +75,7 @@ export function RuntimeErr(originalError: Error, str: string, lineNo: number, pa
 
   const header = filename ? filename + ":" + lineNo + "\n" : "line " + lineNo + "\n";
 
-  const err = new EtaError(header + context + "\n\n" + originalError.message);
+  const err = new EtaRuntimeError(header + context + "\n\n" + originalError.message);
 
   err.name = originalError.name; // the original name (e.g. ReferenceError) may be useful
 

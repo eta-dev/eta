@@ -1,4 +1,4 @@
-import { EtaError } from "./err.ts";
+import { EtaFileResolutionError } from "./err.ts";
 
 import * as path from "node:path";
 
@@ -17,7 +17,7 @@ export function readFile(this: EtaCore, path: string): string {
     // eslint-disable-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err?.code === "ENOENT") {
-      throw new EtaError(`Could not find template: ${path}`);
+      throw new EtaFileResolutionError(`Could not find template: ${path}`);
     } else {
       throw err;
     }
@@ -36,7 +36,7 @@ export function resolvePath(
   const views = this.config.views;
 
   if (!views) {
-    throw new EtaError("Views directory is not defined");
+    throw new EtaFileResolutionError("Views directory is not defined");
   }
 
   const baseFilePath = options && options.filepath;
@@ -80,7 +80,7 @@ export function resolvePath(
 
     return resolvedFilePath;
   } else {
-    throw new EtaError(`Template '${templatePath}' is not in the views directory`);
+    throw new EtaFileResolutionError(`Template '${templatePath}' is not in the views directory`);
   }
 }
 

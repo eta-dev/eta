@@ -1,4 +1,4 @@
-import { EtaError } from "./err.ts";
+import { EtaParseError } from "./err.ts";
 
 /* TYPES */
 import type { Eta } from "./core.ts";
@@ -33,7 +33,7 @@ export function compile(this: Eta, str: string, options?: Partial<Options>): Tem
     ) as TemplateFunction; // eslint-disable-line no-new-func
   } catch (e) {
     if (e instanceof SyntaxError) {
-      throw new EtaError(
+      throw new EtaParseError(
         "Bad template syntax\n\n" +
           e.message +
           "\n" +
