@@ -1,6 +1,6 @@
 {
   "name": "eta",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Lightweight, fast, and powerful embedded JS template engine",
   "keywords": [
     "handlebars",
