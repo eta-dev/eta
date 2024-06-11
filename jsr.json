@@ -1,0 +1,12 @@
+{
+  "name": "@eta-dev/eta",
+  "version": "3.4.0",
+  "exports": "./src/index.ts",
+  "publish": {
+    "include": [
+      "LICENSE",
+      "README.md",
+      "src/**/*.ts"
+    ]
+  }
+}

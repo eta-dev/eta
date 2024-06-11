@@ -53,6 +53,7 @@
     "lint": "eslint src/*.ts test/*.spec.ts --ext .js,.ts",
     "prebuild": "rimraf dist",
     "release": "npm run build && np",
+    "postversion": "node ./jsr.release.js",
     "size": "size-limit",
     "start": "microbundle watch",
     "test": "jest --coverage && npm run size",
