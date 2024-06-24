@@ -152,6 +152,15 @@ To operate with Eta templates in Node-RED: [@ralphwetzel/node-red-contrib-eta](h
 
 </details>
 
+<details>
+  <summary>
+    <b>Koa</b>
+  </summary>
+
+To render Eta templates in [Koa](https://koajs.com) web framework: [@cedx/koa-eta](https://github.com/cedx/koa-eta/wiki)
+
+</details>
+
 <br />
 
 ## Projects using `eta`
