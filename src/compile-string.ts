@@ -74,7 +74,7 @@ return __eta.res;
  * ```
  */
 
-export function compileBody(this: Eta, buff: Array<AstObject>) {
+export function compileBody(this: Eta, buff: Array<AstObject>): string {
   const config = this.config;
 
   let i = 0;

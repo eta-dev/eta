@@ -34,8 +34,8 @@ export class Eta {
   renderStringAsync = renderStringAsync;
 
   filepathCache: Record<string, string> = {};
-  templatesSync = new Cacher<TemplateFunction>({});
-  templatesAsync = new Cacher<TemplateFunction>({});
+  templatesSync: Cacher<TemplateFunction> = new Cacher<TemplateFunction>({});
+  templatesAsync: Cacher<TemplateFunction> = new Cacher<TemplateFunction>({});
 
   // resolvePath takes a relative path from the "views" directory
   resolvePath: null | ((this: Eta, template: string, options?: Partial<Options>) => string) = null;
@@ -47,7 +47,7 @@ export class Eta {
     this.config = { ...this.config, ...customConfig };
   }
 
-  withConfig(customConfig: Partial<EtaConfig>) {
+  withConfig(customConfig: Partial<EtaConfig>): this & { config: EtaConfig }{
     return { ...this, config: { ...this.config, ...customConfig } };
   }
 
