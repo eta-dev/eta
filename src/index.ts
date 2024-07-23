@@ -7,6 +7,7 @@ export {
   EtaFileResolutionError,
   EtaNameResolutionError,
 } from "./err.ts";
+export { type Options, type EtaConfig } from "./config.ts";
 
 export class Eta extends EtaCore {
   readFile = readFile;
