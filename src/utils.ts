@@ -8,7 +8,7 @@ export function trimWS(
   str: string,
   config: EtaConfig,
   wsLeft: string | false,
-  wsRight?: string | false
+  wsRight?: string | false,
 ): string {
   let leftTrim;
   let rightTrim;

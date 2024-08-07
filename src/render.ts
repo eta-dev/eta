@@ -6,8 +6,14 @@ import type { TemplateFunction } from "./compile.ts";
 import type { Eta } from "./core.ts";
 /* END TYPES */
 
-function handleCache(this: Eta, template: string, options: Partial<Options>): TemplateFunction {
-  const templateStore = options && options.async ? this.templatesAsync : this.templatesSync;
+function handleCache(
+  this: Eta,
+  template: string,
+  options: Partial<Options>,
+): TemplateFunction {
+  const templateStore = options && options.async
+    ? this.templatesAsync
+    : this.templatesSync;
 
   if (this.resolvePath && this.readFile && !template.startsWith("@")) {
     const templatePath = options.filepath as string;
@@ -31,7 +37,9 @@ function handleCache(this: Eta, template: string, options: Partial<Options>): Te
     if (cachedTemplate) {
       return cachedTemplate;
     } else {
-      throw new EtaNameResolutionError("Failed to get template '" + template + "'");
+      throw new EtaNameResolutionError(
+        "Failed to get template '" + template + "'",
+      );
     }
   }
 }
@@ -40,7 +48,7 @@ export function render<T extends object>(
   this: Eta,
   template: string | TemplateFunction, // template name or template function
   data: T,
-  meta?: { filepath: string }
+  meta?: { filepath: string },
 ): string {
   let templateFn: TemplateFunction;
   const options = { ...meta, async: false };
@@ -64,7 +72,7 @@ export function renderAsync<T extends object>(
   this: Eta,
   template: string | TemplateFunction, // template name or template function
   data: T,
-  meta?: { filepath: string }
+  meta?: { filepath: string },
 ): Promise<string> {
   let templateFn: TemplateFunction;
   const options = { ...meta, async: true };
@@ -85,7 +93,11 @@ export function renderAsync<T extends object>(
   return Promise.resolve(res);
 }
 
-export function renderString<T extends object>(this: Eta, template: string, data: T): string {
+export function renderString<T extends object>(
+  this: Eta,
+  template: string,
+  data: T,
+): string {
   const templateFn = this.compile(template, { async: false });
 
   return render.call(this, templateFn, data);
@@ -94,7 +106,7 @@ export function renderString<T extends object>(this: Eta, template: string, data
 export function renderStringAsync<T extends object>(
   this: Eta,
   template: string,
-  data: T
+  data: T,
 ): Promise<string> {
   const templateFn = this.compile(template, { async: true });
 
