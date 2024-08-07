@@ -1,6 +1,6 @@
 {
   "name": "@eta-dev/eta",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "exports": "./src/index.ts",
   "publish": {
     "include": [
