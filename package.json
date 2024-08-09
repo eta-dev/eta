@@ -22,8 +22,8 @@
   "source": "src/index.ts",
   "exports": {
     "types": "./dist/types/index.d.ts",
-    "import": "./dist/eta.module.mjs",
     "browser": "./dist/browser.umd.js",
+    "import": "./dist/eta.module.mjs",
     "require": "./dist/eta.umd.js",
     "default": "./dist/eta.umd.js"
   },
