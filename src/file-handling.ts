@@ -11,6 +11,9 @@ import type { Options } from "./config.ts";
 
 export function readFile(this: EtaCore, path: string): string {
   let res = "";
+  if(path.startsWith('@') && this.config.namespaces){
+    path = resolveNamespace.call(this,path) ?? path;
+  }
 
   try {
     res = fs.readFileSync(path, "utf8");
@@ -26,23 +29,58 @@ export function readFile(this: EtaCore, path: string): string {
   return res;
 }
 
+/**
+ *  Funtion resolves namespace path provided on namespaces in config
+ */
+function resolveNamespace(this: EtaCore,templatePath : string)  : string | null{
+  const defaultExtension = this.config.defaultExtension === undefined
+    ? ".eta"
+    : this.config.defaultExtension;
+  if(this.config.namespaces){
+    const entries = Object.keys(this.config.namespaces);
+    const namespace = entries.find(namespaceKey => {
+      return templatePath.startsWith(namespaceKey);
+    });
+    if(namespace){
+      templatePath = templatePath.replace(namespace,this.config.namespaces[namespace]);
+      templatePath += path.extname(templatePath) ? "" : defaultExtension;
+       return templatePath;
+    }
+  }
+  return null;
+}
+
+
+
+
+
 export function resolvePath(
   this: EtaCore,
   templatePath: string,
   options?: Partial<Options>,
 ): string {
   let resolvedFilePath = "";
+  const defaultExtension = this.config.defaultExtension === undefined
+    ? ".eta"
+    : this.config.defaultExtension;
+    const baseFilePath = options && options.filepath;
+
+
+    // Check if tempalte path has a namespace constant at the begining
+  if(templatePath.startsWith('@') && this.config.namespaces){
+    resolvedFilePath =  resolveNamespace.call(this,templatePath) ?? "";
+    return resolvedFilePath;
+  }
+  
 
   const views = this.config.views;
+  
 
   if (!views) {
     throw new EtaFileResolutionError("Views directory is not defined");
   }
 
-  const baseFilePath = options && options.filepath;
-  const defaultExtension = this.config.defaultExtension === undefined
-    ? ".eta"
-    : this.config.defaultExtension;
+
 
   // how we index cached template paths
   const cacheIndex = JSON.stringify({
