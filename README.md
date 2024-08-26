@@ -55,7 +55,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
   - Great error reporting
 - ⚡️ Exports ES Modules as well as UMD
 - 📝 Easy template syntax
-
+- Namespaces for easy tempalte include
 ## Get Started
 
 _For more thorough documentation, visit [https://eta.js.org](https://eta.js.org)_
@@ -84,8 +84,33 @@ const eta = new Eta({ views: path.join(__dirname, "templates") });
 
 const res = eta.render("./simple", { name: "Ben" });
 console.log(res); // Hi Ben!
-```
 
+
+
+```
+Using namespaces
+```ts
+  import { Eta } from "eta";
+  const eta = new Eta({ namespaces: {
+    '@myroot' : path.join(__dirname, "templates"),
+    '@includes' : path.join(__dirname, "templates",'includes'),
+    '@components' : path.join(__dirname, "templates",'components')
+  } });
+
+  const res = eta.render("@myroot/sample", { name: "Ben" });
+  console.log(res); // Hi Ben!
+
+```
+Namespace usage within template
+
+```html
+<% include('@includes/header') %>
+<div>
+  <h1>Welcome to the Index Page</h1>
+  <p>Here's a widget:</p>
+  <% include('@components/widget') %>
+</div>
+```
 ## FAQs
 
 <details>

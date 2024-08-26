@@ -78,6 +78,29 @@ export interface EtaConfig {
 
   /** Control template file extension defaults. Default `.eta` */
   defaultExtension?: string;
+
+
+  /**
+  *  Give namespaces to view paths with `@prefix`.
+  *  
+  *  Example:
+  *  ```typescript
+  *  const eta = new Eta({ 
+  *     namespaces: {
+  *        '@includes': path.join(__dirname, 'src', 'views', 'includes')
+  *     }
+  *  });
+  *  
+  *  // Usage in code:
+  *  eta.render('@includes/header', { title: 'Home' });
+  *  ```
+  *  
+  *  Within a template, you can use the namespace like this:
+  *  ```html
+  *  <% include('@includes/header') %>
+  *  ```
+  */
+  namespaces?: { [key: string]: string };
 }
 
 /* END TYPES */

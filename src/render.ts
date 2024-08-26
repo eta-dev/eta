@@ -15,7 +15,7 @@ function handleCache(
     ? this.templatesAsync
     : this.templatesSync;
 
-  if (this.resolvePath && this.readFile && !template.startsWith("@")) {
+  if (this.resolvePath && this.readFile) {
     const templatePath = options.filepath as string;
 
     const cachedTemplate = templateStore.get(templatePath);
@@ -24,6 +24,7 @@ function handleCache(
       return cachedTemplate;
     } else {
       const templateString = this.readFile(templatePath);
+
 
       const templateFn = this.compile(templateString, options);
 
@@ -54,7 +55,7 @@ export function render<T extends object>(
   const options = { ...meta, async: false };
 
   if (typeof template === "string") {
-    if (this.resolvePath && this.readFile && !template.startsWith("@")) {
+    if (this.resolvePath && this.readFile) {
       options.filepath = this.resolvePath(template, options);
     }
 
@@ -78,7 +79,7 @@ export function renderAsync<T extends object>(
   const options = { ...meta, async: true };
 
   if (typeof template === "string") {
-    if (this.resolvePath && this.readFile && !template.startsWith("@")) {
+    if (this.resolvePath && this.readFile) {
       options.filepath = this.resolvePath(template, options);
     }
 
