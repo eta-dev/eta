@@ -21,11 +21,20 @@
   "types": "./dist/types/index.d.ts",
   "source": "src/index.ts",
   "exports": {
-    "types": "./dist/types/index.d.ts",
-    "browser": "./dist/browser.umd.js",
-    "import": "./dist/eta.module.mjs",
-    "require": "./dist/eta.umd.js",
-    "default": "./dist/eta.umd.js"
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "browser": "./dist/browser.umd.js",
+      "import": "./dist/eta.module.mjs",
+      "require": "./dist/eta.umd.js",
+      "default": "./dist/eta.umd.js"
+    },
+    "./core": {
+      "types": "./dist/types/browser.d.ts",
+      "browser": "./dist/browser.umd.js",
+      "import": "./dist/browser.module.mjs",
+      "require": "./dist/browser.umd.js",
+      "default": "./dist/browser.umd.js"
+    }
   },
   "sideEffects": false,
   "files": [
