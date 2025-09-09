@@ -1,11 +1,11 @@
-/* global it, expect, describe */
+import { describe, expect, it, test } from "vitest";
 
 import { Eta } from "../src/index";
 
 const eta = new Eta();
 
-const fs = require("fs"),
-  path = require("path"),
+const fs = require("node:fs"),
+  path = require("node:path"),
   filePath = path.join(__dirname, "templates/complex.eta");
 
 const complexTemplate = fs.readFileSync(filePath, "utf8");

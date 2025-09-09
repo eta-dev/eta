@@ -1,4 +1,4 @@
-/* global it, expect, describe */
+import { describe, expect, it } from "vitest";
 
 import { Cacher } from "../src/storage";
 

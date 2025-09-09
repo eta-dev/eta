@@ -1,0 +1,49 @@
+name: lint-and-test
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - run: pnpm install --frozen-lockfile
+
+      # Biome
+      - uses: biomejs/setup-biome@v1
+      - run: biome ci .
+
+      # Build
+      - run: pnpm build
+
+      # Tests + coverage
+      - run: pnpm test
+
+      # Upload coverage for badge/commenting
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          flags: unit
+          fail_ci_if_error: true
+          verbose: true

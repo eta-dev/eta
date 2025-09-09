@@ -1,11 +1,10 @@
-/* global it, expect, describe */
+import fs from "node:fs";
+import path from "node:path";
+import { describe, expect, it, test } from "vitest";
 
 import { Eta } from "../src/index";
 
 const eta = new Eta();
-
-const fs = require("fs");
-const path = require("path");
 
 const filePath = path.join(__dirname, "templates/complex.eta");
 
@@ -29,11 +28,16 @@ describe("parse test", () => {
 
   it("works with multiline comments", () => {
     const buff = eta.parse("hi <% /* comment contains delimiter %> */ %>");
-    expect(buff).toEqual(["hi ", { val: "/* comment contains delimiter %> */", t: "e" }]);
+    expect(buff).toEqual([
+      "hi ",
+      { val: "/* comment contains delimiter %> */", t: "e" },
+    ]);
   });
 
   it("parses with simple template literal", () => {
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: intentional
     const buff = eta.parse("hi <%= `template %> ${value}` %>");
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: intentional
     expect(buff).toEqual(["hi ", { val: "`template %> ${value}`", t: "i" }]);
   });
 

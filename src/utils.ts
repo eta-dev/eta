@@ -10,8 +10,8 @@ export function trimWS(
   wsLeft: string | false,
   wsRight?: string | false,
 ): string {
-  let leftTrim;
-  let rightTrim;
+  let leftTrim: string | false;
+  let rightTrim: string | false;
 
   if (Array.isArray(config.autoTrim)) {
     // Slightly confusing,

@@ -1,13 +1,12 @@
-/* global it, expect, describe */
-
-import path from "path";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
 import {
   Eta,
   EtaError,
-  EtaParseError,
-  EtaRuntimeError,
   EtaFileResolutionError,
   EtaNameResolutionError,
+  EtaParseError,
+  EtaRuntimeError,
 } from "../src/index";
 
 describe("ParseErr", () => {
@@ -45,7 +44,10 @@ describe("ParseErr", () => {
 });
 
 describe("RuntimeErr", () => {
-  const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+  const eta = new Eta({
+    debug: true,
+    views: path.join(__dirname, "templates"),
+  });
 
   const errorFilepath = path.join(__dirname, "templates/runtime-error.eta");
 
@@ -68,17 +70,25 @@ undefinedVariable is not defined`);
 
 describe("EtaFileResolutionError", () => {
   it("error throws correctly when template does not exist", () => {
-    const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
-    const errorFilepath = path.join(__dirname, "templates/not-existing-template.eta");
+    const eta = new Eta({
+      debug: true,
+      views: path.join(__dirname, "templates"),
+    });
+    const errorFilepath = path.join(
+      __dirname,
+      "templates/not-existing-template.eta",
+    );
 
     try {
       eta.render("./not-existing-template", {});
     } catch (ex) {
       expect(ex).toBeInstanceOf(EtaError);
       expect(ex).toBeInstanceOf(EtaFileResolutionError);
-      expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
+      expect((ex as EtaFileResolutionError).name).toBe(
+        "EtaFileResolution Error",
+      );
       expect((ex as EtaFileResolutionError).message).toBe(
-        `Could not find template: ${errorFilepath}`
+        `Could not find template: ${errorFilepath}`,
       );
     }
   });
@@ -89,37 +99,53 @@ describe("EtaFileResolutionError", () => {
       eta.render("Hi", {});
     } catch (ex) {
       expect(ex).toBeInstanceOf(EtaFileResolutionError);
-      expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
-      expect((ex as EtaFileResolutionError).message).toBe("Views directory is not defined");
+      expect((ex as EtaFileResolutionError).name).toBe(
+        "EtaFileResolution Error",
+      );
+      expect((ex as EtaFileResolutionError).message).toBe(
+        "Views directory is not defined",
+      );
     }
 
     try {
       await eta.renderAsync("Hi", {});
     } catch (ex) {
       expect(ex).toBeInstanceOf(EtaFileResolutionError);
-      expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
-      expect((ex as EtaFileResolutionError).message).toBe("Views directory is not defined");
+      expect((ex as EtaFileResolutionError).name).toBe(
+        "EtaFileResolution Error",
+      );
+      expect((ex as EtaFileResolutionError).message).toBe(
+        "Views directory is not defined",
+      );
     }
   });
 
   it("error throws correctly when template in not in th view directory", () => {
-    const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+    const eta = new Eta({
+      debug: true,
+      views: path.join(__dirname, "templates"),
+    });
 
     const filePath = "../../../simple.eta";
     try {
       eta.render(filePath, {});
     } catch (ex) {
       expect(ex).toBeInstanceOf(EtaFileResolutionError);
-      expect((ex as EtaFileResolutionError).name).toBe("EtaFileResolution Error");
+      expect((ex as EtaFileResolutionError).name).toBe(
+        "EtaFileResolution Error",
+      );
       expect((ex as EtaFileResolutionError).message).toBe(
-        `Template '${filePath}' is not in the views directory`
+        `Template '${filePath}' is not in the views directory`,
       );
     }
   });
 });
 
 describe("EtaNameResolutionError", () => {
-  const eta = new Eta({ debug: true, views: path.join(__dirname, "templates") });
+  const eta = new Eta({
+    debug: true,
+    views: path.join(__dirname, "templates"),
+  });
 
   it("error throws correctly", () => {
     const template = "@not-existing-tp";
@@ -128,8 +154,12 @@ describe("EtaNameResolutionError", () => {
       eta.render(template, {});
     } catch (ex) {
       expect(ex).toBeInstanceOf(EtaNameResolutionError);
-      expect((ex as EtaNameResolutionError).name).toBe("EtaNameResolution Error");
-      expect((ex as EtaNameResolutionError).message).toBe(`Failed to get template '${template}'`);
+      expect((ex as EtaNameResolutionError).name).toBe(
+        "EtaNameResolution Error",
+      );
+      expect((ex as EtaNameResolutionError).message).toBe(
+        `Failed to get template '${template}'`,
+      );
     }
   });
 });

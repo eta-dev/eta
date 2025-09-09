@@ -1,9 +1,6 @@
+import type { Eta } from "./core.ts";
 import { ParseErr } from "./err.ts";
 import { trimWS } from "./utils.ts";
-
-/* TYPES */
-
-import type { Eta } from "./core.ts";
 
 export type TagType = "r" | "e" | "i" | "";
 
@@ -93,10 +90,7 @@ export function parse(this: Eta, str: string): Array<AstObject> {
     parseOptions.exec,
     parseOptions.interpolate,
     parseOptions.raw,
-  ].reduce(function (
-    accumulator,
-    prefix,
-  ) {
+  ].reduce((accumulator, prefix) => {
     if (accumulator && prefix) {
       return accumulator + "|" + escapeRegExp(prefix);
     } else if (prefix) {
@@ -118,8 +112,9 @@ export function parse(this: Eta, str: string): Array<AstObject> {
     "g",
   );
 
-  let m;
+  let m: RegExpExecArray | null;
 
+  // biome-ignore lint/suspicious/noAssignInExpressions: this is performant
   while ((m = parseOpenReg.exec(str))) {
     const precedingString = str.slice(lastIndex, m.index);
 
@@ -131,9 +126,10 @@ export function parse(this: Eta, str: string): Array<AstObject> {
     pushString(precedingString, wsLeft);
 
     parseCloseReg.lastIndex = lastIndex;
-    let closeTag;
+    let closeTag: RegExpExecArray | null;
     let currentObj: AstObject | false = false;
 
+    // biome-ignore lint/suspicious/noAssignInExpressions: this is performant
     while ((closeTag = parseCloseReg.exec(str))) {
       if (closeTag[1]) {
         const content = str.slice(lastIndex, closeTag.index);
@@ -142,13 +138,14 @@ export function parse(this: Eta, str: string): Array<AstObject> {
 
         trimLeftOfNextStr = closeTag[2];
 
-        const currentType: TagType = prefix === parseOptions.exec
-          ? "e"
-          : prefix === parseOptions.raw
-          ? "r"
-          : prefix === parseOptions.interpolate
-          ? "i"
-          : "";
+        const currentType: TagType =
+          prefix === parseOptions.exec
+            ? "e"
+            : prefix === parseOptions.raw
+              ? "r"
+              : prefix === parseOptions.interpolate
+                ? "i"
+                : "";
 
         currentObj = { t: currentType, val: content };
         break;

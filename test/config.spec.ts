@@ -1,4 +1,4 @@
-/* global it, expect, describe */
+import { describe, expect, it } from "vitest";
 
 import { Eta } from "../src/index";
 
@@ -25,7 +25,9 @@ describe("Config Tests", () => {
     const template = "My favorite food is <%= it.fav %>";
     const baseEta = new Eta();
 
-    expect(baseEta.renderString(template, {})).toEqual("My favorite food is undefined");
+    expect(baseEta.renderString(template, {})).toEqual(
+      "My favorite food is undefined",
+    );
 
     const etaWithSimpleFilter = new Eta({
       autoFilter: true,
@@ -33,14 +35,16 @@ describe("Config Tests", () => {
       filterFunction: (_val) => "apples",
     });
 
-    expect(etaWithSimpleFilter.renderString(template, {})).toEqual("My favorite food is apples");
+    expect(etaWithSimpleFilter.renderString(template, {})).toEqual(
+      "My favorite food is apples",
+    );
   });
 
   it("complex filter function", () => {
     let timesFilterCalled = 0;
     const eta = new Eta({
       autoFilter: true,
-      filterFunction: function () {
+      filterFunction: () => {
         timesFilterCalled++;
         if (timesFilterCalled <= 1) {
           return "The first";
@@ -50,9 +54,9 @@ describe("Config Tests", () => {
       },
     });
 
-    expect(eta.renderString("<%= it.val1 %>, <%~ it.val2 %>, <%~ it.val3 %>", {})).toEqual(
-      "The first, another, another"
-    );
+    expect(
+      eta.renderString("<%= it.val1 %>, <%~ it.val2 %>, <%~ it.val3 %>", {}),
+    ).toEqual("The first, another, another");
   });
 
   it("withConfig", () => {

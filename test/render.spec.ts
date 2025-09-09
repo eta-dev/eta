@@ -1,6 +1,5 @@
-/* global it, expect, describe */
-
 import path from "node:path";
+import { describe, expect, it } from "vitest";
 
 import { Eta } from "../src/index";
 
@@ -12,19 +11,21 @@ describe("basic functionality", () => {
   const eta = new Eta();
 
   it("renderString: template compiles", () => {
-    expect(eta.renderString("Hi <%= it.name%>", { name: "Ada Lovelace" })).toEqual(
-      "Hi Ada Lovelace"
-    );
+    expect(
+      eta.renderString("Hi <%= it.name%>", { name: "Ada Lovelace" }),
+    ).toEqual("Hi Ada Lovelace");
   });
   it("renderString: string trimming", () => {
-    expect(eta.renderString("Hi \n<%- =it.name_%>  !", { name: "Ada Lovelace" })).toEqual(
-      "Hi Ada Lovelace!"
-    );
+    expect(
+      eta.renderString("Hi \n<%- =it.name_%>  !", { name: "Ada Lovelace" }),
+    ).toEqual("Hi Ada Lovelace!");
   });
   it("render: passing in a template function", () => {
-    expect(eta.render(eta.compile("Hi \n<%- =it.name_%>  !"), { name: "Ada Lovelace" })).toEqual(
-      "Hi Ada Lovelace!"
-    );
+    expect(
+      eta.render(eta.compile("Hi \n<%- =it.name_%>  !"), {
+        name: "Ada Lovelace",
+      }),
+    ).toEqual("Hi Ada Lovelace!");
   });
 });
 
@@ -34,7 +35,9 @@ describe("render caching", () => {
   eta.loadTemplate("@template1", "Hi <%=it.name%>");
 
   it("Simple template caches", () => {
-    expect(eta.render("@template1", { name: "Ada Lovelace" })).toEqual("Hi Ada Lovelace");
+    expect(eta.render("@template1", { name: "Ada Lovelace" })).toEqual(
+      "Hi Ada Lovelace",
+    );
 
     expect(eta.templatesSync.get("@template1")).toBeTruthy();
   });
@@ -47,12 +50,20 @@ describe("render caching", () => {
 });
 
 describe("render caching w/ files", () => {
-  const eta = new Eta({ cache: true, views: path.join(__dirname, "templates") });
+  const eta = new Eta({
+    cache: true,
+    views: path.join(__dirname, "templates"),
+  });
 
-  eta.loadTemplate(path.join(__dirname, "templates/nonexistent.eta"), "Hi <%=it.name%>");
+  eta.loadTemplate(
+    path.join(__dirname, "templates/nonexistent.eta"),
+    "Hi <%=it.name%>",
+  );
 
   it("Template files cache", () => {
-    expect(eta.render("./nonexistent", { name: "Ada Lovelace" })).toEqual("Hi Ada Lovelace");
+    expect(eta.render("./nonexistent", { name: "Ada Lovelace" })).toEqual(
+      "Hi Ada Lovelace",
+    );
   });
 });
 
@@ -60,9 +71,9 @@ describe("useWith", () => {
   it("Puts `it` in global scope with env.useWith", () => {
     const etaWithUseWith = new Eta({ useWith: true });
 
-    expect(etaWithUseWith.renderString("Hi <%=name%>", { name: "Ada Lovelace" })).toEqual(
-      "Hi Ada Lovelace"
-    );
+    expect(
+      etaWithUseWith.renderString("Hi <%=name%>", { name: "Ada Lovelace" }),
+    ).toEqual("Hi Ada Lovelace");
   });
 });
 
@@ -83,16 +94,18 @@ describe("async", () => {
   const eta = new Eta();
 
   it("compiles asynchronously", async () => {
-    expect(await eta.renderStringAsync("Hi <%= it.name %>", { name: "Ada Lovelace" })).toEqual(
-      "Hi Ada Lovelace"
-    );
+    expect(
+      await eta.renderStringAsync("Hi <%= it.name %>", {
+        name: "Ada Lovelace",
+      }),
+    ).toEqual("Hi Ada Lovelace");
   });
 
   it("async function works", async () => {
     expect(
       await eta.renderStringAsync("<%= await it.asyncTest() %>", {
         asyncTest: asyncTest,
-      })
+      }),
     ).toEqual("HI FROM ASYNC");
   });
 
@@ -123,13 +136,13 @@ This is the template body.
   it("Layouts are called with arguments if they're provided", async () => {
     eta.loadTemplate(
       "@my-layout",
-      `<%= it.title %> - <%~ it.body %> - <%~ it.content %> - <%~ it.randomNum %>`
+      `<%= it.title %> - <%~ it.body %> - <%~ it.content %> - <%~ it.randomNum %>`,
     );
 
     const res = await eta.renderString(
       `<% layout("@my-layout", { title: 'Nifty title', content: 'Nice content'}) %>
 This is a layout`,
-      { title: "Cool Title", randomNum: 3 }
+      { title: "Cool Title", randomNum: 3 },
     );
 
     // Note that layouts automatically accept the data of the template which called them,

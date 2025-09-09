@@ -1,9 +1,10 @@
-import { EtaNameResolutionError } from "./err.ts";
+import type { TemplateFunction } from "./compile.ts";
 
 /* TYPES */
 import type { Options } from "./config.ts";
-import type { TemplateFunction } from "./compile.ts";
 import type { Eta } from "./core.ts";
+import { EtaNameResolutionError } from "./err.ts";
+
 /* END TYPES */
 
 function handleCache(
@@ -11,7 +12,7 @@ function handleCache(
   template: string,
   options: Partial<Options>,
 ): TemplateFunction {
-  const templateStore = options && options.async
+  const templateStore = options?.async
     ? this.templatesAsync
     : this.templatesSync;
 
@@ -37,9 +38,7 @@ function handleCache(
     if (cachedTemplate) {
       return cachedTemplate;
     } else {
-      throw new EtaNameResolutionError(
-        "Failed to get template '" + template + "'",
-      );
+      throw new EtaNameResolutionError(`Failed to get template '${template}'`);
     }
   }
 }

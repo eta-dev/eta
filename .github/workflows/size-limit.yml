@@ -1,15 +1,19 @@
-name: "size"
+name: size-limit
+
 on:
   pull_request:
-    branches:
-      - master
+    branches: [main]
+
+permissions:
+  contents: read
+
 jobs:
   size:
     runs-on: ubuntu-latest
     env:
       CI_JOB_NUMBER: 1
     steps:
-      - uses: actions/checkout@v2
-      - uses: andresz1/size-limit-action@v1.7.0
+      - uses: actions/checkout@v4
+      - uses: andresz1/size-limit-action@v1.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,26 @@
+name: release-please
+
+on:
+  push:
+    branches: [main] # updates/opens the release PR when commits land on main via merges
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: true
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        with:
+          release-type: node
+          package-name: eta
+          # Also bump jsr.json version alongside package.json:
+          extra-files: |
+            jsr.json

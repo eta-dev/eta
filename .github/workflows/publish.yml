@@ -1,0 +1,50 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write # required for JSR OIDC
+
+concurrency:
+  group: publish-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm -s vitest run -w --reporter=dot
+        env: { CI: true }
+
+      # npm publish
+      - name: Set npm auth
+        run: |
+          npm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+          npm whoami
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm
+        run: pnpm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # JSR publish (OIDC, no secret needed once linked)
+      - name: Publish to JSR
+        run: pnpm dlx jsr publish

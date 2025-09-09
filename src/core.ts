@@ -1,7 +1,9 @@
-import { Cacher } from "./storage.ts";
+import type { TemplateFunction } from "./compile.ts";
 import { compile } from "./compile.ts";
 import { compileBody, compileToString } from "./compile-string.ts";
+import type { EtaConfig, Options } from "./config.ts";
 import { defaultConfig } from "./config.ts";
+import { EtaError, RuntimeErr } from "./err.ts";
 import { parse } from "./parse.ts";
 import {
   render,
@@ -9,12 +11,7 @@ import {
   renderString,
   renderStringAsync,
 } from "./render.ts";
-import { EtaError, RuntimeErr } from "./err.ts";
-import { TemplateFunction } from "./compile.ts";
-
-/* TYPES */
-import type { EtaConfig, Options } from "./config.ts";
-/* END TYPES */
+import { Cacher } from "./storage.ts";
 
 export class Eta {
   constructor(customConfig?: Partial<EtaConfig>) {
@@ -46,7 +43,7 @@ export class Eta {
   resolvePath:
     | null
     | ((this: Eta, template: string, options?: Partial<Options>) => string) =
-      null;
+    null;
   readFile: null | ((this: Eta, path: string) => string) = null;
 
   // METHODS
@@ -65,7 +62,7 @@ export class Eta {
     options?: { async: boolean },
   ): void {
     if (typeof template === "string") {
-      const templates = options && options.async
+      const templates = options?.async
         ? this.templatesAsync
         : this.templatesSync;
 
@@ -73,10 +70,7 @@ export class Eta {
     } else {
       let templates = this.templatesSync;
 
-      if (
-        template.constructor.name === "AsyncFunction" ||
-        (options && options.async)
-      ) {
+      if (template.constructor.name === "AsyncFunction" || options?.async) {
         templates = this.templatesAsync;
       }
 

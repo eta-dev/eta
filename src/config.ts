@@ -1,6 +1,5 @@
+import type { AstObject } from "./parse.ts";
 import { XMLEscape } from "./utils.ts";
-
-/* TYPES */
 
 type trimConfig = "nl" | "slurp" | false;
 
@@ -53,13 +52,11 @@ export interface EtaConfig {
   };
 
   /** Array of plugins */
-  plugins: Array<
-    {
-      processFnString?: Function;
-      processAST?: Function;
-      processTemplate?: Function;
-    }
-  >;
+  plugins: Array<{
+    processFnString?: (fnString: string, env?: EtaConfig) => string;
+    processAST?: (ast: AstObject[], env?: EtaConfig) => AstObject[];
+    processTemplate?: (fnString: string, env?: EtaConfig) => string;
+  }>;
 
   /** Remove all safe-to-remove whitespace */
   rmWhitespace: boolean;

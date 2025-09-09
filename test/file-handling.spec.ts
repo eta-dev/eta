@@ -1,6 +1,5 @@
-/* global it, expect, describe */
-
 import path from "node:path";
+import { describe, expect, it } from "vitest";
 
 import { Eta } from "../src/index";
 
@@ -13,14 +12,14 @@ describe("Filepath caching", () => {
     // This test renders templates/has-include.eta with caching enabled, then checks to make sure
     // `config.filepathCache` contains the expected result afterward
 
-    const templateResult = await eta.render("has-include", {});
+    const templateResult = eta.render("has-include", {});
 
     expect(templateResult).toEqual(
       `This is the outermost template. Now we'll include a partial
 
 ===========================================================
 This is a partial.
-Hi Test Runner`
+Hi Test Runner`,
     );
 
     // The cache is indexed by {filename, path, root, views} (JSON.stringify ignores keys with undefined as their value)
@@ -73,15 +72,23 @@ describe("filepath default extension tests", () => {
   console.log("Templates are in ", viewsDir);
 
   it("works with defaultExtension", async () => {
-    const eta = new Eta({ views: viewsDir, cache: true, defaultExtension: ".tmpl" });
-    const templateResult = await eta.render("template-extn", { name: "TMPL Run" });
+    const eta = new Eta({
+      views: viewsDir,
+      cache: true,
+      defaultExtension: ".tmpl",
+    });
+    const templateResult = await eta.render("template-extn", {
+      name: "TMPL Run",
+    });
 
     expect(templateResult).toEqual(`Hi TMPL Run`);
   });
 
   it("works with no extension", async () => {
     const eta = new Eta({ views: viewsDir, cache: true, defaultExtension: "" });
-    const templateResult = await eta.render("template-without-extn", { name: "TMPL Run" });
+    const templateResult = await eta.render("template-without-extn", {
+      name: "TMPL Run",
+    });
 
     expect(templateResult).toEqual(`Hi TMPL Run`);
   });

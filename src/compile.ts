@@ -1,8 +1,6 @@
-import { EtaParseError } from "./err.ts";
-
-/* TYPES */
-import type { Eta } from "./core.ts";
 import type { EtaConfig, Options } from "./config.ts";
+import type { Eta } from "./core.ts";
+import { EtaParseError } from "./err.ts";
 
 export type TemplateFunction = (
   this: Eta,
@@ -12,7 +10,7 @@ export type TemplateFunction = (
 /* END TYPES */
 
 /* istanbul ignore next */
-const AsyncFunction = async function () {}.constructor; // eslint-disable-line @typescript-eslint/no-empty-function
+const AsyncFunction = (async () => {}).constructor;
 
 /**
  * Takes a template string and returns a template function that can be called with (data, config)
@@ -30,7 +28,7 @@ export function compile(
 
   /* ASYNC HANDLING */
   // code gratefully taken from https://github.com/mde/ejs and adapted
-  const ctor = options && options.async
+  const ctor = options?.async
     ? (AsyncFunction as FunctionConstructor)
     : Function;
   /* END ASYNC HANDLING */

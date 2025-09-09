@@ -105,7 +105,7 @@ var data = {
   list: [],
 };
 
-for (var i = 0; i < config.length; i++) {
+for (let i = 0; i < config.length; i++) {
   data.list.push({
     index: i,
     user: '<strong style="color:red">糖饼</strong>',
@@ -119,13 +119,13 @@ for (var i = 0; i < config.length; i++) {
 var testList = [
   {
     name: "art-template",
-    tester: function () {
+    tester: () => {
       var id = config.escape ? "template" : "template-raw";
       var source = templateList[id];
       //   console.log(fn.toString())
       var html = "";
-      for (var i = 0; i < config.calls; i++) {
-        var fn = template.compile(source);
+      for (let i = 0; i < config.calls; i++) {
+        const fn = template.compile(source);
         html = fn(data);
       }
       return html;
@@ -134,12 +134,12 @@ var testList = [
 
   {
     name: "art-template / fast mode",
-    tester: function () {
+    tester: () => {
       var id = config.escape ? "template-fast-mode" : "template-fast-mode-raw";
       var source = templateList[id];
       var html = "";
-      for (var i = 0; i < config.calls; i++) {
-        var fn = template.compile(source);
+      for (let i = 0; i < config.calls; i++) {
+        const fn = template.compile(source);
         html = fn(data);
       }
       return html;
@@ -148,12 +148,12 @@ var testList = [
 
   {
     name: "lodash.template",
-    tester: function () {
+    tester: () => {
       var id = config.escape ? "template" : "template-raw";
       var source = templateList[id];
       var html = "";
-      for (var i = 0; i < config.calls; i++) {
-        var fn = _.template(source);
+      for (let i = 0; i < config.calls; i++) {
+        const fn = _.template(source);
         html = fn(data);
       }
       return html;
@@ -162,12 +162,12 @@ var testList = [
 
   {
     name: "doT",
-    tester: function () {
+    tester: () => {
       var id = config.escape ? "dot" : "dot-raw";
       var source = templateList[id];
       var html = "";
-      for (var i = 0; i < config.calls; i++) {
-        var fn = doT.template(source);
+      for (let i = 0; i < config.calls; i++) {
+        const fn = doT.template(source);
         html = fn(data);
       }
       return html;
@@ -176,12 +176,12 @@ var testList = [
 
   {
     name: "ejs",
-    tester: function () {
+    tester: () => {
       var id = config.escape ? "template" : "template-raw";
       var source = templateList[id];
       var html = "";
-      for (var i = 0; i < config.calls; i++) {
-        var fn = ejs.compile(source);
+      for (let i = 0; i < config.calls; i++) {
+        const fn = ejs.compile(source);
         html = fn(data);
       }
       return html;
@@ -190,14 +190,14 @@ var testList = [
 
   {
     name: "Eta",
-    tester: function () {
+    tester: () => {
       var id = config.escape ? "eta" : "eta-raw";
 
       var source = templateList[id];
       var html = "";
       data.$name = "temp";
-      for (var i = 0; i < config.calls; i++) {
-        var fn = etaInstance.compile(source);
+      for (let i = 0; i < config.calls; i++) {
+        const fn = etaInstance.compile(source);
         html = etaInstance.render(fn, data);
       }
       return html;
@@ -219,10 +219,10 @@ Highcharts.setOptions({
   ],
 });
 
-var runTest = function (callback) {
-  var list = testList.filter(function (test) {
-    return !config.escape || test.supportEscape !== false;
-  });
+var runTest = (callback) => {
+  var list = testList.filter(
+    (test) => !config.escape || test.supportEscape !== false,
+  );
 
   var Timer = function () {
     this.startTime = window.performance.now();
@@ -235,7 +235,7 @@ var runTest = function (callback) {
   var colors = Highcharts.getOptions().colors;
   var categories = [];
 
-  for (var i = 0; i < list.length; i++) {
+  for (let i = 0; i < list.length; i++) {
     categories.push(list[i].name);
   }
 
@@ -318,7 +318,7 @@ var runTest = function (callback) {
 
     target = list.shift();
 
-    setTimeout(function () {
+    setTimeout(() => {
       tester(target);
     }, 500);
   }
@@ -327,16 +327,21 @@ var runTest = function (callback) {
   tester(target);
 };
 
-window["restart"] = function (key, value) {
+window.restart = (key, value) => {
   config[key] = value;
 };
 
 function getLink() {
   window.location.search =
-    "length=" + config.length + "&calls=" + config.calls + "&escape=" + config.escape;
+    "length=" +
+    config.length +
+    "&calls=" +
+    config.calls +
+    "&escape=" +
+    config.escape;
 }
 
-window["load"] = function (selector) {
+window.load = (selector) => {
   var app = document.querySelector(selector);
   var body = `
 <h1>Eta Browser Benchmarks</h1>
@@ -374,15 +379,14 @@ window["load"] = function (selector) {
   document.getElementById("get-link").addEventListener("click", getLink);
 
   document.getElementById("button-start").onclick = function () {
-    var elem = this;
     this.disabled = true;
-    runTest(function () {
-      elem.style.display = "none";
+    runTest(() => {
+      this.style.display = "none";
       document.getElementById("button-restart").style.display = "";
     });
   };
 
-  document.getElementById("button-restart").onclick = function () {
+  document.getElementById("button-restart").onclick = () => {
     window.location.reload();
   };
 };

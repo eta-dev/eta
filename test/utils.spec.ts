@@ -1,7 +1,7 @@
-/* global it, expect, describe */
+import { describe, expect, it } from "vitest";
 
-import { trimWS, XMLEscape } from "../src/utils";
 import { defaultConfig } from "../src/config";
+import { trimWS, XMLEscape } from "../src/utils";
 
 describe("Whitespace trim", () => {
   describe("#trimLeft", () => {
@@ -17,7 +17,9 @@ describe("Whitespace trim", () => {
     });
     it("WS slurp and WS newline are equal with newline", () => {
       Object.defineProperty(String.prototype, "trimLeft", { value: undefined });
-      expect(trimWS(" jestjs", defaultConfig, "_")).toBe(trimWS("\njestjs", defaultConfig, "-"));
+      expect(trimWS(" jestjs", defaultConfig, "_")).toBe(
+        trimWS("\njestjs", defaultConfig, "-"),
+      );
     });
   });
 
@@ -26,16 +28,20 @@ describe("Whitespace trim", () => {
       expect(trimWS("jestjs  ", defaultConfig, "", "_")).toBe("jestjs");
     });
     it("WS slurp without str.trimRight", () => {
-      Object.defineProperty(String.prototype, "trimRight", { value: undefined });
+      Object.defineProperty(String.prototype, "trimRight", {
+        value: undefined,
+      });
       expect(trimWS("jestjs  ", defaultConfig, "", "_")).toBe("jestjs");
     });
     it("WS newline", () => {
       expect(trimWS("jestjs\n", defaultConfig, "", "-")).toBe("jestjs");
     });
     it("WS slurp and WS newline are equal with newline", () => {
-      Object.defineProperty(String.prototype, "trimRight", { value: undefined });
+      Object.defineProperty(String.prototype, "trimRight", {
+        value: undefined,
+      });
       expect(trimWS("jestjs ", defaultConfig, "", "_")).toBe(
-        trimWS("jestjs\n", defaultConfig, "", "-")
+        trimWS("jestjs\n", defaultConfig, "", "-"),
       );
     });
   });
@@ -43,14 +49,24 @@ describe("Whitespace trim", () => {
   describe("#trim", () => {
     it("WS slurp both sides", () => {
       expect(
-        trimWS(" somestring  ", { ...defaultConfig, autoTrim: ["slurp", "slurp"] }, "", "")
+        trimWS(
+          " somestring  ",
+          { ...defaultConfig, autoTrim: ["slurp", "slurp"] },
+          "",
+          "",
+        ),
       ).toBe("somestring");
     });
 
     it("defaultConfig.autoTrim set to false", () => {
-      expect(trimWS(" some string\n  ", { ...defaultConfig, autoTrim: false }, "", "")).toBe(
-        " some string\n  "
-      );
+      expect(
+        trimWS(
+          " some string\n  ",
+          { ...defaultConfig, autoTrim: false },
+          "",
+          "",
+        ),
+      ).toBe(" some string\n  ");
     });
   });
 });

@@ -140,7 +140,7 @@ Currently there is no official Webpack integration but [@clshortfuse](https://gi
 ```
 
 </details>
-  
+
 <details>
   <summary>
     <b>Node-RED</b>
@@ -174,7 +174,7 @@ To render Eta templates in [Koa](https://koajs.com) web framework: [@cedx/koa-et
 
 ## Contributors
 
-Made with ❤ by [@nebrelbug](https://github.com/eta-dev) and all these wonderful contributors ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+Made with ❤️ by [bgub](https://github.com/bgub) and all these wonderful contributors ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->

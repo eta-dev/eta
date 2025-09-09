@@ -42,7 +42,8 @@ export function ParseErr(message: string, str: string, indx: number): never {
 
   const lineNo = whitespace.length;
   const colNo = whitespace[lineNo - 1].length + 1;
-  message += " at line " +
+  message +=
+    " at line " +
     lineNo +
     " col " +
     colNo +
@@ -71,9 +72,9 @@ export function RuntimeErr(
   // Error context
   const context = lines
     .slice(start, end)
-    .map(function (line, i) {
+    .map((line, i) => {
       const curr = i + start + 1;
-      return (curr == lineNo ? " >> " : "    ") + curr + "| " + line;
+      return (curr === lineNo ? " >> " : "    ") + curr + "| " + line;
     })
     .join("\n");
 

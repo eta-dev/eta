@@ -1,11 +1,11 @@
-/* global it, expect, describe */
+import { describe, expect, it } from "vitest";
 
 import { Eta } from "../src/index";
 
 const eta = new Eta();
 
-const fs = require("fs"),
-  path = require("path"),
+const fs = require("node:fs"),
+  path = require("node:path"),
   filePath = path.join(__dirname, "templates/complex.eta");
 
 const complexTemplate = fs.readFileSync(filePath, "utf8");
@@ -60,7 +60,9 @@ return __eta.res;
   });
 
   it("works with whitespace trimming", () => {
-    const str = eta.compileToString("hi\n<%- = it.firstname-%>\n<%_ = it.lastname_%>");
+    const str = eta.compileToString(
+      "hi\n<%- = it.firstname-%>\n<%_ = it.lastname_%>",
+    );
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 let includeAsync = (template, data) => this.renderAsync(template, data, options);

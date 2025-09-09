@@ -1,10 +1,6 @@
-/* TYPES */
-
 import type { Options } from "./config.ts";
-import type { AstObject } from "./parse.ts";
 import type { Eta } from "./core.ts";
-
-/* END TYPES */
+import type { AstObject } from "./parse.ts";
 
 /**
  * Compiles a template string to a function string. Most often users just use `compile()`, which calls `compileToString` and creates a new function using the result
@@ -16,7 +12,7 @@ export function compileToString(
   options?: Partial<Options>,
 ): string {
   const config = this.config;
-  const isAsync = options && options.async;
+  const isAsync = options?.async;
 
   const compileBody = this.compileBody;
 
@@ -46,13 +42,15 @@ ${compileBody.call(this, buffer)}
 if (__eta.layout) {
   __eta.res = ${
     isAsync ? "await includeAsync" : "include"
-  } (__eta.layout, {...${config.varName}, body: __eta.res, ...__eta.layoutData});
+  } (__eta.layout, {...${
+    config.varName
+  }, body: __eta.res, ...__eta.layoutData});
 }
 ${config.useWith ? "}" : ""}${
-    config.debug
-      ? "} catch (e) { this.RuntimeErr(e, __eta.templateStr, __eta.line, options.filepath) }"
-      : ""
-  }
+  config.debug
+    ? "} catch (e) { this.RuntimeErr(e, __eta.templateStr, __eta.line, options.filepath) }"
+    : ""
+}
 return __eta.res;
 `;
 

@@ -1,20 +1,21 @@
 {
   "compilerOptions": {
+    "target": "esnext",
+    "lib": ["es2023"],
+    "moduleDetection": "force",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "types": ["node"],
     "strict": true,
-    "lib": ["ES2022", "DOM"],
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "NodeNext",
-    "allowImportingTsExtensions": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "declarationMap": true,
-    "declarationDir": "dist/types",
-    "outDir": "dist",
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "esModuleInterop": true
+    "declaration": true,
+    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
   },
-  "files": ["src/index.ts", "src/browser.ts"]
+  "include": ["src"]
 }
