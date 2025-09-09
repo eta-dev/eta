@@ -3,6 +3,8 @@ name: ci
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
 
 permissions:
   contents: read
@@ -30,7 +32,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       # Biome
-      - uses: biomejs/setup-biome@v1
+      - uses: biomejs/setup-biome@v2
       - run: biome ci .
 
       # Build
