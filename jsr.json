@@ -1,6 +1,7 @@
 {
   "name": "@bgub/eta",
   "version": "4.0.0-alpha.1",
+  "license": "MIT",
   "exports": "./src/index.ts",
   "publish": {
     "include": [
