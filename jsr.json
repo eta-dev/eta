@@ -1,8 +1,12 @@
 {
   "name": "@bgub/eta",
-  "version": "3.5.0",
+  "version": "4.0.0-alpha.1",
   "exports": "./src/index.ts",
   "publish": {
-    "include": ["LICENSE", "README.md", "src/**/*.ts"]
+    "include": [
+      "LICENSE",
+      "README.md",
+      "src/**/*.ts"
+    ]
   }
 }
