@@ -2,15 +2,12 @@ name: publish
 
 on:
   release:
-    types: [published]
-  push:
-    tags:
-      - "v*"
+    types: [published, created, prereleased, released]
   workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write # required for JSR OIDC
+  id-token: write # required for OIDC
 
 concurrency:
   group: publish-${{ github.ref_name }}
@@ -18,7 +15,6 @@ concurrency:
 
 jobs:
   publish:
-    if: github.repository_owner == 'bgub'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +28,7 @@ jobs:
           node-version: "20"
           cache: "pnpm"
           registry-url: "https://registry.npmjs.org"
+          npm-version: "11.6.0"
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
@@ -40,17 +37,15 @@ jobs:
           CI: true
 
       # npm publish
-      - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: publish to npm
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if [[ "$VERSION" == *-* ]]; then
-            pnpm publish --access public --provenance --tag next
+            npm publish --access public --provenance --tag next
           else
-            pnpm publish --access public --provenance
+            npm publish --access public --provenance
           fi
 
       # JSR publish (OIDC, no secret needed once linked)
-      - name: Publish to JSR
+      - name: publish to JSR
         run: pnpm dlx jsr publish
