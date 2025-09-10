@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   publish:
+    if: github.repository_owner == 'bgub'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,10 +36,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm -s vitest run --reporter=dot
-        env: { CI: true }
+        env:
+          CI: true
 
       # npm publish
       - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if [[ "$VERSION" == *-* ]]; then

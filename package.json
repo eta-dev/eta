@@ -40,10 +40,7 @@
   },
   "author": "Ben Gubler <nebrelbug@gmail.com>",
   "funding": "https://github.com/bgub/eta?sponsor=1",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bgub/eta.git"
-  },
+  "repository": "github:bgub/eta",
   "bugs": {
     "url": "https://github.com/bgub/eta/issues"
   },
