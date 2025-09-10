@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.0.0-alpha.2](https://github.com/bgub/eta/compare/eta-v4.0.0-alpha.1...eta-v4.0.0-alpha.2) (2025-09-10)
+
+
+### Bug Fixes
+
+* CI tweaks ([#317](https://github.com/bgub/eta/issues/317)) ([cd533c6](https://github.com/bgub/eta/commit/cd533c63a1f03919a68145cb4cdb09a3346e53fa))
+* remove -w flag in CI publish ([#319](https://github.com/bgub/eta/issues/319)) ([dfe66e0](https://github.com/bgub/eta/commit/dfe66e022f1763264fe12ce9cc885d85437560ae))
+* switch to OIDC for npm publish ([#320](https://github.com/bgub/eta/issues/320)) ([69b6e84](https://github.com/bgub/eta/commit/69b6e8447f6a6f2a3c1923d6ccc521a7a7a37693))
+* tweak CI ([#321](https://github.com/bgub/eta/issues/321)) ([58d28ff](https://github.com/bgub/eta/commit/58d28ff6d0b49ce6e7e344e7eb77f00e4937b686))
+
 ## [4.0.0-alpha.1](https://github.com/bgub/eta/compare/eta-v3.5.0...eta-v4.0.0-alpha.1) (2025-09-10)
 
 
