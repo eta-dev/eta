@@ -22,7 +22,7 @@
 [![GitHub package.json version (main)](https://img.shields.io/github/package-json/v/bgub/eta/main?label=current%20version)](https://www.npmjs.com/package/eta)
 [![GitHub Actions Status](https://github.com/bgub/eta/actions/workflows/ci.yml/badge.svg)](https://github.com/bgub/eta/actions)
 [![All Contributors][logo]](#contributors-)
-[![Codecov](https://codecov.io/gh/bgub/eta/branch/main/graph/badge.svg)](https://codecov.io/gh/bgub/eta)
+[![Codecov](https://codecov.io/github/bgub/eta/branch/main/graph/badge.svg)](https://codecov.io/github/bgub/eta)
 [![Donate](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/bengubler)
 
 </span>
