@@ -1,5 +1,5 @@
 {
-  "name": "@eta-dev/eta",
+  "name": "@bgub/eta",
   "version": "3.5.0",
   "exports": "./src/index.ts",
   "publish": {
