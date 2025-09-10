@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.0.1-alpha.2](https://github.com/bgub/eta/compare/eta-v4.0.0-alpha.2...eta-v4.0.1-alpha.2) (2025-09-10)
+
+
+### Bug Fixes
+
+* add CI token ([#322](https://github.com/bgub/eta/issues/322)) ([1129aba](https://github.com/bgub/eta/commit/1129aba061d53d9e2a379b6c86f9b3f453a1b569))
+* install latest npm version ([4185b29](https://github.com/bgub/eta/commit/4185b290717cba0fc33e8044f0e6d464d1dce4b6))
+* last try before bed ([#324](https://github.com/bgub/eta/issues/324)) ([7b3650a](https://github.com/bgub/eta/commit/7b3650a26a9fd69e4df78a60614ad10164154b2d))
+
 ## [4.0.0-alpha.2](https://github.com/bgub/eta/compare/eta-v4.0.0-alpha.1...eta-v4.0.0-alpha.2) (2025-09-10)
 
 
