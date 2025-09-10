@@ -34,7 +34,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm -s vitest run -w --reporter=dot
+      - run: pnpm -s vitest run --reporter=dot
         env: { CI: true }
 
       # npm publish
