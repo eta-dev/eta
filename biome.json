@@ -6,7 +6,8 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "includes": ["**", "!.release-please-manifest.json", "!jsr.json"]
   },
   "formatter": {
     "enabled": true,
